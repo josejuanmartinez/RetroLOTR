@@ -46,7 +46,10 @@ public static class OpportunityHexHinter
         foreach (Hex hex in pathRenderer.FindAllHexesInRemainingRange(character))
         {
             if (hex == null || hex.v2 == character.hex.v2) continue;
-            if (deckManager.GetSituationCards(leader, character, hex).Count > 0)
+            // Existence-only: hint the hex whenever an opportunity card is there, even if its
+            // requirements aren't currently met — the actual card offer (GetSituationCards)
+            // is where unmet requirements get filtered out, once the character has arrived.
+            if (deckManager.HasOpportunityCardsAtHex(leader, character, hex))
             {
                 targets.Add(hex.v2);
             }

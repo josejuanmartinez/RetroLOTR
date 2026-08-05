@@ -41,7 +41,7 @@ public class ScoutArea : AgentAction
             for (int i = 0; i < radiusHexes.Count; i++)
             {
                 Hex hex = radiusHexes[i];
-                if (hex != null && hex.hiddenArtifacts != null && hex.hiddenArtifacts.Count > 0)
+                if (hex != null && hex.hiddenObjects != null && hex.hiddenObjects.Count > 0)
                 {
                     hasArtifactsNearby = true;
                     break;
@@ -58,7 +58,7 @@ public class ScoutArea : AgentAction
                         for (int i = 0; i < radiusHexes.Count; i++)
                         {
                             Hex hex = radiusHexes[i];
-                            if (hex != null && hex.hiddenArtifacts != null && hex.hiddenArtifacts.Count > 0)
+                            if (hex != null && hex.hiddenObjects != null && hex.hiddenObjects.Count > 0)
                             {
                                 hex.RevealArtifact();
                             }

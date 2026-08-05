@@ -21,7 +21,7 @@ public class ABookOfLostMagic : EventAction
             for (int i = 0; i < area.Count; i++)
             {
                 Hex h = area[i];
-                if (h == null || h.hiddenArtifacts == null || h.hiddenArtifacts.Count == 0) continue;
+                if (h == null || h.hiddenObjects == null || h.hiddenObjects.Count == 0) continue;
                 h.RevealArtifact();
                 revealed++;
             }

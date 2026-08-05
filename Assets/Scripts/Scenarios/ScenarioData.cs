@@ -56,7 +56,15 @@ namespace RetroLOTR.Scenarios
         // Artifacts.json's hidden pool). An artifact named here is placed at its given hex instead
         // of a random one; any hidden artifact not named here still gets placed randomly exactly
         // as before. See Board.PlaceScenarioArtifacts. Empty list = fully random (unaffected).
-        public const int CurrentVersion = 11;
+        // v12: artifacts were merged into Object-type cards (Cards/Modular/ObjectsDeck.json).
+        // ScenarioArtifact -> ScenarioObject (artifactName -> objectName), ScenarioData.artifacts
+        // -> ScenarioData.objects, still resolved by name but now against the card catalog instead
+        // of Artifacts.json (see Board.PlaceScenarioObjects). Also added
+        // ScenarioCharacter.startingObjects: Object-card names this character starts holding —
+        // leaders no longer get automatic starting items (Game.GrantStartingArtifacts was
+        // removed); every scenario character, leader or companion, is assigned objects explicitly
+        // here instead. Empty list = holds nothing, same as before.
+        public const int CurrentVersion = 12;
 
         public int version = CurrentVersion;
         public string scenarioName = "New Scenario";
@@ -88,9 +96,9 @@ namespace RetroLOTR.Scenarios
         public List<ScenarioPC> pcs = new();
         public List<ScenarioCharacter> characters = new();
 
-        /// <summary>Author-pinned hex for a named hidden artifact (see v11 note above). Sparse —
-        /// only artifacts the author deliberately placed appear here.</summary>
-        public List<ScenarioArtifact> artifacts = new();
+        /// <summary>Author-pinned hex for a named hidden object (see v11/v12 notes above). Sparse —
+        /// only objects the author deliberately placed appear here.</summary>
+        public List<ScenarioObject> objects = new();
 
         public int Index(int row, int col) => row * width + col;
 
@@ -120,14 +128,14 @@ namespace RetroLOTR.Scenarios
         public string spriteName;
     }
 
-    /// <summary>Pins one hidden artifact (matched by name against Artifacts.json's hidden pool)
-    /// to a specific hex, instead of leaving its placement to the random pass.</summary>
+    /// <summary>Pins one hidden object (matched by name against the Object-card catalog) to a
+    /// specific hex, instead of leaving its placement to the random pass.</summary>
     [Serializable]
-    public class ScenarioArtifact
+    public class ScenarioObject
     {
         public int row;
         public int col;
-        public string artifactName;
+        public string objectName;
     }
 
     [Serializable]
@@ -205,6 +213,11 @@ namespace RetroLOTR.Scenarios
         /// different variant). Ignored when spawnConditionLeaderName is empty.</summary>
         public bool spawnConditionExclude = false;
         public ScenarioArmy army;        // null when the character bears no army
+        /// <summary>Object-card names this character starts holding — resolved against the
+        /// Object catalog and cloned onto Character.objects at spawn. See
+        /// NationSpawner.SpawnScenarioCharacter. Applies to companions and self-owned
+        /// leaders/NPLs alike ("every character can hold objects").</summary>
+        public List<string> startingObjects = new();
     }
 
     /// <summary>An army described as a set of army-card stacks plus shared XP.</summary>

@@ -171,7 +171,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         CardCenterPreview preview = CardCenterPreview.Instance != null
             ? CardCenterPreview.Instance
             : FindFirstObjectByType<CardCenterPreview>();
-        if (hovered) preview?.ShowPreview(previewData);
+        if (hovered) preview?.ShowPreview(previewData, hoverDriven: true);
         else preview?.HidePreview();
     }
 
@@ -906,7 +906,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (BoardNavigator.IsNavigationInputLocked()) return;
         if (!SuppressHoverEffects)
         {
-            if (isTokenOnlyPresentation || isEnvironmentalPresentation) CardCenterPreview.Instance?.ShowPreview(cardData);
+            if (isTokenOnlyPresentation || isEnvironmentalPresentation) CardCenterPreview.Instance?.ShowPreview(cardData, hoverDriven: true);
             else ShowRealCard();
         }
         if (Sounds.Instance != null) Sounds.Instance.PlayUiHover();

@@ -182,7 +182,12 @@ public class Leader : Character
         {
             if (c == null || c.killed || c.hex == null || c.GetEmmissary() <= 0) continue;
 
-            List<CardData> candidates = deckManager.GetUnfoundedOwnRegionPcCards(playable, c.hex);
+            // GetUnfoundedOwnRegionPcCards only checks region + not-yet-founded — it doesn't
+            // know whether the leader can currently afford/qualify to found each PC, so filter
+            // on the same EvaluatePlayability check GetSituationCards uses before offering any.
+            List<CardData> candidates = deckManager.GetUnfoundedOwnRegionPcCards(playable, c.hex)
+                .Where(card => card.EvaluatePlayability(c))
+                .ToList();
             if (candidates.Count == 0) continue;
 
             pcFoundingOfferPending = true;
@@ -607,7 +612,7 @@ public class Leader : Character
     public int GetCharacterPoints()
     {
         if (killed) return 0;
-        return controlledCharacters.FindAll(x => !x.killed).Select(x => x.GetCommander() + x.GetAgent() + x.GetEmmissary() + x.GetMage() + x.artifacts.Count * 10 + x.health).Sum();
+        return controlledCharacters.FindAll(x => !x.killed).Select(x => x.GetCommander() + x.GetAgent() + x.GetEmmissary() + x.GetMage() + x.objects.Count * 10 + x.health).Sum();
     }
 
     public int GetPCPoints()

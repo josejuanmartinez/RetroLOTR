@@ -12,7 +12,8 @@ public enum CardTypeEnum
     Rest = 7,
     Encounter = 8,
     Spell = 9,
-    Environmental = 10
+    Environmental = 10,
+    Object = 11
 }
 
 public static class CardTypeParser

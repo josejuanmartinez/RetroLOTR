@@ -1,5 +1,5 @@
 {
-    "deckCount": 20,
+    "deckCount": 21,
     "decks": [
         {
             "deckId": "shared_base",
@@ -20,6 +20,18 @@
             "alignment": 2,
             "resourcePath": "Cards/EncounterDeck",
             "cardCount": 82,
+            "sharedToAll": true,
+            "parentDeckId": "",
+            "isBaseDeck": false,
+            "deckSpriteName": "sharedDeck"
+        },
+        {
+            "deckId": "objects_shared",
+            "nation": "Shared",
+            "thematic": "Legendary and mundane objects a character may carry — rings, blades, palantiri, and lesser treasures — each granting bonuses or effects while held. Not drawn or played like other cards; looked up by name for starting kits and the map's hidden-object pool.",
+            "alignment": 2,
+            "resourcePath": "Cards/Modular/ObjectsDeck",
+            "cardCount": 51,
             "sharedToAll": true,
             "parentDeckId": "",
             "isBaseDeck": false,

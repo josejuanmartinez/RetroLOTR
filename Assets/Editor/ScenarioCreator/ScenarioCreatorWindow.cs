@@ -32,7 +32,7 @@ namespace RetroLOTR.Scenarios.EditorTools
         private string[] spriteNames; // per-hex chosen tile variation ("" = terrain default)
         private readonly Dictionary<int, ScenarioPC> pcs = new();
         private readonly Dictionary<int, List<ScenarioCharacter>> characters = new();
-        private readonly Dictionary<int, List<ScenarioArtifact>> artifacts = new();
+        private readonly Dictionary<int, List<ScenarioObject>> objects = new();
 
         // ---- Tool state ----------------------------------------------------------------------
         private Tool tool = Tool.Magnifier;
@@ -135,7 +135,7 @@ namespace RetroLOTR.Scenarios.EditorTools
             for (int i = 0; i < terrain.Length; i++) terrain[i] = TerrainEnum.deepWater;
             pcs.Clear();
             characters.Clear();
-            artifacts.Clear();
+            objects.Clear();
             selectedIndex = -1;
         }
 
@@ -746,7 +746,7 @@ namespace RetroLOTR.Scenarios.EditorTools
             bool hasLeader = characters.TryGetValue(idx, out var overlayList) && overlayList.Any(IsLeaderCard);
             bool hasPc = pcs.ContainsKey(idx);
             int charCount = characters.TryGetValue(idx, out var list) ? list.Count : 0;
-            int artifactCount = artifacts.TryGetValue(idx, out var artifactList) ? artifactList.Count : 0;
+            int artifactCount = objects.TryGetValue(idx, out var artifactList) ? artifactList.Count : 0;
 
             // Badges anchor at explicit points inset from center, NOT at the corners of a
             // bounding rect over the hex (as a naive TextAnchor.UpperLeft/etc against a rect
@@ -1013,7 +1013,7 @@ namespace RetroLOTR.Scenarios.EditorTools
             EditorGUILayout.Space();
             DrawCharactersSection(selectedIndex, row, col);
             EditorGUILayout.Space();
-            DrawArtifactsSection(selectedIndex, row, col);
+            DrawObjectsSection(selectedIndex, row, col);
 
             EditorGUILayout.EndScrollView();
             EditorGUILayout.EndVertical();
@@ -1406,6 +1406,7 @@ namespace RetroLOTR.Scenarios.EditorTools
                 DrawCardWithDecks(c.characterName);
 
                 DrawArmyEditor(c);
+                DrawStartingObjectsEditor(c);
 
                 EditorGUILayout.EndVertical();
             }
@@ -1470,29 +1471,53 @@ namespace RetroLOTR.Scenarios.EditorTools
             }
         }
 
+        // Object cards this character starts holding — every scenario character (leader,
+        // NPL, or companion) can carry objects; there's no automatic leader starting kit
+        // anymore (see ScenarioData.CurrentVersion v12 note).
+        private void DrawStartingObjectsEditor(ScenarioCharacter c)
+        {
+            c.startingObjects ??= new List<string>();
+            EditorGUILayout.LabelField("Starting Objects", EditorStyles.boldLabel);
+
+            int removeAt = -1;
+            for (int i = 0; i < c.startingObjects.Count; i++)
+            {
+                EditorGUILayout.BeginHorizontal();
+                int captured = i;
+                SearchableField("", c.startingObjects[i], ScenarioCardCatalog.ObjectCardNames,
+                    v => c.startingObjects[captured] = v, ScenarioCardCatalog.GetCard);
+                if (GUILayout.Button("x", GUILayout.Width(22))) removeAt = i;
+                EditorGUILayout.EndHorizontal();
+            }
+            if (removeAt >= 0) c.startingObjects.RemoveAt(removeAt);
+
+            if (GUILayout.Button("Add Starting Object"))
+                c.startingObjects.Add(string.Empty);
+        }
+
         private void SyncCharacterList(int idx, List<ScenarioCharacter> list)
         {
             if (list.Count == 0) characters.Remove(idx);
             else characters[idx] = list;
         }
 
-        // Pins named hidden artifacts (Artifacts.json's random-placement pool) to this hex — see
-        // Board.PlaceScenarioArtifacts. Any hidden artifact left unpinned still lands on a random
-        // hex exactly as before, so this section is purely additive/optional per scenario.
-        private void DrawArtifactsSection(int idx, int row, int col)
+        // Pins named hidden objects (the Object-card catalog's random-placement pool) to this
+        // hex — see Board.PlaceScenarioObjects. Any hidden object left unpinned still lands on a
+        // random hex exactly as before, so this section is purely additive/optional per scenario.
+        private void DrawObjectsSection(int idx, int row, int col)
         {
-            EditorGUILayout.LabelField("Artifacts", EditorStyles.boldLabel);
-            if (!artifacts.TryGetValue(idx, out List<ScenarioArtifact> list))
+            EditorGUILayout.LabelField("Objects", EditorStyles.boldLabel);
+            if (!objects.TryGetValue(idx, out List<ScenarioObject> list))
             {
-                list = new List<ScenarioArtifact>();
+                list = new List<ScenarioObject>();
             }
 
             int removeAt = -1;
             for (int i = 0; i < list.Count; i++)
             {
-                ScenarioArtifact a = list[i];
+                ScenarioObject a = list[i];
                 EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
-                SearchableField("", a.artifactName, ScenarioCardCatalog.HiddenArtifactNames, v => a.artifactName = v);
+                SearchableField("", a.objectName, ScenarioCardCatalog.ObjectCardNames, v => a.objectName = v);
                 if (GUILayout.Button("x", GUILayout.Width(22))) removeAt = i;
                 EditorGUILayout.EndHorizontal();
             }
@@ -1500,20 +1525,20 @@ namespace RetroLOTR.Scenarios.EditorTools
             if (removeAt >= 0)
             {
                 list.RemoveAt(removeAt);
-                SyncArtifactList(idx, list);
+                SyncObjectList(idx, list);
             }
 
-            if (GUILayout.Button("Add Artifact"))
+            if (GUILayout.Button("Add Object"))
             {
-                list.Add(new ScenarioArtifact { row = row, col = col });
-                SyncArtifactList(idx, list);
+                list.Add(new ScenarioObject { row = row, col = col });
+                SyncObjectList(idx, list);
             }
         }
 
-        private void SyncArtifactList(int idx, List<ScenarioArtifact> list)
+        private void SyncObjectList(int idx, List<ScenarioObject> list)
         {
-            if (list.Count == 0) artifacts.Remove(idx);
-            else artifacts[idx] = list;
+            if (list.Count == 0) objects.Remove(idx);
+            else objects[idx] = list;
         }
 
         // Search-as-you-type picker. Shows the current value on a dropdown button; clicking opens
@@ -1559,7 +1584,7 @@ namespace RetroLOTR.Scenarios.EditorTools
                 terrain = terrain.Select(t => (int)t).ToArray(),
                 pcs = pcs.Values.ToList(),
                 characters = characters.Values.SelectMany(list => list).ToList(),
-                artifacts = artifacts.Values.SelectMany(list => list).ToList()
+                objects = objects.Values.SelectMany(list => list).ToList()
             };
 
             for (int i = 0; i < regions.Length; i++)
@@ -1592,7 +1617,7 @@ namespace RetroLOTR.Scenarios.EditorTools
 
             pcs.Clear();
             characters.Clear();
-            artifacts.Clear();
+            objects.Clear();
             selectedIndex = -1;
 
             foreach (ScenarioRegionCell cell in data.regions ?? new List<ScenarioRegionCell>())
@@ -1612,11 +1637,11 @@ namespace RetroLOTR.Scenarios.EditorTools
                 list.Add(c);
             }
 
-            foreach (ScenarioArtifact a in data.artifacts ?? new List<ScenarioArtifact>())
+            foreach (ScenarioObject a in data.objects ?? new List<ScenarioObject>())
             {
                 if (!InBounds(a.row, a.col)) continue;
                 int idx = Index(a.row, a.col);
-                if (!artifacts.TryGetValue(idx, out var list)) artifacts[idx] = list = new List<ScenarioArtifact>();
+                if (!objects.TryGetValue(idx, out var list)) objects[idx] = list = new List<ScenarioObject>();
                 list.Add(a);
             }
         }

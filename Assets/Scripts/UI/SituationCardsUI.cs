@@ -16,6 +16,11 @@ public class SituationCardsUI : MonoBehaviour
     [Header("Content")]
     [SerializeField] private string titleMessage = "Act now!";
 
+    [Header("Presentation")]
+    [Tooltip("When true, opportunity cards are presented via the CardBloomWheel positioned " +
+        "at the acting character's hex instead of this UI's own center-screen card tray.")]
+    [SerializeField] private bool bloom = false;
+
     [Header("Timing & Layout")]
     [SerializeField] private float fadeInDuration  = 0.35f;
     [SerializeField] private float fadeOutDuration = 0.3f;
@@ -34,6 +39,10 @@ public class SituationCardsUI : MonoBehaviour
 
     private Coroutine showCoroutine;
     private readonly List<GameObject> cardInstances = new();
+
+    // Bloom-mode presentation state (see ShowBloomCoroutine / DismissBloom).
+    private CardBloomWheel activeBloomWheel;
+    private GameObject bloomDismissCatcher;
 
     private void Awake()
     {
@@ -197,7 +206,7 @@ public class SituationCardsUI : MonoBehaviour
         if (cards == null || cards.Count == 0) return;
         IsShowing = true;
         if (showCoroutine != null) StopCoroutine(showCoroutine);
-        showCoroutine = StartCoroutine(ShowCoroutine(cards, character));
+        showCoroutine = StartCoroutine(bloom ? ShowBloomCoroutine(cards, character) : ShowCoroutine(cards, character));
     }
 
     private void Dismiss()
@@ -317,6 +326,120 @@ public class SituationCardsUI : MonoBehaviour
         showCoroutine = null;
     }
 
+    // Bloom presentation: instead of this UI's own center-screen tray, opportunity cards are
+    // handed to DeckManager's CardBloomWheel (its sole purpose — there is no hand display),
+    // repositioned over the acting character's hex for the duration of the offer, then
+    // emptied and hidden again once resolved or dismissed (see DismissBloom).
+    private IEnumerator ShowBloomCoroutine(List<CardData> cards, Character character)
+    {
+        CardBloomWheel wheel = DeckManager.Instance?.GetCardBloomWheel();
+        // TokenCard.prefab (not Card.prefab's real-card-only template) — the two were split
+        // apart in the card refactor, so a real-card instance has no token visuals to show
+        // and would render as an empty rect.
+        GameObject template = DeckManager.Instance?.GetTokenCardPrefabTemplate();
+        if (wheel == null || template == null || character == null || character.hex == null)
+        {
+            // No wheel to bloom from (or nowhere to anchor it) — fall back to the normal
+            // center-screen presentation rather than silently showing nothing.
+            yield return ShowCoroutine(cards, character);
+            yield break;
+        }
+
+        ClearCards();
+
+        PlayableLeader leader = character.GetOwner() as PlayableLeader;
+
+        foreach (CardData card in cards)
+        {
+            GameObject go = Instantiate(template, wheel.transform);
+            go.SetActive(true);
+
+            var cardComp = go.GetComponent<Card>();
+            if (cardComp != null)
+            {
+                cardComp.Initialize(card);
+                cardComp.SuppressHoverEffects = true;
+            }
+
+            // The wheel drives clicks via its own geometric hit test (see SetCards), not
+            // Unity's event system — disable this card's own raycasts so it can't also
+            // receive OnPointerClick and misroute into Card.PlayFromBloom's hand-play flow.
+            var cg = go.GetComponent<CanvasGroup>();
+            if (cg != null) { cg.blocksRaycasts = false; cg.interactable = false; }
+
+            cardInstances.Add(go);
+        }
+
+        activeBloomWheel = wheel;
+        wheel.SetCards(cardInstances, index => OnBloomCardClicked(index, cards, character, leader));
+        wheel.SetWorldAnchor(character.hex.transform.position, Camera.main);
+        wheel.SetVisible(true);
+        wheel.SetForcedOpen(true);
+
+        BuildBloomDismissCatcher();
+        showCoroutine = null;
+    }
+
+    // Full-screen, invisible click-catcher behind the bloom wheel: clicking anywhere that
+    // isn't a card dismisses the offer, mirroring the dim overlay's click-to-dismiss in the
+    // non-bloom presentation.
+    private void BuildBloomDismissCatcher()
+    {
+        DestroyBloomDismissCatcher();
+
+        bloomDismissCatcher = new GameObject("BloomDismissCatcher", typeof(RectTransform));
+        bloomDismissCatcher.transform.SetParent(transform, false);
+        bloomDismissCatcher.transform.SetAsFirstSibling();
+
+        var rt = bloomDismissCatcher.GetComponent<RectTransform>();
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.one;
+        rt.sizeDelta = Vector2.zero;
+
+        var img = bloomDismissCatcher.AddComponent<Image>();
+        img.color = Color.clear;
+        img.raycastTarget = true;
+
+        var btn = bloomDismissCatcher.AddComponent<Button>();
+        btn.transition = Selectable.Transition.None;
+        btn.onClick.AddListener(DismissBloom);
+    }
+
+    private void DestroyBloomDismissCatcher()
+    {
+        if (bloomDismissCatcher != null) Destroy(bloomDismissCatcher);
+        bloomDismissCatcher = null;
+    }
+
+    private void OnBloomCardClicked(int index, List<CardData> cards, Character character, PlayableLeader leader)
+    {
+        if (cards == null || index < 0 || index >= cards.Count) return;
+        CardData cardData = cards[index];
+        DismissBloom();
+        ResolveCardAction(cardData, character, leader);
+    }
+
+    // Tears down the bloom presentation: the wheel is exclusively an opportunity-card
+    // widget (there is no hand display to hand it back to), so dismissing just empties and
+    // hides it. Safe to call more than once (e.g. both the clicked card and the background
+    // catcher may fire on the same click).
+    private void DismissBloom()
+    {
+        if (activeBloomWheel == null) return;
+
+        activeBloomWheel.ClearWorldAnchor();
+        activeBloomWheel.SetForcedOpen(false);
+        activeBloomWheel.SetCards(null);
+        activeBloomWheel.SetVisible(false);
+        activeBloomWheel = null;
+
+        DestroyBloomDismissCatcher();
+        ClearCards();
+
+        if (showCoroutine != null) { StopCoroutine(showCoroutine); showCoroutine = null; }
+        IsShowing = false;
+    }
+
     // Scale-up with an elastic overshoot (easeOutBack), after an optional delay.
     private IEnumerator PopIn(RectTransform rt, float targetScale, float delay)
     {
@@ -391,14 +514,20 @@ public class SituationCardsUI : MonoBehaviour
         btn.onClick.AddListener(() => OnCardClicked(cardData, character, leader));
     }
 
-    // Resolves and executes the card's action right away, the same way a hand card
-    // resolves on click (Card.HandleActionCardPlayed) — the "Act now!" presentation
-    // promises an immediate effect, not a card quietly parked in hand for later.
-    private async void OnCardClicked(CardData cardData, Character character, PlayableLeader leader)
+    // Center-tray click: fade the overlay out, then resolve the card via the shared path.
+    private void OnCardClicked(CardData cardData, Character character, PlayableLeader leader)
     {
         if (showCoroutine != null) StopCoroutine(showCoroutine);
         showCoroutine = StartCoroutine(FadeOut());
+        ResolveCardAction(cardData, character, leader);
+    }
 
+    // Resolves and executes the card's action right away, the same way a hand card
+    // resolves on click (Card.HandleActionCardPlayed) — the "Act now!" presentation
+    // promises an immediate effect, not a card quietly parked in hand for later. Shared by
+    // both the center-tray click (OnCardClicked) and the bloom-wheel click (OnBloomCardClicked).
+    private async void ResolveCardAction(CardData cardData, Character character, PlayableLeader leader)
+    {
         if (cardData == null || character == null || leader == null || DeckManager.Instance == null)
         {
             Debug.Log($"[SituationCards] click aborted — cardData={cardData != null} character={character != null} leader={leader != null} deckManager={DeckManager.Instance != null}");

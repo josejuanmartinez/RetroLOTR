@@ -144,7 +144,7 @@ public class SelectedCharacterIcon : MonoBehaviour
         if (card == null) return;
 
         hoveredPreviewCardName = cardName;
-        CardCenterPreview.Instance.ShowPreview(card);
+        CardCenterPreview.Instance.ShowPreview(card, hoverDriven: true);
     }
 
     private void HideCardHoverPreview()
@@ -326,7 +326,7 @@ public class SelectedCharacterIcon : MonoBehaviour
         health.gameObject.SetActive(true);
         health.fillAmount = c.health / 100f;
 
-        RefreshArtifactStatusItems(c.artifacts, c);
+        RefreshArtifactStatusItems(c.objects, c);
 
         RefreshMovementLeft(c);
         RefreshPlayedCards(c);
@@ -399,7 +399,7 @@ public class SelectedCharacterIcon : MonoBehaviour
         health.gameObject.SetActive(showHealth);
         if (showHealth) health.fillAmount = c.health / 100f;
 
-        RefreshArtifactStatusItems(showArtifacts ? c.artifacts : null, showArtifacts ? c : null);
+        RefreshArtifactStatusItems(showArtifacts ? c.objects : null, showArtifacts ? c : null);
 
         ClearPlayedCardInstances();
         SetPlayedCardVisible(false);
@@ -758,12 +758,12 @@ SetVisible(false);
         playedCardInstances.Clear();
     }
 
-    private void RefreshArtifactStatusItems(List<Artifact> artifacts, Character c)
+    private void RefreshArtifactStatusItems(List<CardData> artifacts, Character c)
     {
         var items = new List<(string spriteName, string label)>();
 
         if (artifacts != null)
-            foreach (Artifact a in artifacts)
+            foreach (CardData a in artifacts)
                 if (a != null) items.Add((a.GetSpriteString(), a.GetHoverText()));
 
         if (c?.statusEffects != null)

@@ -8617,10 +8617,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayableLeaderIcon-Competitor2
       objectReference: {fileID: 0}
-    - target: {fileID: 2185682840033025753, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
-      propertyPath: calendarWidget
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 2233423379456880514, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -8915,7 +8911,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3148234836003888698, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.000091552734
+      value: -0.000045776367
       objectReference: {fileID: 0}
     - target: {fileID: 3164879936607435826, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: m_SizeDelta.y
@@ -9954,8 +9950,24 @@ PrefabInstance:
       value: 28.40004
       objectReference: {fileID: 0}
     - target: {fileID: 6270266855654618568, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6270266855654618568, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6270266855654618568, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6270266855654618568, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -297.84
+      value: 8.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6270266855654618568, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 47.6
       objectReference: {fileID: 0}
     - target: {fileID: 6280694440732743492, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -10613,6 +10625,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8497720564360370556, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1703109852}
+    - target: {fileID: 8497720564360370556, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ResetFlagsAndShowAll
+      objectReference: {fileID: 0}
     - target: {fileID: 8576314449295263176, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -10999,10 +11019,10 @@ PrefabInstance:
     - {fileID: 4223536503898698369, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 3386198231772407560, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
-      insertIndex: 7
+      insertIndex: -1
       addedObject: {fileID: 1826543362}
     - targetCorrespondingSourceObject: {fileID: 3386198231772407560, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
-      insertIndex: 8
+      insertIndex: -1
       addedObject: {fileID: 840352218}
     - targetCorrespondingSourceObject: {fileID: 6270266855654618568, guid: 5aa7f09c9750cfc44bbe7945764b0dbb, type: 3}
       insertIndex: 0
@@ -17717,11 +17737,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5717856803568502095, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_LocalScale.x
-      value: 18.580536
+      value: 20.12087
       objectReference: {fileID: 0}
     - target: {fileID: 5717856803568502095, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: m_LocalScale.y
-      value: 18.580536
+      value: 20.12087
       objectReference: {fileID: 0}
     - target: {fileID: 7513424218518187714, guid: 1b6ff9b154c7d664d9ba7e7c57002f01, type: 3}
       propertyPath: minZoom

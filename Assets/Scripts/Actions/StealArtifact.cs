@@ -16,41 +16,34 @@ public class StealArtifact : AgentAction
         condition = (c) =>
         {
             if (originalCondition != null && !originalCondition(c)) return false;
-            if (c.artifacts.Count >= Character.MAX_ARTIFACTS) return false;
+            if (c.objects.Count >= Character.MAX_OBJECTS) return false;
 
             return c.hex.characters.Any(ch =>
                 ch != null &&
                 !ch.killed &&
                 ch.GetOwner() != c.GetOwner() &&
-                ch.artifacts.Any(a => a != null && a.transferable));
+                ch.objects.Any(a => a != null && a.transferable));
         };
         asyncEffect = async (c) =>
         {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
-            if (c.artifacts.Count >= Character.MAX_ARTIFACTS) return false;
+            if (c.objects.Count >= Character.MAX_OBJECTS) return false;
 
             var candidates = c.hex.characters
                 .Where(ch => ch != null && !ch.killed && ch.GetOwner() != c.GetOwner())
-                .Select(ch => new { character = ch, artifacts = ch.artifacts.Where(a => a != null && a.transferable).ToList() })
-                .Where(x => x.artifacts.Count > 0)
+                .Select(ch => new { character = ch, objects = ch.objects.Where(a => a != null && a.transferable).ToList() })
+                .Where(x => x.objects.Count > 0)
                 .ToList();
 
             if (candidates.Count < 1) return false;
 
             var target = candidates[UnityEngine.Random.Range(0, candidates.Count)];
-            Artifact stolen = target.artifacts[UnityEngine.Random.Range(0, target.artifacts.Count)];
-            if (!target.character.artifacts.Remove(stolen)) return false;
+            CardData stolen = target.objects[UnityEngine.Random.Range(0, target.objects.Count)];
+            if (!target.character.objects.Remove(stolen)) return false;
 
-            bool isAI = !c.isPlayerControlled;
-            if (stolen.ShouldApplyAlignmentPenalty(c.GetAlignment()) && !isAI)
-            {
-                await ConfirmationDialog.AskOk("Artifacts of opposite alignment have health penalties for their bearers");
-            }
-
-            c.artifacts.Add(stolen);
-            c.ApplyOppositeAlignmentArtifactPenalty(stolen);
+            c.objects.Add(stolen);
             Character.RefreshArtifactPcVisibilityForHex(c.hex);
-            MessageDisplayNoUI.ShowMessage(c.hex, c, $"Stole {stolen.artifactName}!", Color.red);
+            MessageDisplayNoUI.ShowMessage(c.hex, c, $"Stole {stolen.name}!", Color.red);
             return true;
         };
         base.Initialize(c, condition, effect, asyncEffect);

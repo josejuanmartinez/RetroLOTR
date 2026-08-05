@@ -16,6 +16,14 @@ public class CardCenterPreview : MonoBehaviour
     [SerializeField] private RectTransform centerPreviewAnchor;
     [SerializeField] private float centerPreviewScale = 1.5f;
 
+    [Header("Hover Safety Net")]
+    [Tooltip("For hover-triggered previews only (see ShowPreview's hoverDriven param): once the " +
+        "mouse has moved this many screen pixels away from where the preview appeared, it is " +
+        "force-hidden even if the hovered source never fired its own hide (e.g. a destroyed/" +
+        "deactivated hover target, or a missed OnPointerExit). Scripted (non-hover) previews — " +
+        "PC/region grant reveals — are exempt so an incidental mouse move can't cut them short.")]
+    [SerializeField] private float hoverAutoHideDistance = 160f;
+
     [Header("Center Preview - Multiple Cards")]
     [Tooltip("Horizontal gap (template-local units, before scaling) between cards when previewing more than one at once.")]
     [SerializeField] private float multiCardSpacing = 40f;
@@ -48,6 +56,8 @@ public class CardCenterPreview : MonoBehaviour
     private float backdropAlpha;
     private bool previewActive;
     private float previewSpeedMultiplier = 1f;
+    private bool hoverDrivenActive;
+    private Vector2 hoverAnchorMousePos;
 
     // Resolved at runtime so newly-added serialized fields left at 0 still animate instead
     // of leaving the preview stuck invisible at alpha 0.
@@ -71,19 +81,25 @@ public class CardCenterPreview : MonoBehaviour
 
     private void Update()
     {
+        if (previewActive && hoverDrivenActive
+            && Vector2.Distance(Input.mousePosition, hoverAnchorMousePos) > hoverAutoHideDistance)
+        {
+            HidePreview();
+        }
         AnimateCenterPreview();
     }
 
-    public void ShowPreview(CardData data, float speedMultiplier = 1f)
+    public void ShowPreview(CardData data, float speedMultiplier = 1f, bool hoverDriven = false)
     {
         if (data == null) return;
-        ShowPreview(new List<CardData> { data }, speedMultiplier);
+        ShowPreview(new List<CardData> { data }, speedMultiplier, hoverDriven);
     }
 
     // Shared by every character-hover site (roster lists, hex map): the character's own
     // card, plus one card per distinct troop type if they command an army. includeArmyCards
     // lets callers hide troop composition for characters that aren't fully scouted, matching
-    // SelectedCharacterIcon.RefreshHoverPreview's existing showArtifacts gating.
+    // SelectedCharacterIcon.RefreshHoverPreview's existing showArtifacts gating. Every caller
+    // is a hover source, so this always opts into the mouse-move safety net (see ShowPreview).
     public void ShowPreviewForCharacter(Character character, bool includeArmyCards = true)
     {
         if (character == null) return;
@@ -108,18 +124,24 @@ public class CardCenterPreview : MonoBehaviour
             }
         }
 
-        if (previewCards.Count > 0) ShowPreview(previewCards);
+        if (previewCards.Count > 0) ShowPreview(previewCards, hoverDriven: true);
     }
 
     // Shows several cards side by side (e.g. a character plus its army's cards). A single
     // entry behaves identically to ShowPreview(CardData) — same centered position and scale.
-    public void ShowPreview(IReadOnlyList<CardData> cardsData, float speedMultiplier = 1f)
+    // hoverDriven marks this as a hover-triggered preview: once shown, if the mouse strays
+    // hoverAutoHideDistance pixels from where it was at that moment, the preview force-hides
+    // itself even if the hover source never calls HidePreview (see Update's safety net).
+    // Leave false for scripted/timed reveals that aren't tied to the cursor sitting still.
+    public void ShowPreview(IReadOnlyList<CardData> cardsData, float speedMultiplier = 1f, bool hoverDriven = false)
     {
         List<CardData> validCards = cardsData?.Where(c => c != null).ToList();
         if (validCards == null || validCards.Count == 0) return;
 
         ClearPreview();
         previewSpeedMultiplier = Mathf.Max(0.1f, speedMultiplier);
+        hoverDrivenActive = hoverDriven;
+        hoverAnchorMousePos = Input.mousePosition;
         Transform parent = centerPreviewAnchor != null
             ? (Transform)centerPreviewAnchor
             : (parentCanvas != null ? parentCanvas.rootCanvas.transform : transform);

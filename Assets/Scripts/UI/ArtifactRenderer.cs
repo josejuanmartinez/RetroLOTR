@@ -9,7 +9,7 @@ public class ArtifactRenderer : MonoBehaviour
 
     public Hover hover;
 
-    public void Initialize(Artifact artifact)
+    public void Initialize(CardData artifact)
     {
         Initialize(artifact.GetSpriteString(), artifact.GetHoverText());
     }

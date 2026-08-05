@@ -24,30 +24,23 @@ public class BagginsDueAction : EventAction
 
             var candidates = character.hex.characters
                 .Where(ch => ch != null && !ch.killed && IsEnemy(character, ch))
-                .Select(ch => new { character = ch, artifacts = ch.artifacts.Where(a => a != null && a.transferable).ToList() })
-                .Where(x => x.artifacts.Count > 0)
+                .Select(ch => new { character = ch, objects = ch.objects.Where(a => a != null && a.transferable).ToList() })
+                .Where(x => x.objects.Count > 0)
                 .ToList();
 
             if (candidates.Count == 0) return false;
 
             var target = candidates[UnityEngine.Random.Range(0, candidates.Count)];
-            Artifact stolen = target.artifacts[UnityEngine.Random.Range(0, target.artifacts.Count)];
-            if (!target.character.artifacts.Remove(stolen)) return false;
+            CardData stolen = target.objects[UnityEngine.Random.Range(0, target.objects.Count)];
+            if (!target.character.objects.Remove(stolen)) return false;
 
-            bool isAI = !character.isPlayerControlled;
-            if (stolen.ShouldApplyAlignmentPenalty(character.GetAlignment()) && !isAI)
-            {
-                ConfirmationDialog.AskOk("Artifacts of opposite alignment have health penalties for their bearers").Wait();
-            }
-
-            character.artifacts.Add(stolen);
-            character.ApplyOppositeAlignmentArtifactPenalty(stolen);
+            character.objects.Add(stolen);
             Character.RefreshArtifactPcVisibilityForHex(character.hex);
 
             MessageDisplayNoUI.ShowMessage(
                 character.hex,
                 character,
-                $"The Sack of Bag End: {character.characterName} ransacks the place and makes off with {stolen.artifactName}!",
+                $"The Sack of Bag End: {character.characterName} ransacks the place and makes off with {stolen.name}!",
                 new Color(0.84f, 0.72f, 0.42f));
 
             return true;
@@ -57,13 +50,13 @@ public class BagginsDueAction : EventAction
         {
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null || character.hex == null) return false;
-            if (character.artifacts.Count >= Character.MAX_ARTIFACTS) return false;
+            if (character.objects.Count >= Character.MAX_OBJECTS) return false;
 
             return character.hex.characters.Any(ch =>
                 ch != null &&
                 !ch.killed &&
                 IsEnemy(character, ch) &&
-                ch.artifacts.Any(a => a != null && a.transferable));
+                ch.objects.Any(a => a != null && a.transferable));
         };
 
         asyncEffect = async (character) =>

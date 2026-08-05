@@ -1,83 +1,86 @@
 ---
 name: video-generation
-description: Generate and download reference-guided MP4 videos with ByteDance Seedance 2.0 through fal.ai. Use when Codex needs to animate RetroLOTR card artwork, combine selected card references into a video, or run Seedance reference-to-video generation with configurable duration, resolution, aspect ratio, audio, bitrate, and seed.
+description: Generate and download RetroLOTR text-to-video MP4 clips with Black Forest Labs FLUX 3 through the official BFL API. Use when Codex needs to turn a written scene into video, write a FLUX 3 prompt in the project's dark late-1970s hand-painted and rotoscoped fantasy-animation style, or run configurable video generation with duration, resolution, aspect ratio, audio, and safety controls.
 ---
 
 # Video Generation
 
-Generate a reference-guided video through fal.ai endpoint `bytedance/seedance-2.0/reference-to-video`.
+Generate text-to-video through the official Black Forest Labs endpoint `POST https://api.bfl.ai/v1/flux-3-video` with `mode: "t2v"`. Do not send image, video, or audio references. Use the nine files in `Assets/Art/Videos/Inspiration` only as a local visual brief.
 
-## Gather Inputs
+## Write the Prompt
 
-Before generating, inspect `Assets/Art/Cards` and ask the user which card images to use. Present likely matches as a numbered list with paths; do not choose card references without confirmation. Preserve the user's selected order because prompts address them as `@Image1`, `@Image2`, and so on.
+Read [references/inspiration-style.md](references/inspiration-style.md) in full before drafting every generation prompt. Inspect the inspiration images again when the files have changed or the requested scene needs a feature not covered by the written analysis.
 
-Explain that the API accepts at most 12 reference files total, but no more than 9 may be images. Therefore, a cards-only request supports 1-9 card images, not 12. It may additionally contain up to 3 videos and 3 audio files while remaining within the 12-file total.
+Build one coherent prompt in this order:
 
-Ask for all generation choices before submitting a paid request:
+1. Subject, setting, and the single main action.
+2. Shot size, composition, camera motion, and temporal continuity.
+3. Character acting, cloth/hair/environmental motion, and physical cause and effect.
+4. Lighting, palette, atmosphere, and depth treatment.
+5. The canonical visual-style block from the reference, adapted without weakening its defining traits.
+6. Audio direction: ambience, physical sounds, score character, and dialogue only when requested.
+7. Negative constraints phrased as positive direction where possible: one continuous readable shot, stable anatomy, no captions, no logos, no modern objects, no glossy CGI.
 
-1. Card reference images (1-9), in intended order.
-2. Prompt or desired scene, motion, camera behavior, and audio/dialogue.
-3. Duration: `auto` or 4-15 seconds.
-4. Resolution: `480p`, `720p`, `1080p`, or `4k`.
-5. Aspect ratio: `auto`, `21:9`, `16:9`, `4:3`, `1:1`, `3:4`, or `9:16`.
-6. Generate synchronized audio: yes or no.
-7. Bitrate: `standard` or `high`.
-8. Optional seed for reproducibility; otherwise omit it.
-9. Optional reference videos/audio, subject to the modality and 12-file limits.
-10. Optional output filename; otherwise derive it from the request ID.
+Prefer one legible action over a montage. Describe concrete visible motion rather than abstract mood alone. Keep the scene request distinct from the style description.
 
-Offer the API defaults (`auto`, `720p`, `auto`, audio on, standard bitrate, random seed) as the recommended option. Use the repo-required numbered-choice format and end questions with: `Please choose a number and I will implement that option`.
+## Confirm Paid Inputs
+
+Before submitting a paid request, show the exact prompt and ask the user to confirm:
+
+1. Duration: `auto` or 5-20 seconds.
+2. Resolution: `hd` or `fhd`.
+3. Aspect ratio: `auto`, `21:9`, `2:1`, `16:9`, `4:3`, `1:1`, `3:4`, or `9:16`.
+4. Native audio: yes or no.
+5. Safety tolerance: 0-4; recommend 2.
+6. Optional output filename.
+
+Recommend `10 seconds`, `hd`, `16:9`, native audio on, and safety tolerance 2 unless the deliverable suggests otherwise. Use the repository's numbered-choice format and end a question with: `Please choose a number and I will implement that option`.
 
 ## Workflow
 
-1. Validate the selected local references and write a concrete prompt using `@Image1`, `@Image2`, `@Video1`, and `@Audio1` labels where relevant.
-2. Run the CLI with `--dry-run` and show the user the ordered references, exact prompt, and parameters.
-3. Submit the live request only after the user has asked to generate it; generation incurs fal.ai charges.
-4. Poll the fal.ai queue, download the completed MP4, and report the result.
+1. Draft the prompt from the requested content and the inspiration style reference.
+2. Run the CLI with `--dry-run` and review the exact payload with the user.
+3. Submit only after the user asks to generate; FLUX 3 generation incurs Black Forest Labs API charges.
+4. Poll the queue, download the completed MP4, and report the result.
 
 ## CLI
 
 ```powershell
 python .agents/skills/video-generation/scripts/generate_video.py `
-  --prompt "The ranger from @Image1 crosses the landscape of @Image2 in a slow painted-fantasy tracking shot." `
-  --image "Assets/Art/Cards/Characters/ranger.png" `
-  --image "Assets/Art/Cards/Events/landscape.jpg" `
+  --prompt "A lone grey pilgrim crosses a blasted ridge... [complete scene and style prompt]" `
   --duration 10 `
-  --resolution 720p `
+  --resolution hd `
   --aspect-ratio "16:9" `
   --generate-audio `
-  --bitrate-mode standard `
+  --safety-tolerance 2 `
   --dry-run
 ```
 
-Remove `--dry-run` only for the confirmed live request. Use `--no-generate-audio` to disable generated audio. Repeat `--video` and `--audio` for optional non-image references.
+Remove `--dry-run` only for a confirmed live request. Use `--no-generate-audio` for a silent clip.
 
 Defaults:
 
 - Output directory: `Assets/Art/Videos/Generated`
 - Duration: `auto`
-- Resolution: `720p`
+- Resolution: `hd`
 - Aspect ratio: `auto`
-- Generated audio: enabled
-- Bitrate: `standard`
+- Native audio: enabled
+- Safety tolerance: 2
 - Poll interval: 5 seconds
 - Timeout: 30 minutes
 
-The script embeds local references as base64 data URIs. Supported images are JPEG, PNG, and WebP; videos are MP4 and MOV; audio files are MP3 and WAV.
-
 ## Authentication
 
-Read the API key only from `FAL_API_KEY`. Never print, persist, or place it on the command line. Send it to fal.ai using `Authorization: Key ...`.
+Read the API key only from `FLUX_API_KEY`. Never print, persist, log, or place it on the command line. Send it only to `api.bfl.ai` in the official `x-key` header.
 
 ## Constraints
 
 - Require a non-empty prompt.
-- Allow no more than 9 images, 3 videos, 3 audio files, and 12 total references.
-- Require at least one image or video when audio references are supplied.
-- Preserve reference ordering and prompt labels.
-- Do not retry failed paid generations blindly; report the response without exposing secrets.
-- Treat `1080p`, `4k`, `bitrate_mode`, and `seed` as schema-dependent options. If fal.ai rejects one, report the response and re-check the live endpoint schema before resubmitting.
+- Use text-to-video only; do not accept reference media arguments.
+- Do not retry failed paid generations blindly. Report the response without exposing secrets.
+- Treat the live endpoint schema as authoritative because FLUX 3 is a new model. Re-check it before changing supported options.
+- Never claim the inspiration images were supplied to FLUX 3; their characteristics are translated into text.
 
 ## Completion Report
 
-Always include the request ID, ordered reference paths, exact prompt, all generation parameters, returned seed, and saved MP4 path.
+Always include the request ID, exact prompt, duration, resolution, aspect ratio, audio setting, safety tolerance, returned seed, and saved MP4 path.

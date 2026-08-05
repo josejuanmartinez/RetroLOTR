@@ -107,7 +107,7 @@ public static class AIContextDataBuilder
     {
         if (board == null || character == null || character.hex == null || leader == null) return;
 
-        List<Artifact> transferable = character.artifacts.Where(a => a != null && a.transferable).ToList();
+        List<CardData> transferable = character.objects.Where(a => a != null && a.transferable).ToList();
         if (transferable.Count == 0) return;
 
         List<Character> friendlies = board.hexes.Values
@@ -120,7 +120,7 @@ public static class AIContextDataBuilder
 
         data.ArtifactTransferCandidates.Clear();
         float bestScore = 0f;
-        foreach (Artifact art in transferable)
+        foreach (CardData art in transferable)
         {
             foreach (Character target in friendlies)
             {
@@ -156,7 +156,7 @@ public static class AIContextDataBuilder
                     score -= 5f;
                 }
 
-                data.ArtifactTransferCandidates.Add(new AIContext.ArtifactTransferCandidate(art.artifactName, target.characterName, score, distance));
+                data.ArtifactTransferCandidates.Add(new AIContext.ArtifactTransferCandidate(art.name, target.characterName, score, distance));
                 bestScore = Mathf.Max(bestScore, score);
             }
         }
@@ -218,8 +218,9 @@ public static class AIContextDataBuilder
     private static float CalculateNationArtifacts(PlayableLeader leader)
     {
         if (leader == null) return 0f;
-        float totalArtifacts = ArtifactRepository.Count * 1f;
-        return leader.controlledCharacters.Sum(ch => ch != null ? ch.artifacts.Count * 1f : 0f) / Mathf.Max(1f, totalArtifacts);
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+        float totalArtifacts = (deckManager?.GetObjectCardCount() ?? 0) * 1f;
+        return leader.controlledCharacters.Sum(ch => ch != null ? ch.objects.Count * 1f : 0f) / Mathf.Max(1f, totalArtifacts);
     }
 
     private static bool ShouldStop(Stopwatch stopwatch, float maxMilliseconds)

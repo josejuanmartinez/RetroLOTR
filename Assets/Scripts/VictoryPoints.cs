@@ -144,7 +144,7 @@ public class VictoryPoints
 
     private static void CalculateArtifactPoints(PlayableLeader leader, VictoryPointsBreakdown breakdown)
     {
-        int artifacts = leader.controlledCharacters.Sum(c => c != null && !c.killed ? c.artifacts.Count : 0);
+        int artifacts = leader.controlledCharacters.Sum(c => c != null && !c.killed ? c.objects.Count : 0);
         breakdown.ArtifactPoints += artifacts * 3;
     }
 

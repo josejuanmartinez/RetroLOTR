@@ -58,7 +58,7 @@ public class DurinsDay : EventAction
                 .Where(ch => ch != null && !ch.killed && ch.race == RacesEnum.Dwarf).Distinct().ToList();
             if (dwarves.Count == 0) return false;
             int artifactsRevealed = 0;
-            if (character.hex != null) { foreach (var h in character.hex.GetHexesInRadius(ArtifactRadius)) { if (h?.hiddenArtifacts != null && h.hiddenArtifacts.Count > 0) { h.RevealArtifact(); artifactsRevealed++; break; } } }
+            if (character.hex != null) { foreach (var h in character.hex.GetHexesInRadius(ArtifactRadius)) { if (h?.hiddenObjects != null && h.hiddenObjects.Count > 0) { h.RevealArtifact(); artifactsRevealed++; break; } } }
             int activated = 0;
             var nearDwarves = dwarves.Where(d => d.hex != null && (character.hex == null || character.hex.GetHexesInRadius(3).Contains(d.hex))).ToList();
             foreach (var d in nearDwarves) { d.hasActionedThisTurn = false; d.ApplyStatusEffect(StatusEffectEnum.Hope, 1); activated++; }

@@ -102,7 +102,7 @@ public class Hex : MonoBehaviour
     private bool isChasm;
     public List<Army> armies = new();
     public List<Character> characters = new();
-    public List<Artifact> hiddenArtifacts = new();
+    public List<CardData> hiddenObjects = new();
     private readonly List<CardData> _pendingEncounters = new();
 
 
@@ -1058,7 +1058,7 @@ public class Hex : MonoBehaviour
         if (previewCards.Count == 0) yield break;
 
         _showingPcCardPreview = true;
-        CardCenterPreview.Instance.ShowPreview(previewCards);
+        CardCenterPreview.Instance.ShowPreview(previewCards, hoverDriven: true);
     }
 
     // Cancels a pending (not-yet-shown) delayed preview and hides one already on screen —
@@ -2774,7 +2774,7 @@ public class Hex : MonoBehaviour
 
     public void UpdateArtifactVisibility()
     {
-        bool shouldShow = artifactRevealed && hiddenArtifacts != null && hiddenArtifacts.Count > 0 && IsHexSeen();
+        bool shouldShow = artifactRevealed && hiddenObjects != null && hiddenObjects.Count > 0 && IsHexSeen();
         SetActiveFast(artifact, shouldShow);
         if (artifactHover) SetActiveFast(artifactHover.gameObject, shouldShow);
     }

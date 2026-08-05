@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class TheDrownOfTheStone : EventAction
 {
-    private static bool IsPalantir(Artifact artifact)
+    private static bool IsPalantir(CardData artifact)
     {
         return artifact != null
-            && !string.IsNullOrWhiteSpace(artifact.artifactName)
-            && artifact.artifactName.IndexOf("Palantir", StringComparison.OrdinalIgnoreCase) >= 0;
+            && !string.IsNullOrWhiteSpace(artifact.name)
+            && artifact.name.IndexOf("Palantir", StringComparison.OrdinalIgnoreCase) >= 0;
     }
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
@@ -37,8 +37,8 @@ public class TheDrownOfTheStone : EventAction
                 .Where(ch => ch != null
                     && !ch.killed
                     && ch.GetAlignment() == AlignmentEnum.freePeople
-                    && ch.artifacts != null
-                    && ch.artifacts.Any(IsPalantir))
+                    && ch.objects != null
+                    && ch.objects.Any(IsPalantir))
                 .Distinct()
                 .ToList();
 
@@ -47,16 +47,16 @@ public class TheDrownOfTheStone : EventAction
             int movedPalantirs = 0;
             foreach (Character holder in freePeopleHolders)
             {
-                List<Artifact> palantirs = holder.artifacts.Where(IsPalantir).ToList();
+                List<CardData> palantirs = holder.objects.Where(IsPalantir).ToList();
                 if (palantirs.Count == 0) continue;
 
-                foreach (Artifact palantir in palantirs)
+                foreach (CardData palantir in palantirs)
                 {
-                    holder.artifacts.Remove(palantir);
+                    holder.objects.Remove(palantir);
                     palantir.hidden = true;
 
                     Hex targetHex = waterHexes[UnityEngine.Random.Range(0, waterHexes.Count)];
-                    targetHex.hiddenArtifacts.Add(palantir);
+                    targetHex.hiddenObjects.Add(palantir);
                     targetHex.UpdateArtifactVisibility();
                     Character.RefreshArtifactPcVisibilityForHex(targetHex);
                     movedPalantirs++;
@@ -88,8 +88,8 @@ public class TheDrownOfTheStone : EventAction
                 .Any(ch => ch != null
                     && !ch.killed
                     && ch.GetAlignment() == AlignmentEnum.freePeople
-                    && ch.artifacts != null
-                    && ch.artifacts.Any(IsPalantir));
+                    && ch.objects != null
+                    && ch.objects.Any(IsPalantir));
         };
 
         asyncEffect = async (character) =>

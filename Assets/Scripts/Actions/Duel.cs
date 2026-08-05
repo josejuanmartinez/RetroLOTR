@@ -178,22 +178,22 @@ public class Duel : CharacterAction
 
     private int GetArtifactCombatScore(Character character, Character opponent)
     {
-        if (character == null || character.artifacts == null) return 0;
-        int score = character.artifacts.Sum(a => Mathf.Max(0, a.bonusAttack) + Mathf.Max(0, a.bonusDefense));
+        if (character == null || character.objects == null) return 0;
+        int score = character.objects.Sum(a => Mathf.Max(0, a.bonusAttack) + Mathf.Max(0, a.bonusDefense));
         if (opponent != null)
         {
-            score += character.artifacts.Sum(a => a != null ? a.GetAttackBonusVsRace(opponent.race) + a.GetDefenseBonusVsRace(opponent.race) : 0);
+            score += character.objects.Sum(a => a != null ? a.GetAttackBonusVsRace(opponent.race) + a.GetDefenseBonusVsRace(opponent.race) : 0);
         }
         return score;
     }
 
     private int GetArtifactDefense(Character character, Character opponent)
     {
-        if (character == null || character.artifacts == null) return 0;
-        int def = character.artifacts.Sum(a => Mathf.Max(0, a.bonusDefense));
+        if (character == null || character.objects == null) return 0;
+        int def = character.objects.Sum(a => Mathf.Max(0, a.bonusDefense));
         if (opponent != null)
         {
-            def += character.artifacts.Sum(a => a != null ? a.GetDefenseBonusVsRace(opponent.race) : 0);
+            def += character.objects.Sum(a => a != null ? a.GetDefenseBonusVsRace(opponent.race) : 0);
         }
         return def;
     }

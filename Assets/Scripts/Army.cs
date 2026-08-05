@@ -335,20 +335,20 @@ public class Army
     private int ApplyArtifactAttackBonus(int value, Army enemyArmy)
     {
         if (commander == null) return value;
-        int bonus = commander.artifacts.Sum(a => Mathf.Max(0, a.bonusAttack)) * 3;
-        bonus += commander.artifacts.Sum(a => a != null ? a.GetArmyAttackStrengthBonus() : 0);
+        int bonus = commander.objects.Sum(a => Mathf.Max(0, a.bonusAttack)) * 3;
+        bonus += commander.objects.Sum(a => a != null ? a.GetArmyAttackStrengthBonus() : 0);
 
         if (enemyArmy != null && enemyArmy.commander != null)
         {
             RacesEnum enemyRace = enemyArmy.commander.race;
-            foreach (var artifact in commander.artifacts)
+            foreach (var artifact in commander.objects)
             {
                 if (artifact == null) continue;
                 bonus += artifact.GetAttackBonusVsRace(enemyRace) * 3;
             }
 
             var enemyTroops = enemyArmy.GetTroopGroups();
-            foreach (var artifact in commander.artifacts)
+            foreach (var artifact in commander.objects)
             {
                 if (artifact == null) continue;
                 foreach (var group in enemyTroops)
@@ -365,20 +365,20 @@ public class Army
     private int ApplyArtifactDefenseBonus(int value, Army enemyArmy)
     {
         if (commander == null) return value;
-        int bonus = commander.artifacts.Sum(a => Mathf.Max(0, a.bonusDefense)) * 3;
-        bonus += commander.artifacts.Sum(a => a != null ? a.GetArmyDefenseStrengthBonus() : 0);
+        int bonus = commander.objects.Sum(a => Mathf.Max(0, a.bonusDefense)) * 3;
+        bonus += commander.objects.Sum(a => a != null ? a.GetArmyDefenseStrengthBonus() : 0);
 
         if (enemyArmy != null && enemyArmy.commander != null)
         {
             RacesEnum enemyRace = enemyArmy.commander.race;
-            foreach (var artifact in commander.artifacts)
+            foreach (var artifact in commander.objects)
             {
                 if (artifact == null) continue;
                 bonus += artifact.GetDefenseBonusVsRace(enemyRace) * 3;
             }
 
             var enemyTroops = enemyArmy.GetTroopGroups();
-            foreach (var artifact in commander.artifacts)
+            foreach (var artifact in commander.objects)
             {
                 if (artifact == null) continue;
                 foreach (var group in enemyTroops)
@@ -407,7 +407,7 @@ public class Army
             AlignmentEnum otherAlignment = otherArmy.commander.GetAlignment();
             if (otherAlignment == commander.GetAlignment() && otherAlignment != AlignmentEnum.neutral) continue;
 
-            penalty += otherArmy.commander.artifacts.Sum(a => a != null ? a.GetEnemyArmyDefensePenaltySameHex() : 0);
+            penalty += otherArmy.commander.objects.Sum(a => a != null ? a.GetEnemyArmyDefensePenaltySameHex() : 0);
         }
 
         return Mathf.Max(0, value - penalty);
@@ -599,13 +599,13 @@ public class Army
     public int GetArtifactAttackBonusTotal()
     {
         if (commander == null) return 0;
-        return commander.artifacts.Sum(a => Mathf.Max(0, a.bonusAttack)) * 3;
+        return commander.objects.Sum(a => Mathf.Max(0, a.bonusAttack)) * 3;
     }
 
     public int GetArtifactDefenseBonusTotal()
     {
         if (commander == null) return 0;
-        return commander.artifacts.Sum(a => Mathf.Max(0, a.bonusDefense)) * 3;
+        return commander.objects.Sum(a => Mathf.Max(0, a.bonusDefense)) * 3;
     }
 
     private void GrantCombatXp(Army army, string reason)

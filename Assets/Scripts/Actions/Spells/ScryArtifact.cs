@@ -7,7 +7,7 @@ public class ScryArtifact: Spell
 {
     override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
-        List<Hex> remainingArtifactsHexes = FindFirstObjectByType<Board>().GetHexes().FindAll(x => x.hiddenArtifacts.Count > 0);
+        List<Hex> remainingArtifactsHexes = FindFirstObjectByType<Board>().GetHexes().FindAll(x => x.hiddenObjects.Count > 0);
         var originalEffect = effect;
         var originalCondition = condition;
         var originalAsyncEffect = asyncEffect;
@@ -16,13 +16,13 @@ public class ScryArtifact: Spell
             if(remainingArtifactsHexes.Count < 1) return false;
             Hex randomHex = remainingArtifactsHexes[UnityEngine.Random.Range(0, remainingArtifactsHexes.Count)];
             if(randomHex == null) return false;
-            if(randomHex.hiddenArtifacts.Count < 1) return false;
-            Artifact artifact = randomHex.hiddenArtifacts[0];
+            if(randomHex.hiddenObjects.Count < 1) return false;
+            CardData artifact = randomHex.hiddenObjects[0];
             randomHex.Reveal(c.GetOwner());
             c.GetOwner()?.AddTemporarySeenHexes(new[] { randomHex });
             randomHex.RevealArtifact();
-            randomHex.LookAt();            
-            MessageDisplayNoUI.ShowMessage(c.hex, c, $"<sprite name=\"artifact\">artifact {artifact.GetHoverText()}", Color.green);
+            randomHex.LookAt();
+            MessageDisplayNoUI.ShowMessage(c.hex, c, $"<sprite name=\"artifact\">artifact {artifact.name}", Color.green);
             return true;
         };
         condition = (c) => {
