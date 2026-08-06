@@ -79,6 +79,7 @@ Save by image type:
 - `Army`: `Assets/Art/Cards/Armies/<Name>.<ext>`
 - `Character`: `Assets/Art/Cards/Characters/<Name>.<ext>`
 - `Encounter`: `Assets/Art/Cards/Encounters/<Name>.<ext>`
+- `Object`: `Assets/Art/Cards/Objects/<Name>.<ext>`
 - `Rest` or generic card art: `Assets/Art/Cards/Rest/<Name>.<ext>`
 
 Always save all generated art under:

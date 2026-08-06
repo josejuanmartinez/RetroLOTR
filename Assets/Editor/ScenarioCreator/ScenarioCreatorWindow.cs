@@ -1517,7 +1517,8 @@ namespace RetroLOTR.Scenarios.EditorTools
             {
                 ScenarioObject a = list[i];
                 EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
-                SearchableField("", a.objectName, ScenarioCardCatalog.ObjectCardNames, v => a.objectName = v);
+                SearchableField("", a.objectName, ScenarioCardCatalog.ObjectCardNames, v => a.objectName = v,
+                    ScenarioCardCatalog.GetCard);
                 if (GUILayout.Button("x", GUILayout.Width(22))) removeAt = i;
                 EditorGUILayout.EndHorizontal();
             }

@@ -55,8 +55,8 @@ public class TransferArtifact : CharacterAction
                         if (art.mageBonus > 0) score += art.mageBonus * 2 + Mathf.Max(0, 5 - target.GetMage());
 
                         // Prefer giving combat bonuses to army commanders
-                        if (art.bonusAttack > 0 && target.IsArmyCommander()) score += art.bonusAttack * 3;
-                        if (art.bonusDefense > 0 && target.IsArmyCommander()) score += art.bonusDefense * 2;
+                        if (art.GetAttackBonus() > 0 && target.IsArmyCommander()) score += art.GetAttackBonus() * 3;
+                        if (art.GetDefenseBonus() > 0 && target.IsArmyCommander()) score += art.GetDefenseBonus() * 2;
 
                         // Small penalty if target already excels at the boosted area
                         if (art.commanderBonus > 0 && target.GetCommander() > 3) score -= 2f;

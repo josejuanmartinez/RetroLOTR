@@ -15,6 +15,12 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: 42ea3338a43de5c4c8efafbbb110e306
   m_SerializeEntries:
+  - m_GUID: 00108b45e3d3bc045a0a57d21eccc8e4
+    m_Address: Assets/Art/Cards/Objects/Horse-tamer.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 001159110f7aaa84487e03380126b6c3
     m_Address: Assets/Art/Hexes/Tiles/Unused/048 1.png
     m_ReadOnly: 0
@@ -46,7 +52,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0028e5ea9729d474c881abfe35b944dd
-    m_Address: Assets/Art/3D/fbx/Weapons/Sword/tripo_mat_bb7c5fd9.mat
+    m_Address: Assets/Art/3D/fbx/Weapons/Sword/Sword.mat
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -317,6 +323,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 021f69f90448eee4faaefcbb60014fce
     m_Address: Assets/Art/Hexes/Tiles/Unused/015 5.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 022e1d0809566304c83465d0c1a2bf4e
+    m_Address: Assets/Art/Characters/Animations/Balrog_Left_Crouch_Idle.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -651,6 +663,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 04e39988765e0bf438f5883341f09de1
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Forward_Attack.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 04f33fce15d54cbd933231f31a56e89c
     m_Address: Assets/Art/Materials/Fog.mat
     m_ReadOnly: 0
@@ -857,6 +875,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 076a8c92f0a17894a8e1a9c9974d99e6
     m_Address: Assets/Art/Icons/NicePng_fantasy-map-icons-png_2379148_218.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 076dfe4a5d5090b48930b5d5329e076a
+    m_Address: Assets/Art/Characters/Animations/Balrog_Forward_Magic.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -1329,6 +1353,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0bc42115395de384a992e79066a8c3c1
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Back_Death.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0bc421d31c8cd6e4782243654b1924f6
     m_Address: Assets/Art/Hexes/Tiles/Unused/grass_03.png
     m_ReadOnly: 0
@@ -1407,6 +1437,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0cac032ee69aaeb44986a88365bf08fe
+    m_Address: Assets/Art/3D/fbx/MouthOfSauron/MouthOfSauron.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0cacd963afe92564d9f6b958a93dbcff
     m_Address: Assets/Art/Hexes/Tiles/Unused/original/028.png
     m_ReadOnly: 0
@@ -1438,7 +1474,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0d00acaaee1040e4e88d92aecab55c54
-    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 21_59_39.png
+    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 21_59_39-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -1521,6 +1557,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0d8fd5a3f8729884eb692f3c32bf86d3
+    m_Address: Assets/Art/3D/fbx/Balrog/Balrog.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0d9b9c9472adcc245839e307bc5861ec
     m_Address: Assets/Art/Cards/Characters/GhanBuriGhan.png
     m_ReadOnly: 0
@@ -1576,7 +1618,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0e094cfdd68055b4293a1b08d80980c6
-    m_Address: Assets/Art/Characters/Portraits/Hobbit.png
+    m_Address: Assets/Art/Characters/Portraits/Hobbit-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -2026,7 +2068,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 11fb8a576cf49af41819db2b1a5ef007
-    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_20_12.png
+    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_20_12-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -2074,7 +2116,13 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 125fc36a54e65744ba4206c536936698
-    m_Address: Assets/Art/Characters/Portraits/Southron.png
+    m_Address: Assets/Art/Characters/Portraits/Southron-Portrait.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1262fed27603d0043a53683b3f878f53
+    m_Address: Assets/Art/Cards/Objects/Palantir of Minas Tirith.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -2337,6 +2385,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 146cf5fc9b5c7d3419dccc65c7f4d1c5
+    m_Address: Assets/Art/Cards/Objects/Black Arrow.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 149721ae931814e499c14cf9e6e58e96
     m_Address: Assets/Art/Hexes/Roads/hexRoad-110000-01.png
     m_ReadOnly: 0
@@ -2350,7 +2404,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 14aff5532462f9146b1f4941984db749
-    m_Address: Assets/Art/3D/fbx/Troll/tripo_mat_c8238a78.mat
+    m_Address: Assets/Art/3D/fbx/Troll/Troll.mat
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -2409,6 +2463,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 151fc2bb8993a0e4f8483f9ba7dc83a5
+    m_Address: Assets/Art/Cards/Objects/Palantir of Ithil.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1523a84827f90c14dabda5bd1a44f792
     m_Address: Assets/Art/Cards/Lands/Lithlad.png
     m_ReadOnly: 0
@@ -2440,7 +2500,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 15aec6e5cc689434f96ee4a0b3cfdad0
-    m_Address: Assets/Art/3D/fbx/Wildman/tripo_mat_f1e2bfc9.mat
+    m_Address: Assets/Art/3D/fbx/Wildman/Wildman.mat
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -2607,6 +2667,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 174e698798891794f85922cdad64bf3f
+    m_Address: Assets/Art/Characters/Portraits/Balrog-Portrait.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 176211e35e13ae94ba8205b9cebd07c3
     m_Address: Assets/Art/Hexes/Tiles/Unused/Tiles_Restyled/hexLake00.png
     m_ReadOnly: 0
@@ -2735,6 +2801,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 180abc1ea8a5da846920cfe4c7af0f44
     m_Address: Assets/Art/Hexes/Tiles/Unused/Tiles_Restyled/010 4.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 181ad71909da0324c81e30be71ccb5ca
+    m_Address: Assets/Art/Cards/Objects/Palantir of Osgiliath.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -3454,7 +3526,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1e3018930ac8c434ca578c99a90b5f17
-    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_10_33.png
+    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_10_33-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -3669,6 +3741,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1fbf6bfb00c4e714785356d505785ade
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Forward_standing_idle.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1fdd5d7aa73be3b4bbd349fc99355683
     m_Address: Assets/Art/Cards/Lands/Enedwaith.png
     m_ReadOnly: 0
@@ -3730,7 +3808,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 204d0f0c4432758458b73da8e39f8a21
-    m_Address: Assets/Art/3D/fbx/Weapons/Staff/tripo_mat_571d6f68.mat
+    m_Address: Assets/Art/3D/fbx/Weapons/Staff/Staff.mat
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -3742,7 +3820,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 205a4cf8bf9ee464692da266de672dd4
-    m_Address: Assets/Art/Characters/Portraits/Sauron.png
+    m_Address: Assets/Art/Characters/Portraits/Sauron-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -4059,8 +4137,14 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 238fa99f48a720e47aee92c6b95c8216
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Back_Attack.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 23a9477967ab69047937bccb0fc10f8b
-    m_Address: Assets/Art/Characters/Portraits/Saruman.png
+    m_Address: Assets/Art/Characters/Portraits/Saruman-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -4335,6 +4419,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 25aa2c622cbec6c46a871336a6aea0e3
+    m_Address: "Assets/Art/Cards/Objects/And\xFAril.png"
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 25af3694aafc88a4abe740f0452cbc1b
     m_Address: Assets/Art/Hexes/Tiles/Unused/original/hexPlainsTempleRuins00.png
     m_ReadOnly: 0
@@ -4391,6 +4481,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2604b281d291e2442b27fdde76ef99b4
     m_Address: Assets/Art/Cards/Actions/Events/LureOfTheEast.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 260aff168fa0cc244bc479778a1a551b
+    m_Address: Assets/Art/Characters/Animations/Balrog_Right_Standing_Walk_Forward.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -4509,6 +4605,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2708b0fb2e37b69439e4b6e025299c47
+    m_Address: Assets/Art/Characters/Animations/Balrog_Forward_standing_idle.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2733498320c13b34b89becf0cd47ffdf
     m_Address: Assets/Art/Characters/AnimationSpritesheets/Dunedain/Dunedain_Left.atlas.json
     m_ReadOnly: 0
@@ -4593,6 +4695,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 279cbae92aa2e2d4991f2de57f6d07ba
+    m_Address: Assets/Art/Cards/Objects/Adunaphel's Ring.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 279fb67fb62e14348b21cdf765c2ed84
     m_Address: Assets/Art/Characters/Animations/Orc_Back_Attack.anim
     m_ReadOnly: 0
@@ -4606,7 +4714,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 27b1a25b5f81e024b8dd671ae724547b
-    m_Address: Assets/Art/3D/fbx/Weapons/Shield/tripo_mat_0eaf8dd2.mat
+    m_Address: Assets/Art/3D/fbx/Weapons/Shield/Shield.mat
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -4828,7 +4936,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 293f9db03a80e3444bc185069c970a29
-    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_18_39.png
+    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_18_39-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -4841,6 +4949,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 29444d00fffc6ce4abe6af77159ab869
     m_Address: Assets/Art/Hexes/Tiles/Unused/Tiles_Restyled/1023.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 294a8f110e6cebf4e9270bfe9585c40e
+    m_Address: Assets/Art/Characters/Animations/Balrog_Right_standing_idle.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -4941,6 +5055,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2a5fc32b68c351d44bc421cd5a262868
+    m_Address: Assets/Art/Characters/Animations/Balrog_Back_Crouch_Idle.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2a6d8471ac8819041bf314323f053595
     m_Address: Assets/Art/Characters/Animations/Dwarf_Right_Turn_Right.anim
     m_ReadOnly: 0
@@ -4955,6 +5075,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2a7b30a713ede674491f7ce2d6e442f5
     m_Address: Assets/Art/Hexes/Tiles/Unused/original/hexPlainsVillageWood03.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2aa83295ce0057f4281ec65b05f9b69c
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Back_Hit.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -5169,6 +5295,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2c8f6e6718580c746805b6a9c8e26db8
+    m_Address: Assets/Art/Characters/Animations/Balrog_Forward_Hit.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2c9ccdb2e75a5cf4aa7bfd76db3ccede
     m_Address: Assets/Art/Icons/NicePng_fantasy-map-icons-png_2379148_333.png
     m_ReadOnly: 0
@@ -5295,6 +5427,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2d57b99e3f7db1542a1bd143def7b07b
+    m_Address: Assets/Art/Characters/Animations/Balrog_Back_Turn_Right.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2d86c27fefb385540a263c90f2dd09c6
     m_Address: Assets/Art/Hexes/Tiles/Unused/original/hexDesertRedMountains00.png
     m_ReadOnly: 0
@@ -5357,6 +5495,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2e2733e9390071041820a829b4678ff8
     m_Address: Assets/Art/Cards/Actions/Events/HallowTheRoad.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2e3b706a3330ea341b173e38c61a1428
+    m_Address: Assets/Art/Characters/Animations/Balrog_Forward_Action.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -5721,6 +5865,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3157e6083533b2c4ca468694370f069e
+    m_Address: Assets/Art/Cards/Objects/Ring of Barahir.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3162b69536eb56549a25df116e4ef244
     m_Address: Assets/Art/Cards/Actions/Events/Environmental/LightThroughCloud.png
     m_ReadOnly: 0
@@ -5751,6 +5901,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 319b6832a78d11d45b984292cea72334
+    m_Address: Assets/Art/Cards/Objects/Lembas.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 31a001c47174dcc468820b7f27514a44
     m_Address: Assets/Art/Characters/Animations/Troll_Back_Action.anim
     m_ReadOnly: 0
@@ -5758,7 +5914,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 31a3bd79e364af04fbaa6a1c4663c677
-    m_Address: Assets/Art/Characters/Portraits/Orc.png
+    m_Address: Assets/Art/Characters/Portraits/Orc-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -5805,6 +5961,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 320191260b0e7054dbfad6aa2c9b4bc3
+    m_Address: Assets/Art/Cards/Objects/Herugrim.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 32195e54fa2bba54b8a154ab6552534b
     m_Address: Assets/Art/Hexes/Tiles/Unused/Tiles_Restyled/013 4.png
     m_ReadOnly: 0
@@ -5824,7 +5986,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3236b21233e40cf4b8ab734f242c421e
-    m_Address: Assets/Art/Characters/Portraits/Dwarf.png
+    m_Address: Assets/Art/Characters/Portraits/Dwarf-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -6082,13 +6244,19 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 348b98925ee559a46b57815119e28272
-    m_Address: Assets/Art/Materials/NeutralCharacterOutline 2.mat
+    m_Address: Assets/Art/Materials/NeutralCharacterOutline.mat
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 348d90ba57a4c0c41ac9a12a5982444d
     m_Address: Assets/Art/Icons/NicePng_fantasy-map-icons-png_2379148_92.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3499ec6a386b28647962a47a64e48645
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Back_Standing_Walk_Forward.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -6251,6 +6419,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 361c4579c2f31b74fa4cfa2929e3a096
     m_Address: Assets/Art/Hexes/Tiles/Unused/original/082 1.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 365ddcc44dc1921499a4624e9aa6d656
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Right_Death.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -6419,6 +6593,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 38205fdac662a274584c100249c90860
     m_Address: Assets/Art/Icons/NicePng_fantasy-map-icons-png_2379148_329.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3821bd2ca5c27f64fae5778b7d572b2b
+    m_Address: Assets/Art/Characters/Animations/Balrog_Back_Death.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -6687,8 +6867,20 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3ac130d6cc2f82748b9dfc23b7718326
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Right_Turn_Right.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3adfc309e7fe6974aae1159d020c2f12
     m_Address: Assets/Art/Characters/Animations/Elf_Forward_Standing_Walk_Forward.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3ae3891146500c948a9fc497b69d8342
+    m_Address: Assets/Art/Characters/Animations/Balrog_Back_Standing_Walk_Forward.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -6861,7 +7053,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3c840968bf0206846a511da811651882
-    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_41_28.png
+    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_41_28-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -6893,6 +7085,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3cbb2a8e431c001429a9e5520ff98e47
     m_Address: Assets/Art/Cards/PC/Luglurak.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3cbb6203042310e45915a855f6a0ce29
+    m_Address: Assets/Art/Characters/Animations/Balrog_Left_Hit.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -6957,6 +7155,18 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3d3fec5ece460c2408f92a0af4169aa6
+    m_Address: Assets/Art/Cards/Objects/Blue Bow.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3d4128e402eaf7a43b71a9890544a22c
+    m_Address: Assets/Art/Cards/Objects/Second Age Banner.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3d5a092613bbe9e48b96562135f3f4a4
     m_Address: Assets/Art/Hexes/Tiles/Unused/Tiles_Restyled/002 1.png
     m_ReadOnly: 0
@@ -6994,7 +7204,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3d7ec82f14af2ba4bb8324f1a3ba8bd1
-    m_Address: Assets/Art/Characters/Portraits/Common.png
+    m_Address: Assets/Art/Characters/Portraits/Common-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -7007,6 +7217,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3d9c43adad9355c4894b30c6c867cf3d
     m_Address: Assets/Art/Icons/NicePng_fantasy-map-icons-png_2379148_335.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3da227e457260a44394e985796f466b0
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Back_Turn_Left.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -7161,6 +7377,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3f143a44c3580704fa08dfd2a21adcb1
+    m_Address: Assets/Art/3D/fbx/Balrog/Balrog.mat
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3f1df77e989304c468de4d9fa0bdc9c5
     m_Address: Assets/Art/Hexes/Tiles/Unused/023 4.png
     m_ReadOnly: 0
@@ -7263,6 +7485,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3fe33135b766f5f4cb32498dfedf449e
+    m_Address: "Assets/Art/Cards/Objects/Guthwin\xEB.png"
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3fe5bbfc2d10f02488c11359491b8048
     m_Address: Assets/Art/Characters/Animations/Elf_Forward_Attack.anim
     m_ReadOnly: 0
@@ -7311,8 +7539,20 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4032e1acd29d6ac4a815e5a1a1682516
+    m_Address: Assets/Art/Characters/Animations/Balrog_Right_Turn_Right.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 404210e68185ba346a432dfe426254d8
     m_Address: Assets/Art/Hexes/Tiles/Unused/plains_13.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4051e69b02467bc4b9d1c626b9cc5cec
+    m_Address: Assets/Art/Characters/Animations/Balrog_Back_Hit.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -7419,6 +7659,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 411ead7839f09ea4e8fcb4a746dd7fca
+    m_Address: Assets/Art/Characters/Animations/Balrog_Left_Turn_Left.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 412c6c0f7229d65428be90fc6ee0f627
     m_Address: Assets/Art/Hexes/Roads/hexRoad-000100-02.png
     m_ReadOnly: 0
@@ -7517,6 +7763,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 41d5238202ea8c449b22c67a84aa43b8
     m_Address: Assets/Art/Cards/Actions/Events/GoingOnAnAdventure.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 41e458dba0299864c858ab48a163baaf
+    m_Address: Assets/Art/Cards/Objects/Palantir of Orthanc.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -7720,7 +7972,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 438a2820da64f0d48ad30abceb28ade8
-    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_14_28.png
+    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_14_28-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -8050,7 +8302,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4649a68a79ac3c14cab6bb8dffcda7a0
-    m_Address: Assets/Art/3D/fbx/Saruman/tripo_mat_bbcff405.mat
+    m_Address: Assets/Art/3D/fbx/Saruman/Saruman.mat
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -8093,6 +8345,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 46ad281b85e6b6844b5c77962016fe6a
     m_Address: Assets/Art/Hexes/Tiles/Unused/056 1.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 46db2b53c19306b4c841c8b3a523376a
+    m_Address: Assets/Art/Characters/Portraits/MouthOfSauron-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -8171,6 +8429,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4769a21d5be3727479d56772a2b5ec53
     m_Address: Assets/Art/Characters/Animations/Beorning_Left_Turn_Left.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 479b3f64cf1820d4b85d1314213db11f
+    m_Address: Assets/Art/Cards/Objects/Palantir of Amon Sul.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -8787,6 +9051,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4c73ca149c1e0724288d85f212730b54
+    m_Address: Assets/Art/Cards/Objects/War Axe.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4c7a04e637c10664da86d0195b2bb2f7
     m_Address: Assets/Art/Characters/Animations/Southron_Left_Block.anim
     m_ReadOnly: 0
@@ -8997,6 +9267,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4e4d4acf6689df94ea7379fbb4f33e90
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Right_Turn_Left.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4e5acf56caa371649bcbb20b0fc1f011
     m_Address: Assets/Art/Hexes/Tiles/Unused/Tiles_Restyled/Imladris.png
     m_ReadOnly: 0
@@ -9045,6 +9321,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4ea4295f671da0745b611503759647fb
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Back_Action.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4ea8df2c443161d468246e00535516e4
     m_Address: Assets/Art/UI/Alignment/Banners/banner_sauron_the_deceiver.png
     m_ReadOnly: 0
@@ -9082,7 +9364,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4ee6b6fef80613941af6b04d58116761
-    m_Address: Assets/Art/Characters/Portraits/Gandalf.png
+    m_Address: Assets/Art/Characters/Portraits/Gandalf-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -9149,6 +9431,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4f8b831c549d6aa4196a958966f2d142
     m_Address: Assets/Art/3D/fbx/Maia/Maia.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4faa9c7fdd2af13439649e9755420605
+    m_Address: Assets/Art/Characters/Animations/Balrog_Left_Standing_Walk_Forward.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -9464,6 +9752,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 52a63ec210045fc4183fc3358e931b6f
+    m_Address: Assets/Art/Characters/Animations/Balrog_Right_Turn_Left.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 52ab7b452550e5d4eae6a5437872377a
     m_Address: Assets/Art/Hexes/Tiles/plains_21.png
     m_ReadOnly: 0
@@ -9502,6 +9796,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 52e58f6b6174b714088868ad6bc0bbd9
     m_Address: Assets/Art/Characters/Animations/Elf_Back_Crouch_Idle.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 52ea637268c866643991365ff7b63f9c
+    m_Address: Assets/Art/Characters/Animations/Balrog_Forward_Block.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -9616,6 +9916,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 53d48c15260d0d94f955f2adcfeca783
     m_Address: Assets/Art/Hexes/Tiles/Unused/mountains_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5406828ae2470ec46ba6ca70ecf99bc5
+    m_Address: Assets/Art/Characters/Animations/Balrog_Right_Action.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -9836,6 +10142,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 55b76c67f6df2ee4a848d6db3a3e32b7
+    m_Address: Assets/Art/Cards/Objects/Iron Crown.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 55cfbd5be6edb764bb7ed7b765a5dc38
     m_Address: Assets/Art/Icons/NicePng_fantasy-map-icons-png_2379148_43.png
     m_ReadOnly: 0
@@ -9844,6 +10156,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 55d875533ebbc8442b623a3920b13996
     m_Address: Assets/Art/Cards/Armies/HallGuardsOfThranduil.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 55e1621864829bf46b4825c48add223e
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Left_standing_idle.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -9878,6 +10196,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 56270168158bf604d913b4fefe75605e
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Right_idle_look.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5661c8c507950a446b7f2291afa84999
     m_Address: Assets/Art/Hexes/Tiles/Unused/original/090 1.png
     m_ReadOnly: 0
@@ -9897,7 +10221,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 569f85d04b8eba643b8de5221909e158
-    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_31_51.png
+    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_31_51-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -9987,7 +10311,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5721a9eeca4d24645b14e1dc3a9ddd23
-    m_Address: Assets/Art/Characters/Portraits/Wildman.png
+    m_Address: Assets/Art/Characters/Portraits/Wildman-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -10095,7 +10419,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 57f1df124aa82154e87b55973a01c65f
-    m_Address: Assets/Art/3D/fbx/Sauron/tripo_mat_9b000fe6.mat
+    m_Address: Assets/Art/3D/fbx/Sauron/Sauron.mat
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -10250,6 +10574,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 596bb27f60064f345a9fdf9a674b6003
+    m_Address: Assets/Art/Cards/Objects/Murazor's Ring.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 596bcd853c8464843bebd1d4b95d6df6
     m_Address: Assets/Art/Hexes/Tiles/Unused/forest_32.png
     m_ReadOnly: 0
@@ -10400,6 +10730,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5acb3d8143dd3c14588b49e9cbc3b1cf
+    m_Address: Assets/Art/Cards/Objects/Long Bow.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5ae45f7b1fdd84a4e8d982a8ef698a66
     m_Address: Assets/Art/Hexes/Tiles/Unused/038.png
     m_ReadOnly: 0
@@ -10526,6 +10862,18 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5bd39dfecdf3b194db032d379430e768
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Right_Magic.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5bd983cf114c1fe4d8215c4c633ecaa3
+    m_Address: Assets/Art/Cards/Objects/Mithril coat.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5bde0c87fcd14544fb1fa4f90e992bee
     m_Address: Assets/Art/Hexes/Tiles/Unused/Tiles_Restyled/Fangorn's Camp.png
     m_ReadOnly: 0
@@ -10580,6 +10928,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5c4e8523968b59c4ebc4f075d753142f
+    m_Address: Assets/Art/Characters/Animations/Balrog_Left_Magic.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5c5be621b0815a0449ecabe4a9e9bc1c
     m_Address: Assets/Art/Cards/Actions/Events/WordsOfWarding.png
     m_ReadOnly: 0
@@ -10592,8 +10946,14 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5c936fae449c84c47a758fd58b7db430
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Forward_Action.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5c983fb4237f0654c8a5bbfe442581b2
-    m_Address: Assets/Art/3D/fbx/Common/tripo_mat_71855c41.mat
+    m_Address: Assets/Art/3D/fbx/Common/Common.mat
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -10708,6 +11068,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5df7dd534215fc849a1989b80d996540
     m_Address: Assets/Art/Icons/NicePng_fantasy-map-icons-png_2379148_146.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5e19350bff3b39c49a6d2fafc5746911
+    m_Address: Assets/Art/Cards/Objects/Glamdring.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -10994,6 +11360,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6047209df8e866e439392dd4714057fc
+    m_Address: Assets/Art/Characters/Animations/Balrog_Right_Death.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 604b49a09da1b1440b027f9bcbb4774f
     m_Address: Assets/Art/Icons/NicePng_fantasy-map-icons-png_2379148_269.png
     m_ReadOnly: 0
@@ -11140,6 +11512,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 61b7c0f83c5cdc842a7345fd7be6a250
     m_Address: Assets/Art/Cards/Encounters/TheShardEyedKing.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 61c43e59a47ea1d4ab87277e5664604f
+    m_Address: Assets/Art/Characters/Animations/Balrog_Forward_Turn_Right.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -11312,6 +11690,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 63e1238aaedf8684d8842e2f9ea8046e
+    m_Address: Assets/Art/Characters/Animations/Balrog_Back_Block.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 63fe661b0c627bf499ab0ae59ac96269
     m_Address: Assets/Art/Characters/Animations/Elf_Back_idle_look.anim
     m_ReadOnly: 0
@@ -11361,7 +11745,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6459e98ef9ca7ad47bcd82691a41972a
-    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_30_28.png
+    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_30_28-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -11500,6 +11884,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6597dd663415b954d9fec0db3e0a22e1
     m_Address: Assets/Art/Characters/AnimationSpritesheets/Easterling/Easterling.atlas.json
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 659ba47db0d698c4ab017da52b77d98e
+    m_Address: Assets/Art/Cards/Objects/Ring of Orthanc.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -11800,6 +12190,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 685ec9e86b51c544084d3dbbfe29a77f
     m_Address: Assets/Art/Hexes/Tiles/Unused/Tiles_Restyled/072 2.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 687001376d1da1047ae171084a9a9d1d
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Forward_Block.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -12110,6 +12506,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6adce846f30b33b41b366a907acb9adc
+    m_Address: Assets/Art/Characters/Animations/Balrog_Forward_idle_look.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6ade4465c91e02b42a5c81adcd4a00fb
     m_Address: Assets/Art/Cards/Encounters/Giants.jpg
     m_ReadOnly: 0
@@ -12256,6 +12658,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6c26b9355526b6f46998885d96eca5a9
     m_Address: Assets/Art/Characters/Animations/Sauron_Forward_standing_idle.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6c2e67a947b364741a2c0dba2e318761
+    m_Address: Assets/Art/Cards/Objects/Orcrist.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -12566,6 +12974,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6e90ddbb933f2904e8df794db05c0fd7
+    m_Address: Assets/Art/Cards/Objects/Palantir of Fornost.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6e989a7f7855d5849839d625ff87243a
     m_Address: Assets/Art/Characters/Animations/Hobbit_Forward_Action.anim
     m_ReadOnly: 0
@@ -12676,6 +13090,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6f2480c1735afb04d8ba2458a1d26788
     m_Address: Assets/Art/3D/Animations/Humanoid/Standing 1H Magic Attack 02.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6f4eda19ca06a894d877f9175ec0d2ba
+    m_Address: Assets/Art/Cards/Objects/Vilya.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -13077,7 +13497,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 724969b5a722a9740b6a944eb0d94323
-    m_Address: Assets/Art/Characters/Portraits/Beorning.png
+    m_Address: Assets/Art/Characters/Portraits/Beorning-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -13202,6 +13622,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 733c5cc06f0319f40a7fa6f788781318
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Left_Death.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 733db03058184d347ac7ebac3bfc3540
     m_Address: Assets/Art/Characters/Animations/Gandalf_Forward_Standing_Walk_Forward.anim
     m_ReadOnly: 0
@@ -13276,6 +13702,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7426e3a2d287b444593f4957232f7504
     m_Address: Assets/Art/Characters/AnimationSpritesheets/Easterling/Easterling_Forward.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 74364e1296212e44c9dbd0613453a99a
+    m_Address: Assets/Art/Characters/Animations/Balrog_Right_Block.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -13802,6 +14234,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7867d58823f01804c83cc30565301de7
+    m_Address: Assets/Art/Cards/Objects/Snowmane.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 786d1976eaa91b74888d228bbdd094ea
     m_Address: Assets/Art/Hexes/Tiles/Unused/063 1.png
     m_ReadOnly: 0
@@ -14084,6 +14522,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7a8a96ad4fda14648b77b6d72b195502
+    m_Address: Assets/Art/Characters/Animations/Balrog_Back_Attack.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7a92616c9ef25954e9642af29b23b61b
     m_Address: Assets/Art/Cards/Actions/Spells/ReturnToCapital.jpg
     m_ReadOnly: 0
@@ -14224,6 +14668,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7b83761db2a98e0419e2b33a35b0e1be
     m_Address: Assets/Art/Hexes/Roads/hexRoad-101111-00.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7b9a2d6fff8ab0b4b9b536e1064182a4
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Forward_Turn_Left.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -14373,7 +14823,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7d0bca292d8bfeb4a8b887ee931878f5
-    m_Address: Assets/Art/3D/fbx/Weapons/Scimitar/tripo_mat_04072a36.mat
+    m_Address: Assets/Art/3D/fbx/Weapons/Scimitar/Scimitar.mat
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -14404,6 +14854,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7d5fba0e236ec17498cc114aaf82b192
     m_Address: Assets/Art/UI/Alignment/Banners/banner_balrog.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7d6de9eca0ace6d49843dce6499ad653
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Back_Block.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -14445,7 +14901,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7d964387be56cbf46a72e406897812b6
-    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_34_59.png
+    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_34_59-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -14642,6 +15098,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7efc9fa8eca9e1c4c8b434fadbb7128a
+    m_Address: Assets/Art/Cards/Objects/Palantir of Annuminas.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7f03dba4ac693ce41881901bb6e01c46
     m_Address: Assets/Art/Characters/Animations/Hobbit_Back_idle_look.anim
     m_ReadOnly: 0
@@ -14740,6 +15202,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7f98ce4d858551a43b2bcd07565fc1d0
     m_Address: Assets/Art/Hexes/Tiles/Unused/original/030.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7fad4b300ad6052448639f6ca99a0870
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Left_Attack.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -14900,6 +15368,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 811a5251927d7b1438183bd553c5ead8
+    m_Address: Assets/Art/Cards/Objects/Sting.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 811c7518bc8015c4aae8e5e276062326
     m_Address: Assets/Art/3D/fbx/Weapons/Staff/Wooden_Staff_basecolor.PNG
     m_ReadOnly: 0
@@ -15004,6 +15478,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 825b60c3ba732d24da3bb5575db47a0b
     m_Address: Assets/Art/Hexes/Tiles/Unused/original/hexPlainsVillageThatched00.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 82834e28983764a4eadfac11d6b7f3e6
+    m_Address: Assets/Art/Cards/Objects/Miruvor.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -15254,6 +15734,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 84b78ab47e5d96d409f67b3f48896e65
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Left_Block.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 84c291cd27acd864dbe5115615242099
     m_Address: Assets/Art/Hexes/Tiles/Unused/darkServants_16.png
     m_ReadOnly: 0
@@ -15286,6 +15772,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 84ea562e4c36de448a1aa454712b60ed
     m_Address: Assets/Art/Hexes/Tiles/Unused/Tiles_Restyled/054.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 84ee2de32e98039489a5e66ecbf953bf
+    m_Address: Assets/Art/Characters/Animations/Balrog_Left_Turn_Right.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -15710,6 +16202,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 89023f2bdf314324ba20b2581e1bc881
+    m_Address: Assets/Art/Characters/Animations/Balrog_Back_Magic.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 890bd2db87449634bb365edbd4d34713
     m_Address: Assets/Art/Characters/Animations/Dwarf_Forward_Attack.anim
     m_ReadOnly: 0
@@ -15808,6 +16306,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 898b40903da607c4890ee74eb3aa25f4
     m_Address: Assets/Art/Characters/Animations/Elf_Forward_Action.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 899cd0fd1f8c1c340be68418bee7732b
+    m_Address: Assets/Art/Characters/Animations/Balrog_Right_Hit.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -16023,7 +16527,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8b3d77a8df23e7a41a113df3c3ee0167
-    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_24_40.png
+    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_24_40-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -16178,6 +16682,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8ca6a1bc92cb0254b918c8553b6e1d8e
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Forward_Crouch_Idle.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8cb8ef3998366cd429912c93bfbaf9bb
     m_Address: Assets/Art/Cards/PC/JugRijeisha.jpg
     m_ReadOnly: 0
@@ -16276,6 +16786,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8d49270dad31322408e4e854afbb5c50
     m_Address: Assets/Art/Hexes/Tiles/Unused/original/034 1.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8d4e87bb9a2746a499ec092533b61cf3
+    m_Address: Assets/Art/Cards/Objects/Ren's Ring.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -16790,6 +17306,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 91a2595a659aaab479e52dd100c95c33
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Forward_Magic.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 91b01477b3996844eba24c2d258f365d
     m_Address: Assets/Art/Icons/NicePng_fantasy-map-icons-png_2379148_357.png
     m_ReadOnly: 0
@@ -16960,6 +17482,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 93013f1c1f855d94cad6aea710d90844
     m_Address: Assets/Art/UI/Alignment/Banners/banner_blue_white_tree.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9302cb1bd554d7241b75e4ead8881ecc
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Right_standing_idle.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -17342,6 +17870,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 962054d9add265d41a15dfc8781cd256
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Left_Turn_Right.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9633bd935d3205f42b9e39aae600cc2e
     m_Address: Assets/Art/Hexes/Tiles/Unused/Tiles_Restyled/064 2.png
     m_ReadOnly: 0
@@ -17540,7 +18074,7 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 97b23a356b9ddf1458dabd19d414d819
-    m_Address: Assets/Art/Characters/Portraits/Easterling.png
+    m_Address: Assets/Art/Characters/Portraits/Easterling-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -17595,6 +18129,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9827895d643c4bb5946ecd79079c952a
     m_Address: Assets/Art/Cards/Actions/CreatePort.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 983b25a9124b26948b8fb27c96c379ba
+    m_Address: Assets/Art/Characters/Animations/Balrog_Right_Crouch_Idle.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -17852,7 +18392,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9ad1dce7bb823394fa2529a029c5f629
-    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_22_46.png
+    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_22_46-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -18235,6 +18775,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9e0fbab3f035eb5459d352701bf19b13
+    m_Address: Assets/Art/Characters/Animations/Balrog_Left_standing_idle.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9e117f8610ac2974ba4e9171c77902dd
     m_Address: Assets/Art/Characters/Animations/Maia_Left_standing_idle.anim
     m_ReadOnly: 0
@@ -18331,6 +18877,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9e723db846a85a548b1f834946b696e8
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Left_Action.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9e7486e9864de78449655ca4c8f6bd2d
     m_Address: Assets/Art/Hexes/Tiles/Unused/original/010 3.png
     m_ReadOnly: 0
@@ -18381,6 +18933,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9ed20cef9700372468d53091d4e50893
     m_Address: Assets/Art/Cards/PC/Gundabad.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9ee11325c4eafef46949cd776acc1fae
+    m_Address: Assets/Art/Cards/Objects/Hoarmurath's Ring.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -18469,6 +19027,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9f531e9ee9f8a1547bc1924f39f99cad
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Back_standing_idle.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9f54abeae96a72a4287f60cb57f6e5e1
     m_Address: Assets/Art/Hexes/Tiles/Unused/Tiles_Restyled/074 1.png
     m_ReadOnly: 0
@@ -18518,7 +19082,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9f66ab34722af814182e8ee776b5d3c2
-    m_Address: Assets/Art/3D/fbx/Elf/tripo_mat_c49890d6.mat
+    m_Address: Assets/Art/3D/fbx/Elf/Elf.mat
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -18555,6 +19119,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9fb599dd128f9c74b94382d3fc2605b7
     m_Address: Assets/Art/Hexes/Tiles/Unused/Tiles_Restyled/022 4.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9fb84df00a7aa034ead3f6d9a167df40
+    m_Address: Assets/Art/Characters/Animations/Balrog_Right_idle_look.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -18703,6 +19273,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a0d0e81b35a306c438ee481b84140dc8
+    m_Address: Assets/Art/Characters/Animations/Balrog_Forward_Attack.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a1066449a5aa87046b4a2b79ebf09d2b
     m_Address: Assets/Art/Cards/PC/Pelargir.jpg
     m_ReadOnly: 0
@@ -18764,7 +19340,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a198355fc72913346ba8bcaafab8a842
-    m_Address: Assets/Art/3D/fbx/Orc/tripo_mat_a6eebbed.mat
+    m_Address: Assets/Art/3D/fbx/Orc/Orc.mat
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -18855,6 +19431,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a25a44572afcf104c9baa3ea0e7aa311
     m_Address: Assets/Art/Icons/NicePng_fantasy-map-icons-png_2379148_217.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a25bf968c55534245b52454a085c9ad9
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Left_Turn_Left.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -19603,7 +20185,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a8a9bbc6b94dad547902e021451cd87a
-    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_36_21.png
+    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_36_21-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -19799,6 +20381,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a9fc5c74a6ff4a745b96ff106f1be4e2
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Forward_Turn_Right.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a9ff964ce255011439709d4f2e797142
     m_Address: Assets/Art/Hexes/Tiles/Unused/Tiles_Restyled/hexDirtVillageSmall02.png
     m_ReadOnly: 0
@@ -19931,6 +20519,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: aad33bebd1fa2914fa2009812534f86a
+    m_Address: Assets/Art/3D/fbx/MouthOfSauron/MouthOfSauron.mat
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: aad863045478fe5459e79d11e58ba9bd
     m_Address: Assets/Art/Characters/Animations/Easterling_Back_Block.anim
     m_ReadOnly: 0
@@ -20015,6 +20609,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: aba76ed3839aab14fbd413f83f132132
+    m_Address: Assets/Art/Cards/Objects/Horn of Gondor.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: aba7eee67c9987d47ab173e89c853638
     m_Address: Assets/Art/3D/Animations/Humanoid/Standing Run Back.fbx
     m_ReadOnly: 0
@@ -20094,7 +20694,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ac929d5815373904cb5d946d7eb45baf
-    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 28 jul 2026, 12_32_31.png
+    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 28 jul 2026, 12_32_31-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -20131,6 +20731,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: acbe9b85be7502d459d1226e4607aca8
     m_Address: Assets/Art/Hexes/Tiles/Unused/097 1.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: acc88bb560905fe47a9ffa587b7330f9
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Left_idle_look.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -20233,6 +20839,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: addb70861518b1843844543db19bcb27
     m_Address: Assets/Art/Cards/Actions/Events/ClimbingTheWhiteHills.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ade674a197aeaef42a2335b1d8c9264e
+    m_Address: Assets/Art/Characters/Animations/Balrog_Left_idle_look.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -20568,7 +21180,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b0a9a8a56a6251d42a41c46ad90cc62f
-    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_16_45.png
+    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_16_45-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -20611,6 +21223,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b11312e8892ed7e4997e372c87c1948a
     m_Address: Assets/Art/Hexes/Tiles/Unused/033.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b113dc4e4b004b040b9e18ecfb6194c0
+    m_Address: Assets/Art/3D/fbx/Balrog/Balrog_basecolor.PNG
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -20891,6 +21509,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b3b3d2bf3a0b308439ef7dee88230ae7
+    m_Address: Assets/Art/Characters/Animations/Balrog_Left_Block.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b3b49c5da88847158468cbd344484a93
     m_Address: Assets/Art/Cards/Lands/SeaOfRhun.png
     m_ReadOnly: 0
@@ -21072,7 +21696,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b5bd628a04aab3546a0006e0cd3e66bf
-    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_23_52.png
+    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_23_52-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -21257,6 +21881,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b760b57f59e8cd24fa0c0ad5adf2dc0b
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Left_Hit.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b76c56f48510eba41b02099405aa1b28
     m_Address: Assets/Art/Hexes/Tiles/Unused/Tiles_Restyled/013 1.png
     m_ReadOnly: 0
@@ -21390,7 +22020,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b87cd671c60b5614a8904d7a4ffd596a
-    m_Address: Assets/Art/Characters/Portraits/Gollum.png
+    m_Address: Assets/Art/Characters/Portraits/Gollum-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -21641,6 +22271,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ba4f4f1e778231b43a8ea3dc7690c32e
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Back_Magic.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ba5c939803afdc24ca0434b42947be06
     m_Address: Assets/Art/Characters/Animations/Easterling_Death.anim
     m_ReadOnly: 0
@@ -21756,7 +22392,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: bb7fa221dc08b73479ed0a9c8f167484
-    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_12_25.png
+    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_12_25-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -21787,6 +22423,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: bbc809fa5c8332b4c96d81927b6cd0af
     m_Address: Assets/Art/Characters/Animations/Maia_Left_Crouch_Idle.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bbc8faf3360bbfe48b7f753c9e38c581
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Left_Standing_Walk_Forward.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -21883,6 +22525,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: bcd559b3832eb9145a3458a19dfa3d48
     m_Address: Assets/Art/Icons/color_common_spritesheet_62.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bce0082c70b04df43aebfbf5a025edff
+    m_Address: Assets/Art/Characters/Animations/Balrog_Forward_Death.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -22499,6 +23147,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c2230c245a0c974439c0cd0b22b5c5d0
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Right_Block.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c235d2744460e524186a28e7539097ca
     m_Address: Assets/Art/Hexes/Tiles/Unused/017 3.png
     m_ReadOnly: 0
@@ -22601,6 +23255,18 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c31baaf467f410e4386b5744fb0bca07
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Right_Hit.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c325c247d010d66469cd774bae1103ab
+    m_Address: Assets/Art/Characters/Animations/Balrog_Forward_Crouch_Idle.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c326d85effd0fe74c8d75f97470908d1
     m_Address: Assets/Art/Characters/Animations/Dwarf_Left_Action.anim
     m_ReadOnly: 0
@@ -22693,6 +23359,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c410c937cc28f01469f9d627a35e3e63
     m_Address: Assets/Art/Other/neonj-rectangle.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c41b8cc41819e5840a22350c6ec65a99
+    m_Address: Assets/Art/Cards/Objects/Shards of Narsil.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -22932,7 +23604,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c68c73af1374b0b4ea4500439ee8befa
-    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_15_43.png
+    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_15_43-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -22998,7 +23670,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c706ac10cf25de047a19672a6e12b2b5
-    m_Address: Assets/Art/Materials/EnemyCharacterOutline 1.mat
+    m_Address: Assets/Art/Materials/EnemyCharacterOutline.mat
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -23011,6 +23683,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c70d7deb4612ee747b3935655fbfe022
     m_Address: Assets/Art/Hexes/Tiles/Unused/original/015 1.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c7101f733b8e2f440aac35808c659949
+    m_Address: Assets/Art/Characters/Animations/Balrog_Forward_Standing_Walk_Forward.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -23087,6 +23765,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c7b0687dcf0c34c499823f26591425d8
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Right_Attack.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c7b5f76c2a098ec419d77450a77e1950
     m_Address: Assets/Art/Hexes/Tiles/Unused/original/hexDesertYellowCactiForest00.png
     m_ReadOnly: 0
@@ -23107,6 +23791,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c7db5256e129e7f4f9ec12cdba526c7d
     m_Address: Assets/Art/Decks/Sharkey.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c7dccdc2d3a882541a074711c7acacf6
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Forward_Hit.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -23201,8 +23891,20 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c8f3606d0fc890449a19956f7d164cab
+    m_Address: Assets/Art/Cards/Objects/Athelas.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c8f4b2d0937605b40b8a4050552ffbd8
     m_Address: Assets/Art/Characters/AnimationSpritesheets/Gollum/Gollum_Back.atlas.json
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c902ecad175800a45a1c729d1cdf2619
+    m_Address: Assets/Art/Cards/Objects/Khamul's Ring.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -23327,6 +24029,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ca0f552ce7c85024590bf2f80c4552ed
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Left_Crouch_Idle.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ca1616c6e2216404494fdd59443b736c
     m_Address: Assets/Art/Characters/AnimationSpritesheets/Orc/Orc_Right.atlas.json
     m_ReadOnly: 0
@@ -23377,6 +24085,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ca6bcf14d8fc432cb37a38805da4592b
     m_Address: Assets/Art/Cards/Actions/Events/CobwebsOfMirkwood.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ca6daa47df1b5ef4397afb50d2985b55
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Forward_Death.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -23442,7 +24156,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: caecf752ac0c696429e2b52201da0cce
-    m_Address: Assets/Art/3D/fbx/Weapons/MorningStar/tripo_mat_0cbb27d8.mat
+    m_Address: Assets/Art/3D/fbx/Weapons/MorningStar/MorningStar.mat
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -23520,6 +24234,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: cba626f98d0b8a841970f7bbcb6a19fd
     m_Address: Assets/Art/Hexes/Tiles/grass_18.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cbad9853f7a1bf84c8e324ec455139f4
+    m_Address: Assets/Art/Cards/Objects/The Arkenstone.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -23616,6 +24336,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: cc96e3da75d05234d8bfe392215bb4f5
     m_Address: Assets/Art/Cards/Characters/mauhir.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cc9988cb43a537c48b35fe646ea9140f
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Back_Turn_Right.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -23772,6 +24498,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ce0dccc66feee4041bcfdbf66ad959a7
     m_Address: Assets/Art/Cards/PC/BaradWath.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ce19bce12ad66a946bc6036f53a3a96e
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Left_Magic.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -24142,6 +24874,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d0a07061f5fddbf4e91b90f725eedec3
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Forward_Standing_Walk_Forward.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d0b22997a0c79694eb798adf7cb41bec
     m_Address: Assets/Art/Hexes/Tiles/Unused/Tiles_Restyled/hexPlainsVillageThatched02.png
     m_ReadOnly: 0
@@ -24174,6 +24912,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d0d9aa57d91b0e44fb4ce34b017278f5
     m_Address: Assets/Art/Hexes/Tiles/Unused/027.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d0db9a23c8d7af244a2f1ccb7efa5e49
+    m_Address: Assets/Art/Characters/Animations/Balrog_Back_Turn_Left.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -24288,6 +25032,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d1f754c93f15d0945911f085dd531ad2
     m_Address: Assets/Art/Icons/NicePng_fantasy-map-icons-png_2379148_294.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d1fe5b76f95d7994f8d6eef947e8c31d
+    m_Address: Assets/Art/Cards/Objects/Easterling Helmet.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -24436,6 +25186,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d33a848cc05f21a46b2f37db4cbdb73b
+    m_Address: Assets/Art/Characters/Animations/Balrog_Left_Death.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d3495c27896268b488f7b835c3834d21
     m_Address: Assets/Art/Characters/Animations/Common_Left_Death.anim
     m_ReadOnly: 0
@@ -24574,6 +25330,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d48139ab0b6af5549a1d44bfd8df04b4
+    m_Address: Assets/Art/Cards/Objects/Narya.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d49bd5300e472654b8c68e9bdc321a94
     m_Address: Assets/Art/Hexes/Tiles/Unused/Tiles_Restyled/Harlond.png
     m_ReadOnly: 0
@@ -24592,6 +25354,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d4d040d838fa1534498077b7e44ff98f
+    m_Address: Assets/Art/Cards/Objects/Westernesse Blade.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d4d0d799b08bcf94197d1344bc25777c
     m_Address: Assets/Art/Cards/Characters/Uvatha.png
     m_ReadOnly: 0
@@ -24600,6 +25368,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d4e47c64b22195f4887bb2d6865f7b3d
     m_Address: Assets/Art/Hexes/Tiles/Unused/Tiles_Restyled/Sarn Ford.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d5011f5fdc13b6548897fad87cc3cb09
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Right_Action.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -24784,6 +25558,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d6e67ee162ce17446ad1945fa76798b1
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Right_Standing_Walk_Forward.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d6ed031bc2b69b944917b712d17ef7fc
     m_Address: Assets/Art/Hexes/Tiles/Unused/original/042 4.png
     m_ReadOnly: 0
@@ -24798,6 +25578,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d71f2bcd62ae77f4c8ba6a0e3a0c211c
     m_Address: Assets/Art/Hexes/Tiles/Unused/036 2.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d7274429b27766a4cbe4aa72deab3ca3
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Back_Crouch_Idle.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -24930,12 +25716,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d826934391130ac48acd4f6ccd19b564
     m_Address: Assets/Art/3D/Animations/Humanoid/Standing 1H Magic Attack 03.fbx
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: d84549471aae88f41a8d0fe5bd2f6e9e
-    m_Address: Assets/Art/Videos/introBakshi.mp4
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -25126,6 +25906,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d9bdf7cf7bc8cc946aef133de9f09b3a
+    m_Address: Assets/Art/Cards/Objects/First Age Banner.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d9d06832928ff2044a768d3a99c99764
     m_Address: Assets/Art/Characters/Animations/Sauron_Right_Turn_Right.anim
     m_ReadOnly: 0
@@ -25181,7 +25967,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: da206b1e381745a45a05f88905b682f2
-    m_Address: Assets/Art/3D/fbx/Weapons/Spear/tripo_mat_c7394253.mat
+    m_Address: Assets/Art/3D/fbx/Weapons/Spear/Spear.mat
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -26050,6 +26836,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e12c7c0b86029e741a3cdd184399870c
+    m_Address: Assets/Art/Cards/Objects/Elessar.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e13bddf66f4016d4180eb2ecf09f6f72
     m_Address: Assets/Art/Hexes/Tiles/Unused/hills_03.png
     m_ReadOnly: 0
@@ -26112,6 +26904,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e1b36422675baab41a33484dde98a21a
     m_Address: Assets/Art/Cards/Armies/RangersOfIthilien.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e1b7a7684772d4a4da0bd1959399298b
+    m_Address: Assets/Art/Cards/Objects/Palantir of Elostirion.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -26200,6 +26998,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e23f168f44b2af640a64b7d25cae7100
+    m_Address: Assets/Art/Videos/intro-bakshi.mp4
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e264352d00a935d4eb24c1d0c5b203e8
     m_Address: Assets/Art/Characters/Animations/Easterling_Back_idle_look.anim
     m_ReadOnly: 0
@@ -26237,7 +27041,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e2ac9105f137fc44faf2512f69f0d240
-    m_Address: Assets/Art/3D/fbx/Southron/tripo_mat_d273d14f.mat
+    m_Address: Assets/Art/3D/fbx/Southron/Southron.mat
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -26332,8 +27136,20 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e3636ea1305e98240be12cf37c635423
+    m_Address: Assets/Art/Characters/Animations/Balrog_Back_Action.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e368639732262a740aa61db7838d15a8
     m_Address: Assets/Art/Characters/Animations/Common_Right_Block.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e372be0afda3f3e4f8b34c17715a9240
+    m_Address: Assets/Art/Characters/Animations/Balrog_Right_Magic.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -26387,7 +27203,13 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e3d91075511237640aa4ad85a971a358
-    m_Address: Assets/Art/Characters/Portraits/Elf.png
+    m_Address: Assets/Art/Characters/Portraits/Elf-Portrait.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e3dd33375aff69c4aa949284106665a7
+    m_Address: Assets/Art/Cards/Objects/Dwar's Ring.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -26435,7 +27257,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e43a9b7167df6324fbffbec3ee47eb35
-    m_Address: Assets/Art/Characters/Portraits/Nazgul.png
+    m_Address: Assets/Art/Characters/Portraits/Nazgul-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -26550,6 +27372,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e5294125f9da67d4c9c50935fa84165f
     m_Address: Assets/Art/Hexes/Tiles/Unused/1037.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e52d856d154baa94b8a30c6c934f08a5
+    m_Address: Assets/Art/Cards/Objects/Elfbane.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -26830,6 +27658,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e76e491e7edf4cb46866394ded0e14db
+    m_Address: Assets/Art/Cards/Objects/Phial of Galadriel.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e779378e68ad0f249a9753bd9bee6f66
     m_Address: Assets/Art/Hexes/Tiles/Unused/Tiles_Restyled/039.png
     m_ReadOnly: 0
@@ -26980,6 +27814,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e878b862055557b4685bb231a382b074
+    m_Address: Assets/Art/Cards/Objects/Nenya.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e87c60c190e5620419de4d5cbe31a7e7
     m_Address: Assets/Art/Hexes/PCs/Rul.png
     m_ReadOnly: 0
@@ -27012,6 +27852,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e8bff187743a4584595d23bba0e22015
     m_Address: Assets/Art/Hexes/Tiles/Unused/022 5.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e8d3a7e527e6bd04589b47488ff957ac
+    m_Address: Assets/Art/3D/fbx/MouthOfSauron/MouthOfSauron.PNG
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -27126,6 +27972,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e9baacf2d6d1d13479a964765a96aab8
     m_Address: Assets/Art/Hexes/Tiles/Unused/original/023 5.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e9c0fa4ed1aa4d6479c861028f7f5e43
+    m_Address: Assets/Art/Characters/Animations/Balrog_Right_Attack.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -27246,6 +28098,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ea7232ebb3204c8abfbb8f5f2ffe884e
     m_Address: Assets/Art/Cards/Actions/Events/Environmental/AdunaphelUnleashed.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ea90de57ba5c07246abcda5794d39627
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Forward_idle_look.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -27424,6 +28282,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ec26380e10e1fe84194d4d84a98a8b4f
+    m_Address: Assets/Art/Cards/Objects/Golden Armor of Rohan.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ec2bf0df75e8ebd4e9e2b1385b719e35
     m_Address: Assets/Art/Cards/Encounters/SmaugAtHome.jpg
     m_ReadOnly: 0
@@ -27442,14 +28306,26 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ec40c927e799bce4598ccde89484c2d7
+    m_Address: Assets/Art/Cards/Objects/Akhorahil's Ring.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ec51009b431d4ad408e171d89cce3abe
-    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_06_17.png
+    m_Address: Assets/Art/Characters/Portraits/ChatGPT Image 26 jul 2026, 22_06_17-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ec5b3cc00ec10bb4e965168bfae11f24
     m_Address: Assets/Art/3D/fbx/Hobbit/Hobbit_basecolor.PNG
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ec5e59b05135805488d4375f0b18ea79
+    m_Address: Assets/Art/Characters/Animations/Balrog_Forward_Turn_Left.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -27558,6 +28434,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ecff6123600a5b0429265e1982b9889b
     m_Address: Assets/Art/Hexes/Tiles/Unused/052 1.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ecffb12ba57b08444ba0d2db61b0294b
+    m_Address: Assets/Art/Characters/Animations/Balrog_Left_Action.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -27898,6 +28780,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f0095e9f31634f34c89086f0bed5a0b9
+    m_Address: Assets/Art/Cards/Objects/Ovatha's Ring.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f019b1beea718d845ae8488c60ae303e
     m_Address: Assets/Art/Cards/Encounters/BlackRider.jpg
     m_ReadOnly: 0
@@ -28110,6 +28998,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f2150e4c24ac96f4eae8ee239af5c2b3
     m_Address: Assets/Art/Hexes/Tiles/Unused/Tiles_Restyled/001 5.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f229d839b48a80d4d99882a67750535f
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Right_Crouch_Idle.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -28421,7 +29315,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f4ba33eb130152a40b0c3ffa24488c89
-    m_Address: Assets/Art/3D/fbx/Dunedain/tripo_mat_1c2b49bb.mat
+    m_Address: Assets/Art/3D/fbx/Dunedain/Dunedain.mat
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -28498,8 +29392,20 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f59d78b3fb0444c4c941f3ccfdc78879
+    m_Address: Assets/Art/Characters/Animations/Balrog_Back_standing_idle.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f5a0afaa6a410894cb0ff25dd667fb75
     m_Address: Assets/Art/Hexes/Tiles/Unused/Tiles_Restyled/090 1.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f5aa52050deeb244f992be3e3ace8dc0
+    m_Address: Assets/Art/Characters/Animations/Balrog_Back_idle_look.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -28602,6 +29508,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f68b681bc308df849917e0cece555f55
     m_Address: Assets/Art/Hexes/Roads/hexRoad-010000-00.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f68e0b9538ca93246afe813c656d3eee
+    m_Address: Assets/Art/Cards/Objects/Indur's Ring.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -28858,6 +29770,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f8585f77411dbef4b9b502df051f855b
+    m_Address: Assets/Art/Characters/Animations/MouthOfSauron_Back_idle_look.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f85e8e32ed2ddb649bbc9ac898228075
     m_Address: Assets/Art/Hexes/Tiles/Unused/Tiles_Restyled/056.png
     m_ReadOnly: 0
@@ -29074,8 +29992,14 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fa3b97400fc573b4091e3e1a9e67954b
+    m_Address: Assets/Art/Cards/Objects/TheMirrorOfGaladriel.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: fa4d55159b314bb4b87c6ecd421b94af
-    m_Address: Assets/Art/Characters/Portraits/Troll.png
+    m_Address: Assets/Art/Characters/Portraits/Troll-Portrait.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -29699,6 +30623,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ff76056f2fd21f543a9f64849ce281de
     m_Address: Assets/Art/Hexes/Tiles/Unused/original/hexDirtVillage02.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ff81feb94aa234541bfb60258d306599
+    m_Address: Assets/Art/Characters/Animations/Balrog_Left_Attack.anim
     m_ReadOnly: 0
     m_SerializedLabels:
     - default

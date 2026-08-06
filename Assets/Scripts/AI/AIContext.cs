@@ -386,8 +386,8 @@ public class AIContext
                 // Combat bonuses are more valuable on army commanders
                 if (target.IsArmyCommander())
                 {
-                    score += art.bonusAttack * 3f;
-                    score += art.bonusDefense * 2f;
+                    score += art.GetAttackBonus() * 3f;
+                    score += art.GetDefenseBonus() * 2f;
                 }
 
                 // Small penalty if target already excels in the boosted area
