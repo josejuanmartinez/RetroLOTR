@@ -402,6 +402,7 @@ public class Board : MonoBehaviour
         DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
         List<CardData> hiddenObjectPool = deckManager != null ? deckManager.GetAllObjectCardClones() : new List<CardData>();
 
+        RemoveScenarioStartingObjectsFromPool(hiddenObjectPool);
         PlaceScenarioObjects(hiddenObjectPool);
 
         // Shuffle the hexes to randomize object placement
@@ -422,6 +423,29 @@ public class Board : MonoBehaviour
             // Yield to distribute over frames if needed
             if (i % 10 == 0) yield return null;
         }
+    }
+
+    // Any object a scenario already hands a character via startingObjects must not also be
+    // eligible for the random scatter pool below, or the same named item (e.g. Narya) can end
+    // up both in a character's inventory and lying on some random hex simultaneously. Removes
+    // by name, not by carrying character, since the pool is a fresh set of clones with no
+    // ownership yet. No-op when there's no active scenario or nobody has starting objects.
+    private void RemoveScenarioStartingObjectsFromPool(List<CardData> hiddenObjectPool)
+    {
+        if (hiddenObjectPool == null || activeScenario?.characters == null) return;
+
+        var claimedNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (ScenarioCharacter character in activeScenario.characters)
+        {
+            if (character?.startingObjects == null) continue;
+            foreach (string objectName in character.startingObjects)
+            {
+                if (!string.IsNullOrWhiteSpace(objectName)) claimedNames.Add(objectName.Trim());
+            }
+        }
+
+        if (claimedNames.Count == 0) return;
+        hiddenObjectPool.RemoveAll(card => card != null && claimedNames.Contains(card.name));
     }
 
     // Places author-pinned hidden objects (ScenarioData.objects) at their chosen hex, removing

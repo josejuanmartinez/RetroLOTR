@@ -178,8 +178,6 @@ public class CardData
     public int agentBonus;
     public int emmissaryBonus;
     public int mageBonus;
-    public int bonusAttack;
-    public int bonusDefense;
     public string passiveEffectId = "";
     public int passiveEffectValue;
     public bool transferable = true;
@@ -189,17 +187,11 @@ public class CardData
     public bool grantsHasteAtSea;
     public int autoScoutRadius;
     public int detectionEvasion;
-    public string attackBonusVsRace;
-    public int attackBonusVsRaceValue;
-    public string attackBonusVsTroopType;
-    public int attackBonusVsTroopTypeValue;
-    public string defenseBonusVsRace;
-    public int defenseBonusVsRaceValue;
-    public string defenseBonusVsTroopType;
-    public int defenseBonusVsTroopTypeValue;
-    public int armyAttackStrengthBonus;
-    public int armyDefenseStrengthBonus;
-    public int enemyArmyDefensePenaltySameHex;
+    // Combat-relevant effects (attack/defense/vs-race/vs-troop-type/army bonuses) — a closed,
+    // dropdown-only enum list (see ObjectCombatEffect.cs) rather than free-typed strings/ints,
+    // so a card can't accidentally ship an unbalanced raw number. Non-combat Object fields
+    // (above/below) don't feed Duel.cs or Army.cs and stay as plain fields.
+    public System.Collections.Generic.List<ObjectCombatEffect> combatEffects = new();
     public int recruitBonusMenAtArms;
     public int scryAreaBonus;
     public int scryObjectBonus;
@@ -219,33 +211,30 @@ public class CardData
     public int GetAutoScoutRadius() => Mathf.Max(0, autoScoutRadius);
     public int GetDetectionEvasion() => Mathf.Max(0, detectionEvasion);
 
-    public int GetAttackBonusVsRace(RacesEnum race)
-    {
-        if (attackBonusVsRaceValue > 0 && string.Equals(attackBonusVsRace, race.ToString(), StringComparison.OrdinalIgnoreCase))
-            return attackBonusVsRaceValue;
-        return 0;
-    }
+    // Sum rather than "first match wins" — a card's combatEffects list can carry more than one
+    // entry of the same type (e.g. two different vs-race bonuses), unlike the old single-value
+    // flat fields it replaced.
+    public int GetAttackBonus() =>
+        combatEffects?.Where(e => e != null && e.type == ObjectCombatEffectTypeEnum.AttackBonus).Sum(e => e.Value) ?? 0;
 
-    public int GetAttackBonusVsTroopType(TroopsTypeEnum troopType)
-    {
-        if (attackBonusVsTroopTypeValue > 0 && string.Equals(attackBonusVsTroopType, troopType.ToString(), StringComparison.OrdinalIgnoreCase))
-            return attackBonusVsTroopTypeValue;
-        return 0;
-    }
+    public int GetDefenseBonus() =>
+        combatEffects?.Where(e => e != null && e.type == ObjectCombatEffectTypeEnum.DefenseBonus).Sum(e => e.Value) ?? 0;
 
-    public int GetDefenseBonusVsRace(RacesEnum race)
-    {
-        if (defenseBonusVsRaceValue > 0 && string.Equals(defenseBonusVsRace, race.ToString(), StringComparison.OrdinalIgnoreCase))
-            return defenseBonusVsRaceValue;
-        return 0;
-    }
+    public int GetAttackBonusVsRace(RacesEnum race) =>
+        combatEffects?.Where(e => e != null && e.type == ObjectCombatEffectTypeEnum.AttackBonusVsRace && e.targetRace == race)
+            .Sum(e => e.Value) ?? 0;
 
-    public int GetDefenseBonusVsTroopType(TroopsTypeEnum troopType)
-    {
-        if (defenseBonusVsTroopTypeValue > 0 && string.Equals(defenseBonusVsTroopType, troopType.ToString(), StringComparison.OrdinalIgnoreCase))
-            return defenseBonusVsTroopTypeValue;
-        return 0;
-    }
+    public int GetAttackBonusVsTroopType(TroopsTypeEnum troopType) =>
+        combatEffects?.Where(e => e != null && e.type == ObjectCombatEffectTypeEnum.AttackBonusVsTroopType && e.targetTroopType == troopType)
+            .Sum(e => e.Value) ?? 0;
+
+    public int GetDefenseBonusVsRace(RacesEnum race) =>
+        combatEffects?.Where(e => e != null && e.type == ObjectCombatEffectTypeEnum.DefenseBonusVsRace && e.targetRace == race)
+            .Sum(e => e.Value) ?? 0;
+
+    public int GetDefenseBonusVsTroopType(TroopsTypeEnum troopType) =>
+        combatEffects?.Where(e => e != null && e.type == ObjectCombatEffectTypeEnum.DefenseBonusVsTroopType && e.targetTroopType == troopType)
+            .Sum(e => e.Value) ?? 0;
 
     public int GetRecruitBonusMenAtArms() => Mathf.Max(0, recruitBonusMenAtArms);
     public int GetScryAreaBonus() => Mathf.Max(0, scryAreaBonus);
@@ -271,9 +260,14 @@ public class CardData
         return 0;
     }
 
-    public int GetArmyAttackStrengthBonus() => Mathf.Max(0, armyAttackStrengthBonus);
-    public int GetArmyDefenseStrengthBonus() => Mathf.Max(0, armyDefenseStrengthBonus);
-    public int GetEnemyArmyDefensePenaltySameHex() => Mathf.Max(0, enemyArmyDefensePenaltySameHex);
+    public int GetArmyAttackStrengthBonus() =>
+        combatEffects?.Where(e => e != null && e.type == ObjectCombatEffectTypeEnum.ArmyAttackBonus).Sum(e => e.Value) ?? 0;
+
+    public int GetArmyDefenseStrengthBonus() =>
+        combatEffects?.Where(e => e != null && e.type == ObjectCombatEffectTypeEnum.ArmyDefenseBonus).Sum(e => e.Value) ?? 0;
+
+    public int GetEnemyArmyDefensePenaltySameHex() =>
+        combatEffects?.Where(e => e != null && e.type == ObjectCombatEffectTypeEnum.EnemyArmyDefensePenaltySameHex).Sum(e => e.Value) ?? 0;
     public bool GrantsEnvironmentalImmunity() => grantsEnvironmentalImmunity;
     public bool GrantsHasteAtSea() => grantsHasteAtSea;
 
@@ -296,8 +290,43 @@ public class CardData
         if (agentBonus > 0) details.Add($"+{agentBonus}<sprite name=\"agent\">");
         if (emmissaryBonus > 0) details.Add($"+{emmissaryBonus}<sprite name=\"emmissary\">");
         if (mageBonus > 0) details.Add($"+{mageBonus}<sprite name=\"mage\">");
-        if (bonusAttack > 0) details.Add($"+{bonusAttack} attack");
-        if (bonusDefense > 0) details.Add($"+{bonusDefense} defense");
+        if (combatEffects != null)
+        {
+            foreach (ObjectCombatEffect effect in combatEffects)
+            {
+                if (effect == null) continue;
+                switch (effect.type)
+                {
+                    case ObjectCombatEffectTypeEnum.AttackBonus:
+                        details.Add($"+{effect.Value} attack");
+                        break;
+                    case ObjectCombatEffectTypeEnum.DefenseBonus:
+                        details.Add($"+{effect.Value} defense");
+                        break;
+                    case ObjectCombatEffectTypeEnum.AttackBonusVsRace:
+                        details.Add($"+{effect.Value} attack vs {effect.targetRace}");
+                        break;
+                    case ObjectCombatEffectTypeEnum.AttackBonusVsTroopType:
+                        details.Add($"+{effect.Value} attack vs {effect.targetTroopType}");
+                        break;
+                    case ObjectCombatEffectTypeEnum.DefenseBonusVsRace:
+                        details.Add($"+{effect.Value} defense vs {effect.targetRace}");
+                        break;
+                    case ObjectCombatEffectTypeEnum.DefenseBonusVsTroopType:
+                        details.Add($"+{effect.Value} defense vs {effect.targetTroopType}");
+                        break;
+                    case ObjectCombatEffectTypeEnum.ArmyAttackBonus:
+                        details.Add($"+{effect.Value} army attack");
+                        break;
+                    case ObjectCombatEffectTypeEnum.ArmyDefenseBonus:
+                        details.Add($"+{effect.Value} army defense");
+                        break;
+                    case ObjectCombatEffectTypeEnum.EnemyArmyDefensePenaltySameHex:
+                        details.Add($"-{effect.Value} enemy army defense in same hex");
+                        break;
+                }
+            }
+        }
 
         if (healPerTurn > 0) details.Add($"heals {healPerTurn} each turn");
         if (movementBonus > 0) details.Add($"+{movementBonus} movement");
@@ -305,19 +334,6 @@ public class CardData
         if (grantsHasteAtSea) details.Add("grants Haste at sea");
         if (autoScoutRadius > 0) details.Add($"auto-scouts radius {autoScoutRadius}");
         if (detectionEvasion > 0) details.Add($"+{detectionEvasion * 10}% harder to detect");
-
-        if (!string.IsNullOrWhiteSpace(attackBonusVsRace) && attackBonusVsRaceValue > 0)
-            details.Add($"+{attackBonusVsRaceValue} attack vs {attackBonusVsRace}");
-        if (!string.IsNullOrWhiteSpace(attackBonusVsTroopType) && attackBonusVsTroopTypeValue > 0)
-            details.Add($"+{attackBonusVsTroopTypeValue} attack vs {attackBonusVsTroopType}");
-        if (!string.IsNullOrWhiteSpace(defenseBonusVsRace) && defenseBonusVsRaceValue > 0)
-            details.Add($"+{defenseBonusVsRaceValue} defense vs {defenseBonusVsRace}");
-        if (!string.IsNullOrWhiteSpace(defenseBonusVsTroopType) && defenseBonusVsTroopTypeValue > 0)
-            details.Add($"+{defenseBonusVsTroopTypeValue} defense vs {defenseBonusVsTroopType}");
-
-        if (armyAttackStrengthBonus > 0) details.Add($"+{armyAttackStrengthBonus} army attack");
-        if (armyDefenseStrengthBonus > 0) details.Add($"+{armyDefenseStrengthBonus} army defense");
-        if (enemyArmyDefensePenaltySameHex > 0) details.Add($"-{enemyArmyDefensePenaltySameHex} enemy army defense in same hex");
 
         if (recruitBonusMenAtArms > 0) details.Add($"+{recruitBonusMenAtArms} men-at-arms recruited");
         if (scryAreaBonus > 0) details.Add($"+{scryAreaBonus} Scry Area range");
@@ -431,6 +447,7 @@ public class CardData
             CardTypeEnum.PC => PcDescriptionBuilder.BuildBody(this, includeFoundingText),
             CardTypeEnum.Event or CardTypeEnum.Action or CardTypeEnum.Spell or CardTypeEnum.Environmental => GetActionEffectText(),
             CardTypeEnum.Encounter => !string.IsNullOrWhiteSpace(description) ? description.Trim() : string.Empty,
+            CardTypeEnum.Object => GetObjectDescription(),
             _ => string.Empty
         };
 
@@ -473,6 +490,22 @@ public class CardData
     public string GetActionEffectText()
     {
         return string.IsNullOrWhiteSpace(actionEffect) ? string.Empty : actionEffect.Trim();
+    }
+
+    // Flavor text (authored `description`) followed by the same mechanical-effect summary
+    // used in the carried-object hover tooltip (BuildObjectMechanicalDetails/GetHoverText),
+    // reformatted one-per-line for the larger card face instead of comma-joined.
+    public string GetObjectDescription()
+    {
+        if (GetCardType() != CardTypeEnum.Object) return string.Empty;
+
+        string flavor = !string.IsNullOrWhiteSpace(description) ? description.Trim() : string.Empty;
+        List<string> details = BuildObjectMechanicalDetails();
+        string effectsBlock = details.Count > 0 ? string.Join("\n", details.Select(d => $"• {d}")) : string.Empty;
+
+        if (string.IsNullOrWhiteSpace(flavor)) return effectsBlock;
+        if (string.IsNullOrWhiteSpace(effectsBlock)) return flavor;
+        return $"{flavor}\n\n{effectsBlock}";
     }
 
     private string AppendCardStatusText(string body)
@@ -1855,8 +1888,6 @@ public class DeckManager : MonoBehaviour
             agentBonus = card.agentBonus,
             emmissaryBonus = card.emmissaryBonus,
             mageBonus = card.mageBonus,
-            bonusAttack = card.bonusAttack,
-            bonusDefense = card.bonusDefense,
             passiveEffectId = card.passiveEffectId,
             passiveEffectValue = card.passiveEffectValue,
             transferable = card.transferable,
@@ -1866,17 +1897,7 @@ public class DeckManager : MonoBehaviour
             grantsHasteAtSea = card.grantsHasteAtSea,
             autoScoutRadius = card.autoScoutRadius,
             detectionEvasion = card.detectionEvasion,
-            attackBonusVsRace = card.attackBonusVsRace,
-            attackBonusVsRaceValue = card.attackBonusVsRaceValue,
-            attackBonusVsTroopType = card.attackBonusVsTroopType,
-            attackBonusVsTroopTypeValue = card.attackBonusVsTroopTypeValue,
-            defenseBonusVsRace = card.defenseBonusVsRace,
-            defenseBonusVsRaceValue = card.defenseBonusVsRaceValue,
-            defenseBonusVsTroopType = card.defenseBonusVsTroopType,
-            defenseBonusVsTroopTypeValue = card.defenseBonusVsTroopTypeValue,
-            armyAttackStrengthBonus = card.armyAttackStrengthBonus,
-            armyDefenseStrengthBonus = card.armyDefenseStrengthBonus,
-            enemyArmyDefensePenaltySameHex = card.enemyArmyDefensePenaltySameHex,
+            combatEffects = CloneCombatEffects(card.combatEffects),
             recruitBonusMenAtArms = card.recruitBonusMenAtArms,
             scryAreaBonus = card.scryAreaBonus,
             scryObjectBonus = card.scryObjectBonus,
@@ -2119,6 +2140,18 @@ public class DeckManager : MonoBehaviour
             }
         }
         return -1;
+    }
+
+    private static List<ObjectCombatEffect> CloneCombatEffects(List<ObjectCombatEffect> effects)
+    {
+        if (effects == null) return new List<ObjectCombatEffect>();
+        return effects.Where(e => e != null).Select(e => new ObjectCombatEffect
+        {
+            type = e.type,
+            targetRace = e.targetRace,
+            targetTroopType = e.targetTroopType,
+            magnitude = e.magnitude
+        }).ToList();
     }
 
     private static List<EncounterOptionData> CloneEncounterOptions(List<EncounterOptionData> options)

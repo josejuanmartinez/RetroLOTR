@@ -138,8 +138,8 @@ public static class AIContextDataBuilder
 
                 if (target.IsArmyCommander())
                 {
-                    score += art.bonusAttack * 3f;
-                    score += art.bonusDefense * 2f;
+                    score += art.GetAttackBonus() * 3f;
+                    score += art.GetDefenseBonus() * 2f;
                 }
 
                 if (art.commanderBonus > 0 && target.GetCommander() > 3) score -= 2f;

@@ -103,6 +103,29 @@ public class DeckExplorerWindow : EditorWindow
     private int editedAlignment;
     private RacesEnum editedRace;
     private string editedRawJson = string.Empty;
+    private bool editedObjectHidden;
+    private bool editedObjectTransferable;
+    private int editedObjectCommanderBonus;
+    private int editedObjectAgentBonus;
+    private int editedObjectEmmissaryBonus;
+    private int editedObjectMageBonus;
+    private string editedObjectPassiveEffectId = string.Empty;
+    private int editedObjectPassiveEffectValue;
+    private int editedObjectHealPerTurn;
+    private int editedObjectMovementBonus;
+    private bool editedObjectIgnoreTerrainMovementPenalty;
+    private bool editedObjectGrantsHasteAtSea;
+    private bool editedObjectGrantsEnvironmentalImmunity;
+    private int editedObjectAutoScoutRadius;
+    private int editedObjectDetectionEvasion;
+    private int editedObjectRecruitBonusMenAtArms;
+    private int editedObjectScryAreaBonus;
+    private int editedObjectScryObjectBonus;
+    private string editedObjectNegativeStatusImmunity = string.Empty;
+    private int editedObjectNegativeStatusDurationReduction;
+    private int editedObjectNegativeStatusDamageReduction;
+    private int editedObjectPositiveStatusDurationBonus;
+    private int editedObjectPositiveStatusEffectBonus;
     private bool showRawJsonEditor;
 
     private const float PreviewCardW = 275f;
@@ -539,6 +562,13 @@ public class DeckExplorerWindow : EditorWindow
             DrawEditableCharacterStats(card);
         }
 
+        if (card.GetCardType() == CardTypeEnum.Object)
+        {
+            GUILayout.Space(10);
+            EditorGUILayout.LabelField("Object Effects", EditorStyles.boldLabel);
+            DrawEditableObjectStats(card);
+        }
+
         GUILayout.Space(10);
         EditorGUILayout.LabelField("Editable Grants", EditorStyles.boldLabel);
         DrawEditableGrants(card);
@@ -687,6 +717,178 @@ public class DeckExplorerWindow : EditorWindow
         EditorGUI.EndDisabledGroup();
     }
 
+    private void DrawEditableObjectStats(CardData card)
+    {
+        if (card == null) return;
+
+        SyncEditableCardFields(card);
+
+        EditorGUI.BeginDisabledGroup(IsCardDisabled(card));
+
+        editedObjectHidden = EditorGUILayout.Toggle(
+            new GUIContent("Hidden", "Not revealed to its owner until found/granted."), editedObjectHidden);
+        editedObjectTransferable = EditorGUILayout.Toggle(
+            new GUIContent("Transferable", "Can be handed off between characters."), editedObjectTransferable);
+
+        GUILayout.Space(10);
+        EditorGUILayout.LabelField("Combat Effects", EditorStyles.boldLabel);
+        DrawEditableObjectCombatEffects(card);
+
+        GUILayout.Space(4);
+        EditorGUILayout.LabelField("Skill Bonuses", EditorStyles.boldLabel);
+        EditorGUILayout.HelpBox("These only affect whether a character meets an action card's skill requirement — they do not affect duel or army combat.", MessageType.None);
+        editedObjectCommanderBonus = EditorGUILayout.IntField("Commander", editedObjectCommanderBonus);
+        editedObjectAgentBonus = EditorGUILayout.IntField("Agent", editedObjectAgentBonus);
+        editedObjectEmmissaryBonus = EditorGUILayout.IntField("Emissary", editedObjectEmmissaryBonus);
+        editedObjectMageBonus = EditorGUILayout.IntField("Mage", editedObjectMageBonus);
+
+        GUILayout.Space(4);
+        editedObjectRecruitBonusMenAtArms = EditorGUILayout.IntField("Recruit Bonus (Men-at-Arms)", editedObjectRecruitBonusMenAtArms);
+
+        GUILayout.Space(4);
+        EditorGUILayout.LabelField("Utility", EditorStyles.boldLabel);
+        editedObjectHealPerTurn = EditorGUILayout.IntField("Heal Per Turn", editedObjectHealPerTurn);
+        editedObjectMovementBonus = EditorGUILayout.IntField("Movement Bonus", editedObjectMovementBonus);
+        editedObjectIgnoreTerrainMovementPenalty = EditorGUILayout.Toggle("Ignore Terrain Movement Penalty", editedObjectIgnoreTerrainMovementPenalty);
+        editedObjectGrantsHasteAtSea = EditorGUILayout.Toggle("Grants Haste At Sea", editedObjectGrantsHasteAtSea);
+        editedObjectGrantsEnvironmentalImmunity = EditorGUILayout.Toggle("Grants Environmental Immunity", editedObjectGrantsEnvironmentalImmunity);
+        editedObjectAutoScoutRadius = EditorGUILayout.IntField("Auto-Scout Radius", editedObjectAutoScoutRadius);
+        editedObjectDetectionEvasion = EditorGUILayout.IntField("Detection Evasion", editedObjectDetectionEvasion);
+        editedObjectScryAreaBonus = EditorGUILayout.IntField("Scry Area Bonus", editedObjectScryAreaBonus);
+        editedObjectScryObjectBonus = EditorGUILayout.IntField(
+            new GUIContent("Scry Object Bonus", "Also reduces Find Object action difficulty."), editedObjectScryObjectBonus);
+
+        GUILayout.Space(4);
+        EditorGUILayout.LabelField("Status Effects", EditorStyles.boldLabel);
+        editedObjectNegativeStatusImmunity = EditorGUILayout.TextField(
+            new GUIContent("Negative Status Immunity", "Name of a StatusEffectEnum value, e.g. Poisoned"), editedObjectNegativeStatusImmunity);
+        editedObjectNegativeStatusDurationReduction = EditorGUILayout.IntField("Negative Status Duration Reduction", editedObjectNegativeStatusDurationReduction);
+        editedObjectNegativeStatusDamageReduction = EditorGUILayout.IntField("Negative Status Damage Reduction", editedObjectNegativeStatusDamageReduction);
+        editedObjectPositiveStatusDurationBonus = EditorGUILayout.IntField("Positive Status Duration Bonus", editedObjectPositiveStatusDurationBonus);
+        editedObjectPositiveStatusEffectBonus = EditorGUILayout.IntField("Positive Status Effect Bonus", editedObjectPositiveStatusEffectBonus);
+
+        GUILayout.Space(4);
+        editedObjectPassiveEffectId = EditorGUILayout.TextField(
+            new GUIContent("Passive Effect Id", "Matches a passive-effect hook, e.g. HexEnemyFearAndDespairChancePerTurn"), editedObjectPassiveEffectId);
+        editedObjectPassiveEffectValue = EditorGUILayout.IntField("Passive Effect Value", editedObjectPassiveEffectValue);
+
+        GUILayout.Space(6);
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.FlexibleSpace();
+        if (GUILayout.Button("Save object effects", GUILayout.Width(180)))
+        {
+            SaveObjectStats(card);
+        }
+        EditorGUILayout.EndHorizontal();
+        EditorGUI.EndDisabledGroup();
+    }
+
+    // Combat effects (attack/defense/vs-race/vs-troop-type/army bonuses) are the only Object
+    // fields that feed Duel.cs/Army.cs math, so — unlike the free IntFields above — every part
+    // of an entry here is a closed dropdown: effect type, race/troop-type target, and magnitude
+    // are all enums (ObjectCombatEffect.cs). Nothing here can be free-typed into an unbalanced
+    // number. Mutates card.combatEffects directly and saves immediately, mirroring
+    // DrawEditableArmyAbilities' pattern for card.specialAbilities.
+    private void DrawEditableObjectCombatEffects(CardData card)
+    {
+        if (card == null) return;
+
+        card.combatEffects ??= new List<ObjectCombatEffect>();
+        EditorGUI.BeginDisabledGroup(IsCardDisabled(card));
+
+        bool changed = false;
+        int toRemove = -1;
+        for (int i = 0; i < card.combatEffects.Count; i++)
+        {
+            ObjectCombatEffect effect = card.combatEffects[i];
+            if (effect == null) continue;
+
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUILayout.BeginHorizontal();
+            var newType = (ObjectCombatEffectTypeEnum)EditorGUILayout.EnumPopup(effect.type, GUILayout.MinWidth(160));
+            if (newType != effect.type) { effect.type = newType; changed = true; }
+            if (GUILayout.Button("x", GUILayout.Width(22))) toRemove = i;
+            EditorGUILayout.EndHorizontal();
+
+            if (RequiresRaceTarget(effect.type))
+            {
+                var newRace = (RacesEnum)EditorGUILayout.EnumPopup("Target Race", effect.targetRace);
+                if (newRace != effect.targetRace) { effect.targetRace = newRace; changed = true; }
+            }
+            else if (RequiresTroopTypeTarget(effect.type))
+            {
+                var newTroopType = (TroopsTypeEnum)EditorGUILayout.EnumPopup("Target Troop Type", effect.targetTroopType);
+                if (newTroopType != effect.targetTroopType) { effect.targetTroopType = newTroopType; changed = true; }
+            }
+
+            var newMagnitude = (ObjectCombatEffectMagnitudeEnum)EditorGUILayout.EnumPopup("Magnitude", effect.magnitude);
+            if (newMagnitude != effect.magnitude) { effect.magnitude = newMagnitude; changed = true; }
+
+            EditorGUILayout.EndVertical();
+        }
+
+        if (toRemove >= 0)
+        {
+            card.combatEffects.RemoveAt(toRemove);
+            changed = true;
+        }
+
+        if (GUILayout.Button("Add Combat Effect"))
+        {
+            card.combatEffects.Add(new ObjectCombatEffect());
+            changed = true;
+        }
+
+        if (changed) SaveObjectCombatEffects(card);
+        EditorGUI.EndDisabledGroup();
+    }
+
+    private static bool RequiresRaceTarget(ObjectCombatEffectTypeEnum type) =>
+        type is ObjectCombatEffectTypeEnum.AttackBonusVsRace or ObjectCombatEffectTypeEnum.DefenseBonusVsRace;
+
+    private static bool RequiresTroopTypeTarget(ObjectCombatEffectTypeEnum type) =>
+        type is ObjectCombatEffectTypeEnum.AttackBonusVsTroopType or ObjectCombatEffectTypeEnum.DefenseBonusVsTroopType;
+
+    private void SaveObjectCombatEffects(CardData card)
+    {
+        DeckEntryView deckView = GetSelectedDeckView();
+        if (card == null || deckView?.deckData?.cards == null)
+        {
+            return;
+        }
+
+        CardData target = deckView.deckData.cards.FirstOrDefault(c => c != null && c.cardId == card.cardId);
+        if (target == null)
+        {
+            target = card;
+        }
+
+        target.combatEffects = card.combatEffects != null
+            ? card.combatEffects.Select(e => e == null ? null : new ObjectCombatEffect
+            {
+                type = e.type,
+                targetRace = e.targetRace,
+                targetTroopType = e.targetTroopType,
+                magnitude = e.magnitude
+            }).Where(e => e != null).ToList()
+            : new List<ObjectCombatEffect>();
+
+        string assetPath = GetDeckAssetPath(deckView.manifest?.resourcePath);
+        if (string.IsNullOrWhiteSpace(assetPath))
+        {
+            Debug.LogWarning("DeckExplorerWindow: could not resolve deck asset path for saving combat effects.");
+            return;
+        }
+
+        string json = JsonUtility.ToJson(deckView.deckData, true);
+        File.WriteAllText(assetPath, json);
+        AssetDatabase.ImportAsset(ToAssetPath(assetPath), ImportAssetOptions.ForceUpdate);
+        AssetDatabase.Refresh();
+
+        ReloadSelectedCard();
+        EditorUtility.SetDirty(this);
+    }
+
     private void DrawRawJsonEditor(CardData card)
     {
         if (card == null) return;
@@ -809,6 +1011,29 @@ public class DeckExplorerWindow : EditorWindow
         editedAlignment = card.alignment;
         editedRace = card.race;
         editedRawJson = string.Empty;
+        editedObjectHidden = card.hidden;
+        editedObjectTransferable = card.transferable;
+        editedObjectCommanderBonus = card.commanderBonus;
+        editedObjectAgentBonus = card.agentBonus;
+        editedObjectEmmissaryBonus = card.emmissaryBonus;
+        editedObjectMageBonus = card.mageBonus;
+        editedObjectPassiveEffectId = card.passiveEffectId ?? string.Empty;
+        editedObjectPassiveEffectValue = card.passiveEffectValue;
+        editedObjectHealPerTurn = card.healPerTurn;
+        editedObjectMovementBonus = card.movementBonus;
+        editedObjectIgnoreTerrainMovementPenalty = card.ignoreTerrainMovementPenalty;
+        editedObjectGrantsHasteAtSea = card.grantsHasteAtSea;
+        editedObjectGrantsEnvironmentalImmunity = card.grantsEnvironmentalImmunity;
+        editedObjectAutoScoutRadius = card.autoScoutRadius;
+        editedObjectDetectionEvasion = card.detectionEvasion;
+        editedObjectRecruitBonusMenAtArms = card.recruitBonusMenAtArms;
+        editedObjectScryAreaBonus = card.scryAreaBonus;
+        editedObjectScryObjectBonus = card.scryObjectBonus;
+        editedObjectNegativeStatusImmunity = card.negativeStatusImmunity ?? string.Empty;
+        editedObjectNegativeStatusDurationReduction = card.negativeStatusDurationReduction;
+        editedObjectNegativeStatusDamageReduction = card.negativeStatusDamageReduction;
+        editedObjectPositiveStatusDurationBonus = card.positiveStatusDurationBonus;
+        editedObjectPositiveStatusEffectBonus = card.positiveStatusEffectBonus;
     }
 
     private static string GetEditableRequirementsKey(CardData card)
@@ -1090,6 +1315,61 @@ public class DeckExplorerWindow : EditorWindow
         ReloadSelectedCard();
         EditorUtility.SetDirty(this);
         Debug.Log($"DeckExplorerWindow: saved character stats for '{card.name}'.");
+    }
+
+    private void SaveObjectStats(CardData card)
+    {
+        DeckEntryView deckView = GetSelectedDeckView();
+        if (card == null || deckView?.deckData?.cards == null)
+        {
+            return;
+        }
+
+        CardData target = deckView.deckData.cards.FirstOrDefault(c => c != null && c.cardId == card.cardId);
+        if (target == null)
+        {
+            target = card;
+        }
+
+        target.hidden = editedObjectHidden;
+        target.transferable = editedObjectTransferable;
+        target.commanderBonus = editedObjectCommanderBonus;
+        target.agentBonus = editedObjectAgentBonus;
+        target.emmissaryBonus = editedObjectEmmissaryBonus;
+        target.mageBonus = editedObjectMageBonus;
+        target.passiveEffectId = editedObjectPassiveEffectId ?? string.Empty;
+        target.passiveEffectValue = editedObjectPassiveEffectValue;
+        target.healPerTurn = editedObjectHealPerTurn;
+        target.movementBonus = editedObjectMovementBonus;
+        target.ignoreTerrainMovementPenalty = editedObjectIgnoreTerrainMovementPenalty;
+        target.grantsHasteAtSea = editedObjectGrantsHasteAtSea;
+        target.grantsEnvironmentalImmunity = editedObjectGrantsEnvironmentalImmunity;
+        target.autoScoutRadius = editedObjectAutoScoutRadius;
+        target.detectionEvasion = editedObjectDetectionEvasion;
+        target.recruitBonusMenAtArms = editedObjectRecruitBonusMenAtArms;
+        target.scryAreaBonus = editedObjectScryAreaBonus;
+        target.scryObjectBonus = editedObjectScryObjectBonus;
+        target.negativeStatusImmunity = editedObjectNegativeStatusImmunity ?? string.Empty;
+        target.negativeStatusDurationReduction = editedObjectNegativeStatusDurationReduction;
+        target.negativeStatusDamageReduction = editedObjectNegativeStatusDamageReduction;
+        target.positiveStatusDurationBonus = editedObjectPositiveStatusDurationBonus;
+        target.positiveStatusEffectBonus = editedObjectPositiveStatusEffectBonus;
+
+        string assetPath = GetDeckAssetPath(deckView.manifest?.resourcePath);
+        if (string.IsNullOrWhiteSpace(assetPath))
+        {
+            Debug.LogWarning("DeckExplorerWindow: could not resolve deck asset path for saving object effects.");
+            return;
+        }
+
+        string json = JsonUtility.ToJson(deckView.deckData, true);
+        File.WriteAllText(assetPath, json);
+        AssetDatabase.ImportAsset(ToAssetPath(assetPath), ImportAssetOptions.ForceUpdate);
+        AssetDatabase.Refresh();
+
+        ReloadSelectedCard();
+        EditorUtility.SetDirty(this);
+        Debug.Log($"DeckExplorerWindow: saved object effects for '{card.name}'.");
     }
 
     private void SaveArmyType(CardData card)
@@ -2937,6 +3217,7 @@ public class DeckExplorerWindow : EditorWindow
             CardTypeEnum.Spell => "Spell",
             CardTypeEnum.Encounter => "Encounter",
             CardTypeEnum.Environmental => "Environmental",
+            CardTypeEnum.Object => "Object",
             _ => string.Empty
         };
 
@@ -2954,6 +3235,7 @@ public class DeckExplorerWindow : EditorWindow
             CardTypeEnum.Spell => "spell",
             CardTypeEnum.Encounter => "encounter",
             CardTypeEnum.Environmental => "environmental",
+            CardTypeEnum.Object => "object",
             _ => null
         };
 
@@ -2976,6 +3258,7 @@ public class DeckExplorerWindow : EditorWindow
             c = colorName switch
             {
                 "environmental" => new Color(0.42f, 0.67f, 0.42f, 1f),
+                "object" => new Color(0.78f, 0.62f, 0.24f, 1f),
                 _ => Color.clear
             };
         }

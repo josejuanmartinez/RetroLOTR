@@ -62,7 +62,7 @@ public class BattleOfSongs : CharacterAction
         float score = character.GetBaseMage() * 2f
                     + character.GetBaseEmmissary() * 0.5f;
         if (character.objects != null)
-            score += character.objects.Sum(a => a != null ? Mathf.Max(0, a.bonusAttack) + Mathf.Max(0, a.bonusDefense) : 0);
+            score += character.objects.Sum(a => a != null ? a.GetAttackBonus() + a.GetDefenseBonus() : 0);
         if (character.HasStatusEffect(StatusEffectEnum.Strengthened)) score *= 1.10f;
         if (character.HasStatusEffect(StatusEffectEnum.Fortified)) score *= 1.10f;
         return score;

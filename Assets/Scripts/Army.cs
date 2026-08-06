@@ -335,8 +335,11 @@ public class Army
     private int ApplyArtifactAttackBonus(int value, Army enemyArmy)
     {
         if (commander == null) return value;
-        int bonus = commander.objects.Sum(a => Mathf.Max(0, a.bonusAttack)) * 3;
-        bonus += commander.objects.Sum(a => a != null ? a.GetArmyAttackStrengthBonus() : 0);
+        int bonus = commander.objects.Sum(a => a != null ? a.GetAttackBonus() : 0) * 3;
+        // Army-dedicated bonuses (Banners, Horn of Gondor) get the same x3 treatment as a
+        // generic weapon's bonusAttack so a card explicitly themed around army command isn't
+        // worth less to an army fight than a sword. See balance review, 2026-08-06.
+        bonus += commander.objects.Sum(a => a != null ? a.GetArmyAttackStrengthBonus() : 0) * 3;
 
         if (enemyArmy != null && enemyArmy.commander != null)
         {
@@ -365,8 +368,9 @@ public class Army
     private int ApplyArtifactDefenseBonus(int value, Army enemyArmy)
     {
         if (commander == null) return value;
-        int bonus = commander.objects.Sum(a => Mathf.Max(0, a.bonusDefense)) * 3;
-        bonus += commander.objects.Sum(a => a != null ? a.GetArmyDefenseStrengthBonus() : 0);
+        int bonus = commander.objects.Sum(a => a != null ? a.GetDefenseBonus() : 0) * 3;
+        // See ApplyArtifactAttackBonus: Banners/Horn now get the same x3 as a generic bonusDefense.
+        bonus += commander.objects.Sum(a => a != null ? a.GetArmyDefenseStrengthBonus() : 0) * 3;
 
         if (enemyArmy != null && enemyArmy.commander != null)
         {
@@ -599,13 +603,13 @@ public class Army
     public int GetArtifactAttackBonusTotal()
     {
         if (commander == null) return 0;
-        return commander.objects.Sum(a => Mathf.Max(0, a.bonusAttack)) * 3;
+        return commander.objects.Sum(a => a != null ? a.GetAttackBonus() : 0) * 3;
     }
 
     public int GetArtifactDefenseBonusTotal()
     {
         if (commander == null) return 0;
-        return commander.objects.Sum(a => Mathf.Max(0, a.bonusDefense)) * 3;
+        return commander.objects.Sum(a => a != null ? a.GetDefenseBonus() : 0) * 3;
     }
 
     private void GrantCombatXp(Army army, string reason)

@@ -176,26 +176,35 @@ public class Duel : CharacterAction
         return score;
     }
 
+    // Hard cap on how much carried objects can add to a duel score, independent of how many
+    // objects a character holds (Character.MAX_OBJECTS = 10). Without this, a character who
+    // hoards several attack-granting objects (there are 10 in the shared pool) could stack past
+    // +10 raw score against a typical character baseScore of ~1-6, making duels a deterministic
+    // blowout regardless of the opponent's own stats. 5 keeps a strong 2-3-item loadout fully
+    // effective while blunting pure hoarding. See balance review, 2026-08-06.
+    private const int MaxArtifactDuelScore = 5;
+    private const int MaxArtifactDuelDefense = 5;
+
     private int GetArtifactCombatScore(Character character, Character opponent)
     {
         if (character == null || character.objects == null) return 0;
-        int score = character.objects.Sum(a => Mathf.Max(0, a.bonusAttack) + Mathf.Max(0, a.bonusDefense));
+        int score = character.objects.Sum(a => a != null ? a.GetAttackBonus() + a.GetDefenseBonus() : 0);
         if (opponent != null)
         {
             score += character.objects.Sum(a => a != null ? a.GetAttackBonusVsRace(opponent.race) + a.GetDefenseBonusVsRace(opponent.race) : 0);
         }
-        return score;
+        return Mathf.Min(score, MaxArtifactDuelScore);
     }
 
     private int GetArtifactDefense(Character character, Character opponent)
     {
         if (character == null || character.objects == null) return 0;
-        int def = character.objects.Sum(a => Mathf.Max(0, a.bonusDefense));
+        int def = character.objects.Sum(a => a != null ? a.GetDefenseBonus() : 0);
         if (opponent != null)
         {
             def += character.objects.Sum(a => a != null ? a.GetDefenseBonusVsRace(opponent.race) : 0);
         }
-        return def;
+        return Mathf.Min(def, MaxArtifactDuelDefense);
     }
 
     private bool PlayerCanSeeHex(Hex hex)
