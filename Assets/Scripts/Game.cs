@@ -64,6 +64,9 @@ public class Game : MonoBehaviour
     public int turn = 0;
     public bool started = false;
 
+    [Header("AI")]
+    [SerializeField] private AIDifficulty aiDifficulty = AIDifficulty.Normal;
+
     public event Action<int> NewTurnStarted;
 
     private bool skipNextTurnPrompt = false;
@@ -79,6 +82,7 @@ public class Game : MonoBehaviour
         {
             gameObject.AddComponent<NonPlayableLeaderEventManager>();
         }
+        AIDifficultySettings.CurrentDifficulty = aiDifficulty;
     }
 
     private void RandomizeCompetitorVariants()

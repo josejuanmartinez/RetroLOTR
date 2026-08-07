@@ -76,6 +76,7 @@ public static class AIAdvisorConfig
         public const string DifficultyDivisor = "Global.DifficultyDivisor";
         public const string MaxDifficultyPenalty = "Global.MaxDifficultyPenalty";
         public const string CostPressureWhenPoor = "Global.CostPressureWhenPoor";
+        public const string HTNBiasBonus = "Global.HTNBiasBonus";
 
         public const string MilitaristicPerCommanderLevel = "Affinity.Militaristic.PerCommanderLevel";
         public const string MilitaristicLeadingArmyBonus = "Affinity.Militaristic.LeadingArmyBonus";
@@ -104,20 +105,25 @@ public static class AIAdvisorConfig
 
         public const string NoArmyPenalty = "Militaristic.NoArmyPenalty";
         public const string FarTargetPenalty = "Militaristic.FarTargetPenalty";
+        public const string MilitaristicViabilityThreshold = "Militaristic.ViabilityThreshold";
+        public const string OutmatchedStrengthRatio = "Militaristic.OutmatchedStrengthRatio";
 
         public const string IntelligencePoorEconomyBonus = "Intelligence.PoorEconomyBonus";
         public const string IntelligenceOutmatchedBonus = "Intelligence.OutmatchedBonus";
         public const string ScoutAreaBonus = "Intelligence.ScoutAreaBonus";
         public const string EnemyCharacterProximityMax = "Intelligence.EnemyCharacterProximityMax";
+        public const string IntelligenceViabilityThreshold = "Intelligence.ViabilityThreshold";
 
         public const string ArtifactScarcityWeight = "Magic.ArtifactScarcityWeight";
+        public const string MagicViabilityThreshold = "Magic.ViabilityThreshold";
 
         public const string DiplomaticOutmatchedBonus = "Diplomatic.OutmatchedBonus";
         public const string NpcProximityMax = "Diplomatic.NpcProximityMax";
+        public const string DiplomaticViabilityThreshold = "Diplomatic.ViabilityThreshold";
 
-        public const string MovementPriorityBonus = "Movement.PriorityBonus";
         public const string MovementProximityMax = "Movement.ProximityMax";
         public const string MovementDistancePenaltyPerHex = "Movement.DistancePenaltyPerHex";
+        public const string MovementViabilityThreshold = "Movement.ViabilityThreshold";
     }
 
     public static readonly IReadOnlyList<AdvisorWeightDefinition> KnownWeights = new List<AdvisorWeightDefinition>
@@ -126,6 +132,7 @@ public static class AIAdvisorConfig
         new(Keys.DifficultyDivisor, 25f, "Card difficulty is divided by this to compute the penalty; higher = difficulty matters less."),
         new(Keys.MaxDifficultyPenalty, 3f, "Cap on the difficulty penalty."),
         new(Keys.CostPressureWhenPoor, 2.5f, "Gold-cost penalty multiplier while the economy needs help (1 = no extra pressure)."),
+        new(Keys.HTNBiasBonus, 4f, "Flat score bonus for cards whose advisor matches the HTN strategy's currently-active task."),
 
         new(Keys.MilitaristicPerCommanderLevel, 2f, "Militaristic appeal per commander level."),
         new(Keys.MilitaristicLeadingArmyBonus, 2f, "Extra militaristic appeal when the character leads an army."),
@@ -154,20 +161,25 @@ public static class AIAdvisorConfig
 
         new(Keys.NoArmyPenalty, -4f, "Militaristic score adjustment when the character leads no army."),
         new(Keys.FarTargetPenalty, 1.5f, "Militaristic penalty when the enemy target is more than 1 hex away."),
+        new(Keys.MilitaristicViabilityThreshold, 0f, "HTN switches to a Militaristic strategy once Militaristic's viability (enemy proximity + army edge, same terms as its situational score above) crosses this."),
+        new(Keys.OutmatchedStrengthRatio, 1.1f, "The nearest enemy must be at least this many times my army's strength (0 while leading no army) to count as \"outmatched\" — the single definition Militaristic.Danger and the Intelligence/Diplomatic outmatched bonuses below all read."),
 
         new(Keys.IntelligencePoorEconomyBonus, 3f, "Intelligence bonus while the economy needs help."),
         new(Keys.IntelligenceOutmatchedBonus, 3f, "Intelligence bonus when the army is outmatched (indirect approach)."),
         new(Keys.ScoutAreaBonus, 6f, "Extra bonus for the Scout Area action."),
         new(Keys.EnemyCharacterProximityMax, 6f, "Intelligence bonus when an enemy character is at distance 0; fades by 1 per hex."),
+        new(Keys.IntelligenceViabilityThreshold, 0f, "HTN switches to an Intelligence strategy once Intelligence's viability (same terms as its situational score above, minus the Scout Area bonus) crosses this."),
 
         new(Keys.ArtifactScarcityWeight, 2f, "Magic bonus scale for how few artifacts the nation owns (0..1 scarcity times this)."),
+        new(Keys.MagicViabilityThreshold, 0f, "HTN switches to a Magic strategy once Magic's viability (same terms as its situational score above) crosses this."),
 
         new(Keys.DiplomaticOutmatchedBonus, 2f, "Diplomatic bonus when the army is outmatched (indirect approach)."),
         new(Keys.NpcProximityMax, 10f, "Diplomatic bonus when an unrevealed NPC is at distance 0; fades by 1 per hex."),
+        new(Keys.DiplomaticViabilityThreshold, 0f, "HTN switches to a Diplomatic strategy once Diplomatic's viability (same terms as its situational score above) crosses this."),
 
-        new(Keys.MovementPriorityBonus, 10f, "Movement bonus while movement is the priority (no threats, has a destination)."),
         new(Keys.MovementProximityMax, 8f, "Movement bonus at distance 0 from the preferred destination."),
         new(Keys.MovementDistancePenaltyPerHex, 2f, "How fast the movement bonus fades per hex of distance."),
+        new(Keys.MovementViabilityThreshold, 0f, "HTN switches to a Movement strategy once Movement's viability (same terms as its situational score above) crosses this."),
     };
 
     private static Dictionary<string, float> defaultsByKey;

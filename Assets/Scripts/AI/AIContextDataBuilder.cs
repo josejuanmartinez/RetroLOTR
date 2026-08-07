@@ -77,7 +77,8 @@ public static class AIContextDataBuilder
         }
 
         AIContext.EnemyTarget best = data.ClosestNonNeutralEnemy.Hex != null ? data.ClosestNonNeutralEnemy : data.ClosestEnemy;
-        if (best.Hex != null && best.Strength > myStrength * 1.1f) data.NeedsIndirectApproach = true;
+        float outmatchedRatio = AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.OutmatchedStrengthRatio);
+        if (best.Hex != null && best.Strength > myStrength * outmatchedRatio) data.NeedsIndirectApproach = true;
     }
 
     private static void CacheNpcTargets(Board board, Character character, ref AIContext.AIContextPrecomputedData data, Stopwatch stopwatch, float maxMilliseconds)

@@ -12,14 +12,16 @@ public class AIWidgetWindow : EditorWindow
     private enum Tab
     {
         Situations = 0,
-        BehaviourTrees = 1,
-        NN = 2
+        Strategies = 1,
+        Advisors = 2,
+        NN = 3
     }
 
-    private static readonly string[] TabLabels = { "Situations", "Behaviour Trees", "NN" };
+    private static readonly string[] TabLabels = { "Situations", "HTN", "Advisors", "NN" };
 
     private const string PriorityAssetPath = "Assets/Resources/" + SituationEvaluator.PriorityResourcePath + ".json";
-    private const string TreesAssetPath = "Assets/Resources/" + AIBehaviourTreeLibrary.ResourcePath + ".json";
+    private const string StrategiesAssetPath = "Assets/Resources/" + AIStrategyLibrary.ResourcePath + ".json";
+    private const string AdvisorAssetPath = "Assets/Resources/" + AIAdvisorConfig.ResourcePath + ".json";
 
     private Tab currentTab = Tab.Situations;
 
@@ -29,30 +31,103 @@ public class AIWidgetWindow : EditorWindow
     private ReorderableList situationList;
     private bool orderDirty;
 
-    // Behaviour Trees tab
-    private BehaviourTreeLibraryData treeLibrary = new();
-    private int selectedTreeIndex;
-    private Vector2 treesScroll;
-    private bool treesDirty;
+    // Strategies tab
+    private HTNStrategyLibraryData strategyLibrary = new();
+    private int selectedStrategyIndex;
+    private Vector2 strategiesScroll;
+    private bool strategiesDirty;
 
     private static readonly Color RowHighlightColor = new(0.26f, 0.53f, 0.96f, 0.22f);
 
-    // Advisors section (inside the Behaviour Trees tab)
+    // Advisor-profile readability styles (weight rows, condition rows, the HTN scorecard).
+    // Lazily built in EnsureAdvisorStyles — EditorStyles isn't safe to touch before OnGUI runs.
+    private static readonly Color BadgeTrueColor = new(0.20f, 0.47f, 0.24f);
+    private static readonly Color BadgeFalseColor = new(0.32f, 0.32f, 0.32f);
+    private static readonly Color WeightRowAltColor = new(1f, 1f, 1f, 0.03f);
+    private GUIStyle weightRowBoxStyle;
+    private GUIStyle weightLabelStyle;
+    private GUIStyle weightDescStyle;
+    private GUIStyle conditionKeyStyle;
+    private GUIStyle sectionHeaderStyle;
+    private GUIStyle metricValueStyle;
+    private GUIStyle metricCaptionStyle;
+    private GUIStyle badgeStyle;
+    private GUIStyle compactBadgeStyle;
+
+    private void EnsureAdvisorStyles()
+    {
+        if (weightRowBoxStyle != null) return;
+        weightRowBoxStyle = new GUIStyle(EditorStyles.helpBox) { padding = new RectOffset(10, 10, 6, 6), margin = new RectOffset(0, 0, 0, 4) };
+        weightLabelStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 12 };
+        weightDescStyle = new GUIStyle(EditorStyles.wordWrappedMiniLabel) { wordWrap = true };
+        conditionKeyStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 11 };
+        sectionHeaderStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 13, margin = new RectOffset(0, 0, 6, 4) };
+        metricValueStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 18, alignment = TextAnchor.MiddleCenter };
+        metricCaptionStyle = new GUIStyle(EditorStyles.miniLabel) { alignment = TextAnchor.MiddleCenter };
+        badgeStyle = new GUIStyle(EditorStyles.boldLabel) { fontSize = 14, alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.white } };
+        compactBadgeStyle = new GUIStyle(EditorStyles.miniBoldLabel) { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.white } };
+    }
+
+    // Live TRUE/FALSE for any HTNRegistry predicate key, under the current "Live effect"
+    // scenario inputs — the same signal HTNRegistry's own lambda would return at runtime,
+    // computed via the widget's Simulated* mirrors since there's no live AIContext here.
+    // This is what lets every condition shown in the widget (not just the one currently
+    // active tier) carry its own live state, instead of the reader having to infer the other
+    // three tiers are false from the one tier that's shown true.
+    private bool EvaluatePredicateLive(string key)
+    {
+        if (string.Equals(key, "Global.Always", StringComparison.OrdinalIgnoreCase)) return true;
+        if (string.Equals(key, "Global.Never", StringComparison.OrdinalIgnoreCase)) return false;
+
+        EconomyStatus tier = SimulatedEconomyStatus();
+        switch (key)
+        {
+            case "Economic.NeedsHelp": return tier is EconomyStatus.Critical or EconomyStatus.Weak;
+            case "Economic.Critical": return tier == EconomyStatus.Critical;
+            case "Economic.Weak": return tier == EconomyStatus.Weak;
+            case "Economic.Stable": return tier == EconomyStatus.Stable;
+            case "Economic.Surplus": return tier == EconomyStatus.Surplus;
+            case "Militaristic.EnemyNear": return SimulatedEnemyNear();
+            case "Militaristic.Danger": return SimulatedDanger();
+        }
+
+        // Every remaining predicate follows the "<Advisor>.Viable" pattern.
+        string advisorPart = key.Contains('.') ? key.Split('.')[0] : key;
+        if (Enum.TryParse(advisorPart, out AdvisorType advisor))
+        {
+            string thresholdKey = ViabilityThresholdKeyFor(advisor);
+            if (thresholdKey != null)
+            {
+                float threshold = advisorWeights.TryGetValue(thresholdKey, out float t) ? t : AIAdvisorConfig.GetDefaultWeight(thresholdKey);
+                return SimulateViability(advisor) > threshold;
+            }
+        }
+        return false;
+    }
+
+    // Compact colored pill sized to its own text — for packing several conditions into one row.
+    private void DrawConditionBadge(string label, bool value)
+    {
+        GUIContent content = new GUIContent(label);
+        Vector2 size = compactBadgeStyle.CalcSize(content);
+        Rect r = GUILayoutUtility.GetRect(size.x + 16f, 22f, GUILayout.Width(size.x + 16f));
+        EditorGUI.DrawRect(r, value ? BadgeTrueColor : BadgeFalseColor);
+        GUI.Label(r, label, compactBadgeStyle);
+        GUILayout.Space(6f);
+    }
+
+    // Advisors tab
+    private Vector2 advisorsScroll;
     private readonly Dictionary<string, float> advisorWeights = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, AdvisorType> advisorActionOverrides = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, float> advisorActionBonuses = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, ActionScoreFlags> advisorActionFlags = new(StringComparer.OrdinalIgnoreCase);
-    private readonly Dictionary<string, bool> advisorGroupExpanded = new();
     private List<(string actionClass, AdvisorType defaultAdvisor)> actionCatalog;
     private Dictionary<string, List<CardUsage>> cardsByActionRef;
     private readonly HashSet<string> expandedActions = new(StringComparer.OrdinalIgnoreCase);
-    private bool advisorsSectionExpanded;
-    private bool onlyShowCardActions = true;
     private bool advisorsDirty;
     private string actionSearch = string.Empty;
-    private int actionSortMode;
-
-    private static readonly string[] ActionSortLabels = { "Sort: Score", "Sort: Advisor", "Sort: Name", "Sort: Card Count" };
+    private int simBiasedAdvisorIndex; // index into Enum.GetNames(typeof(AdvisorType)); 0 = None
 
     // Score-preview scenario: user-set assumptions for everything the real
     // scoring reads from the board at runtime.
@@ -62,7 +137,6 @@ public class AIWidgetWindow : EditorWindow
     private int simMage = 2;
     private int simArtifactsCarried;
     private bool simLeadingArmy;
-    private bool simMovementPriority;
     private bool simHostageToRescue;
     private bool simHoldingHostage;
     private int simGoldBuffer = 50;
@@ -83,9 +157,7 @@ public class AIWidgetWindow : EditorWindow
         public int goldCost;
     }
 
-    private static readonly string[] NodeTypeLabels =
-        { "Selector", "Sequence", "Condition", "Action" };
-
+    private static readonly string[] NodeTypeLabels = { "CompoundTask", "Method", "PrimitiveTask" };
     private static readonly string[] InvertLabels = { "IS TRUE", "IS FALSE" };
 
     [MenuItem("Window/RetroLOTR/AI Widget")]
@@ -98,7 +170,7 @@ public class AIWidgetWindow : EditorWindow
     {
         wantsMouseMove = true;
         LoadSituationOrder();
-        LoadTreeLibrary();
+        LoadStrategyLibrary();
         LoadAdvisorConfig();
     }
 
@@ -114,8 +186,11 @@ public class AIWidgetWindow : EditorWindow
             case Tab.Situations:
                 DrawSituationsTab();
                 break;
-            case Tab.BehaviourTrees:
-                DrawBehaviourTreesTab();
+            case Tab.Strategies:
+                DrawStrategiesTab();
+                break;
+            case Tab.Advisors:
+                DrawAdvisorsTab();
                 break;
             case Tab.NN:
                 EditorGUILayout.HelpBox("NN — not implemented yet.", MessageType.Info);
@@ -129,9 +204,11 @@ public class AIWidgetWindow : EditorWindow
 
     private void DrawSituationsTab()
     {
-        EditorGUILayout.LabelField("Situation priority", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("Situation ranking", EditorStyles.boldLabel);
         EditorGUILayout.HelpBox(
-            "Drag to reorder. When more than 2 situations are active on a hex, the top-most 2 that can back a playable card are offered as opportunity cards.\n"
+            "Drag to reorder. This ranking feeds a score bonus for player Opportunity Cards (earlier = bigger bonus) "
+            + "when a card's own situation tag matches one that's currently active — it no longer gates or caps which "
+            + "cards can be offered, scoring across the whole eligible pool decides that.\n"
             + $"Saved to {PriorityAssetPath} and read by SituationEvaluator at runtime.",
             MessageType.None);
 
@@ -210,7 +287,7 @@ public class AIWidgetWindow : EditorWindow
     {
         situationList = new ReorderableList(situationOrder, typeof(CardSituationEnum), true, true, false, false)
         {
-            drawHeaderCallback = rect => EditorGUI.LabelField(rect, "Priority (top = offered first)"),
+            drawHeaderCallback = rect => EditorGUI.LabelField(rect, "Ranking (top = biggest score bonus)"),
             drawElementCallback = (rect, index, isActive, isFocused) =>
             {
                 rect.y += 1f;
@@ -235,193 +312,179 @@ public class AIWidgetWindow : EditorWindow
         WriteJsonAsset(PriorityAssetPath, JsonUtility.ToJson(data, true));
         SituationEvaluator.ReloadPriority();
         orderDirty = false;
-        Debug.Log($"AIWidget: saved situation priority to {PriorityAssetPath}");
+        Debug.Log($"AIWidget: saved situation ranking to {PriorityAssetPath}");
     }
 
     // ------------------------------------------------------------------
-    // Behaviour Trees tab
+    // Strategies tab (HTN)
     // ------------------------------------------------------------------
 
-    private void DrawBehaviourTreesTab()
+    private void DrawStrategiesTab()
     {
-        EditorGUILayout.LabelField("Behaviour trees", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("Strategies (HTN)", EditorStyles.boldLabel);
         EditorGUILayout.HelpBox(
-            "Each AI character ticks its leader's tree once per turn. Depth-0 rows act as a priority list (tried top-down until one succeeds). "
-            + "Selector = first child that succeeds; Sequence = all children in order, stops on failure; Condition/Action = leaves.\n"
-            + $"Saved to {TreesAssetPath} and read by AIBehaviourTreeLibrary at runtime.",
+            "Each AI leader persists a strategy across turns instead of recomputing it every turn. A CompoundTask's "
+            + "Methods are tried top-down by row order (priority) — a Method higher in the list can always interrupt "
+            + "an already-active lower one, even mid-sequence. A Method's subtasks run in order: each PrimitiveTask "
+            + "biases card scoring toward its advisor (see Advisors tab) until its completion condition fires, then "
+            + "execution advances to the next step in the sequence. Row order matters for BOTH priority (which Method "
+            + "wins / can interrupt) and sequence (subtask execution order) — reordering rows is a behavior change.\n"
+            + $"Saved to {StrategiesAssetPath} and read by AIStrategyLibrary at runtime.",
             MessageType.None);
 
-        DrawTreesToolbar();
+        DrawStrategiesToolbar();
         EditorGUILayout.Space();
-        DrawAssignments();
+        DrawStrategyAssignments();
         EditorGUILayout.Space();
 
-        if (treeLibrary.trees.Count == 0)
+        if (strategyLibrary.strategies.Count == 0)
         {
-            EditorGUILayout.HelpBox("No trees defined. Click 'Add Tree'.", MessageType.Warning);
+            EditorGUILayout.HelpBox("No strategies defined. Click 'Add Strategy'.", MessageType.Warning);
             return;
         }
 
-        selectedTreeIndex = Mathf.Clamp(selectedTreeIndex, 0, treeLibrary.trees.Count - 1);
-        BehaviourTreeData tree = treeLibrary.trees[selectedTreeIndex];
+        selectedStrategyIndex = Mathf.Clamp(selectedStrategyIndex, 0, strategyLibrary.strategies.Count - 1);
+        HTNStrategyData strategy = strategyLibrary.strategies[selectedStrategyIndex];
 
-        foreach (string issue in ValidateTree(tree))
+        foreach (string issue in ValidateStrategy(strategy))
         {
             EditorGUILayout.HelpBox(issue, MessageType.Warning);
         }
 
-        treesScroll = EditorGUILayout.BeginScrollView(treesScroll);
-        DrawNodeOutline(tree);
-        EditorGUILayout.Space(4f);
-        EditorGUILayout.LabelField("FINISH — the first root-level row that succeeds ends the character's action for this turn.", EditorStyles.centeredGreyMiniLabel);
-
-        EditorGUILayout.Space();
+        strategiesScroll = EditorGUILayout.BeginScrollView(strategiesScroll);
+        DrawStrategyOutline(strategy);
+        EditorGUILayout.Space(8f);
         if (GUILayout.Button("Add Node (root level)", GUILayout.Width(170f)))
         {
-            tree.nodes.Add(NewLeafNode());
-            treesDirty = true;
-        }
-
-        EditorGUILayout.Space(14f);
-        advisorsSectionExpanded = EditorGUILayout.Foldout(advisorsSectionExpanded,
-            "Advisors — what the advisor rows above actually do", true, EditorStyles.foldoutHeader);
-        if (advisorsSectionExpanded)
-        {
-            DrawAdvisorsSection();
+            strategy.nodes.Add(NewLeafNode());
+            EnsureUniqueTaskIds(strategy.nodes);
+            strategiesDirty = true;
         }
         EditorGUILayout.EndScrollView();
     }
 
-    private void DrawTreesToolbar()
+    private void DrawStrategiesToolbar()
     {
         EditorGUILayout.BeginHorizontal();
 
-        string[] treeIds = treeLibrary.trees.Select(t => t.treeId).ToArray();
-        if (treeIds.Length > 0)
+        string[] strategyIds = strategyLibrary.strategies.Select(s => s.strategyId).ToArray();
+        if (strategyIds.Length > 0)
         {
-            selectedTreeIndex = EditorGUILayout.Popup(Mathf.Clamp(selectedTreeIndex, 0, treeIds.Length - 1), treeIds, GUILayout.Width(180f));
+            selectedStrategyIndex = EditorGUILayout.Popup(Mathf.Clamp(selectedStrategyIndex, 0, strategyIds.Length - 1), strategyIds, GUILayout.Width(180f));
 
-            string currentId = treeLibrary.trees[selectedTreeIndex].treeId;
+            string currentId = strategyLibrary.strategies[selectedStrategyIndex].strategyId;
             string newId = EditorGUILayout.DelayedTextField(currentId, GUILayout.Width(160f));
-            if (!string.Equals(newId, currentId, StringComparison.Ordinal)) RenameSelectedTree(newId);
+            if (!string.Equals(newId, currentId, StringComparison.Ordinal)) RenameSelectedStrategy(newId);
         }
 
-        if (GUILayout.Button("Add Tree", GUILayout.Width(80f)))
+        if (GUILayout.Button("Add Strategy", GUILayout.Width(100f)))
         {
-            BehaviourTreeData tree = new()
+            HTNStrategyData strategy = new()
             {
-                treeId = MakeUniqueTreeId("new_tree"),
-                nodes = new List<BehaviourTreeNodeData>
+                strategyId = MakeUniqueStrategyId("new_strategy"),
+                nodes = new List<HTNNodeData>
                 {
-                    new() { depth = 0, type = "Action", action = "BestAvailableAction" },
-                    new() { depth = 0, type = "Action", action = "Pass" }
+                    new() { depth = 0, type = "CompoundTask", taskId = "root" },
+                    new() { depth = 1, type = "Method", precondition = "Global.Always", taskId = "root.fallback" },
+                    new() { depth = 2, type = "PrimitiveTask", advisor = string.Empty, completionCondition = "Global.Never", taskId = "root.fallback.leaf" }
                 }
             };
-            treeLibrary.trees.Add(tree);
-            selectedTreeIndex = treeLibrary.trees.Count - 1;
-            treesDirty = true;
+            strategyLibrary.strategies.Add(strategy);
+            selectedStrategyIndex = strategyLibrary.strategies.Count - 1;
+            strategiesDirty = true;
         }
 
-        using (new EditorGUI.DisabledScope(treeLibrary.trees.Count == 0))
+        using (new EditorGUI.DisabledScope(strategyLibrary.strategies.Count == 0))
         {
             if (GUILayout.Button("Duplicate", GUILayout.Width(80f)))
             {
-                BehaviourTreeData source = treeLibrary.trees[selectedTreeIndex];
-                BehaviourTreeData copy = JsonUtility.FromJson<BehaviourTreeData>(JsonUtility.ToJson(source));
-                copy.treeId = MakeUniqueTreeId(source.treeId);
-                treeLibrary.trees.Add(copy);
-                selectedTreeIndex = treeLibrary.trees.Count - 1;
-                treesDirty = true;
+                HTNStrategyData source = strategyLibrary.strategies[selectedStrategyIndex];
+                HTNStrategyData copy = JsonUtility.FromJson<HTNStrategyData>(JsonUtility.ToJson(source));
+                copy.strategyId = MakeUniqueStrategyId(source.strategyId);
+                strategyLibrary.strategies.Add(copy);
+                selectedStrategyIndex = strategyLibrary.strategies.Count - 1;
+                strategiesDirty = true;
             }
 
-            using (new EditorGUI.DisabledScope(treeLibrary.trees.Count <= 1))
+            using (new EditorGUI.DisabledScope(strategyLibrary.strategies.Count <= 1))
             {
                 if (GUILayout.Button("Delete", GUILayout.Width(70f))
-                    && EditorUtility.DisplayDialog("Delete tree",
-                        $"Delete tree '{treeLibrary.trees[selectedTreeIndex].treeId}'?", "Delete", "Cancel"))
+                    && EditorUtility.DisplayDialog("Delete strategy",
+                        $"Delete strategy '{strategyLibrary.strategies[selectedStrategyIndex].strategyId}'?", "Delete", "Cancel"))
                 {
-                    string removedId = treeLibrary.trees[selectedTreeIndex].treeId;
-                    treeLibrary.trees.RemoveAt(selectedTreeIndex);
-                    selectedTreeIndex = Mathf.Clamp(selectedTreeIndex, 0, treeLibrary.trees.Count - 1);
-                    string fallbackId = treeLibrary.trees[selectedTreeIndex].treeId;
-                    foreach (BehaviourTreeAssignment assignment in treeLibrary.assignments)
+                    string removedId = strategyLibrary.strategies[selectedStrategyIndex].strategyId;
+                    strategyLibrary.strategies.RemoveAt(selectedStrategyIndex);
+                    selectedStrategyIndex = Mathf.Clamp(selectedStrategyIndex, 0, strategyLibrary.strategies.Count - 1);
+                    string fallbackId = strategyLibrary.strategies[selectedStrategyIndex].strategyId;
+                    foreach (HTNStrategyAssignment assignment in strategyLibrary.assignments)
                     {
-                        if (string.Equals(assignment.treeId, removedId, StringComparison.OrdinalIgnoreCase))
-                            assignment.treeId = fallbackId;
+                        if (string.Equals(assignment.strategyId, removedId, StringComparison.OrdinalIgnoreCase))
+                            assignment.strategyId = fallbackId;
                     }
-                    treesDirty = true;
+                    strategiesDirty = true;
                 }
             }
         }
 
         GUILayout.FlexibleSpace();
 
-        using (new EditorGUI.DisabledScope(!treesDirty && !advisorsDirty))
+        using (new EditorGUI.DisabledScope(!strategiesDirty))
         {
-            if (GUILayout.Button("Save", GUILayout.Width(90f)))
-            {
-                if (treesDirty) SaveTreeLibrary();
-                if (advisorsDirty) SaveAdvisorConfig();
-            }
-            if (GUILayout.Button("Revert", GUILayout.Width(90f)))
-            {
-                LoadTreeLibrary();
-                LoadAdvisorConfig();
-            }
+            if (GUILayout.Button("Save", GUILayout.Width(90f))) SaveStrategyLibrary();
+            if (GUILayout.Button("Revert", GUILayout.Width(90f))) LoadStrategyLibrary();
         }
-        if (treesDirty || advisorsDirty) GUILayout.Label("Unsaved changes", EditorStyles.miniBoldLabel);
+        if (strategiesDirty) GUILayout.Label("Unsaved changes", EditorStyles.miniBoldLabel);
 
         EditorGUILayout.EndHorizontal();
     }
 
-    private void DrawAssignments()
+    private void DrawStrategyAssignments()
     {
-        EditorGUILayout.LabelField("Tree per alignment", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("Strategy per alignment", EditorStyles.boldLabel);
 
-        string[] treeIds = treeLibrary.trees.Select(t => t.treeId).ToArray();
-        if (treeIds.Length == 0) return;
+        string[] strategyIds = strategyLibrary.strategies.Select(s => s.strategyId).ToArray();
+        if (strategyIds.Length == 0) return;
 
         foreach (string alignmentName in Enum.GetNames(typeof(AlignmentEnum)))
         {
-            BehaviourTreeAssignment assignment = treeLibrary.assignments.FirstOrDefault(a =>
+            HTNStrategyAssignment assignment = strategyLibrary.assignments.FirstOrDefault(a =>
                 string.Equals(a.alignment, alignmentName, StringComparison.OrdinalIgnoreCase));
             if (assignment == null)
             {
-                assignment = new BehaviourTreeAssignment { alignment = alignmentName, treeId = treeIds[0] };
-                treeLibrary.assignments.Add(assignment);
+                assignment = new HTNStrategyAssignment { alignment = alignmentName, strategyId = strategyIds[0] };
+                strategyLibrary.assignments.Add(assignment);
             }
 
-            int current = Array.FindIndex(treeIds, id => string.Equals(id, assignment.treeId, StringComparison.OrdinalIgnoreCase));
+            int current = Array.FindIndex(strategyIds, id => string.Equals(id, assignment.strategyId, StringComparison.OrdinalIgnoreCase));
             if (current < 0) current = 0;
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField(ObjectNames.NicifyVariableName(alignmentName), GUILayout.Width(120f));
-            int picked = EditorGUILayout.Popup(current, treeIds, GUILayout.Width(180f));
+            int picked = EditorGUILayout.Popup(current, strategyIds, GUILayout.Width(180f));
             EditorGUILayout.EndHorizontal();
 
-            if (picked != current || !string.Equals(assignment.treeId, treeIds[picked], StringComparison.Ordinal))
+            if (picked != current || !string.Equals(assignment.strategyId, strategyIds[picked], StringComparison.Ordinal))
             {
-                if (!string.Equals(assignment.treeId, treeIds[picked], StringComparison.Ordinal)) treesDirty = true;
-                assignment.treeId = treeIds[picked];
+                if (!string.Equals(assignment.strategyId, strategyIds[picked], StringComparison.Ordinal)) strategiesDirty = true;
+                assignment.strategyId = strategyIds[picked];
             }
         }
     }
 
-    private void DrawNodeOutline(BehaviourTreeData tree)
+    private void DrawStrategyOutline(HTNStrategyData strategy)
     {
-        List<BehaviourTreeNodeData> nodes = tree.nodes;
+        List<HTNNodeData> nodes = strategy.nodes;
         int pendingOp = -1; // 0 up, 1 down, 2 outdent, 3 indent, 4 insert-after, 5 delete
         int pendingIndex = -1;
         int hoverEnd = -1; // exclusive end of the hovered subtree's row range
+        string[] advisorOptions = Enum.GetNames(typeof(AdvisorType));
 
         for (int i = 0; i < nodes.Count; i++)
         {
-            BehaviourTreeNodeData node = nodes[i];
+            HTNNodeData node = nodes[i];
             if (node == null) continue;
 
             Rect rowRect = EditorGUILayout.BeginHorizontal();
-            // The subtree a hovered row would move starts at that row, so it can
-            // be highlighted in this same pass: its rows all come after it.
             if (Event.current.type == EventType.Repaint && rowRect.Contains(Event.current.mousePosition))
             {
                 hoverEnd = i + SubtreeCount(nodes, i);
@@ -432,39 +495,59 @@ public class AIWidgetWindow : EditorWindow
             }
             GUILayout.Space(8f + node.depth * 24f);
 
-            GUILayout.Label(GetRowConnective(nodes, i), EditorStyles.miniBoldLabel, GUILayout.Width(52f));
+            GUILayout.Label(GetStrategyRowConnective(nodes, i), EditorStyles.miniBoldLabel, GUILayout.Width(60f));
 
             int typeIndex = Mathf.Max(0, Array.IndexOf(NodeTypeLabels, node.type));
-            int newTypeIndex = EditorGUILayout.Popup(typeIndex, NodeTypeLabels, GUILayout.Width(85f));
+            int newTypeIndex = EditorGUILayout.Popup(typeIndex, NodeTypeLabels, GUILayout.Width(105f));
             if (newTypeIndex != typeIndex)
             {
                 node.type = NodeTypeLabels[newTypeIndex];
-                treesDirty = true;
+                strategiesDirty = true;
             }
 
-            BehaviourTreeNodeType nodeType = ParseNodeType(node.type);
+            string newTaskId = EditorGUILayout.DelayedTextField(node.taskId, GUILayout.Width(90f));
+            if (!string.Equals(newTaskId, node.taskId, StringComparison.Ordinal))
+            {
+                node.taskId = newTaskId;
+                strategiesDirty = true;
+            }
+
+            HTNNodeType nodeType = ParseNodeType(node.type);
             switch (nodeType)
             {
-                case BehaviourTreeNodeType.Condition:
+                case HTNNodeType.Method:
                 {
-                    string picked = DrawNamePopup(node.condition, BehaviourTreeRegistry.ConditionNames);
-                    if (!string.Equals(picked, node.condition, StringComparison.Ordinal)) { node.condition = picked; treesDirty = true; }
+                    string picked = DrawNamePopup(node.precondition, HTNRegistry.PredicateNames, 140f);
+                    if (!string.Equals(picked, node.precondition, StringComparison.Ordinal)) { node.precondition = picked; strategiesDirty = true; }
 
-                    int invertIndex = EditorGUILayout.Popup(node.invert ? 1 : 0, InvertLabels, GUILayout.Width(80f));
+                    int invertIndex = EditorGUILayout.Popup(node.invert ? 1 : 0, InvertLabels, GUILayout.Width(75f));
                     bool newInvert = invertIndex == 1;
-                    if (newInvert != node.invert) { node.invert = newInvert; treesDirty = true; }
+                    if (newInvert != node.invert) { node.invert = newInvert; strategiesDirty = true; }
                     break;
                 }
-                case BehaviourTreeNodeType.Action:
+                case HTNNodeType.PrimitiveTask:
                 {
-                    string picked = DrawNamePopup(node.action, BehaviourTreeRegistry.ActionNames);
-                    if (!string.Equals(picked, node.action, StringComparison.Ordinal)) { node.action = picked; treesDirty = true; }
+                    string currentAdvisor = string.IsNullOrEmpty(node.advisor) ? nameof(AdvisorType.None) : node.advisor;
+                    int advisorIndex = Mathf.Max(0, Array.IndexOf(advisorOptions, currentAdvisor));
+                    int pickedAdvisorIndex = EditorGUILayout.Popup(advisorIndex, advisorOptions, GUILayout.Width(110f));
+                    string pickedAdvisor = advisorOptions[pickedAdvisorIndex] == nameof(AdvisorType.None) ? string.Empty : advisorOptions[pickedAdvisorIndex];
+                    if (!string.Equals(pickedAdvisor, node.advisor ?? string.Empty, StringComparison.Ordinal))
+                    {
+                        node.advisor = pickedAdvisor;
+                        strategiesDirty = true;
+                    }
+
+                    GUILayout.Label("until", EditorStyles.miniLabel, GUILayout.Width(28f));
+                    string pickedCompletion = DrawNamePopup(node.completionCondition, HTNRegistry.PredicateNames, 140f);
+                    if (!string.Equals(pickedCompletion, node.completionCondition, StringComparison.Ordinal)) { node.completionCondition = pickedCompletion; strategiesDirty = true; }
+
+                    int completionInvertIndex = EditorGUILayout.Popup(node.completionInvert ? 1 : 0, InvertLabels, GUILayout.Width(75f));
+                    bool newCompletionInvert = completionInvertIndex == 1;
+                    if (newCompletionInvert != node.completionInvert) { node.completionInvert = newCompletionInvert; strategiesDirty = true; }
                     break;
                 }
                 default:
-                    GUILayout.Label(nodeType == BehaviourTreeNodeType.Selector
-                        ? "one of the rows below (first that works):"
-                        : "all of the rows below (in order, quit if one fails):", EditorStyles.miniLabel);
+                    GUILayout.Label("methods below, tried top-down (higher = can interrupt an active lower one):", EditorStyles.miniLabel);
                     break;
             }
 
@@ -482,6 +565,18 @@ public class AIWidgetWindow : EditorWindow
             if (GUILayout.Button("✕", GUILayout.Width(24f))) { pendingOp = 5; pendingIndex = i; }
 
             EditorGUILayout.EndHorizontal();
+
+            // Always-visible description line — never hide condition meaning behind a hover
+            // state. Every name in the two dropdowns above comes from HTNRegistry.KnownPredicates,
+            // which is required to carry a plain-English Description for exactly this reason.
+            string conditionSummary = BuildConditionSummary(node);
+            if (!string.IsNullOrEmpty(conditionSummary))
+            {
+                EditorGUILayout.BeginHorizontal();
+                GUILayout.Space(8f + node.depth * 24f + 60f);
+                EditorGUILayout.LabelField(conditionSummary, EditorStyles.wordWrappedMiniLabel);
+                EditorGUILayout.EndHorizontal();
+            }
         }
 
         if (pendingIndex < 0) return;
@@ -500,11 +595,12 @@ public class AIWidgetWindow : EditorWindow
             case 4: nodes.Insert(pendingIndex + SubtreeCount(nodes, pendingIndex), NewLeafNode(nodes[pendingIndex].depth)); break;
             case 5: nodes.RemoveRange(pendingIndex, SubtreeCount(nodes, pendingIndex)); break;
         }
-        treesDirty = true;
+        EnsureUniqueTaskIds(nodes);
+        strategiesDirty = true;
         GUI.FocusControl(null);
     }
 
-    private static string DrawNamePopup(string current, IReadOnlyList<string> names)
+    private static string DrawNamePopup(string current, IReadOnlyList<string> names, float width = 200f)
     {
         List<string> options = names.ToList();
         if (!string.IsNullOrEmpty(current) && !options.Contains(current, StringComparer.OrdinalIgnoreCase))
@@ -515,19 +611,46 @@ public class AIWidgetWindow : EditorWindow
         int index = options.FindIndex(o => string.Equals(o, current, StringComparison.OrdinalIgnoreCase));
         if (index < 0) index = string.IsNullOrEmpty(current) ? 0 : options.Count - 1;
 
-        int picked = EditorGUILayout.Popup(index, options.ToArray(), GUILayout.Width(200f));
+        int picked = EditorGUILayout.Popup(index, options.ToArray(), GUILayout.Width(width));
         return picked < names.Count ? names[picked] : current;
     }
 
-    private static BehaviourTreeNodeType ParseNodeType(string type)
-        => Enum.TryParse(type, true, out BehaviourTreeNodeType parsed) ? parsed : BehaviourTreeNodeType.Action;
+    private static HTNNodeType ParseNodeType(string type)
+        => Enum.TryParse(type, true, out HTNNodeType parsed) ? parsed : HTNNodeType.PrimitiveTask;
 
-    // Pseudocode connective for a row, based on its parent's type and whether
-    // it is the first sibling: Selector children chain with TRY/OR ELSE,
-    // Sequence children with IF/AND IF (conditions) and DO/THEN (the rest).
-    private static string GetRowConnective(List<BehaviourTreeNodeData> nodes, int index)
+    // The always-visible line under a Method/PrimitiveTask row explaining what its
+    // precondition/completion condition actually means — sourced from
+    // HTNRegistry.KnownPredicates.Description, never left as a bare unexplained name.
+    private static string BuildConditionSummary(HTNNodeData node)
     {
-        BehaviourTreeNodeType parentType = BehaviourTreeNodeType.Selector; // implicit root
+        HTNNodeType type = ParseNodeType(node.type);
+        string key = type switch
+        {
+            HTNNodeType.Method => node.precondition,
+            HTNNodeType.PrimitiveTask => node.completionCondition,
+            _ => null
+        };
+        if (string.IsNullOrWhiteSpace(key)) return null;
+
+        bool inverted = type == HTNNodeType.Method ? node.invert : node.completionInvert;
+        string description = HTNRegistry.TryGetDescription(key, out string desc)
+            ? desc
+            : $"Unknown condition '{key}' — not in HTNRegistry.KnownPredicates.";
+        string invertedNote = inverted ? " (inverted: met when the above is FALSE)" : string.Empty;
+        string roleLabel = type == HTNNodeType.Method ? "Precondition" : "Completes when";
+        return $"{roleLabel} '{key}'{invertedNote} — {description}";
+    }
+
+    // Pseudocode connective for a row, based on its parent's type and whether it is the
+    // first sibling: a CompoundTask's Method children chain with TRY/OR ELSE (priority —
+    // also the interrupt order, see HTNPlanner); a Method's subtask children chain with
+    // DO/THEN (sequence — the order they execute in, advancing on completion).
+    private static string GetStrategyRowConnective(List<HTNNodeData> nodes, int index)
+    {
+        HTNNodeType type = ParseNodeType(nodes[index].type);
+        if (type == HTNNodeType.CompoundTask) return "TASK";
+
+        HTNNodeType parentType = HTNNodeType.CompoundTask; // implicit: depth-0 rows are the strategy root
         for (int j = index - 1; j >= 0; j--)
         {
             if (nodes[j].depth < nodes[index].depth)
@@ -538,24 +661,42 @@ public class AIWidgetWindow : EditorWindow
         }
 
         bool isFirstSibling = PrevSiblingIndex(nodes, index) < 0;
-
-        if (parentType == BehaviourTreeNodeType.Selector)
+        if (parentType == HTNNodeType.CompoundTask)
         {
             return isFirstSibling ? "TRY" : "OR ELSE";
         }
 
-        bool isCondition = ParseNodeType(nodes[index].type) == BehaviourTreeNodeType.Condition;
-        if (isCondition) return isFirstSibling ? "IF" : "AND IF";
         return isFirstSibling ? "DO" : "THEN";
     }
 
-    private static BehaviourTreeNodeData NewLeafNode(int depth = 0)
-        => new() { depth = depth, type = "Action", action = "Pass" };
+    private static HTNNodeData NewLeafNode(int depth = 0)
+        => new() { depth = depth, type = HTNNodeType.PrimitiveTask.ToString(), advisor = string.Empty, completionCondition = "Never", taskId = string.Empty };
+
+    // Fills in blank/duplicate taskIds after a structural edit. Never touches an
+    // already-unique non-blank id — the Blackboard's persisted execution stack
+    // references these by id across turns, so stable ids must not churn on reorder.
+    private static void EnsureUniqueTaskIds(List<HTNNodeData> nodes)
+    {
+        HashSet<string> seen = new(StringComparer.OrdinalIgnoreCase);
+        foreach (HTNNodeData node in nodes)
+        {
+            if (node == null) continue;
+            bool blank = string.IsNullOrWhiteSpace(node.taskId);
+            bool duplicate = !blank && !seen.Add(node.taskId);
+            if (!blank && !duplicate) { seen.Add(node.taskId); continue; }
+
+            string candidate;
+            int suffix = seen.Count + 1;
+            do { candidate = $"node_{suffix++}"; } while (!seen.Add(candidate));
+            node.taskId = candidate;
+        }
+    }
 
     // ---- outline structure helpers (a subtree = a node plus the contiguous
-    // run of following nodes with greater depth) ----
+    // run of following nodes with greater depth) — pure depth-int operations,
+    // identical shape to the old Behaviour Tree outline's helpers. ----
 
-    private static int SubtreeCount(List<BehaviourTreeNodeData> nodes, int index)
+    private static int SubtreeCount(List<HTNNodeData> nodes, int index)
     {
         int count = 1;
         int depth = nodes[index].depth;
@@ -563,7 +704,7 @@ public class AIWidgetWindow : EditorWindow
         return count;
     }
 
-    private static int PrevSiblingIndex(List<BehaviourTreeNodeData> nodes, int index)
+    private static int PrevSiblingIndex(List<HTNNodeData> nodes, int index)
     {
         int depth = nodes[index].depth;
         for (int j = index - 1; j >= 0; j--)
@@ -574,25 +715,25 @@ public class AIWidgetWindow : EditorWindow
         return -1;
     }
 
-    private static int NextSiblingIndex(List<BehaviourTreeNodeData> nodes, int index)
+    private static int NextSiblingIndex(List<HTNNodeData> nodes, int index)
     {
         int next = index + SubtreeCount(nodes, index);
         if (next < nodes.Count && nodes[next].depth == nodes[index].depth) return next;
         return -1;
     }
 
-    private static void MoveSubtreeUp(List<BehaviourTreeNodeData> nodes, int index)
+    private static void MoveSubtreeUp(List<HTNNodeData> nodes, int index)
     {
         int prev = PrevSiblingIndex(nodes, index);
         if (prev < 0) return;
 
         int count = SubtreeCount(nodes, index);
-        List<BehaviourTreeNodeData> block = nodes.GetRange(index, count);
+        List<HTNNodeData> block = nodes.GetRange(index, count);
         nodes.RemoveRange(index, count);
         nodes.InsertRange(prev, block);
     }
 
-    private static void ShiftSubtreeDepth(List<BehaviourTreeNodeData> nodes, int index, int delta)
+    private static void ShiftSubtreeDepth(List<HTNNodeData> nodes, int index, int delta)
     {
         if (delta > 0 && PrevSiblingIndex(nodes, index) < 0) return;
         if (delta < 0 && nodes[index].depth <= 0) return;
@@ -604,169 +745,209 @@ public class AIWidgetWindow : EditorWindow
         }
     }
 
-    private static List<string> ValidateTree(BehaviourTreeData tree)
+    private static List<string> ValidateStrategy(HTNStrategyData strategy)
     {
         List<string> issues = new();
-        List<BehaviourTreeNodeData> nodes = tree.nodes;
+        List<HTNNodeData> nodes = strategy.nodes;
 
         if (nodes.Count == 0)
         {
-            issues.Add("Tree has no nodes — the built-in default tree will be used instead.");
+            issues.Add("Strategy has no nodes — the built-in default strategy will be used instead.");
             return issues;
+        }
+
+        if (nodes[0] == null || nodes[0].depth != 0)
+        {
+            issues.Add("Row 1 must be at root level (depth 0).");
+        }
+        else if (ParseNodeType(nodes[0].type) != HTNNodeType.CompoundTask)
+        {
+            issues.Add("Row 1 must be a CompoundTask (the strategy root).");
         }
 
         for (int i = 0; i < nodes.Count; i++)
         {
-            BehaviourTreeNodeData node = nodes[i];
-            BehaviourTreeNodeType type = ParseNodeType(node.type);
-            bool hasChildren = i + 1 < nodes.Count && nodes[i + 1].depth > node.depth;
+            HTNNodeData node = nodes[i];
+            if (node == null) continue;
+            HTNNodeType type = ParseNodeType(node.type);
 
-            if (i == 0 && node.depth != 0)
-                issues.Add("Row 1 must be at root level (depth 0).");
+            int childCount = 0;
+            for (int j = i + 1; j < nodes.Count && nodes[j] != null && nodes[j].depth > node.depth; j++)
+            {
+                if (nodes[j].depth == node.depth + 1) childCount++;
+            }
+
             if (i > 0 && node.depth > nodes[i - 1].depth + 1)
                 issues.Add($"Row {i + 1}: indented more than one level below the previous row — it will be skipped.");
 
-            if ((type == BehaviourTreeNodeType.Selector || type == BehaviourTreeNodeType.Sequence) && !hasChildren)
-                issues.Add($"Row {i + 1}: {type} has no children — it will be skipped.");
-            if ((type == BehaviourTreeNodeType.Condition || type == BehaviourTreeNodeType.Action) && hasChildren)
-                issues.Add($"Row {i + 1}: {type} is a leaf — rows indented under it will be ignored.");
-            if (type == BehaviourTreeNodeType.Condition && !BehaviourTreeRegistry.TryGetCondition(node.condition, out _))
-                issues.Add($"Row {i + 1}: unknown condition '{node.condition}'.");
-            if (type == BehaviourTreeNodeType.Action && !BehaviourTreeRegistry.TryGetAction(node.action, out _))
-                issues.Add($"Row {i + 1}: unknown action '{node.action}'.");
+            if (type == HTNNodeType.CompoundTask && childCount == 0)
+                issues.Add($"Row {i + 1}: CompoundTask has no Methods — it will be skipped.");
+            if (type == HTNNodeType.Method && childCount == 0)
+                issues.Add($"Row {i + 1}: Method has no subtasks — it will be skipped.");
+            if (type == HTNNodeType.PrimitiveTask && childCount > 0)
+                issues.Add($"Row {i + 1}: PrimitiveTask is a leaf — rows indented under it will be ignored.");
+            if (type == HTNNodeType.Method && !string.IsNullOrWhiteSpace(node.precondition) && !HTNRegistry.TryGetPredicate(node.precondition, out _))
+                issues.Add($"Row {i + 1}: unknown precondition '{node.precondition}'.");
+            if (type == HTNNodeType.PrimitiveTask && !string.IsNullOrWhiteSpace(node.completionCondition) && !HTNRegistry.TryGetPredicate(node.completionCondition, out _))
+                issues.Add($"Row {i + 1}: unknown completion condition '{node.completionCondition}'.");
+
+            if (type == HTNNodeType.PrimitiveTask
+                && string.Equals(node.completionCondition, "Never", StringComparison.OrdinalIgnoreCase)
+                && NextSiblingIndex(nodes, i) >= 0)
+            {
+                issues.Add($"Row {i + 1}: completion condition is 'Never', but it isn't the last step in its sequence — later rows will never be reached through normal advancement (only via interrupt).");
+            }
+        }
+
+        foreach (IGrouping<string, HTNNodeData> group in nodes
+                     .Where(n => n != null && !string.IsNullOrWhiteSpace(n.taskId))
+                     .GroupBy(n => n.taskId, StringComparer.OrdinalIgnoreCase)
+                     .Where(g => g.Count() > 1))
+        {
+            issues.Add($"taskId '{group.Key}' is used by {group.Count()} rows — must be unique within a strategy.");
         }
 
         return issues;
     }
 
-    private string MakeUniqueTreeId(string baseId)
+    private string MakeUniqueStrategyId(string baseId)
     {
         string candidate = baseId;
         int suffix = 2;
-        while (treeLibrary.trees.Any(t => string.Equals(t.treeId, candidate, StringComparison.OrdinalIgnoreCase)))
+        while (strategyLibrary.strategies.Any(s => string.Equals(s.strategyId, candidate, StringComparison.OrdinalIgnoreCase)))
         {
             candidate = $"{baseId}_{suffix++}";
         }
         return candidate;
     }
 
-    private void RenameSelectedTree(string newId)
+    private void RenameSelectedStrategy(string newId)
     {
         newId = (newId ?? string.Empty).Trim();
         if (string.IsNullOrEmpty(newId)) return;
-        if (treeLibrary.trees.Any(t => string.Equals(t.treeId, newId, StringComparison.OrdinalIgnoreCase))) return;
+        if (strategyLibrary.strategies.Any(s => string.Equals(s.strategyId, newId, StringComparison.OrdinalIgnoreCase))) return;
 
-        string oldId = treeLibrary.trees[selectedTreeIndex].treeId;
-        treeLibrary.trees[selectedTreeIndex].treeId = newId;
-        foreach (BehaviourTreeAssignment assignment in treeLibrary.assignments)
+        string oldId = strategyLibrary.strategies[selectedStrategyIndex].strategyId;
+        strategyLibrary.strategies[selectedStrategyIndex].strategyId = newId;
+        foreach (HTNStrategyAssignment assignment in strategyLibrary.assignments)
         {
-            if (string.Equals(assignment.treeId, oldId, StringComparison.OrdinalIgnoreCase))
-                assignment.treeId = newId;
+            if (string.Equals(assignment.strategyId, oldId, StringComparison.OrdinalIgnoreCase))
+                assignment.strategyId = newId;
         }
-        treesDirty = true;
+        strategiesDirty = true;
     }
 
-    private void LoadTreeLibrary()
+    private void LoadStrategyLibrary()
     {
-        treeLibrary = null;
-        if (File.Exists(TreesAssetPath))
+        strategyLibrary = null;
+        if (File.Exists(StrategiesAssetPath))
         {
-            try { treeLibrary = JsonUtility.FromJson<BehaviourTreeLibraryData>(File.ReadAllText(TreesAssetPath)); }
+            try { strategyLibrary = JsonUtility.FromJson<HTNStrategyLibraryData>(File.ReadAllText(StrategiesAssetPath)); }
             catch (Exception e)
             {
-                Debug.LogWarning($"AIWidget: could not parse {TreesAssetPath} — starting from the built-in default tree. {e.Message}");
+                Debug.LogWarning($"AIWidget: could not parse {StrategiesAssetPath} — starting from the built-in default strategy. {e.Message}");
             }
         }
 
-        treeLibrary ??= new BehaviourTreeLibraryData();
-        treeLibrary.trees ??= new List<BehaviourTreeData>();
-        treeLibrary.assignments ??= new List<BehaviourTreeAssignment>();
-        treeLibrary.trees.RemoveAll(t => t == null);
-        foreach (BehaviourTreeData tree in treeLibrary.trees)
+        strategyLibrary ??= new HTNStrategyLibraryData();
+        strategyLibrary.strategies ??= new List<HTNStrategyData>();
+        strategyLibrary.assignments ??= new List<HTNStrategyAssignment>();
+        strategyLibrary.strategies.RemoveAll(s => s == null);
+        foreach (HTNStrategyData strategy in strategyLibrary.strategies)
         {
-            tree.nodes ??= new List<BehaviourTreeNodeData>();
-            tree.nodes.RemoveAll(n => n == null);
-            ClampDepths(tree.nodes);
+            strategy.nodes ??= new List<HTNNodeData>();
+            strategy.nodes.RemoveAll(n => n == null);
+            ClampDepths(strategy.nodes);
         }
 
-        if (treeLibrary.trees.Count == 0)
+        if (strategyLibrary.strategies.Count == 0)
         {
-            treeLibrary.trees.Add(BuildDefaultTreeData());
+            strategyLibrary.strategies.Add(BuildDefaultStrategyData());
         }
 
-        selectedTreeIndex = Mathf.Clamp(selectedTreeIndex, 0, treeLibrary.trees.Count - 1);
-        treesDirty = false;
+        selectedStrategyIndex = Mathf.Clamp(selectedStrategyIndex, 0, strategyLibrary.strategies.Count - 1);
+        strategiesDirty = false;
     }
 
-    private static void ClampDepths(List<BehaviourTreeNodeData> nodes)
+    private static void ClampDepths(List<HTNNodeData> nodes)
     {
         int previousDepth = -1;
-        foreach (BehaviourTreeNodeData node in nodes)
+        foreach (HTNNodeData node in nodes)
         {
             node.depth = Mathf.Max(0, Mathf.Min(node.depth, previousDepth + 1));
             previousDepth = node.depth;
         }
     }
 
-    // Data mirror of AIBehaviourTreeBuilder.BuildDefault().
-    private static BehaviourTreeData BuildDefaultTreeData()
+    // Data mirror of HTNStrategyBuilder.BuildDefault().
+    private static HTNStrategyData BuildDefaultStrategyData()
     {
-        return new BehaviourTreeData
+        return new HTNStrategyData
         {
-            treeId = AIBehaviourTreeLibrary.DefaultTreeId,
-            nodes = new List<BehaviourTreeNodeData>
+            strategyId = AIStrategyLibrary.DefaultStrategyId,
+            nodes = new List<HTNNodeData>
             {
-                new() { depth = 0, type = "Sequence" },
-                new() { depth = 1, type = "Condition", condition = "NeedsEconomicHelp" },
-                new() { depth = 1, type = "Action", action = "EconomicAdvisor" },
-                new() { depth = 0, type = "Sequence" },
-                new() { depth = 1, type = "Condition", condition = "HasEnemyTarget" },
-                new() { depth = 1, type = "Selector" },
-                new() { depth = 2, type = "Action", action = "MilitaristicAdvisor" },
-                new() { depth = 2, type = "Action", action = "IntelligenceAdvisor" },
-                new() { depth = 2, type = "Action", action = "MagicAdvisor" },
-                new() { depth = 2, type = "Action", action = "DiplomaticAdvisor" },
-                new() { depth = 0, type = "Sequence" },
-                new() { depth = 1, type = "Condition", condition = "ShouldPrioritizeMovement" },
-                new() { depth = 1, type = "Action", action = "MovementAdvisor" },
-                new() { depth = 0, type = "Action", action = "BestAvailableAction" },
-                new() { depth = 0, type = "Action", action = "Pass" }
+                new() { depth = 0, type = "CompoundTask", taskId = "root" },
+                new() { depth = 1, type = "Method", precondition = "Militaristic.Danger", taskId = "root.danger" },
+                new() { depth = 2, type = "PrimitiveTask", advisor = "Militaristic", completionCondition = "Global.Never", taskId = "root.danger.leaf" },
+                new() { depth = 1, type = "Method", precondition = "Economic.Critical", taskId = "root.recover" },
+                new() { depth = 2, type = "PrimitiveTask", advisor = "Economic", completionCondition = "Economic.Weak", taskId = "root.recover.build" },
+                new() { depth = 2, type = "PrimitiveTask", advisor = "Economic", completionCondition = "Economic.Stable", taskId = "root.recover.trade" },
+                new() { depth = 1, type = "Method", precondition = "Militaristic.Viable", taskId = "root.offense" },
+                new() { depth = 2, type = "CompoundTask", taskId = "root.offense.pick" },
+                new() { depth = 3, type = "Method", precondition = "Global.Always", taskId = "root.offense.pick.mil" },
+                new() { depth = 4, type = "PrimitiveTask", advisor = "Militaristic", completionCondition = "Global.Never", taskId = "root.offense.pick.mil.leaf" },
+                new() { depth = 1, type = "Method", precondition = "Movement.Viable", taskId = "root.movement" },
+                new() { depth = 2, type = "PrimitiveTask", advisor = "Movement", completionCondition = "Global.Never", taskId = "root.movement.leaf" },
+                new() { depth = 1, type = "Method", precondition = "Global.Always", taskId = "root.fallback" },
+                new() { depth = 2, type = "PrimitiveTask", advisor = string.Empty, completionCondition = "Global.Never", taskId = "root.fallback.leaf" }
             }
         };
     }
 
-    private void SaveTreeLibrary()
+    private void SaveStrategyLibrary()
     {
-        WriteJsonAsset(TreesAssetPath, JsonUtility.ToJson(treeLibrary, true));
-        AIBehaviourTreeLibrary.Reload();
-        treesDirty = false;
-        Debug.Log($"AIWidget: saved behaviour trees to {TreesAssetPath}");
+        WriteJsonAsset(StrategiesAssetPath, JsonUtility.ToJson(strategyLibrary, true));
+        AIStrategyLibrary.Reload();
+        strategiesDirty = false;
+        Debug.Log($"AIWidget: saved strategies to {StrategiesAssetPath}");
     }
 
     // ------------------------------------------------------------------
     // Advisors tab
     // ------------------------------------------------------------------
 
-    private const string AdvisorAssetPath = "Assets/Resources/" + AIAdvisorConfig.ResourcePath + ".json";
+    private void DrawAdvisorsTab()
+    {
+        EditorGUILayout.BeginHorizontal();
+        using (new EditorGUI.DisabledScope(!advisorsDirty))
+        {
+            if (GUILayout.Button("Save", GUILayout.Width(90f))) SaveAdvisorConfig();
+            if (GUILayout.Button("Revert", GUILayout.Width(90f))) LoadAdvisorConfig();
+        }
+        if (advisorsDirty) GUILayout.Label("Unsaved changes", EditorStyles.miniBoldLabel);
+        GUILayout.FlexibleSpace();
+        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.Space();
+
+        advisorsScroll = EditorGUILayout.BeginScrollView(advisorsScroll);
+        DrawAdvisorsSection();
+        EditorGUILayout.EndScrollView();
+    }
+
+    // "Shared" holds everything not specific to one advisor (base score, difficulty,
+    // HTN bias bonus, Always/Never, ...). The rest match AdvisorType names exactly, so a
+    // single string doubles as both the toolbar label and (parsed) the AdvisorType filter.
+    private static readonly string[] AdvisorProfileNames = { "Shared", "Militaristic", "Economic", "Diplomatic", "Intelligence", "Magic", "Movement" };
+    private int selectedAdvisorProfile;
 
     private void DrawAdvisorsSection()
     {
         EditorGUILayout.HelpBox(
-            "The AI plays cards from its hand, exactly like a human player. Every card carries an action "
-            + "(the 'action' field in the deck JSONs, e.g. StealGold) that runs when the card is played.\n\n"
-            + "When a tree row calls an advisor (e.g. TRY MilitaristicAdvisor), that advisor:\n"
-            + "  1. takes the cards currently in the AI leader's hand that are playable by this character,\n"
-            + "  2. keeps only the cards whose action belongs to it (the ownership list below),\n"
-            + "  3. scores each card and plays the single highest-scoring one.\n"
-            + "If it holds no playable card, the row FAILS and the tree falls through to the next OR ELSE.\n\n"
-            + "Card score = Base Score\n"
-            + "  −  difficulty penalty (card difficulty ÷ Difficulty Divisor, capped at Max Difficulty Penalty)\n"
-            + "  −  gold-cost pressure (bigger when the card is expensive and the treasury is thin;\n"
-            + "      multiplied by Cost Pressure When Poor while the economy needs help)\n"
-            + "  +  affinity (the character's skill levels × the Affinity weights — a mage leans Magic, an agent Intelligence)\n"
-            + "  +  the advisor's situational bonuses (its group below — economy state, enemy distance, being outmatched, ...).\n"
-            + "Typical totals land between about −5 and +15; a bonus of 3 is significant, 10 is dominant.\n\n"
-            + $"Saved to {AdvisorAssetPath} (part of this tab's Save button).",
+            "Pick an advisor to see everything about it in one place: its scoring weights, the HTN conditions that read "
+            + "its state, which authored HTN tasks bias toward it, and which cards it owns (with a live score example). "
+            + "\"Shared\" holds the handful of things every advisor uses.\n\n"
+            + $"Saved to {AdvisorAssetPath}.",
             MessageType.Info);
 
         if (GUILayout.Button("Reset Advisor Tuning To Default", GUILayout.Width(220f)))
@@ -780,81 +961,192 @@ public class AIWidgetWindow : EditorWindow
             advisorActionFlags.Clear();
             advisorsDirty = true;
         }
-        EditorGUILayout.Space();
-
-        DrawAdvisorWeights();
         EditorGUILayout.Space(10f);
-        DrawActionOwnership();
+
+        selectedAdvisorProfile = GUILayout.Toolbar(Mathf.Clamp(selectedAdvisorProfile, 0, AdvisorProfileNames.Length - 1), AdvisorProfileNames);
+        EditorGUILayout.Space(10f);
+
+        DrawAdvisorProfile(AdvisorProfileNames[selectedAdvisorProfile]);
     }
 
-    private void DrawAdvisorWeights()
+    // AIAdvisorConfig.Keys groups don't all match an advisor name literally (Affinity.X.*,
+    // Economy.* for Economic, Targeting.* shared by several) — this is the one place that
+    // mapping lives, so "which advisor is this weight about" has a single source of truth.
+    private static string AdvisorGroupForWeightKey(string key)
     {
-        EditorGUILayout.LabelField("Scoring weights", EditorStyles.boldLabel);
-
-        foreach (IGrouping<string, AdvisorWeightDefinition> group in AIAdvisorConfig.KnownWeights
-                     .GroupBy(d => d.key.Split('.')[0]))
+        if (key.StartsWith("Affinity.", StringComparison.OrdinalIgnoreCase))
         {
-            bool expanded = !advisorGroupExpanded.TryGetValue(group.Key, out bool value) || value;
-            expanded = EditorGUILayout.Foldout(expanded, group.Key, true, EditorStyles.foldoutHeader);
-            advisorGroupExpanded[group.Key] = expanded;
-            if (!expanded) continue;
+            string[] parts = key.Split('.');
+            return parts.Length > 1 ? parts[1] : "Shared";
+        }
+        if (key.StartsWith("Economy.", StringComparison.OrdinalIgnoreCase)) return "Economic";
+        if (key.StartsWith("Global.", StringComparison.OrdinalIgnoreCase)) return "Shared";
+        if (key.StartsWith("Targeting.", StringComparison.OrdinalIgnoreCase)) return "Shared";
+        return key.Split('.')[0];
+    }
 
-            foreach (AdvisorWeightDefinition definition in group)
+    private static string AdvisorGroupForPredicateKey(string key)
+        => key.StartsWith("Global.", StringComparison.OrdinalIgnoreCase) ? "Shared" : key.Split('.')[0];
+
+    // Everything connected to one advisor (or "Shared"), in one screen: weights it owns,
+    // HTN conditions about it, HTN tasks that bias toward it, and the cards it owns with a
+    // live score preview. Replaces the old flat "everything, in five separate lists" layout.
+    private void DrawAdvisorProfile(string advisorGroup)
+    {
+        EnsureAdvisorStyles();
+        bool isShared = string.Equals(advisorGroup, "Shared", StringComparison.OrdinalIgnoreCase);
+        Enum.TryParse(advisorGroup, out AdvisorType advisor); // AdvisorType.None if isShared or unparseable
+
+        EditorGUILayout.LabelField("Scoring weights", sectionHeaderStyle);
+        List<AdvisorWeightDefinition> weights = AIAdvisorConfig.KnownWeights
+            .Where(d => string.Equals(AdvisorGroupForWeightKey(d.key), advisorGroup, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+        if (weights.Count == 0)
+        {
+            EditorGUILayout.LabelField("(no weights for this advisor)", weightDescStyle);
+        }
+        else
+        {
+            foreach (AdvisorWeightDefinition definition in weights) DrawWeightRow(definition);
+        }
+
+        if (isShared)
+        {
+            EditorGUILayout.Space(12f);
+            DrawConditionsForGroup(advisorGroup);
+            return; // "cards owned" / "tasks that bias toward" only make sense per-advisor
+        }
+
+        EditorGUILayout.Space(16f);
+        DrawHtnDrivingPanel(advisorGroup, advisor);
+
+        // Live effect comes next, directly under the weights that drive it — change a
+        // number above, watch the scores below move, with nothing in between to scroll past.
+        EditorGUILayout.Space(16f);
+        EditorGUILayout.LabelField("Live effect", sectionHeaderStyle);
+        EditorGUILayout.LabelField("Edit any weight above, or any field below, and every score updates.", weightDescStyle);
+        DrawScenarioInputs();
+        EditorGUILayout.Space(4f);
+        DrawActionOwnership(advisor);
+
+        EditorGUILayout.Space(20f);
+        EditorGUILayout.LabelField("Reference", sectionHeaderStyle);
+        DrawConditionsForGroup(advisorGroup);
+
+        EditorGUILayout.Space(12f);
+        EditorGUILayout.LabelField("HTN tasks that bias toward this advisor", conditionKeyStyle);
+        List<string> taskRefs = new();
+        foreach (HTNStrategyData strategy in strategyLibrary.strategies)
+        {
+            if (strategy?.nodes == null) continue;
+            foreach (HTNNodeData node in strategy.nodes)
             {
-                float current = advisorWeights.TryGetValue(definition.key, out float v) ? v : definition.defaultValue;
-
-                EditorGUILayout.BeginHorizontal();
-                GUILayout.Space(16f);
-                string label = ObjectNames.NicifyVariableName(
-                    definition.key.Substring(group.Key.Length + 1).Replace(".", " "));
-                EditorGUILayout.LabelField(new GUIContent(label, definition.description), GUILayout.Width(280f));
-
-                float picked = EditorGUILayout.FloatField(current, GUILayout.Width(60f));
-                if (!Mathf.Approximately(picked, current))
+                if (node == null || ParseNodeType(node.type) != HTNNodeType.PrimitiveTask) continue;
+                if (string.Equals(node.advisor, advisorGroup, StringComparison.OrdinalIgnoreCase))
                 {
-                    advisorWeights[definition.key] = picked;
-                    advisorsDirty = true;
-                    current = picked;
+                    taskRefs.Add($"{strategy.strategyId} : {node.taskId}");
                 }
-
-                if (!Mathf.Approximately(current, definition.defaultValue))
-                {
-                    GUILayout.Label($"(default {definition.defaultValue})", EditorStyles.miniLabel, GUILayout.Width(80f));
-                    if (GUILayout.Button("↺", GUILayout.Width(24f)))
-                    {
-                        advisorWeights[definition.key] = definition.defaultValue;
-                        advisorsDirty = true;
-                        GUI.FocusControl(null);
-                    }
-                }
-
-                GUILayout.Space(8f);
-                GUILayout.Label(definition.description, EditorStyles.miniLabel);
-                GUILayout.FlexibleSpace();
-                EditorGUILayout.EndHorizontal();
+            }
+        }
+        if (taskRefs.Count == 0)
+        {
+            EditorGUILayout.LabelField("Not referenced by any authored HTN strategy yet — see the HTN tab.", EditorStyles.miniLabel);
+        }
+        else
+        {
+            foreach (string taskRef in taskRefs)
+            {
+                EditorGUILayout.LabelField("•  " + taskRef, EditorStyles.miniLabel);
             }
         }
     }
 
-    private void DrawActionOwnership()
+    private void DrawConditionsForGroup(string advisorGroup)
     {
-        EditorGUILayout.LabelField("Card actions → advisor ownership", EditorStyles.boldLabel);
-        EditorGUILayout.HelpBox(
-            "Which advisor gets to play the cards that carry each action. 'Default' keeps the value coded on the action class; "
-            + "an override moves those cards to another advisor's pool. 'Not advised' removes them from every advisor's pool — "
-            + "only a Best Available Action tree row can still play them.\n\n"
-            + "PRIORITY: within an advisor there is no manual order — the advisor always plays its HIGHEST-SCORING card. "
-            + "To prioritize one action over another, give it a Bonus: a flat number added to its score every time it is considered. "
-            + "+2 wins most ties, +10 dominates, negative pushes it to last resort.",
-            MessageType.None);
+        EnsureAdvisorStyles();
+        EditorGUILayout.LabelField("HTN conditions about this", sectionHeaderStyle);
+        List<HTNPredicateDefinition> conditions = HTNRegistry.KnownPredicates
+            .Where(d => string.Equals(AdvisorGroupForPredicateKey(d.Key), advisorGroup, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+        if (conditions.Count == 0)
+        {
+            EditorGUILayout.LabelField("No HTN condition currently reads this advisor's state.", weightDescStyle);
+        }
+        else
+        {
+            foreach (HTNPredicateDefinition definition in conditions)
+            {
+                bool live = EvaluatePredicateLive(definition.Key);
+                EditorGUILayout.BeginVertical(weightRowBoxStyle);
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField(definition.Key, conditionKeyStyle);
+                GUILayout.FlexibleSpace();
+                DrawConditionBadge(live ? "TRUE" : "FALSE", live);
+                EditorGUILayout.EndHorizontal();
+                EditorGUILayout.LabelField(definition.Description, weightDescStyle);
+                EditorGUILayout.EndVertical();
+            }
+        }
+    }
 
-        DrawScenarioInputs();
-        EditorGUILayout.Space(4f);
+    // One card per weight: a top row with the label and the number field big enough to read,
+    // and the plain-English description on its own full-width wrapped line underneath —
+    // replaces the old single-line layout that squeezed label + field + default + description
+    // into one row and clipped the description on anything but a very wide window.
+    private void DrawWeightRow(AdvisorWeightDefinition definition)
+    {
+        EnsureAdvisorStyles();
+        float current = advisorWeights.TryGetValue(definition.key, out float v) ? v : definition.defaultValue;
+        bool isDefault = Mathf.Approximately(current, definition.defaultValue);
+
+        int firstDot = definition.key.IndexOf('.');
+        string shortKey = firstDot >= 0 && firstDot < definition.key.Length - 1 ? definition.key.Substring(firstDot + 1) : definition.key;
+        string label = ObjectNames.NicifyVariableName(shortKey.Replace(".", " "));
+
+        EditorGUILayout.BeginVertical(weightRowBoxStyle);
+
+        EditorGUILayout.BeginHorizontal();
+        EditorGUILayout.LabelField(label, weightLabelStyle, GUILayout.MinWidth(140f));
+        GUILayout.FlexibleSpace();
+        if (!isDefault)
+        {
+            GUILayout.Label($"default {definition.defaultValue:0.##}", EditorStyles.miniLabel);
+            if (GUILayout.Button("Reset", EditorStyles.miniButton, GUILayout.Width(50f)))
+            {
+                advisorWeights[definition.key] = definition.defaultValue;
+                advisorsDirty = true;
+                GUI.FocusControl(null);
+                current = definition.defaultValue;
+            }
+            GUILayout.Space(6f);
+        }
+        float picked = EditorGUILayout.FloatField(current, GUILayout.Width(70f), GUILayout.Height(20f));
+        if (!Mathf.Approximately(picked, current))
+        {
+            advisorWeights[definition.key] = picked;
+            advisorsDirty = true;
+        }
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.Space(2f);
+        EditorGUILayout.LabelField(definition.description, weightDescStyle);
+
+        EditorGUILayout.EndVertical();
+    }
+
+    // forcedAdvisor scopes the list to cards owned by exactly one advisor — the only way
+    // this is called now, from DrawAdvisorProfile. An action's "resolved" advisor is its
+    // override if it has one, else the default coded on the CharacterAction class.
+    private void DrawActionOwnership(AdvisorType forcedAdvisor)
+    {
+        EditorGUILayout.HelpBox(
+            "'Default' keeps the advisor coded on the action class; an override moves it here. Scoring has no manual "
+            + "order — the single highest-scoring card across the whole deck wins each pick — so to prioritize one "
+            + "action, give it a Bonus instead: +2 wins most ties, +10 dominates, negative pushes it to last resort.",
+            MessageType.None);
 
         EditorGUILayout.BeginHorizontal();
         actionSearch = EditorGUILayout.TextField("Filter", actionSearch);
-        actionSortMode = EditorGUILayout.Popup(actionSortMode, ActionSortLabels, GUILayout.Width(130f));
-        onlyShowCardActions = GUILayout.Toggle(onlyShowCardActions, "Only actions used by cards", GUILayout.Width(180f));
         EditorGUILayout.EndHorizontal();
 
         actionCatalog ??= BuildActionCatalog();
@@ -863,11 +1155,31 @@ public class AIWidgetWindow : EditorWindow
             .Select(n => n == nameof(AdvisorType.None) ? "Not advised" : n)
             .ToArray();
 
+        // Auto-expand the single best-scoring, actually-in-a-deck card for this advisor so a
+        // full "here's the effect" breakdown is visible on arrival — never hidden behind a
+        // click nobody knows to make.
+        AdvisorType ResolvedOf(string actionClass, AdvisorType defaultAdvisor) =>
+            advisorActionOverrides.TryGetValue(actionClass, out AdvisorType o) ? o : defaultAdvisor;
+        List<string> currentClasses = SortedActionCatalog()
+            .Where(e => ResolvedOf(e.actionClass, e.defaultAdvisor) == forcedAdvisor)
+            .Select(e => e.actionClass)
+            .ToList();
+        if (!currentClasses.Any(expandedActions.Contains))
+        {
+            string autoExpand = currentClasses.FirstOrDefault(c =>
+                cardsByActionRef.TryGetValue(c, out List<CardUsage> u) && u.Count > 0);
+            if (autoExpand != null) expandedActions.Add(autoExpand);
+        }
+
+        bool anyShown = false;
         foreach ((string actionClass, AdvisorType defaultAdvisor) in SortedActionCatalog())
         {
+            bool hasOverride = advisorActionOverrides.TryGetValue(actionClass, out AdvisorType overridden);
+            AdvisorType resolvedAdvisor = hasOverride ? overridden : defaultAdvisor;
+            if (resolvedAdvisor != forcedAdvisor) continue;
+
             cardsByActionRef.TryGetValue(actionClass, out List<CardUsage> cards);
             bool usedByCards = cards != null && cards.Count > 0;
-            if (onlyShowCardActions && !usedByCards) continue;
 
             if (!string.IsNullOrWhiteSpace(actionSearch)
                 && actionClass.IndexOf(actionSearch, StringComparison.OrdinalIgnoreCase) < 0
@@ -876,8 +1188,7 @@ public class AIWidgetWindow : EditorWindow
                 continue;
             }
 
-            bool hasOverride = advisorActionOverrides.TryGetValue(actionClass, out AdvisorType overridden);
-            AdvisorType resolvedAdvisor = hasOverride ? overridden : defaultAdvisor;
+            anyShown = true;
             bool expanded = expandedActions.Contains(actionClass);
             float bonus = advisorActionBonuses.TryGetValue(actionClass, out float b) ? b : 0f;
             float bestScore = BestScoreForAction(actionClass, resolvedAdvisor, cards, bonus);
@@ -892,7 +1203,7 @@ public class AIWidgetWindow : EditorWindow
             }
 
             GUILayout.Label(new GUIContent(bestScore.ToString("0.0"),
-                "Exact score of this action's best card under the scenario above. The advisor plays the card with the highest score."),
+                "Exact score of this action's best card under the scenario above. The AI plays the single highest-scoring card across the whole deck."),
                 EditorStyles.miniBoldLabel, GUILayout.Width(34f));
 
             string[] options = new string[advisorNames.Length + 1];
@@ -910,7 +1221,7 @@ public class AIWidgetWindow : EditorWindow
             }
 
             GUILayout.Label(new GUIContent("Bonus",
-                "Flat score adjustment added every time the AI scores this action. Use it to prioritize one action over its advisor's other cards: +2 wins most ties, +10 dominates, negative = last resort."),
+                "Flat score adjustment added every time the AI scores this action. +2 wins most ties, +10 dominates, negative = last resort."),
                 EditorStyles.miniLabel, GUILayout.Width(38f));
             float pickedBonus = EditorGUILayout.FloatField(bonus, GUILayout.Width(40f));
             if (!Mathf.Approximately(pickedBonus, bonus))
@@ -969,92 +1280,132 @@ public class AIWidgetWindow : EditorWindow
                 EditorGUILayout.Space(4f);
             }
         }
+
+        if (!anyShown)
+        {
+            EditorGUILayout.LabelField(
+                string.IsNullOrWhiteSpace(actionSearch) ? "No actions currently resolve to this advisor." : "No match for that filter.",
+                EditorStyles.miniLabel);
+        }
     }
 
+    // Highest-scoring first — exactly the order the AI would prefer these cards this turn.
     private IEnumerable<(string actionClass, AdvisorType defaultAdvisor)> SortedActionCatalog()
     {
-        AdvisorType Resolved((string actionClass, AdvisorType defaultAdvisor) entry) =>
-            advisorActionOverrides.TryGetValue(entry.actionClass, out AdvisorType o) ? o : entry.defaultAdvisor;
-        int CardCount((string actionClass, AdvisorType defaultAdvisor) entry) =>
-            cardsByActionRef.TryGetValue(entry.actionClass, out List<CardUsage> c) ? c.Count : 0;
         float Score((string actionClass, AdvisorType defaultAdvisor) entry)
         {
+            AdvisorType resolved = advisorActionOverrides.TryGetValue(entry.actionClass, out AdvisorType o) ? o : entry.defaultAdvisor;
             cardsByActionRef.TryGetValue(entry.actionClass, out List<CardUsage> cards);
             float bonus = advisorActionBonuses.TryGetValue(entry.actionClass, out float b) ? b : 0f;
-            return BestScoreForAction(entry.actionClass, Resolved(entry), cards, bonus);
+            return BestScoreForAction(entry.actionClass, resolved, cards, bonus);
         }
 
-        return actionSortMode switch
-        {
-            // By advisor: real advisors first (enum order), Not advised last.
-            1 => actionCatalog
-                .OrderBy(e => Resolved(e) == AdvisorType.None ? int.MaxValue : (int)Resolved(e))
-                .ThenBy(e => e.actionClass, StringComparer.OrdinalIgnoreCase),
-            2 => actionCatalog.OrderBy(e => e.actionClass, StringComparer.OrdinalIgnoreCase),
-            3 => actionCatalog.OrderByDescending(CardCount).ThenBy(e => e.actionClass, StringComparer.OrdinalIgnoreCase),
-            // By score: exactly the order an advisor (or Best Available Action) would prefer them.
-            _ => actionCatalog.OrderByDescending(Score).ThenBy(e => e.actionClass, StringComparer.OrdinalIgnoreCase)
-        };
+        return actionCatalog.OrderByDescending(Score).ThenBy(e => e.actionClass, StringComparer.OrdinalIgnoreCase);
     }
 
     // Scenario assumptions for the score preview: every value the real scoring
     // reads from the board at runtime becomes an editable input here.
+    // Every field gets its own caption above the box (instead of a fixed-width inline label
+    // that clips) and fields are grouped into named cards — Character / Status / Gold &
+    // military / Distances / HTN bias — so it reads as a form, not one run-on row of controls.
     private void DrawScenarioInputs()
     {
-        EditorGUILayout.LabelField("Score preview scenario — set the unknowns; every card below shows its exact score", EditorStyles.boldLabel);
+        EnsureAdvisorStyles();
+        EditorGUILayout.LabelField("Score preview scenario", sectionHeaderStyle);
+        EditorGUILayout.LabelField(
+            "Set the unknowns below — every card score, viability tile, and HTN badge on this page recomputes from them.",
+            weightDescStyle);
+        EditorGUILayout.Space(6f);
 
-        float previousLabelWidth = EditorGUIUtility.labelWidth;
-        EditorGUIUtility.labelWidth = 78f;
-
+        EditorGUILayout.BeginVertical(weightRowBoxStyle);
+        EditorGUILayout.LabelField("Character", conditionKeyStyle);
         EditorGUILayout.BeginHorizontal();
-        simCommander = EditorGUILayout.IntField("Commander", simCommander, GUILayout.Width(130f));
-        simAgent = EditorGUILayout.IntField("Agent", simAgent, GUILayout.Width(130f));
-        simEmissary = EditorGUILayout.IntField("Emissary", simEmissary, GUILayout.Width(130f));
-        simMage = EditorGUILayout.IntField("Mage", simMage, GUILayout.Width(130f));
-        simArtifactsCarried = EditorGUILayout.IntField("Artifacts", simArtifactsCarried, GUILayout.Width(130f));
+        simCommander = DrawStatField("Commander", simCommander);
+        simAgent = DrawStatField("Agent", simAgent);
+        simEmissary = DrawStatField("Emissary", simEmissary);
+        simMage = DrawStatField("Mage", simMage);
+        simArtifactsCarried = DrawStatField("Artifacts carried", simArtifactsCarried, width: 110f);
         GUILayout.FlexibleSpace();
         EditorGUILayout.EndHorizontal();
+        EditorGUILayout.EndVertical();
 
+        EditorGUILayout.BeginVertical(weightRowBoxStyle);
+        EditorGUILayout.LabelField("Status", conditionKeyStyle);
         EditorGUILayout.BeginHorizontal();
-        simLeadingArmy = GUILayout.Toggle(simLeadingArmy, "Leading an army", GUILayout.Width(120f));
-        simMovementPriority = GUILayout.Toggle(simMovementPriority, new GUIContent("Movement priority", "No threats around and the character has somewhere to go."), GUILayout.Width(130f));
-        simHostageToRescue = GUILayout.Toggle(simHostageToRescue, new GUIContent("Hostage to rescue", "A friendly character is held captive nearby. Off = rescue actions (Free Character) get 0 situation points."), GUILayout.Width(130f));
-        simHoldingHostage = GUILayout.Toggle(simHoldingHostage, new GUIContent("Holding hostage", "This character holds a captive. Off = hostage actions (Ask Ransom, Release Character) get 0 situation points."), GUILayout.Width(120f));
-
-        GUILayout.Label(new GUIContent($"Outmatched: {(SimulatedOutmatched() ? "Yes" : "No")}",
-            "Derived, not chosen: outmatched = leading an army AND my army strength < enemy army strength. Not leading an army = never outmatched."),
-            EditorStyles.miniBoldLabel, GUILayout.Width(110f));
-
-        EconomyStatus economy = SimulatedEconomyStatus();
-        GUILayout.Label(new GUIContent($"Economy: {economy}", EconomyThresholdsTooltip()), EditorStyles.miniBoldLabel, GUILayout.Width(140f));
-
+        simLeadingArmy = GUILayout.Toggle(simLeadingArmy, "Leading an army", GUILayout.Width(130f));
+        simHostageToRescue = GUILayout.Toggle(simHostageToRescue, new GUIContent("Hostage to rescue", "A friendly character is held captive nearby. Off = rescue actions (Free Character) get 0 situation points."), GUILayout.Width(150f));
+        simHoldingHostage = GUILayout.Toggle(simHoldingHostage, new GUIContent("Holding hostage", "This character holds a captive. Off = hostage actions (Ask Ransom, Release Character) get 0 situation points."), GUILayout.Width(140f));
         GUILayout.FlexibleSpace();
         EditorGUILayout.EndHorizontal();
-
+        EditorGUILayout.Space(6f);
         EditorGUILayout.BeginHorizontal();
-        simGoldBuffer = EditorGUILayout.IntField("Gold", simGoldBuffer, GUILayout.Width(130f));
-        simGoldPerTurn = EditorGUILayout.IntField("Gold/turn", simGoldPerTurn, GUILayout.Width(130f));
+        bool outmatched = SimulatedOutmatched();
+        DrawConditionBadge(outmatched ? "Outmatched: Yes" : "Outmatched: No", outmatched);
+        GUILayout.Space(4f);
+        DrawMetricTile("Economy", SimulatedEconomyStatus().ToString(), EconomyThresholdsTooltip());
+        GUILayout.FlexibleSpace();
+        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.EndVertical();
+
+        EditorGUILayout.BeginVertical(weightRowBoxStyle);
+        EditorGUILayout.LabelField("Gold & military", conditionKeyStyle);
+        EditorGUILayout.BeginHorizontal();
+        simGoldBuffer = DrawStatField("Gold", simGoldBuffer);
+        simGoldPerTurn = DrawStatField("Gold / turn", simGoldPerTurn, width: 100f);
         using (new EditorGUI.DisabledScope(!simLeadingArmy))
         {
             int shownStrength = simLeadingArmy ? simMyArmyStrength : 0;
-            int pickedStrength = EditorGUILayout.IntField(new GUIContent("My army", "Army offence strength. 0 while not leading an army."), shownStrength, GUILayout.Width(130f));
-            if (simLeadingArmy) simMyArmyStrength = pickedStrength;
+            int picked = DrawStatField("My army", shownStrength, "Army offence strength. 0 while not leading an army.");
+            if (simLeadingArmy) simMyArmyStrength = picked;
         }
-        simEnemyStrength = EditorGUILayout.IntField("Enemy army", simEnemyStrength, GUILayout.Width(130f));
-        simArtifactShare = EditorGUILayout.Slider(new GUIContent("Artifacts %", "Share of the world's artifacts the nation already owns (0..1)."), simArtifactShare, 0f, 1f, GUILayout.Width(240f));
+        simEnemyStrength = DrawStatField("Enemy army", simEnemyStrength);
         GUILayout.FlexibleSpace();
         EditorGUILayout.EndHorizontal();
-
-        EditorGUIUtility.labelWidth = 118f;
+        EditorGUILayout.Space(6f);
         EditorGUILayout.BeginHorizontal();
-        simEnemyDistance = EditorGUILayout.FloatField(new GUIContent("Enemy PC/Army dist", "Hexes to the nearest enemy PC or army. Use 99 for none."), simEnemyDistance, GUILayout.Width(170f));
-        simEnemyCharacterDistance = EditorGUILayout.FloatField(new GUIContent("Enemy char dist", "Hexes to the nearest enemy character. Use 99 for none."), simEnemyCharacterDistance, GUILayout.Width(170f));
-        simNpcDistance = EditorGUILayout.FloatField(new GUIContent("NPC dist", "Hexes to the nearest unrevealed NPC. Use 99 for none."), simNpcDistance, GUILayout.Width(170f));
-        simDestinationDistance = EditorGUILayout.FloatField(new GUIContent("Destination dist", "Hexes to the preferred movement destination."), simDestinationDistance, GUILayout.Width(170f));
+        EditorGUILayout.LabelField(new GUIContent("Artifacts % owned", "Share of the world's artifacts the nation already owns (0..1)."), GUILayout.Width(130f));
+        simArtifactShare = EditorGUILayout.Slider(simArtifactShare, 0f, 1f, GUILayout.Width(220f));
         GUILayout.FlexibleSpace();
         EditorGUILayout.EndHorizontal();
+        EditorGUILayout.EndVertical();
 
-        EditorGUIUtility.labelWidth = previousLabelWidth;
+        EditorGUILayout.BeginVertical(weightRowBoxStyle);
+        EditorGUILayout.LabelField("Distances (hexes)", conditionKeyStyle);
+        EditorGUILayout.BeginHorizontal();
+        simEnemyDistance = DrawStatFieldF("Enemy PC / army", simEnemyDistance, "Hexes to the nearest enemy PC or army. Use 99 for none.");
+        simEnemyCharacterDistance = DrawStatFieldF("Enemy character", simEnemyCharacterDistance, "Hexes to the nearest enemy character. Use 99 for none.");
+        simNpcDistance = DrawStatFieldF("Unrevealed NPC", simNpcDistance, "Hexes to the nearest unrevealed NPC. Use 99 for none.");
+        simDestinationDistance = DrawStatFieldF("Move destination", simDestinationDistance, "Hexes to the preferred movement destination.");
+        GUILayout.FlexibleSpace();
+        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.EndVertical();
+
+        EditorGUILayout.BeginVertical(weightRowBoxStyle);
+        EditorGUILayout.LabelField("HTN bias preview", conditionKeyStyle);
+        EditorGUILayout.LabelField("Simulate the HTN tab's currently-active task biasing scoring toward this advisor.", weightDescStyle);
+        string[] biasOptions = Enum.GetNames(typeof(AdvisorType));
+        simBiasedAdvisorIndex = EditorGUILayout.Popup(Mathf.Clamp(simBiasedAdvisorIndex, 0, biasOptions.Length - 1), biasOptions, GUILayout.Width(160f));
+        EditorGUILayout.EndVertical();
+    }
+
+    private int DrawStatField(string caption, int value, string tooltip = null, float width = 90f)
+    {
+        EditorGUILayout.BeginVertical(GUILayout.Width(width));
+        GUILayout.Label(new GUIContent(caption, tooltip), EditorStyles.miniLabel);
+        int result = EditorGUILayout.IntField(value, GUILayout.Width(width), GUILayout.Height(20f));
+        EditorGUILayout.EndVertical();
+        GUILayout.Space(10f);
+        return result;
+    }
+
+    private float DrawStatFieldF(string caption, float value, string tooltip = null, float width = 120f)
+    {
+        EditorGUILayout.BeginVertical(GUILayout.Width(width));
+        GUILayout.Label(new GUIContent(caption, tooltip), EditorStyles.miniLabel);
+        float result = EditorGUILayout.FloatField(value, GUILayout.Width(width), GUILayout.Height(20f));
+        EditorGUILayout.EndVertical();
+        GUILayout.Space(10f);
+        return result;
     }
 
     // Checkboxes deciding which formula terms count for this action's score.
@@ -1091,8 +1442,28 @@ public class AIWidgetWindow : EditorWindow
 
     // Derived, mirroring GetMilitaryEdgeScore: only an army commander whose
     // army is weaker than the enemy's counts as outmatched.
+    // Mirrors AIContextDataBuilder.CacheEnemyTargets exactly: 0 strength while leading no
+    // army (so "no army" always counts as outmatched against any enemy), compared against
+    // enemy strength via the single OutmatchedStrengthRatio weight — not a second, looser
+    // threshold invented just for the widget.
     private bool SimulatedOutmatched()
-        => simLeadingArmy && simMyArmyStrength < simEnemyStrength;
+    {
+        float ratio = advisorWeights.TryGetValue(AIAdvisorConfig.Keys.OutmatchedStrengthRatio, out float r)
+            ? r : AIAdvisorConfig.GetDefaultWeight(AIAdvisorConfig.Keys.OutmatchedStrengthRatio);
+        float myStrength = simLeadingArmy ? simMyArmyStrength : 0f;
+        return simEnemyStrength > myStrength * ratio;
+    }
+
+    // Mirrors AIContext.IsEnemyNear (GetDistanceScore(false) > 0).
+    private bool SimulatedEnemyNear()
+    {
+        float proximityMax = advisorWeights.TryGetValue(AIAdvisorConfig.Keys.EnemyProximityMax, out float p)
+            ? p : AIAdvisorConfig.GetDefaultWeight(AIAdvisorConfig.Keys.EnemyProximityMax);
+        return proximityMax - simEnemyDistance > 0f;
+    }
+
+    // Mirrors HTNRegistry's Militaristic.Danger predicate.
+    private bool SimulatedDanger() => SimulatedEnemyNear() && SimulatedOutmatched();
 
     // Hostage-dependent actions lose their situation term when the scenario
     // has no matching hostage (in game they would not be playable at all).
@@ -1139,6 +1510,144 @@ public class AIWidgetWindow : EditorWindow
             return SimulateScore(actionClass, advisor, 0, 0, bonus, out _);
         }
         return cards.Max(c => SimulateScore(actionClass, advisor, c.difficulty, c.goldCost, bonus, out _));
+    }
+
+    // Exact mirror of AIContext.GetAdvisorViability under the scenario assumptions above —
+    // literally the same terms SimulateScore adds as an advisor's situational bonus, minus
+    // the handful tied to one specific action. This is the number HTNRegistry's Viable
+    // predicates compare against a threshold at runtime; showing it here, live, next to the
+    // weights that compose it, is what makes "Advisors drive HTN" a visible fact instead of
+    // a claim in a comment.
+    private float SimulateViability(AdvisorType advisor)
+    {
+        float W(string key) => advisorWeights.TryGetValue(key, out float v) ? v : AIAdvisorConfig.GetDefaultWeight(key);
+        float enemyProximity = Mathf.Max(0f, W(AIAdvisorConfig.Keys.EnemyProximityMax) - simEnemyDistance);
+
+        return advisor switch
+        {
+            AdvisorType.Economic => SimulatedEconomyStatus() switch
+            {
+                EconomyStatus.Critical => W(AIAdvisorConfig.Keys.EconomyCriticalBonus),
+                EconomyStatus.Weak => W(AIAdvisorConfig.Keys.EconomyWeakBonus),
+                EconomyStatus.Stable => W(AIAdvisorConfig.Keys.EconomyStableBonus),
+                _ => 0f
+            },
+            AdvisorType.Militaristic => enemyProximity + (!simLeadingArmy
+                ? W(AIAdvisorConfig.Keys.NoArmyPenalty)
+                : simEnemyStrength > 0
+                    ? MilitaristicEdge(W)
+                    : 0f),
+            AdvisorType.Intelligence => Mathf.Max(0f, W(AIAdvisorConfig.Keys.EnemyCharacterProximityMax) - simEnemyCharacterDistance)
+                + enemyProximity
+                + (SimulatedEconomyStatus() is EconomyStatus.Critical or EconomyStatus.Weak ? W(AIAdvisorConfig.Keys.IntelligencePoorEconomyBonus) : 0f)
+                + (SimulatedOutmatched() ? W(AIAdvisorConfig.Keys.IntelligenceOutmatchedBonus) : 0f),
+            AdvisorType.Magic => (1f - Mathf.Clamp01(simArtifactShare)) * W(AIAdvisorConfig.Keys.ArtifactScarcityWeight) + enemyProximity,
+            AdvisorType.Diplomatic => Mathf.Max(0f, W(AIAdvisorConfig.Keys.NpcProximityMax) - simNpcDistance)
+                + enemyProximity
+                + (SimulatedOutmatched() ? W(AIAdvisorConfig.Keys.DiplomaticOutmatchedBonus) : 0f),
+            AdvisorType.Movement => Mathf.Max(0f, W(AIAdvisorConfig.Keys.MovementProximityMax)
+                - simDestinationDistance * W(AIAdvisorConfig.Keys.MovementDistancePenaltyPerHex)),
+            _ => 0f
+        };
+    }
+
+    private float MilitaristicEdge(Func<string, float> W)
+    {
+        float strengthDiff = simMyArmyStrength - simEnemyStrength;
+        float farPenalty = simEnemyDistance > 1f ? W(AIAdvisorConfig.Keys.FarTargetPenalty) : 0f;
+        return strengthDiff < 0
+            ? Mathf.Max(-10f, strengthDiff / 10f - farPenalty)
+            : Mathf.Clamp(strengthDiff / 20f, -5f, 8f) - farPenalty;
+    }
+
+    // Named threshold weight per advisor, matching HTNRegistry's Viable predicates.
+    private static string ViabilityThresholdKeyFor(AdvisorType advisor) => advisor switch
+    {
+        AdvisorType.Militaristic => AIAdvisorConfig.Keys.MilitaristicViabilityThreshold,
+        AdvisorType.Diplomatic => AIAdvisorConfig.Keys.DiplomaticViabilityThreshold,
+        AdvisorType.Intelligence => AIAdvisorConfig.Keys.IntelligenceViabilityThreshold,
+        AdvisorType.Magic => AIAdvisorConfig.Keys.MagicViabilityThreshold,
+        AdvisorType.Movement => AIAdvisorConfig.Keys.MovementViabilityThreshold,
+        _ => null
+    };
+
+    // The block that makes the Advisor → HTN connection visible: the live viability number
+    // (same weights as "Scoring weights" above), the threshold, and whether HTNRegistry's
+    // Viable predicate for this advisor is true right now — for Economic, the tier instead,
+    // since Economic's HTN conditions are tier-based rather than a single threshold.
+    // A scorecard, not a paragraph: the number, the threshold it's compared against, and the
+    // resulting HTN predicate as a colored TRUE/FALSE badge, side by side — everything the old
+    // single dense HelpBox said, but readable at a glance instead of parsed as one sentence.
+    private void DrawHtnDrivingPanel(string advisorGroup, AdvisorType advisor)
+    {
+        EnsureAdvisorStyles();
+        EditorGUILayout.LabelField("Drives HTN", sectionHeaderStyle);
+
+        if (advisor == AdvisorType.Economic)
+        {
+            EconomyStatus tier = SimulatedEconomyStatus();
+            EditorGUILayout.LabelField($"Economic tier right now: {tier}", weightLabelStyle);
+            EditorGUILayout.Space(4f);
+
+            // All four tiers, not just the active one — each is its own HTN condition, and
+            // exactly one is ever TRUE at a time; showing all four makes that mutual-exclusion
+            // visible instead of implied.
+            EditorGUILayout.BeginHorizontal();
+            DrawConditionBadge("Economic.Critical", EvaluatePredicateLive("Economic.Critical"));
+            DrawConditionBadge("Economic.Weak", EvaluatePredicateLive("Economic.Weak"));
+            DrawConditionBadge("Economic.Stable", EvaluatePredicateLive("Economic.Stable"));
+            DrawConditionBadge("Economic.Surplus", EvaluatePredicateLive("Economic.Surplus"));
+            GUILayout.FlexibleSpace();
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.Space(4f);
+            EditorGUILayout.BeginHorizontal();
+            DrawConditionBadge("Economic.NeedsHelp", EvaluatePredicateLive("Economic.NeedsHelp"));
+            GUILayout.FlexibleSpace();
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.Space(4f);
+            EditorGUILayout.LabelField(
+                "Same Economy weights as above (income/gold thresholds) decide which tier is active — nothing extra to tune here.",
+                weightDescStyle);
+            return;
+        }
+
+        string thresholdKey = ViabilityThresholdKeyFor(advisor);
+        float viability = SimulateViability(advisor);
+        float threshold = thresholdKey != null
+            ? (advisorWeights.TryGetValue(thresholdKey, out float t) ? t : AIAdvisorConfig.GetDefaultWeight(thresholdKey))
+            : 0f;
+        bool viable = viability > threshold;
+
+        EditorGUILayout.BeginHorizontal();
+        DrawMetricTile("Viability", viability.ToString("0.0"));
+        DrawMetricTile("Threshold", threshold.ToString("0.0"));
+        DrawStatusBadge($"{advisorGroup}.Viable", viable, GUILayout.MinWidth(180f), GUILayout.ExpandWidth(true));
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.LabelField(
+            "Viability uses the same weights shown above. Edit the Viability Threshold weight above to change when this flips — not here.",
+            weightDescStyle);
+    }
+
+    private void DrawMetricTile(string caption, string value, string tooltip = null)
+    {
+        EditorGUILayout.BeginVertical(weightRowBoxStyle, GUILayout.Width(110f));
+        EditorGUILayout.LabelField(value, metricValueStyle);
+        EditorGUILayout.LabelField(new GUIContent(caption, tooltip), metricCaptionStyle);
+        EditorGUILayout.EndVertical();
+        GUILayout.Space(6f);
+    }
+
+    private void DrawStatusBadge(string label, bool positive, params GUILayoutOption[] options)
+    {
+        EditorGUILayout.BeginVertical(options);
+        GUILayout.FlexibleSpace();
+        Rect r = GUILayoutUtility.GetRect(0, 36f, GUILayout.ExpandWidth(true));
+        EditorGUI.DrawRect(r, positive ? BadgeTrueColor : BadgeFalseColor);
+        GUI.Label(r, $"{label} = {(positive ? "TRUE" : "FALSE")}", badgeStyle);
+        GUILayout.FlexibleSpace();
+        EditorGUILayout.EndVertical();
     }
 
     // Exact mirror of AIContext.ScoreAction under the scenario assumptions,
@@ -1243,13 +1752,19 @@ public class AIWidgetWindow : EditorWindow
                 AddSituation(enemyProximity, "enemy near");
                 break;
             case AdvisorType.Movement:
-                if (simMovementPriority) AddSituation(W(AIAdvisorConfig.Keys.MovementPriorityBonus), "movement priority");
                 AddSituation(Mathf.Max(0f, W(AIAdvisorConfig.Keys.MovementProximityMax)
                     - simDestinationDistance * W(AIAdvisorConfig.Keys.MovementDistancePenaltyPerHex)), "destination near");
                 break;
         }
 
-        float total = baseScore - difficultyPenalty - costPenalty + affinity + situational + bonus;
+        string[] biasOptions = Enum.GetNames(typeof(AdvisorType));
+        string biasedAdvisorName = biasOptions[Mathf.Clamp(simBiasedAdvisorIndex, 0, biasOptions.Length - 1)];
+        float biasBonus = !string.Equals(biasedAdvisorName, nameof(AdvisorType.None), StringComparison.OrdinalIgnoreCase)
+            && string.Equals(advisor.ToString(), biasedAdvisorName, StringComparison.OrdinalIgnoreCase)
+            ? W(AIAdvisorConfig.Keys.HTNBiasBonus)
+            : 0f;
+
+        float total = baseScore - difficultyPenalty - costPenalty + affinity + situational + bonus + biasBonus;
 
         string situationDetail = situationParts.Count > 0 ? $" [{string.Join(", ", situationParts)}]" : string.Empty;
 
@@ -1261,6 +1776,10 @@ public class AIWidgetWindow : EditorWindow
         if (!Mathf.Approximately(bonus, 0f))
         {
             parts.Add($"{(bonus > 0 ? "+" : "−")} {Mathf.Abs(bonus):0.#} bonus");
+        }
+        if (!Mathf.Approximately(biasBonus, 0f))
+        {
+            parts.Add($"+ {biasBonus:0.#} HTN bias ({biasedAdvisorName})");
         }
         breakdown = string.Join(" ", parts) + $" = {total:0.0}";
         return total;
