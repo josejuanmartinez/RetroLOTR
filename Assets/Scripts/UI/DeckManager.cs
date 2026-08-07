@@ -174,6 +174,12 @@ public class CardData
     // artifactName/spriteString. No alignment restriction: every object is usable by any
     // leader (Artifact's per-item alignment field was deliberately dropped, not carried over).
     public bool hidden;
+    // How many instances of this Object exist in the world's random hidden-object scatter pool
+    // (Board.SpawnArtifacts via GetAllObjectCardClones) — distinct from `amount`, which governs
+    // draw-pile repeats for Action/Event/Spell decks and is not read by the Object scatter path.
+    // A unique legendary item (Andúril, Narya) should stay at the default 1; a common item that
+    // narratively grows in multiple places (Athelas) can be set higher so it's not a one-shot find.
+    public int copies = 1;
     public int commanderBonus;
     public int agentBonus;
     public int emmissaryBonus;
@@ -1803,11 +1809,14 @@ public class DeckManager : MonoBehaviour
 
     // Fresh clones of every Object card in the catalog — the map's random hidden-object pool
     // (Board's placement pass) draws from this instead of the retired ArtifactRepository.
+    // Repeated `copies` times per card so a common item (e.g. Athelas) can seed multiple
+    // findable instances instead of always being a unique one-of-a-kind pickup.
     public List<CardData> GetAllObjectCardClones()
     {
         if (!loaded && !InitializeFromResources()) return new List<CardData>();
         return cards
             .Where(card => card != null && card.GetCardType() == CardTypeEnum.Object)
+            .SelectMany(card => Enumerable.Repeat(card, Math.Max(1, card.copies)))
             .Select(CloneCard)
             .Where(card => card != null)
             .ToList();
@@ -1884,6 +1893,7 @@ public class DeckManager : MonoBehaviour
             situation = card.situation,
             isUnderground = card.isUnderground,
             hidden = card.hidden,
+            copies = card.copies,
             commanderBonus = card.commanderBonus,
             agentBonus = card.agentBonus,
             emmissaryBonus = card.emmissaryBonus,

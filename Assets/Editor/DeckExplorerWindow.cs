@@ -105,6 +105,7 @@ public class DeckExplorerWindow : EditorWindow
     private string editedRawJson = string.Empty;
     private bool editedObjectHidden;
     private bool editedObjectTransferable;
+    private int editedObjectCopies;
     private int editedObjectCommanderBonus;
     private int editedObjectAgentBonus;
     private int editedObjectEmmissaryBonus;
@@ -729,6 +730,8 @@ public class DeckExplorerWindow : EditorWindow
             new GUIContent("Hidden", "Not revealed to its owner until found/granted."), editedObjectHidden);
         editedObjectTransferable = EditorGUILayout.Toggle(
             new GUIContent("Transferable", "Can be handed off between characters."), editedObjectTransferable);
+        editedObjectCopies = Mathf.Max(1, EditorGUILayout.IntField(
+            new GUIContent("Copies", "How many instances of this item seed the map's random hidden-object pool. Unique items should stay at 1."), editedObjectCopies));
 
         GUILayout.Space(10);
         EditorGUILayout.LabelField("Combat Effects", EditorStyles.boldLabel);
@@ -1013,6 +1016,7 @@ public class DeckExplorerWindow : EditorWindow
         editedRawJson = string.Empty;
         editedObjectHidden = card.hidden;
         editedObjectTransferable = card.transferable;
+        editedObjectCopies = Mathf.Max(1, card.copies);
         editedObjectCommanderBonus = card.commanderBonus;
         editedObjectAgentBonus = card.agentBonus;
         editedObjectEmmissaryBonus = card.emmissaryBonus;
@@ -1333,6 +1337,7 @@ public class DeckExplorerWindow : EditorWindow
 
         target.hidden = editedObjectHidden;
         target.transferable = editedObjectTransferable;
+        target.copies = Mathf.Max(1, editedObjectCopies);
         target.commanderBonus = editedObjectCommanderBonus;
         target.agentBonus = editedObjectAgentBonus;
         target.emmissaryBonus = editedObjectEmmissaryBonus;
