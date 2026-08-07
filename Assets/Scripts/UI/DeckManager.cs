@@ -1089,8 +1089,49 @@ public class DeckManager : MonoBehaviour
         return playerDecks.TryGetValue(leader, out PlayerDeckState state) ? state.hand : Array.Empty<CardData>();
     }
 
-    // Returns up to handSize affordable situation cards (max 1 per active situation,
-    // priority-ordered, at most 1 Event card, Spell cards gated on mage rank).
+    // Every card this leader currently holds or could still draw this game — the live,
+    // per-instance pool TryConsumeActionCardFromFullDeck actually operates on. Used by AI
+    // full-deck scoring (AITurnController), unlike GetHand which is what the human hand UI
+    // uses. Deliberately excludes discardPile (already played, not consumable again until a
+    // reshuffle moves it back into drawPile) and situationPool (a separate non-drawable
+    // opportunity-card pool).
+    public IReadOnlyList<CardData> GetFullDeck(PlayableLeader leader)
+    {
+        if (leader == null || !playerDecks.TryGetValue(leader, out PlayerDeckState state)) return Array.Empty<CardData>();
+        return state.drawPile.Concat(state.hand).ToList();
+    }
+
+    // Score for ranking player-facing Opportunity Cards. Deliberately not a reuse of
+    // AIContext.ScoreAction — that class is AI-only (board-wide enemy scans, economy status,
+    // advisor switches) and the human isn't following an HTN strategy. Base score is the same
+    // conceptual starting point as AI scoring; the situational bonus reuses the Situations
+    // tab's authored ranking (SituationEvaluator.GetActiveSituations) as a score gradient
+    // instead of the old hard gate/first-match-wins order.
+    private static float ScoreOpportunityCard(CardData card, Character character, List<CardSituationEnum> activeSituations)
+    {
+        float score = AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.BaseScore);
+
+        score += character.GetCommander() * (card.commanderSkillRequired > 0 ? 0.5f : 0f)
+               + character.GetAgent() * (card.agentSkillRequired > 0 ? 0.5f : 0f)
+               + character.GetEmmissary() * (card.emissarySkillRequired > 0 ? 0.5f : 0f)
+               + character.GetMage() * (card.mageSkillRequired > 0 ? 0.5f : 0f);
+
+        CardSituationEnum situation = card.GetSituation();
+        if (situation != CardSituationEnum.None)
+        {
+            int rank = activeSituations.IndexOf(situation);
+            if (rank >= 0) score += Mathf.Max(0f, 10f - rank);
+        }
+
+        return score;
+    }
+
+    // Returns up to handSize affordable opportunity cards, ranked by ScoreOpportunityCard
+    // across the whole eligible pool together (character-at-PC + situation-matching +
+    // Spell/Event), rather than the old one-match-per-situation loop — this is what lets
+    // multiple cards from the same situation compete on relevance instead of the same single
+    // card always winning. IsEligibleOpportunityCard's hard filters (Event cap, Spell mage-rank
+    // gate) still apply while filling the result.
     public List<CardData> GetSituationCards(PlayableLeader leader, Character character, Hex hex)
     {
         var result = new List<CardData>();
@@ -1098,62 +1139,33 @@ public class DeckManager : MonoBehaviour
         if (!playerDecks.TryGetValue(leader, out PlayerDeckState state)) return result;
 
         int maxCards = GetHandSize();
-        bool eventIncluded = false;
-
-        int poolSize = state.situationPool.Count;
-        int withSituation = state.situationPool.Count(c => c != null && c.GetSituation() != CardSituationEnum.None);
-        Debug.Log($"[SituationCards] pool size={poolSize}, cards with situation set={withSituation}");
-
         List<CardSituationEnum> activeSituations = SituationEvaluator.GetActiveSituations(character, hex);
 
         // Character cards are world opportunities at their authored starting PC. PC ownership
         // is deliberately irrelevant: reaching the place is enough, provided the character card
         // belongs to this leader's configured deck and its normal costs can be paid.
         PC currentPc = hex.GetPCData();
-        if (currentPc != null)
-        {
-            foreach (CardData candidate in state.situationPool.Where(c =>
-                c != null
-                && c.GetCardType() == CardTypeEnum.Character
-                && !string.IsNullOrWhiteSpace(c.startingPC)
-                && CardNameUtility.Equals(c.startingPC, currentPc.pcName)))
-            {
-                if (result.Count >= maxCards) break;
-                if (candidate.EvaluatePlayability(character)) result.Add(candidate);
-            }
-        }
 
-        foreach (CardSituationEnum situation in activeSituations)
-        {
-            if (result.Count >= maxCards) break;
+        List<CardData> candidates = state.situationPool.Where(c => c != null && (
+            (currentPc != null && c.GetCardType() == CardTypeEnum.Character && !string.IsNullOrWhiteSpace(c.startingPC) && CardNameUtility.Equals(c.startingPC, currentPc.pcName))
+            || (c.GetSituation() != CardSituationEnum.None && activeSituations.Contains(c.GetSituation()))
+            || c.GetCardType() == CardTypeEnum.Spell
+            || c.GetCardType() == CardTypeEnum.Event
+        )).ToList();
 
-            var candidates = state.situationPool.Where(c => c != null && c.GetSituation() == situation).ToList();
-            Debug.Log($"[SituationCards] situation={situation}: {candidates.Count} candidate(s) in pool");
-            foreach (var c in candidates)
-            {
-                bool playable = c.EvaluatePlayability(character);
-                Debug.Log($"[SituationCards]   '{c.name}' playable={playable} (lvl={character.GetCommander()}/{character.GetAgent()}/{character.GetEmmissary()}/{character.GetMage()} req={c.commanderSkillRequired}/{c.agentSkillRequired}/{c.emissarySkillRequired}/{c.mageSkillRequired})");
-            }
+        List<CardData> ranked = candidates
+            .Where(c => c.EvaluatePlayability(character))
+            .OrderByDescending(c => ScoreOpportunityCard(c, character, activeSituations))
+            .ToList();
 
-            CardData match = candidates.FirstOrDefault(c => IsEligibleOpportunityCard(c, character, eventIncluded));
-            if (match == null) continue;
-
-            result.Add(match);
-            if (match.GetCardType() == CardTypeEnum.Event) eventIncluded = true;
-        }
-
-        // Unlike Action cards, Spell and Event cards are never tied to a specific situation —
-        // every one currently in the pool is an eligible opportunity regardless of which hex
-        // triggered this check, gated only by playability, the mage-rank requirement on
-        // Spells, and the one-Event cap (see IsEligibleOpportunityCard).
-        foreach (CardData candidate in state.situationPool.Where(c =>
-            c != null && (c.GetCardType() == CardTypeEnum.Spell || c.GetCardType() == CardTypeEnum.Event)))
+        bool eventIncluded = false;
+        foreach (CardData c in ranked)
         {
             if (result.Count >= maxCards) break;
-            if (!IsEligibleOpportunityCard(candidate, character, eventIncluded)) continue;
+            if (!IsEligibleOpportunityCard(c, character, eventIncluded)) continue;
 
-            result.Add(candidate);
-            if (candidate.GetCardType() == CardTypeEnum.Event) eventIncluded = true;
+            result.Add(c);
+            if (c.GetCardType() == CardTypeEnum.Event) eventIncluded = true;
         }
 
         return result;
@@ -1389,21 +1401,42 @@ public class DeckManager : MonoBehaviour
         if (leader is not PlayableLeader playableLeader) return true;
         if (!playerDecks.TryGetValue(playableLeader, out PlayerDeckState state)) return false;
 
-        int handIndex = -1;
+        return TryConsumeActionCardFromList(playableLeader, state, state.hand, actionClassName, preferredCardName, drawReplacement, out consumedCard);
+    }
+
+    // AI full-deck scoring (see GetFullDeck/AITurnController) can select a card that hasn't
+    // been drawn into hand yet — this generalizes consumption to also search drawPile.
+    // TryConsumeActionCard above stays hand-only, since the human's play-from-hand path
+    // must never reach into an undrawn pile.
+    public bool TryConsumeActionCardFromFullDeck(PlayableLeader leader, string actionClassName, CardData preferredCard, out CardData consumedCard)
+    {
+        consumedCard = null;
+        if (leader == null || !playerDecks.TryGetValue(leader, out PlayerDeckState state)) return false;
+
+        string preferredCardName = preferredCard != null ? preferredCard.name : null;
+        if (TryConsumeActionCardFromList(leader, state, state.hand, actionClassName, preferredCardName, drawReplacement: false, out consumedCard)) return true;
+        return TryConsumeActionCardFromList(leader, state, state.drawPile, actionClassName, preferredCardName, drawReplacement: false, out consumedCard);
+    }
+
+    private bool TryConsumeActionCardFromList(PlayableLeader playableLeader, PlayerDeckState state, List<CardData> sourceList, string actionClassName, string preferredCardName, bool drawReplacement, out CardData consumedCard)
+    {
+        consumedCard = null;
+
+        int index = -1;
         if (!string.IsNullOrWhiteSpace(preferredCardName))
         {
-            handIndex = state.hand.FindIndex(card =>
+            index = sourceList.FindIndex(card =>
                 card != null
                 && string.Equals(card.name, preferredCardName, StringComparison.OrdinalIgnoreCase)
                 && MatchesActionCard(card, actionClassName));
         }
-        if (handIndex < 0)
+        if (index < 0)
         {
-            handIndex = FindMatchingActionCardIndex(state.hand, actionClassName);
+            index = FindMatchingActionCardIndex(sourceList, actionClassName);
         }
-        if (handIndex < 0) return false;
+        if (index < 0) return false;
 
-        consumedCard = state.hand[handIndex];
+        consumedCard = sourceList[index];
         if (consumedCard == null) return false;
         if (consumedCard.GetCardType() == CardTypeEnum.Land && playableLeader.HasPlayedLandThisTurn())
         {
@@ -1416,7 +1449,7 @@ public class DeckManager : MonoBehaviour
             return false;
         }
 
-        state.hand.RemoveAt(handIndex);
+        sourceList.RemoveAt(index);
         state.discardPile.Add(consumedCard);
         ApplyCardCosts(playableLeader, consumedCard);
 

@@ -33,6 +33,10 @@ public class AIContext
     public CharacterAction LastChosenAction { get; private set; }
     public AdvisorType LastAdvisor { get; private set; }
 
+    // Set by AITurnController after construction, from the HTN's currently-active
+    // PrimitiveTask.TaskId, purely for AIActionLogger traceability (see BuildLogEntry).
+    public string ActiveHtnTaskId { get; set; }
+
     public AIContext(PlayableLeader leader, Character character, List<CharacterAction> availableActions, Dictionary<CharacterAction, CardData> actionCards = null, AIContextPrecomputedData? precomputed = null)
     {
         Leader = leader;
@@ -54,9 +58,6 @@ public class AIContext
     }
 
     public bool NeedsEconomicHelp => EconomyStatus == EconomyStatus.Critical || EconomyStatus == EconomyStatus.Weak;
-    public bool HasEnemyTarget => closestEnemy.Hex != null || closestNonNeutralEnemy.Hex != null;
-    public bool HasNpcTarget => nearestUnrevealedNpcHex != null;
-    public bool ShouldPrioritizeMovement => !NeedsEconomicHelp && !HasEnemyTarget && GetPreferredMovementTarget() != null;
 
     public async Task<bool> TryExecuteAdvisorActionAsync(AdvisorType advisor)
     {
@@ -64,10 +65,7 @@ public class AIContext
         CharacterAction action = PickBestActionForAdvisor(advisor);
         if (action == null) return false;
 
-        if (!PrepareActionForExecution(action)) return false;
-        RecordAction(action, advisor);
-        await action.Execute();
-        return true;
+        return await TryExecuteChosenActionAsync(action, advisor);
     }
 
     public async Task<bool> TryExecuteBestAvailableActionAsync()
@@ -79,8 +77,16 @@ public class AIContext
 
         if (action == null) return false;
 
+        return await TryExecuteChosenActionAsync(action, AIAdvisorConfig.ResolveAdvisor(action));
+    }
+
+    // Shared tail of TryExecuteAdvisorActionAsync/TryExecuteBestAvailableActionAsync, also used
+    // by AITurnController's full-deck difficulty loop once an action has already been chosen.
+    public async Task<bool> TryExecuteChosenActionAsync(CharacterAction action, AdvisorType advisor)
+    {
+        if (action == null) return false;
         if (!PrepareActionForExecution(action)) return false;
-        RecordAction(action, AIAdvisorConfig.ResolveAdvisor(action));
+        RecordAction(action, advisor);
         await action.Execute();
         return true;
     }
@@ -120,9 +126,10 @@ public class AIContext
         return matches.OrderByDescending(a => ScoreAction(a, advisor)).First();
     }
 
-    private float ScoreAction(CharacterAction action, AdvisorType advisor)
+    public float ScoreAction(CharacterAction action, AdvisorType advisor, float advisorBiasBonus = 0f)
     {
         float score = AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.BaseScore);
+        score += advisorBiasBonus;
         int actionDifficulty = ResolveCardDifficulty(action);
         ActionScoreFlags scoreFlags = AIAdvisorConfig.GetActionScoreFlags(action);
 
@@ -148,32 +155,18 @@ public class AIContext
         switch (scoreFlags.ignoreSituation ? AdvisorType.None : advisor)
         {
             case AdvisorType.Economic:
-                score += GetEconomyPressureScore();
-                break;
             case AdvisorType.Militaristic:
-                score += GetDistanceScore(false);
-                score += GetMilitaryEdgeScore();
+            case AdvisorType.Diplomatic:
+            case AdvisorType.Movement:
+                score += GetAdvisorViability(advisor);
                 break;
             case AdvisorType.Intelligence:
-                if (NeedsEconomicHelp) score += AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.IntelligencePoorEconomyBonus);
-                if (needsIndirectApproach) score += AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.IntelligenceOutmatchedBonus);
+                score += GetAdvisorViability(advisor);
                 if (action is ScoutArea) score += AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.ScoutAreaBonus);
-                score += GetNearbyEnemyCharacterScore();
-                score += GetDistanceScore(true);
                 break;
             case AdvisorType.Magic:
-                score += (1f - nationPercentageArtifacts) * AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.ArtifactScarcityWeight);
-                score += GetDistanceScore(true);
+                score += GetAdvisorViability(advisor);
                 score += GetArtifactTransferScore();
-                break;
-            case AdvisorType.Diplomatic:
-                score += GetDiplomaticScore();
-                if (needsIndirectApproach) score += AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.DiplomaticOutmatchedBonus);
-                score += GetDistanceScore(true);
-                break;
-            case AdvisorType.Movement:
-                if (ShouldPrioritizeMovement) score += AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MovementPriorityBonus);
-                score += GetMovementProximityScore();
                 break;
             default:
                 break;
@@ -262,7 +255,7 @@ public class AIContext
             : UnityEngine.Object.FindFirstObjectByType<DeckManager>();
         if (deckManager == null) return false;
 
-        if (!deckManager.TryConsumeActionCard(Leader, action.GetType().Name, drawReplacement: false, out CardData consumedCard, card.name))
+        if (!deckManager.TryConsumeActionCardFromFullDeck(Leader, action.GetType().Name, card, out CardData consumedCard))
         {
             return false;
         }
@@ -289,7 +282,10 @@ public class AIContext
 
         if (strengthDiff < 0)
         {
-            needsIndirectApproach = true;
+            // needsIndirectApproach is decided once, authoritatively, in
+            // AIContextDataBuilder (against OutmatchedStrengthRatio) — not re-derived here
+            // against a different, undocumented threshold (this used to set it on any
+            // deficit at all, vs. the builder's ratio-buffered definition).
             return Mathf.Max(-10f, strengthDiff / 10f - distancePenalty);
         }
 
@@ -308,6 +304,56 @@ public class AIContext
         if (nearestEnemyCharacterDistance == float.MaxValue) return 0f;
         // Closer enemy characters make intelligence more valuable
         return Mathf.Max(0f, AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.EnemyCharacterProximityMax) - nearestEnemyCharacterDistance);
+    }
+
+    // The nearest non-neutral enemy PC/army is within Militaristic's proximity window
+    // (Targeting.EnemyProximityMax) — proximity alone, independent of who would win a fight.
+    // Read by HTNRegistry's Militaristic.EnemyNear/Danger predicates.
+    public bool IsEnemyNear => GetDistanceScore(false) > 0f;
+
+    // The nearest enemy target outguns this leader's army by AIContextDataBuilder's
+    // OutmatchedStrengthRatio (0 strength while leading no army, so "no army" is always
+    // outmatched if any enemy exists) — computed once, authoritatively, at context build time.
+    // Read by HTNRegistry's Militaristic.Danger predicate and already feeds the Intelligence/
+    // Diplomatic "indirect approach" bonuses below.
+    public bool IsOutmatched => needsIndirectApproach;
+
+    // World-state-only appeal of pursuing this advisor right now, independent of any specific
+    // card — the same situational terms ScoreAction adds per-card above, minus the handful
+    // tied to a concrete action (Intelligence's Scout Area bonus, Magic's artifact-transfer
+    // search — both added separately in ScoreAction). This is what HTNRegistry's Viable
+    // predicates read: the HTN's strategy choice is driven by literally the same weights and
+    // formula the Utility scorer uses to pick cards, not a separate hand-coded sensing layer.
+    // All terms degrade to 0 (or a fixed penalty, e.g. NoArmyPenalty) with no valid target, so
+    // no separate "HasTarget" boolean is needed — a low/negative viability already means "no."
+    public float GetAdvisorViability(AdvisorType advisor)
+    {
+        switch (advisor)
+        {
+            case AdvisorType.Economic:
+                return GetEconomyPressureScore();
+            case AdvisorType.Militaristic:
+                return GetDistanceScore(false) + GetMilitaryEdgeScore();
+            case AdvisorType.Intelligence:
+            {
+                float viability = GetNearbyEnemyCharacterScore() + GetDistanceScore(true);
+                if (NeedsEconomicHelp) viability += AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.IntelligencePoorEconomyBonus);
+                if (needsIndirectApproach) viability += AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.IntelligenceOutmatchedBonus);
+                return viability;
+            }
+            case AdvisorType.Magic:
+                return (1f - nationPercentageArtifacts) * AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.ArtifactScarcityWeight) + GetDistanceScore(true);
+            case AdvisorType.Diplomatic:
+            {
+                float viability = GetDiplomaticScore() + GetDistanceScore(true);
+                if (needsIndirectApproach) viability += AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.DiplomaticOutmatchedBonus);
+                return viability;
+            }
+            case AdvisorType.Movement:
+                return GetMovementProximityScore();
+            default:
+                return 0f;
+        }
     }
 
     private void RecordAction(CharacterAction action, AdvisorType advisor)
@@ -534,6 +580,7 @@ public class AIContext
             preferredTargetDistance = preferred != null && Character != null && Character.hex != null ? Vector2.Distance(Character.hex.v2, preferred.v2) : -1f,
             actionName = LastChosenAction != null ? LastChosenAction.actionName : Pass.ActionRef,
             advisorType = LastAdvisor.ToString(),
+            activeHtnTaskId = ActiveHtnTaskId,
             actionDifficulty = LastChosenAction != null ? ResolveCardDifficulty(LastChosenAction) : 0,
             actionGoldCost = LastChosenAction != null ? LastChosenAction.GetGoldCost() : 0,
             scoredActions = scoredActions.Select(sa => $"{sa.actionName}|{sa.advisor}|{sa.score:0.00}|{sa.targetDistance:0.00}").ToList(),
@@ -599,7 +646,8 @@ public class AIContext
         }
 
         EnemyTarget best = closestNonNeutralEnemy.Hex != null ? closestNonNeutralEnemy : closestEnemy;
-        if (best.Hex != null && best.Strength > myStrength * 1.1f) needsIndirectApproach = true;
+        float outmatchedRatio = AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.OutmatchedStrengthRatio);
+        if (best.Hex != null && best.Strength > myStrength * outmatchedRatio) needsIndirectApproach = true;
     }
 
     private void CacheNpcTargets()

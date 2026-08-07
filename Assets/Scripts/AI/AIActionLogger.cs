@@ -10,6 +10,7 @@ public class AIActionLogEntry
     public int turn;
     public string leaderName;
     public string leaderAlignment;
+    public string activeHtnTaskId;
     public string characterName;
     public string characterAlignment;
     public bool armyCommander;
