@@ -1353,7 +1353,8 @@ public class Character : MonoBehaviour
     public int GetArtifactActionDifficultyReduction(string actionClassName)
     {
         if (objects == null || objects.Count == 0) return 0;
-        return objects.Sum(o => o != null ? o.GetActionDifficultyReduction(actionClassName) : 0);
+        int total = objects.Sum(o => o != null ? o.GetActionDifficultyReduction(actionClassName) : 0);
+        return Mathf.Min(total, MaxTotalScryObjectBonus);
     }
 
     public int GetTemporaryActionDifficultyReduction(string actionClassName, Hex currentHex)
@@ -1494,13 +1495,22 @@ public class Character : MonoBehaviour
         return total;
     }
 
+    // Hard caps on how much carried objects can stack, independent of how many a character
+    // holds (MAX_OBJECTS = 10). Same rationale as Duel.cs's MaxArtifactDuelScore: without a
+    // cap, hoarding every scry-granting object (5 cards at scryAreaBonus 2, or 6 cards
+    // totaling 80 scryObjectBonus once the Find Artifact difficulty-order bug is fixed) would
+    // make the ability trivial rather than a meaningful bonus. Values are roughly "best single
+    // item plus one backup" (Vilya's scryObjectBonus of 25 plus a Minor item).
+    private const int MaxTotalScryAreaBonus = 6;
+    private const int MaxTotalScryObjectBonus = 30;
+
     public int GetTotalScryAreaBonus()
     {
         if (objects == null || objects.Count == 0) return 0;
         int total = 0;
         for (int i = 0; i < objects.Count; i++)
             if (objects[i] != null) total += objects[i].GetScryAreaBonus();
-        return total;
+        return Mathf.Min(total, MaxTotalScryAreaBonus);
     }
 
     public int GetTotalScryObjectBonus()
@@ -1509,7 +1519,7 @@ public class Character : MonoBehaviour
         int total = 0;
         for (int i = 0; i < objects.Count; i++)
             if (objects[i] != null) total += objects[i].GetScryObjectBonus();
-        return total;
+        return Mathf.Min(total, MaxTotalScryObjectBonus);
     }
 
     private static bool IsNegativeStatus(StatusEffectEnum effect)

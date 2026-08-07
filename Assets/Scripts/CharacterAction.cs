@@ -305,6 +305,16 @@ public class CharacterAction
 
             bool failed = false;
             int effectiveDifficulty = difficulty;
+            // Penalties (guard defenses, AI acting on an unscouted hex) are applied first, so
+            // artifact/temporary reductions below have something real to offset. Reducing before
+            // the penalties were added made those reductions a no-op whenever base difficulty
+            // was already 0 (e.g. Find Artifact) — exactly the case where a guarded hex most
+            // needed them to matter. See balance review, 2026-08-07.
+            if (isAI && ShouldApplyUnscoutedPenalty(character))
+            {
+                effectiveDifficulty = Mathf.Min(100, effectiveDifficulty + 25);
+            }
+            effectiveDifficulty = Mathf.Min(100, effectiveDifficulty + GetGuardPenalty(character, actionHex));
             if (character != null)
             {
                 int artifactReduction = character.GetArtifactActionDifficultyReduction(GetType().Name);
@@ -315,11 +325,6 @@ public class CharacterAction
                     effectiveDifficulty = Mathf.Max(0, effectiveDifficulty - 50);
                 }
             }
-            if (isAI && ShouldApplyUnscoutedPenalty(character))
-            {
-                effectiveDifficulty = Mathf.Min(100, effectiveDifficulty + 25);
-            }
-            effectiveDifficulty = Mathf.Min(100, effectiveDifficulty + GetGuardPenalty(character, actionHex));
             bool failedByChance = UnityEngine.Random.Range(0, 100) < effectiveDifficulty;
             character?.ConsumeTemporaryActionDifficultyReduction(GetType().Name, actionHex);
 
