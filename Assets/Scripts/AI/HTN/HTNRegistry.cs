@@ -41,6 +41,15 @@ public class HTNPredicateDefinition
 
 public static class HTNRegistry
 {
+    // Generic boolean-OR combinator over other predicates. This is what "OR" means at the HTN
+    // level: a Method's own precondition can be built from more than one term — e.g.
+    // "Economic.Critical OR Economic.Weak" authored directly on that Method's row — composed
+    // here at load time, never as a hand-coded boolean property on AIContext (that would put
+    // decision logic in scoring code) and never as a bespoke named alias predicate either
+    // (that would just hide the same OR behind an extra layer of indirection).
+    public static Func<AIContext, AIBlackboard, bool> Or(params Func<AIContext, AIBlackboard, bool>[] predicates)
+        => (ctx, bb) => predicates.Any(p => p(ctx, bb));
+
     public static readonly IReadOnlyList<HTNPredicateDefinition> KnownPredicates = new List<HTNPredicateDefinition>
     {
         new("Global.Always", "Always true. Use for an unconditional fallback branch (usually the last Method under a CompoundTask).",
@@ -48,8 +57,6 @@ public static class HTNRegistry
         new("Global.Never", "Always false. Use on a PrimitiveTask that should never auto-advance — it only ever leaves via a higher-priority interrupt or its own precondition breaking.",
             (ctx, bb) => false),
 
-        new("Economic.NeedsHelp", "True when the economy is Critical or Weak (see the Economic weight group for the exact thresholds).",
-            (ctx, bb) => ctx.NeedsEconomicHelp),
         new("Economic.Critical", "True when gold income per turn is below Economy.CriticalIncomeBelow, or stored gold is below Economy.CriticalGoldBelow.",
             (ctx, bb) => ctx.EconomyStatus == EconomyStatus.Critical),
         new("Economic.Weak", "True when not Critical, and income per turn is at or below Economy.WeakIncomeAtMost, or stored gold is below Economy.WeakGoldBelow.",
@@ -69,7 +76,7 @@ public static class HTNRegistry
         new("Diplomatic.Viable", "True when Diplomatic's viability (NPC proximity + outmatched bonus — the same weights shown in the Diplomatic group of the Advisors tab) is above Diplomatic.ViabilityThreshold.",
             (ctx, bb) => ctx.GetAdvisorViability(AdvisorType.Diplomatic) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.DiplomaticViabilityThreshold)),
 
-        new("Intelligence.Viable", "True when Intelligence's viability (enemy-character proximity + poor-economy/outmatched bonuses — the same weights shown in the Intelligence group of the Advisors tab) is above Intelligence.ViabilityThreshold.",
+        new("Intelligence.Viable", "True when Intelligence's viability (enemy-character proximity + outmatched bonus — the same weights shown in the Intelligence group of the Advisors tab) is above Intelligence.ViabilityThreshold.",
             (ctx, bb) => ctx.GetAdvisorViability(AdvisorType.Intelligence) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.IntelligenceViabilityThreshold)),
 
         new("Magic.Viable", "True when Magic's viability (artifact scarcity + enemy proximity — the same weights shown in the Magic group of the Advisors tab) is above Magic.ViabilityThreshold.",
@@ -77,6 +84,47 @@ public static class HTNRegistry
 
         new("Movement.Viable", "True when Movement's viability (proximity to the preferred destination — the same weights shown in the Movement group of the Advisors tab) is above Movement.ViabilityThreshold.",
             (ctx, bb) => ctx.GetAdvisorViability(AdvisorType.Movement) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MovementViabilityThreshold)),
+        // Fine-grained predicates consume direct, named Advisor parameters only.
+        // Each threshold is an authored Advisor weight, so HTN has no hidden score.
+        new("Diplomatic.NpcDiscoveryReady", "Direct Diplomatic.NpcDiscovery is above its authored threshold.",
+            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.DiplomaticNpcDiscovery) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.DiplomaticNpcDiscoveryThreshold)),
+        new("Diplomatic.IndirectSafetyReady", "Direct Diplomatic.IndirectSafety is above its authored threshold.",
+            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.DiplomaticIndirectSafety) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.DiplomaticIndirectSafetyThreshold)),
+        new("Intelligence.EnemyCharacterReady", "Direct Intelligence.EnemyCharacter is above its authored threshold.",
+            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.IntelligenceEnemyCharacter) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.IntelligenceEnemyCharacterThreshold)),
+        new("Intelligence.IndirectSafetyReady", "Direct Intelligence.IndirectSafety is above its authored threshold.",
+            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.IntelligenceIndirectSafety) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.IntelligenceIndirectSafetyThreshold)),
+        new("Magic.ArtifactScarcityReady", "Direct Magic.ArtifactScarcity is above its authored threshold.",
+            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.MagicArtifactScarcity) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MagicArtifactScarcityThreshold)),
+        new("Magic.ArtifactTransferReady", "Direct Magic.ArtifactTransfer is above its authored threshold.",
+            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.MagicArtifactTransfer) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MagicArtifactTransferThreshold)),
+        new("Magic.EnemyPressureReady", "Direct Magic.EnemyPressure is above its authored threshold.",
+            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.MagicEnemyPressure) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MagicEnemyPressureThreshold)),
+        new("Movement.ReachNpcReady", "Direct Movement.ReachNpc is above its authored threshold.",
+            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.MovementReachNpc) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MovementReachNpcThreshold)),
+        new("Movement.InterceptEnemyReady", "Direct Movement.InterceptEnemy is above its authored threshold.",
+            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.MovementInterceptEnemy) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MovementInterceptEnemyThreshold)),
+        new("Movement.ReachEnemyCharacterReady", "Direct Movement.ReachEnemyCharacter is above its authored threshold.",
+            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.MovementReachEnemyCharacter) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MovementReachEnemyCharacterThreshold)),
+
+        // Target-quality predicates: gate on "a specific good target exists nearby right now",
+        // not just "this advisor is generically busy" — what lets root.diplomacy/root.intelligence
+        // branch into distinct sub-strategies instead of a single stub leaf.
+        new("Diplomatic.EnemyPcOpportunityReady", "Direct Diplomatic.EnemyPcOpportunity is above its authored threshold — a nearby enemy-owned PC has fallen below Diplomatic.EnemyPcLoyaltyBelow, a candidate for influencing out.",
+            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.DiplomaticEnemyPcOpportunity) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.DiplomaticEnemyPcOpportunityThreshold)),
+        new("Diplomatic.OwnPcLoyaltyRiskReady", "Direct Diplomatic.OwnPcLoyaltyRisk is above its authored threshold — one of this leader's own PCs has fallen below Diplomatic.OwnPcLoyaltyBelow and needs influencing up.",
+            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.DiplomaticOwnPcLoyaltyRisk) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.DiplomaticOwnPcLoyaltyRiskThreshold)),
+        new("Intelligence.EnemyPcVulnerabilityReady", "Direct Intelligence.EnemyPcVulnerability is above its authored threshold — a nearby enemy-owned PC's defense has fallen below Intelligence.EnemyPcDefenseBelow, a candidate for sabotage/theft.",
+            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.IntelligenceEnemyPcVulnerability) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.IntelligenceEnemyPcVulnerabilityThreshold)),
+        new("Intelligence.HighValueEnemyCharacterReady", "Direct Intelligence.HighValueEnemyCharacter is above its authored threshold — a nearby enemy character's skill sum has reached Intelligence.HighValueSkillAtLeast, a candidate for assassination/kidnap.",
+            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.IntelligenceHighValueEnemyCharacter) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.IntelligenceHighValueEnemyCharacterThreshold)),
+
+        new("Magic.SpellOpportunityReady", "Direct Magic.SpellOpportunity is above its authored threshold — at least one Spell action is currently playable by this character.",
+            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.MagicSpellOpportunity) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MagicSpellOpportunityThreshold)),
+        new("Militaristic.OwnPcFortificationNeedReady", "Direct Militaristic.OwnPcFortificationNeed is above its authored threshold — a nearby own PC's defense has fallen below Militaristic.OwnPcDefenseBelow and needs fortifying.",
+            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.MilitaristicOwnPcFortificationNeed) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MilitaristicOwnPcFortificationNeedThreshold)),
+        new("Diplomatic.NplRecruitmentReady", "Direct Diplomatic.NplRecruitment is above its authored threshold — a nearby NPL capital is eligible for StateAllegiance (AFriendOrThree) recruitment right now.",
+            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.DiplomaticNplRecruitment) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.DiplomaticNplRecruitmentThreshold)),
     };
 
     private static readonly Dictionary<string, HTNPredicateDefinition> ByKey =

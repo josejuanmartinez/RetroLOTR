@@ -14,15 +14,22 @@ public static class AIContextDataBuilder
         }
 
         Board board = Object.FindFirstObjectByType<Board>();
+        StoresManager stores = Object.FindFirstObjectByType<StoresManager>();
         var data = new AIContext.AIContextPrecomputedData
         {
-            GoldPerTurn = AIContext.CalculateGoldPerTurn(leader),
-            GoldBuffer = leader != null ? leader.goldAmount : 0,
+            LiquidWealth = AIContext.CalculateLiquidWealth(leader, stores),
             NationPercentageArtifacts = CalculateNationArtifacts(leader),
+            HiddenArtifactsRemaining = CountHiddenArtifacts(board),
             ClosestEnemy = new AIContext.EnemyTarget(null, float.MaxValue, false, 0f),
             ClosestNonNeutralEnemy = new AIContext.EnemyTarget(null, float.MaxValue, false, 0f),
             NearestUnrevealedNpcDistance = float.MaxValue,
             NearestEnemyCharacterDistance = float.MaxValue,
+            NearestEnemyPcOpportunityDistance = float.MaxValue,
+            NearestOwnPcLoyaltyRiskDistance = float.MaxValue,
+            NearestEnemyPcVulnerabilityDistance = float.MaxValue,
+            NearestHighValueEnemyCharacterDistance = float.MaxValue,
+            NearestOwnPcFortificationNeedDistance = float.MaxValue,
+            NearestNplRecruitmentDistance = float.MaxValue,
             ArtifactTransferCandidates = new List<AIContext.ArtifactTransferCandidate>(),
             BestArtifactTransferScore = 0f
         };
@@ -33,8 +40,10 @@ public static class AIContextDataBuilder
         CacheEnemyTargets(board, character, leader, ref data, stopwatch, maxMilliseconds);
         if (ShouldStop(stopwatch, maxMilliseconds)) return data;
 
-        CacheNpcTargets(board, character, ref data, stopwatch, maxMilliseconds);
+        CacheNpcTargets(board, character, leader, ref data, stopwatch, maxMilliseconds);
         if (ShouldStop(stopwatch, maxMilliseconds)) return data;
+
+        CacheOwnPcSignals(leader, character, ref data);
 
         BuildArtifactTransfers(board, leader, character, ref data, stopwatch, maxMilliseconds);
 
@@ -46,11 +55,18 @@ public static class AIContextDataBuilder
         IEnumerable<Hex> hexes = board.hexes != null ? board.hexes.Values : Enumerable.Empty<Hex>();
         float myStrength = character.IsArmyCommander() && character.GetArmy() != null ? character.GetArmy().GetOffence() : 0f;
 
+        // Target-quality thresholds for the enemy-PC/enemy-character signals below — read once
+        // per turn rather than per hex.
+        float enemyPcLoyaltyBelow = AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.DiplomaticEnemyPcLoyaltyBelow);
+        float enemyPcDefenseBelow = AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.IntelligenceEnemyPcDefenseBelow);
+        float highValueSkillAtLeast = AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.IntelligenceHighValueSkillAtLeast);
+
         foreach (Hex hex in hexes)
         {
             if (ShouldStop(stopwatch, maxMilliseconds)) return;
 
-            bool hasEnemyCharacter = hex.characters.Any(c => c != null && c.GetOwner() != null && IsEnemy(c.GetOwner(), leader));
+            List<Character> enemyCharactersOnHex = hex.characters.Where(c => c != null && c.GetOwner() != null && IsEnemy(c.GetOwner(), leader)).ToList();
+            bool hasEnemyCharacter = enemyCharactersOnHex.Count > 0;
             Leader enemyLeader = GetEnemyLeaderOnHex(hex, leader);
             if (enemyLeader == null) continue;
 
@@ -74,6 +90,33 @@ public static class AIContextDataBuilder
                 data.NearestEnemyCharacterDistance = distance;
                 data.NearestEnemyCharacterHex = hex;
             }
+
+            // Enemy-owned PC target quality: a good influence-out target (low loyalty) and/or a
+            // good sabotage/theft target (weak defense) are independent qualities of the same PC.
+            PC pc = hex.GetPC();
+            if (pc != null && pc.owner != null && IsEnemy(pc.owner, leader))
+            {
+                if (pc.loyalty < enemyPcLoyaltyBelow && distance < data.NearestEnemyPcOpportunityDistance)
+                {
+                    data.NearestEnemyPcOpportunityDistance = distance;
+                }
+                if (pc.GetDefense() < enemyPcDefenseBelow && distance < data.NearestEnemyPcVulnerabilityDistance)
+                {
+                    data.NearestEnemyPcVulnerabilityDistance = distance;
+                }
+            }
+
+            // High-value enemy character: worth a dedicated assassination/kidnap play, distinct
+            // from "any enemy character is nearby" (Intelligence.EnemyCharacter above).
+            foreach (Character enemyCharacter in enemyCharactersOnHex)
+            {
+                int skill = Mathf.Max(0, enemyCharacter.GetCommander()) + Mathf.Max(0, enemyCharacter.GetAgent())
+                    + Mathf.Max(0, enemyCharacter.GetEmmissary()) + Mathf.Max(0, enemyCharacter.GetMage());
+                if (skill >= highValueSkillAtLeast && distance < data.NearestHighValueEnemyCharacterDistance)
+                {
+                    data.NearestHighValueEnemyCharacterDistance = distance;
+                }
+            }
         }
 
         AIContext.EnemyTarget best = data.ClosestNonNeutralEnemy.Hex != null ? data.ClosestNonNeutralEnemy : data.ClosestEnemy;
@@ -81,7 +124,33 @@ public static class AIContextDataBuilder
         if (best.Hex != null && best.Strength > myStrength * outmatchedRatio) data.NeedsIndirectApproach = true;
     }
 
-    private static void CacheNpcTargets(Board board, Character character, ref AIContext.AIContextPrecomputedData data, Stopwatch stopwatch, float maxMilliseconds)
+    // Own-PC signals: a small scan over this leader's own PCs (not the whole board) for the
+    // nearest one falling below each "needs attention" threshold — loyalty (needs influencing
+    // up) and defense (needs fortifying) are independent qualities of the same PC, same as the
+    // enemy-side opportunity/vulnerability pair in CacheEnemyTargets above.
+    private static void CacheOwnPcSignals(PlayableLeader leader, Character character, ref AIContext.AIContextPrecomputedData data)
+    {
+        if (leader?.controlledPcs == null || character == null || character.hex == null) return;
+
+        float ownPcLoyaltyBelow = AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.DiplomaticOwnPcLoyaltyBelow);
+        float ownPcDefenseBelow = AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MilitaristicOwnPcDefenseBelow);
+        foreach (PC pc in leader.controlledPcs)
+        {
+            if (pc == null || pc.hex == null) continue;
+            float distance = Vector2.Distance(character.hex.v2, pc.hex.v2);
+
+            if (pc.loyalty < ownPcLoyaltyBelow && distance < data.NearestOwnPcLoyaltyRiskDistance)
+            {
+                data.NearestOwnPcLoyaltyRiskDistance = distance;
+            }
+            if (pc.GetDefense() < ownPcDefenseBelow && distance < data.NearestOwnPcFortificationNeedDistance)
+            {
+                data.NearestOwnPcFortificationNeedDistance = distance;
+            }
+        }
+    }
+
+    private static void CacheNpcTargets(Board board, Character character, PlayableLeader leader, ref AIContext.AIContextPrecomputedData data, Stopwatch stopwatch, float maxMilliseconds)
     {
         Game game = GameObject.FindFirstObjectByType<Game>();
         if (board == null || character == null || character.hex == null || game == null) return;
@@ -93,13 +162,22 @@ public static class AIContextDataBuilder
             PC pc = hex.GetPC();
             if (pc == null) continue;
             if (pc.owner is not NonPlayableLeader npc) continue;
-            if (npc.IsRevealedToLeader(game.currentlyPlaying)) continue;
 
             float distance = Vector2.Distance(character.hex.v2, hex.v2);
-            if (distance < data.NearestUnrevealedNpcDistance)
+
+            if (!npc.IsRevealedToLeader(game.currentlyPlaying) && distance < data.NearestUnrevealedNpcDistance)
             {
                 data.NearestUnrevealedNpcDistance = distance;
                 data.NearestUnrevealedNpcHex = hex;
+            }
+
+            // Recruitment eligibility, not proximity to reveal — CanJoinWithStateAllegiance
+            // already checks joined/killed/alignment/HasPlayedPcCard internally, so this is the
+            // same gate StateAllegiance (the AFriendOrThree card) itself uses before letting the
+            // trivia gauntlet run.
+            if (pc.isCapital && leader != null && npc.CanJoinWithStateAllegiance(leader) && distance < data.NearestNplRecruitmentDistance)
+            {
+                data.NearestNplRecruitmentDistance = distance;
             }
         }
     }
@@ -222,6 +300,14 @@ public static class AIContextDataBuilder
         DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : UnityEngine.Object.FindFirstObjectByType<DeckManager>();
         float totalArtifacts = (deckManager?.GetObjectCardCount() ?? 0) * 1f;
         return leader.controlledCharacters.Sum(ch => ch != null ? ch.objects.Count * 1f : 0f) / Mathf.Max(1f, totalArtifacts);
+    }
+
+    // This is the literal map count: each item still in Hex.hiddenObjects is
+    // an artifact opportunity remaining for every leader. It is intentionally
+    // not estimated from deck state or fog-of-war.
+    private static int CountHiddenArtifacts(Board board)
+    {
+        return board?.hexes?.Values.Sum(hex => hex?.hiddenObjects?.Count ?? 0) ?? 0;
     }
 
     private static bool ShouldStop(Stopwatch stopwatch, float maxMilliseconds)

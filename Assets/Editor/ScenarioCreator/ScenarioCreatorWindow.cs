@@ -108,7 +108,7 @@ namespace RetroLOTR.Scenarios.EditorTools
             return true;
         }
 
-        [MenuItem("Window/RetroLOTR/Scenario Creator")]
+        [MenuItem("Tools/RetroLOTR/Scenario Creator")]
         public static void Open()
         {
             ScenarioCreatorWindow window = GetWindow<ScenarioCreatorWindow>("Scenario Creator");

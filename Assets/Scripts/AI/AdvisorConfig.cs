@@ -18,38 +18,59 @@ public class AdvisorWeightEntry
 }
 
 [Serializable]
-public class AdvisorActionOverride
+public class ActionUtilityParameterModifier
 {
-    public string actionClass = string.Empty;
-    // Empty = keep the advisor coded on the action class.
-    public string advisor = string.Empty;
-    // Flat score adjustment applied whenever the AI scores this action;
-    // lets an action be prioritized over its advisor's other cards.
-    public float scoreBonus;
-    // Per-action formula composition: true = leave that term out of the score.
-    public bool ignoreDifficulty;
-    public bool ignoreGoldCost;
-    public bool ignoreSkills;
-    public bool ignoreSituation;
+    // Must be one of AIUtilityParameters.Known. Empty entries are ignored.
+    public string parameter = string.Empty;
+    // The named utility value is multiplied by this, then bonus is added.
+    public float multiplier = 1f;
+    public float bonus;
 }
 
-// Which score terms an action opts out of. Default (all false) = full formula.
+// Which score terms an action opts out of. Default (false) = full formula.
 [Serializable]
 public struct ActionScoreFlags
 {
-    public bool ignoreDifficulty;
-    public bool ignoreGoldCost;
-    public bool ignoreSkills;
     public bool ignoreSituation;
 
-    public bool AnySet => ignoreDifficulty || ignoreGoldCost || ignoreSkills || ignoreSituation;
+    public bool AnySet => ignoreSituation;
 }
 
 [Serializable]
 public class AdvisorConfigData
 {
     public List<AdvisorWeightEntry> weights = new();
-    public List<AdvisorActionOverride> actionOverrides = new();
+    public List<CardAdvisorProfile> cardProfiles = new();
+}
+
+// One row per printed card — the unit every Card Board authoring choice is
+// keyed against. deckId+cardId is the stable identity (see
+// AIAdvisorConfig.BuildCardProfileKey for why reference/injected cards resolve
+// to their template's deckId+cardId instead of their own). Two cards that
+// happen to share an action class each get their own independent row here —
+// the AI Widget's Card Board tab has a "duplicate to sibling cards" action to
+// seed one from another, but nothing at runtime ever shares a row.
+[Serializable]
+public class CardAdvisorProfile
+{
+    public string deckId = string.Empty;
+    public int cardId;
+
+    // Display-only — never read for lookups, so a stale value (e.g. after a
+    // card rename) can't silently break anything.
+    public string cardName = string.Empty;
+    public string actionClass = string.Empty;
+
+    // Empty = keep the advisor coded on the action class.
+    public string advisor = string.Empty;
+    // Flat score adjustment applied whenever the AI scores this action;
+    // lets an action be prioritized over its advisor's other cards.
+    public float scoreBonus;
+    // Per-action formula composition: true = leave that term out of the score.
+    public bool ignoreSituation;
+    // Explicit card-side composition of named Advisor utility parameters. These
+    // entries are also shown and edited in the AI Widget's Card Board tab.
+    public List<ActionUtilityParameterModifier> utilityParameters = new();
 }
 
 public class AdvisorWeightDefinition
@@ -66,39 +87,75 @@ public class AdvisorWeightDefinition
     }
 }
 
+// The complete public vocabulary shared by Advisors, HTN, and card profiles.
+// Values are direct observations from AIContext; they are never inferred from
+// a card, and every card-specific contribution is authored in AdvisorConfig.
+public static class AIUtilityParameters
+{
+    public const string MilitaristicEnemyPressure = "Militaristic.EnemyPressure";
+    public const string MilitaristicMilitaryEdge = "Militaristic.MilitaryEdge";
+    public const string EconomicLiquidWealth = "Economic.LiquidWealth";
+    public const string DiplomaticNpcDiscovery = "Diplomatic.NpcDiscovery";
+    public const string DiplomaticIndirectSafety = "Diplomatic.IndirectSafety";
+    public const string IntelligenceEnemyCharacter = "Intelligence.EnemyCharacter";
+    public const string IntelligenceIndirectSafety = "Intelligence.IndirectSafety";
+    public const string MagicArtifactScarcity = "Magic.ArtifactScarcity";
+    public const string MagicArtifactTransfer = "Magic.ArtifactTransfer";
+    public const string MagicEnemyPressure = "Magic.EnemyPressure";
+    public const string MagicHiddenArtifacts = "Magic.HiddenArtifacts";
+    public const string MagicMageStrength = "Magic.MageStrength";
+    public const string DiplomaticEnemyPressure = "Diplomatic.EnemyPressure";
+    public const string DiplomaticEmissaryStrength = "Diplomatic.EmissaryStrength";
+    public const string IntelligenceEnemyPressure = "Intelligence.EnemyPressure";
+    public const string IntelligenceAgentStrength = "Intelligence.AgentStrength";
+    public const string MovementReachNpc = "Movement.ReachNpc";
+    public const string MovementInterceptEnemy = "Movement.InterceptEnemy";
+    public const string MovementReachEnemyCharacter = "Movement.ReachEnemyCharacter";
+
+    // Target-quality signals (distinct from the proximity/strength terms above): "is there a
+    // specific, good target nearby right now", not just "is an advisor generically busy".
+    public const string DiplomaticEnemyPcOpportunity = "Diplomatic.EnemyPcOpportunity";
+    public const string DiplomaticOwnPcLoyaltyRisk = "Diplomatic.OwnPcLoyaltyRisk";
+    public const string IntelligenceEnemyPcVulnerability = "Intelligence.EnemyPcVulnerability";
+    public const string IntelligenceHighValueEnemyCharacter = "Intelligence.HighValueEnemyCharacter";
+
+    // Second wave: closes the remaining gaps in each advisor's stated purpose (spells for
+    // Magic, fortification for Militaristic, NPL recruitment for Diplomatic) rather than just
+    // proximity/strength math.
+    public const string MagicSpellOpportunity = "Magic.SpellOpportunity";
+    public const string MilitaristicOwnPcFortificationNeed = "Militaristic.OwnPcFortificationNeed";
+    public const string DiplomaticNplRecruitment = "Diplomatic.NplRecruitment";
+
+    public static readonly IReadOnlyList<string> Known = new[]
+    {
+        MilitaristicEnemyPressure, MilitaristicMilitaryEdge, EconomicLiquidWealth,
+        DiplomaticNpcDiscovery, DiplomaticIndirectSafety,
+        IntelligenceEnemyCharacter, IntelligenceIndirectSafety,
+        MagicArtifactScarcity, MagicArtifactTransfer, MagicEnemyPressure, MagicHiddenArtifacts, MagicMageStrength,
+        DiplomaticEnemyPressure, DiplomaticEmissaryStrength, IntelligenceEnemyPressure, IntelligenceAgentStrength,
+        MovementReachNpc, MovementInterceptEnemy, MovementReachEnemyCharacter,
+        DiplomaticEnemyPcOpportunity, DiplomaticOwnPcLoyaltyRisk, IntelligenceEnemyPcVulnerability, IntelligenceHighValueEnemyCharacter,
+        MagicSpellOpportunity, MilitaristicOwnPcFortificationNeed, DiplomaticNplRecruitment
+    };
+
+    public static bool IsKnown(string parameter) => !string.IsNullOrWhiteSpace(parameter)
+        && Known.Contains(parameter, StringComparer.OrdinalIgnoreCase);
+}
+
 public static class AIAdvisorConfig
 {
     public const string ResourcePath = "AI/AdvisorConfig";
 
     public static class Keys
     {
-        public const string BaseScore = "Global.BaseScore";
-        public const string DifficultyDivisor = "Global.DifficultyDivisor";
-        public const string MaxDifficultyPenalty = "Global.MaxDifficultyPenalty";
-        public const string CostPressureWhenPoor = "Global.CostPressureWhenPoor";
         public const string HTNBiasBonus = "Global.HTNBiasBonus";
 
-        public const string MilitaristicPerCommanderLevel = "Affinity.Militaristic.PerCommanderLevel";
-        public const string MilitaristicLeadingArmyBonus = "Affinity.Militaristic.LeadingArmyBonus";
-        public const string EconomicPerEmissaryLevel = "Affinity.Economic.PerEmissaryLevel";
-        public const string EconomicPerCommanderLevel = "Affinity.Economic.PerCommanderLevel";
-        public const string DiplomaticPerEmissaryLevel = "Affinity.Diplomatic.PerEmissaryLevel";
-        public const string IntelligencePerAgentLevel = "Affinity.Intelligence.PerAgentLevel";
-        public const string MagicPerMageLevel = "Affinity.Magic.PerMageLevel";
-        public const string MagicPerArtifactCarried = "Affinity.Magic.PerArtifactCarried";
-        public const string MovementPerCommanderLevel = "Affinity.Movement.PerCommanderLevel";
-        public const string MovementPerAgentLevel = "Affinity.Movement.PerAgentLevel";
-        public const string MovementPerEmissaryLevel = "Affinity.Movement.PerEmissaryLevel";
-
-        public const string EconomyCriticalBonus = "Economic.EconomyCriticalBonus";
-        public const string EconomyWeakBonus = "Economic.EconomyWeakBonus";
-        public const string EconomyStableBonus = "Economic.EconomyStableBonus";
-
-        public const string EconomyCriticalIncomeBelow = "Economy.CriticalIncomeBelow";
-        public const string EconomyCriticalGoldBelow = "Economy.CriticalGoldBelow";
-        public const string EconomyWeakIncomeAtMost = "Economy.WeakIncomeAtMost";
-        public const string EconomyWeakGoldBelow = "Economy.WeakGoldBelow";
-        public const string EconomyStableIncomeAtMost = "Economy.StableIncomeAtMost";
+        // Single axis: Leader.goldAmount + resources held valued at current market sell
+        // price (AIContext.CalculateLiquidWealth) — this game has no passive per-turn
+        // income of any kind, so there is no second "income" axis to threshold against.
+        public const string EconomyCriticalBelow = "Economy.CriticalBelow";
+        public const string EconomyWeakBelow = "Economy.WeakBelow";
+        public const string EconomyStableBelow = "Economy.StableBelow";
 
         public const string EnemyProximityMax = "Targeting.EnemyProximityMax";
         public const string NeutralTargetExtraDistance = "Targeting.NeutralTargetExtraDistance";
@@ -108,9 +165,7 @@ public static class AIAdvisorConfig
         public const string MilitaristicViabilityThreshold = "Militaristic.ViabilityThreshold";
         public const string OutmatchedStrengthRatio = "Militaristic.OutmatchedStrengthRatio";
 
-        public const string IntelligencePoorEconomyBonus = "Intelligence.PoorEconomyBonus";
         public const string IntelligenceOutmatchedBonus = "Intelligence.OutmatchedBonus";
-        public const string ScoutAreaBonus = "Intelligence.ScoutAreaBonus";
         public const string EnemyCharacterProximityMax = "Intelligence.EnemyCharacterProximityMax";
         public const string IntelligenceViabilityThreshold = "Intelligence.ViabilityThreshold";
 
@@ -124,37 +179,68 @@ public static class AIAdvisorConfig
         public const string MovementProximityMax = "Movement.ProximityMax";
         public const string MovementDistancePenaltyPerHex = "Movement.DistancePenaltyPerHex";
         public const string MovementViabilityThreshold = "Movement.ViabilityThreshold";
+
+        public const string DiplomaticNpcDiscoveryThreshold = "Diplomatic.NpcDiscoveryThreshold";
+        public const string DiplomaticIndirectSafetyThreshold = "Diplomatic.IndirectSafetyThreshold";
+        public const string IntelligenceEnemyCharacterThreshold = "Intelligence.EnemyCharacterThreshold";
+        public const string IntelligenceIndirectSafetyThreshold = "Intelligence.IndirectSafetyThreshold";
+        public const string MagicArtifactScarcityThreshold = "Magic.ArtifactScarcityThreshold";
+        public const string MagicArtifactTransferThreshold = "Magic.ArtifactTransferThreshold";
+        public const string MagicEnemyPressureThreshold = "Magic.EnemyPressureThreshold";
+        public const string MovementReachNpcThreshold = "Movement.ReachNpcThreshold";
+        public const string MovementInterceptEnemyThreshold = "Movement.InterceptEnemyThreshold";
+        public const string MovementReachEnemyCharacterThreshold = "Movement.ReachEnemyCharacterThreshold";
+        public const string MagicHiddenArtifactsWeight = "Magic.HiddenArtifactsWeight";
+        public const string MagicMageStrengthWeight = "Magic.MageStrengthWeight";
+        public const string DiplomaticEnemyPressureWeight = "Diplomatic.EnemyPressureWeight";
+        public const string DiplomaticEmissaryStrengthWeight = "Diplomatic.EmissaryStrengthWeight";
+        public const string IntelligenceEnemyPressureWeight = "Intelligence.EnemyPressureWeight";
+        public const string IntelligenceAgentStrengthWeight = "Intelligence.AgentStrengthWeight";
+
+        // Target-quality signals: is there a specific good target nearby, not just "is this
+        // advisor generically busy". Each pairs a "what counts as a target" threshold with a
+        // proximity-falloff window, following the *ProximityMax / *Threshold convention above.
+        public const string DiplomaticEnemyPcLoyaltyBelow = "Diplomatic.EnemyPcLoyaltyBelow";
+        public const string DiplomaticEnemyPcOpportunityProximityMax = "Diplomatic.EnemyPcOpportunityProximityMax";
+        public const string DiplomaticEnemyPcOpportunityThreshold = "Diplomatic.EnemyPcOpportunityThreshold";
+
+        public const string DiplomaticOwnPcLoyaltyBelow = "Diplomatic.OwnPcLoyaltyBelow";
+        public const string DiplomaticOwnPcLoyaltyRiskProximityMax = "Diplomatic.OwnPcLoyaltyRiskProximityMax";
+        public const string DiplomaticOwnPcLoyaltyRiskThreshold = "Diplomatic.OwnPcLoyaltyRiskThreshold";
+
+        public const string IntelligenceEnemyPcDefenseBelow = "Intelligence.EnemyPcDefenseBelow";
+        public const string IntelligenceEnemyPcVulnerabilityProximityMax = "Intelligence.EnemyPcVulnerabilityProximityMax";
+        public const string IntelligenceEnemyPcVulnerabilityThreshold = "Intelligence.EnemyPcVulnerabilityThreshold";
+
+        public const string IntelligenceHighValueSkillAtLeast = "Intelligence.HighValueSkillAtLeast";
+        public const string IntelligenceHighValueEnemyCharacterProximityMax = "Intelligence.HighValueEnemyCharacterProximityMax";
+        public const string IntelligenceHighValueEnemyCharacterThreshold = "Intelligence.HighValueEnemyCharacterThreshold";
+
+        // Second wave: Magic gets a spell-casting signal (previously artifact-only), Militaristic
+        // gets a fortification-need signal (previously combat-only), Diplomatic gets an
+        // NPL-recruitment-eligibility signal (previously discovery-only). None of these are
+        // folded into GetAdvisorViability — same precedent as Magic.ArtifactTransfer: available
+        // as a direct utility parameter and an HTN "Ready" predicate for sub-branching once
+        // already in that advisor's territory, without widening the outer viability gate.
+        public const string MagicSpellOpportunityThreshold = "Magic.SpellOpportunityThreshold";
+
+        public const string MilitaristicOwnPcDefenseBelow = "Militaristic.OwnPcDefenseBelow";
+        public const string MilitaristicOwnPcFortificationProximityMax = "Militaristic.OwnPcFortificationProximityMax";
+        public const string MilitaristicOwnPcFortificationNeedThreshold = "Militaristic.OwnPcFortificationNeedThreshold";
+
+        public const string DiplomaticNplRecruitmentProximityMax = "Diplomatic.NplRecruitmentProximityMax";
+        public const string DiplomaticNplRecruitmentThreshold = "Diplomatic.NplRecruitmentThreshold";
     }
 
     public static readonly IReadOnlyList<AdvisorWeightDefinition> KnownWeights = new List<AdvisorWeightDefinition>
     {
-        new(Keys.BaseScore, 1f, "Starting score every candidate action begins with."),
-        new(Keys.DifficultyDivisor, 25f, "Card difficulty is divided by this to compute the penalty; higher = difficulty matters less."),
-        new(Keys.MaxDifficultyPenalty, 3f, "Cap on the difficulty penalty."),
-        new(Keys.CostPressureWhenPoor, 2.5f, "Gold-cost penalty multiplier while the economy needs help (1 = no extra pressure)."),
         new(Keys.HTNBiasBonus, 4f, "Flat score bonus for cards whose advisor matches the HTN strategy's currently-active task."),
 
-        new(Keys.MilitaristicPerCommanderLevel, 2f, "Militaristic appeal per commander level."),
-        new(Keys.MilitaristicLeadingArmyBonus, 2f, "Extra militaristic appeal when the character leads an army."),
-        new(Keys.EconomicPerEmissaryLevel, 0.5f, "Economic appeal per emissary level."),
-        new(Keys.EconomicPerCommanderLevel, 0.25f, "Economic appeal per commander level."),
-        new(Keys.DiplomaticPerEmissaryLevel, 2f, "Diplomatic appeal per emissary level."),
-        new(Keys.IntelligencePerAgentLevel, 2f, "Intelligence appeal per agent level."),
-        new(Keys.MagicPerMageLevel, 2f, "Magic appeal per mage level."),
-        new(Keys.MagicPerArtifactCarried, 1f, "Magic appeal per artifact the character carries."),
-        new(Keys.MovementPerCommanderLevel, 0.5f, "Movement appeal per commander level."),
-        new(Keys.MovementPerAgentLevel, 0.4f, "Movement appeal per agent level."),
-        new(Keys.MovementPerEmissaryLevel, 0.25f, "Movement appeal per emissary level."),
-
-        new(Keys.EconomyCriticalIncomeBelow, 0f, "Economy is Critical when gold income per turn is below this."),
-        new(Keys.EconomyCriticalGoldBelow, 5f, "Economy is Critical when stored gold is below this."),
-        new(Keys.EconomyWeakIncomeAtMost, 1f, "Economy is Weak when gold income per turn is at most this."),
-        new(Keys.EconomyWeakGoldBelow, 15f, "Economy is Weak when stored gold is below this."),
-        new(Keys.EconomyStableIncomeAtMost, 4f, "Economy is Stable when gold income per turn is at most this; above it, Surplus."),
-
-        new(Keys.EconomyCriticalBonus, 8f, "Economic advisor bonus while the economy is Critical."),
-        new(Keys.EconomyWeakBonus, 5f, "Economic advisor bonus while the economy is Weak."),
-        new(Keys.EconomyStableBonus, 2f, "Economic advisor bonus while the economy is Stable."),
+        // Fresh thresholds against a fresh metric (liquid wealth) — these are a starting
+        // point, not tuned against real playtested economies. Expect to retune.
+        new(Keys.EconomyCriticalBelow, 20f, "Economy is Critical when gold + resource net worth (at current market price) is below this."),
+        new(Keys.EconomyWeakBelow, 60f, "Economy is Weak (not Critical) when gold + resource net worth is below this."),
+        new(Keys.EconomyStableBelow, 150f, "Economy is Stable (not Critical or Weak) when gold + resource net worth is below this; above it, Surplus."),
 
         new(Keys.EnemyProximityMax, 10f, "Enemy-proximity bonus at distance 0; fades by 1 per hex."),
         new(Keys.NeutralTargetExtraDistance, 2f, "Neutral targets count as this many hexes farther away."),
@@ -164,11 +250,9 @@ public static class AIAdvisorConfig
         new(Keys.MilitaristicViabilityThreshold, 0f, "HTN switches to a Militaristic strategy once Militaristic's viability (enemy proximity + army edge, same terms as its situational score above) crosses this."),
         new(Keys.OutmatchedStrengthRatio, 1.1f, "The nearest enemy must be at least this many times my army's strength (0 while leading no army) to count as \"outmatched\" — the single definition Militaristic.Danger and the Intelligence/Diplomatic outmatched bonuses below all read."),
 
-        new(Keys.IntelligencePoorEconomyBonus, 3f, "Intelligence bonus while the economy needs help."),
         new(Keys.IntelligenceOutmatchedBonus, 3f, "Intelligence bonus when the army is outmatched (indirect approach)."),
-        new(Keys.ScoutAreaBonus, 6f, "Extra bonus for the Scout Area action."),
         new(Keys.EnemyCharacterProximityMax, 6f, "Intelligence bonus when an enemy character is at distance 0; fades by 1 per hex."),
-        new(Keys.IntelligenceViabilityThreshold, 0f, "HTN switches to an Intelligence strategy once Intelligence's viability (same terms as its situational score above, minus the Scout Area bonus) crosses this."),
+        new(Keys.IntelligenceViabilityThreshold, 0f, "HTN switches to an Intelligence strategy once Intelligence's viability (same terms as its situational score above) crosses this."),
 
         new(Keys.ArtifactScarcityWeight, 2f, "Magic bonus scale for how few artifacts the nation owns (0..1 scarcity times this)."),
         new(Keys.MagicViabilityThreshold, 0f, "HTN switches to a Magic strategy once Magic's viability (same terms as its situational score above) crosses this."),
@@ -180,21 +264,59 @@ public static class AIAdvisorConfig
         new(Keys.MovementProximityMax, 8f, "Movement bonus at distance 0 from the preferred destination."),
         new(Keys.MovementDistancePenaltyPerHex, 2f, "How fast the movement bonus fades per hex of distance."),
         new(Keys.MovementViabilityThreshold, 0f, "HTN switches to a Movement strategy once Movement's viability (same terms as its situational score above) crosses this."),
+
+        new(Keys.DiplomaticNpcDiscoveryThreshold, 0f, "HTN threshold for direct Diplomatic.NpcDiscovery."),
+        new(Keys.DiplomaticIndirectSafetyThreshold, 0f, "HTN threshold for direct Diplomatic.IndirectSafety."),
+        new(Keys.IntelligenceEnemyCharacterThreshold, 0f, "HTN threshold for direct Intelligence.EnemyCharacter."),
+        new(Keys.IntelligenceIndirectSafetyThreshold, 0f, "HTN threshold for direct Intelligence.IndirectSafety."),
+        new(Keys.MagicArtifactScarcityThreshold, 0f, "HTN threshold for direct Magic.ArtifactScarcity."),
+        new(Keys.MagicArtifactTransferThreshold, 0f, "HTN threshold for direct Magic.ArtifactTransfer."),
+        new(Keys.MagicEnemyPressureThreshold, 0f, "HTN threshold for direct Magic.EnemyPressure."),
+        new(Keys.MovementReachNpcThreshold, 0f, "HTN threshold for direct Movement.ReachNpc."),
+        new(Keys.MovementInterceptEnemyThreshold, 0f, "HTN threshold for direct Movement.InterceptEnemy."),
+        new(Keys.MovementReachEnemyCharacterThreshold, 0f, "HTN threshold for direct Movement.ReachEnemyCharacter."),
+        new(Keys.MagicHiddenArtifactsWeight, 1f, "Magic viability per hidden artifact still on the map."),
+        new(Keys.MagicMageStrengthWeight, 0.5f, "Magic viability per total active Mage level under this leader."),
+        new(Keys.DiplomaticEnemyPressureWeight, 1f, "Diplomatic viability multiplier for enemy proximity."),
+        new(Keys.DiplomaticEmissaryStrengthWeight, 0.5f, "Diplomatic viability per total active Emissary level under this leader."),
+        new(Keys.IntelligenceEnemyPressureWeight, 1f, "Intelligence viability multiplier for enemy proximity."),
+        new(Keys.IntelligenceAgentStrengthWeight, 0.5f, "Intelligence viability per total active Agent level under this leader."),
+
+        new(Keys.DiplomaticEnemyPcLoyaltyBelow, 50f, "An enemy-owned PC counts as an influence-out opportunity when its loyalty is below this (PC.loyalty, 0-100)."),
+        new(Keys.DiplomaticEnemyPcOpportunityProximityMax, 10f, "Diplomatic.EnemyPcOpportunity bonus at distance 0 from the nearest qualifying enemy PC; fades by 1 per hex."),
+        new(Keys.DiplomaticEnemyPcOpportunityThreshold, 0f, "HTN threshold for direct Diplomatic.EnemyPcOpportunity."),
+
+        new(Keys.DiplomaticOwnPcLoyaltyBelow, 40f, "One of this leader's own PCs counts as an influence-up risk when its loyalty is below this."),
+        new(Keys.DiplomaticOwnPcLoyaltyRiskProximityMax, 10f, "Diplomatic.OwnPcLoyaltyRisk bonus at distance 0 from the nearest at-risk own PC; fades by 1 per hex."),
+        new(Keys.DiplomaticOwnPcLoyaltyRiskThreshold, 0f, "HTN threshold for direct Diplomatic.OwnPcLoyaltyRisk."),
+
+        new(Keys.IntelligenceEnemyPcDefenseBelow, 5f, "An enemy-owned PC counts as a sabotage/theft target when its PC.GetDefense() is below this."),
+        new(Keys.IntelligenceEnemyPcVulnerabilityProximityMax, 8f, "Intelligence.EnemyPcVulnerability bonus at distance 0 from the nearest qualifying enemy PC; fades by 1 per hex."),
+        new(Keys.IntelligenceEnemyPcVulnerabilityThreshold, 0f, "HTN threshold for direct Intelligence.EnemyPcVulnerability."),
+
+        new(Keys.IntelligenceHighValueSkillAtLeast, 4f, "An enemy character counts as a high-value assassination/kidnap target when their Commander+Agent+Emmissary+Mage sum is at least this."),
+        new(Keys.IntelligenceHighValueEnemyCharacterProximityMax, 8f, "Intelligence.HighValueEnemyCharacter bonus at distance 0 from the nearest qualifying enemy character; fades by 1 per hex."),
+        new(Keys.IntelligenceHighValueEnemyCharacterThreshold, 0f, "HTN threshold for direct Intelligence.HighValueEnemyCharacter."),
+
+        new(Keys.MagicSpellOpportunityThreshold, 0f, "HTN threshold for direct Magic.SpellOpportunity (count of currently-playable Spell actions)."),
+
+        new(Keys.MilitaristicOwnPcDefenseBelow, 6f, "One of this leader's own PCs counts as needing fortification when its PC.GetDefense() is below this."),
+        new(Keys.MilitaristicOwnPcFortificationProximityMax, 10f, "Militaristic.OwnPcFortificationNeed bonus at distance 0 from the nearest under-fortified own PC; fades by 1 per hex."),
+        new(Keys.MilitaristicOwnPcFortificationNeedThreshold, 0f, "HTN threshold for direct Militaristic.OwnPcFortificationNeed."),
+
+        new(Keys.DiplomaticNplRecruitmentProximityMax, 10f, "Diplomatic.NplRecruitment bonus at distance 0 from the nearest NPL capital eligible for StateAllegiance (AFriendOrThree) recruitment; fades by 1 per hex."),
+        new(Keys.DiplomaticNplRecruitmentThreshold, 0f, "HTN threshold for direct Diplomatic.NplRecruitment."),
     };
 
     private static Dictionary<string, float> defaultsByKey;
     private static Dictionary<string, float> loadedWeights;
-    private static Dictionary<string, AdvisorType> loadedOverrides;
-    private static Dictionary<string, float> loadedBonuses;
-    private static Dictionary<string, ActionScoreFlags> loadedFlags;
+    private static Dictionary<string, CardAdvisorProfile> loadedCardProfiles;
     private static bool loaded;
 
     public static void Reload()
     {
         loadedWeights = null;
-        loadedOverrides = null;
-        loadedBonuses = null;
-        loadedFlags = null;
+        loadedCardProfiles = null;
         loaded = false;
     }
 
@@ -217,8 +339,9 @@ public static class AIAdvisorConfig
     {
         if (action == null) return AdvisorType.None;
         EnsureLoaded();
-        if (loadedOverrides != null
-            && loadedOverrides.TryGetValue(action.GetType().Name, out AdvisorType overridden))
+        if (TryGetProfile(action.card, out CardAdvisorProfile profile)
+            && !string.IsNullOrWhiteSpace(profile.advisor)
+            && Enum.TryParse(profile.advisor, true, out AdvisorType overridden))
         {
             return overridden;
         }
@@ -230,21 +353,18 @@ public static class AIAdvisorConfig
     {
         if (action == null) return 0f;
         EnsureLoaded();
-        return loadedBonuses != null
-            && loadedBonuses.TryGetValue(action.GetType().Name, out float bonus)
-            ? bonus
-            : 0f;
+        return TryGetProfile(action.card, out CardAdvisorProfile profile) ? profile.scoreBonus : 0f;
     }
 
-    // Single source of truth for how gold buffer + income map to an economy
-    // status. Thresholds are editable in the AI Widget (Economy group).
-    public static EconomyStatus EvaluateEconomyStatus(int goldBuffer, int goldPerTurn)
+    // Single source of truth for how liquid wealth (gold + resources at current market
+    // price — see AIContext.CalculateLiquidWealth) maps to an economy status. This game has
+    // no passive per-turn income to threshold against, so there is only one axis. Thresholds
+    // are editable in the AI Widget (Economic tab).
+    public static EconomyStatus EvaluateEconomyStatus(float liquidWealth)
     {
-        if (goldPerTurn < GetWeight(Keys.EconomyCriticalIncomeBelow)
-            || goldBuffer < GetWeight(Keys.EconomyCriticalGoldBelow)) return EconomyStatus.Critical;
-        if (goldPerTurn <= GetWeight(Keys.EconomyWeakIncomeAtMost)
-            || goldBuffer < GetWeight(Keys.EconomyWeakGoldBelow)) return EconomyStatus.Weak;
-        if (goldPerTurn <= GetWeight(Keys.EconomyStableIncomeAtMost)) return EconomyStatus.Stable;
+        if (liquidWealth < GetWeight(Keys.EconomyCriticalBelow)) return EconomyStatus.Critical;
+        if (liquidWealth < GetWeight(Keys.EconomyWeakBelow)) return EconomyStatus.Weak;
+        if (liquidWealth < GetWeight(Keys.EconomyStableBelow)) return EconomyStatus.Stable;
         return EconomyStatus.Surplus;
     }
 
@@ -253,20 +373,51 @@ public static class AIAdvisorConfig
     {
         if (action == null) return default;
         EnsureLoaded();
-        return loadedFlags != null
-            && loadedFlags.TryGetValue(action.GetType().Name, out ActionScoreFlags flags)
-            ? flags
+        return TryGetProfile(action.card, out CardAdvisorProfile profile)
+            ? new ActionScoreFlags { ignoreSituation = profile.ignoreSituation }
             : default;
     }
+
+    // Card-side, fully authored modifiers. No implicit action-specific utility
+    // exists: a contribution can only be present if it appears in this list.
+    public static IReadOnlyList<ActionUtilityParameterModifier> GetActionUtilityParameters(CharacterAction action)
+    {
+        if (action == null) return Array.Empty<ActionUtilityParameterModifier>();
+        EnsureLoaded();
+        return TryGetProfile(action.card, out CardAdvisorProfile profile) && profile.utilityParameters?.Count > 0
+            ? profile.utilityParameters
+            : Array.Empty<ActionUtilityParameterModifier>();
+    }
+
+    private static bool TryGetProfile(CardData card, out CardAdvisorProfile profile)
+    {
+        profile = null;
+        string key = BuildCardProfileKey(card);
+        return !string.IsNullOrEmpty(key) && loadedCardProfiles != null && loadedCardProfiles.TryGetValue(key, out profile);
+    }
+
+    // The canonical per-printed-card identity. Injected reference cards (Land/starting-PC
+    // cards DeckManager auto-duplicates into every subdeck that lacks one, see
+    // InjectMissingStartingPcAndLandReferences) carry their own local deckId/cardId but point
+    // back at one canonical template via referenceDeckId/referenceCardId — a profile authored
+    // once must resolve through that template, or it would only ever apply to the one deck
+    // whose injected clone happened to share the template's numbering.
+    public static string BuildCardProfileKey(CardData card)
+    {
+        if (card == null) return string.Empty;
+        bool isReference = !string.IsNullOrWhiteSpace(card.referenceDeckId) && card.referenceCardId > 0;
+        return BuildCardProfileKey(isReference ? card.referenceDeckId : card.deckId, isReference ? card.referenceCardId : card.cardId);
+    }
+
+    public static string BuildCardProfileKey(string deckId, int cardId)
+        => string.IsNullOrWhiteSpace(deckId) || cardId <= 0 ? string.Empty : $"{deckId.Trim().ToLowerInvariant()}::{cardId}";
 
     private static void EnsureLoaded()
     {
         if (loaded) return;
         loaded = true;
         loadedWeights = new Dictionary<string, float>(StringComparer.OrdinalIgnoreCase);
-        loadedOverrides = new Dictionary<string, AdvisorType>(StringComparer.OrdinalIgnoreCase);
-        loadedBonuses = new Dictionary<string, float>(StringComparer.OrdinalIgnoreCase);
-        loadedFlags = new Dictionary<string, ActionScoreFlags>(StringComparer.OrdinalIgnoreCase);
+        loadedCardProfiles = new Dictionary<string, CardAdvisorProfile>(StringComparer.OrdinalIgnoreCase);
 
         TextAsset asset = Resources.Load<TextAsset>(ResourcePath);
         if (asset == null || string.IsNullOrWhiteSpace(asset.text)) return;
@@ -288,40 +439,32 @@ public static class AIAdvisorConfig
             }
         }
 
-        if (data?.actionOverrides != null)
+        if (data?.cardProfiles != null)
         {
-            foreach (AdvisorActionOverride entry in data.actionOverrides)
+            foreach (CardAdvisorProfile entry in data.cardProfiles)
             {
-                if (entry == null || string.IsNullOrWhiteSpace(entry.actionClass)) continue;
+                string key = BuildCardProfileKey(entry?.deckId, entry?.cardId ?? 0);
+                if (string.IsNullOrEmpty(key)) continue;
 
-                if (!string.IsNullOrWhiteSpace(entry.advisor))
-                {
-                    if (Enum.TryParse(entry.advisor, true, out AdvisorType advisor))
-                    {
-                        loadedOverrides[entry.actionClass] = advisor;
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"AIAdvisorConfig: unknown advisor '{entry.advisor}' for action '{entry.actionClass}' — ignoring override.");
-                    }
-                }
+                List<ActionUtilityParameterModifier> valid = entry.utilityParameters?
+                    .Where(p => p != null && AIUtilityParameters.IsKnown(p.parameter))
+                    .Select(p => new ActionUtilityParameterModifier { parameter = p.parameter, multiplier = p.multiplier, bonus = p.bonus })
+                    .ToList() ?? new List<ActionUtilityParameterModifier>();
 
-                if (!Mathf.Approximately(entry.scoreBonus, 0f))
-                {
-                    loadedBonuses[entry.actionClass] = entry.scoreBonus;
-                }
+                AdvisorType parsedAdvisor = AdvisorType.None;
+                bool hasAdvisorOverride = !string.IsNullOrWhiteSpace(entry.advisor) && Enum.TryParse(entry.advisor, true, out parsedAdvisor);
 
-                ActionScoreFlags flags = new()
+                loadedCardProfiles[key] = new CardAdvisorProfile
                 {
-                    ignoreDifficulty = entry.ignoreDifficulty,
-                    ignoreGoldCost = entry.ignoreGoldCost,
-                    ignoreSkills = entry.ignoreSkills,
-                    ignoreSituation = entry.ignoreSituation
+                    deckId = entry.deckId,
+                    cardId = entry.cardId,
+                    cardName = entry.cardName,
+                    actionClass = entry.actionClass,
+                    advisor = hasAdvisorOverride ? parsedAdvisor.ToString() : string.Empty,
+                    scoreBonus = entry.scoreBonus,
+                    ignoreSituation = entry.ignoreSituation,
+                    utilityParameters = valid
                 };
-                if (flags.AnySet)
-                {
-                    loadedFlags[entry.actionClass] = flags;
-                }
             }
         }
     }

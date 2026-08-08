@@ -146,7 +146,7 @@ public class DeckExplorerWindow : EditorWindow
     private RenderTexture previewRenderTexture;
     private Rect previewRect;
 
-    [MenuItem("Window/RetroLOTR/Deck Explorer")]
+    [MenuItem("Tools/RetroLOTR/Deck Explorer")]
     public static void Open()
     {
         GetWindow<DeckExplorerWindow>("Deck Explorer");

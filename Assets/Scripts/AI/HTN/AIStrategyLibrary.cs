@@ -151,7 +151,7 @@ public static class AIStrategyLibrary
         HTNMethod method = new()
         {
             TaskId = data.taskId,
-            Precondition = ResolvePredicate(data.precondition, data.invert, blankDefaultsToAlways: true, strategyId, "Method precondition")
+            Precondition = ResolveCondition(data.precondition, blankDefaultsToAlways: true, strategyId, "Method precondition")
         };
 
         while (index < nodes.Count && nodes[index] != null && nodes[index].depth > myDepth)
@@ -198,24 +198,37 @@ public static class AIStrategyLibrary
         return new HTNPrimitiveTask
         {
             TaskId = data.taskId,
-            Precondition = ResolvePredicate(data.precondition, data.invert, blankDefaultsToAlways: true, strategyId, "PrimitiveTask precondition"),
-            CompletionCondition = ResolvePredicate(data.completionCondition, data.completionInvert, blankDefaultsToAlways: false, strategyId, "PrimitiveTask completion condition"),
+            Precondition = ResolveCondition(data.precondition, blankDefaultsToAlways: true, strategyId, "PrimitiveTask precondition"),
+            CompletionCondition = ResolveCondition(data.completionCondition, blankDefaultsToAlways: false, strategyId, "PrimitiveTask completion condition"),
             AdvisorName = data.advisor ?? string.Empty
         };
     }
 
-    private static Func<AIContext, AIBlackboard, bool> ResolvePredicate(string name, bool invert, bool blankDefaultsToAlways, string strategyId, string role)
+    // Terms OR together — this is where "Economic.Critical OR Economic.Weak", authored as two
+    // terms on one Method row, becomes a single evaluable predicate. An empty/all-blank list
+    // means "no gate" for a precondition (Always) or "never completes" for a completion
+    // condition (Never) — both already exist in HTNRegistry.
+    private static Func<AIContext, AIBlackboard, bool> ResolveCondition(List<HTNConditionTerm> terms, bool blankDefaultsToAlways, string strategyId, string role)
     {
-        // Blank precondition means "no gate" (Method) / blank completion means "never completes" — both map to Always/Never already in HTNRegistry.
-        string effectiveName = string.IsNullOrWhiteSpace(name) ? (blankDefaultsToAlways ? "Always" : "Never") : name;
-
-        if (!HTNRegistry.TryGetPredicate(effectiveName, out Func<AIContext, AIBlackboard, bool> predicate))
+        List<HTNConditionTerm> validTerms = terms?.FindAll(t => t != null && !string.IsNullOrWhiteSpace(t.name)) ?? new List<HTNConditionTerm>();
+        if (validTerms.Count == 0)
         {
-            Debug.LogWarning($"AIStrategyLibrary: strategy '{strategyId}' references unknown {role} '{effectiveName}' — treating it as always-false.");
-            predicate = (_, _) => false;
+            HTNRegistry.TryGetPredicate(blankDefaultsToAlways ? "Always" : "Never", out Func<AIContext, AIBlackboard, bool> fallback);
+            return fallback;
         }
 
-        return invert ? (ctx, bb) => !predicate(ctx, bb) : predicate;
+        List<Func<AIContext, AIBlackboard, bool>> resolved = new();
+        foreach (HTNConditionTerm term in validTerms)
+        {
+            if (!HTNRegistry.TryGetPredicate(term.name, out Func<AIContext, AIBlackboard, bool> predicate))
+            {
+                Debug.LogWarning($"AIStrategyLibrary: strategy '{strategyId}' references unknown {role} term '{term.name}' — treating it as always-false.");
+                predicate = (_, _) => false;
+            }
+            resolved.Add(term.invert ? (ctx, bb) => !predicate(ctx, bb) : predicate);
+        }
+
+        return resolved.Count == 1 ? resolved[0] : HTNRegistry.Or(resolved.ToArray());
     }
 
     private static void SkipChildren(List<HTNNodeData> nodes, ref int index, int parentDepth)

@@ -1109,9 +1109,7 @@ public class DeckManager : MonoBehaviour
     // instead of the old hard gate/first-match-wins order.
     private static float ScoreOpportunityCard(CardData card, Character character, List<CardSituationEnum> activeSituations)
     {
-        float score = AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.BaseScore);
-
-        score += character.GetCommander() * (card.commanderSkillRequired > 0 ? 0.5f : 0f)
+        float score = character.GetCommander() * (card.commanderSkillRequired > 0 ? 0.5f : 0f)
                + character.GetAgent() * (card.agentSkillRequired > 0 ? 0.5f : 0f)
                + character.GetEmmissary() * (card.emissarySkillRequired > 0 ? 0.5f : 0f)
                + character.GetMage() * (card.mageSkillRequired > 0 ? 0.5f : 0f);
