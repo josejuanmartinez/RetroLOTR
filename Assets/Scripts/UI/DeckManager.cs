@@ -2553,6 +2553,9 @@ public class DeckManager : MonoBehaviour
     {
         if (owner == null || card == null) return;
 
+        owner.recentlyPlayedCards.Add(card);
+        if (owner.recentlyPlayedCards.Count > 2) owner.recentlyPlayedCards.RemoveAt(0);
+
         if (card.leatherRequired > 0) owner.RemoveLeather(card.leatherRequired, false);
         if (card.timberRequired > 0) owner.RemoveTimber(card.timberRequired, false);
         if (card.mountsRequired > 0) owner.RemoveMounts(card.mountsRequired, false);

@@ -99,10 +99,12 @@ public static class AIContextDataBuilder
                 if (pc.loyalty < enemyPcLoyaltyBelow && distance < data.NearestEnemyPcOpportunityDistance)
                 {
                     data.NearestEnemyPcOpportunityDistance = distance;
+                    data.NearestEnemyPcOpportunityHex = hex;
                 }
                 if (pc.GetDefense() < enemyPcDefenseBelow && distance < data.NearestEnemyPcVulnerabilityDistance)
                 {
                     data.NearestEnemyPcVulnerabilityDistance = distance;
+                    data.NearestEnemyPcVulnerabilityHex = hex;
                 }
             }
 
@@ -115,6 +117,7 @@ public static class AIContextDataBuilder
                 if (skill >= highValueSkillAtLeast && distance < data.NearestHighValueEnemyCharacterDistance)
                 {
                     data.NearestHighValueEnemyCharacterDistance = distance;
+                    data.NearestHighValueEnemyCharacterHex = hex;
                 }
             }
         }
@@ -142,10 +145,12 @@ public static class AIContextDataBuilder
             if (pc.loyalty < ownPcLoyaltyBelow && distance < data.NearestOwnPcLoyaltyRiskDistance)
             {
                 data.NearestOwnPcLoyaltyRiskDistance = distance;
+                data.NearestOwnPcLoyaltyRiskHex = pc.hex;
             }
             if (pc.GetDefense() < ownPcDefenseBelow && distance < data.NearestOwnPcFortificationNeedDistance)
             {
                 data.NearestOwnPcFortificationNeedDistance = distance;
+                data.NearestOwnPcFortificationNeedHex = pc.hex;
             }
         }
     }
@@ -178,6 +183,7 @@ public static class AIContextDataBuilder
             if (pc.isCapital && leader != null && npc.CanJoinWithStateAllegiance(leader) && distance < data.NearestNplRecruitmentDistance)
             {
                 data.NearestNplRecruitmentDistance = distance;
+                data.NearestNplRecruitmentHex = hex;
             }
         }
     }

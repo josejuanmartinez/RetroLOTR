@@ -6,7 +6,11 @@ public enum AdvisorType
     Diplomatic = 3,
     Intelligence = 4,
     Magic = 5,
-    Movement = 6
+    // Movement was split into Disruption (deny/debuff the enemy) and Logistics (reposition/heal
+    // our own side) — two distinct strategic intents that a single "move toward a destination"
+    // formula couldn't represent.
+    Disruption = 6,
+    Logistics = 7
 }
 
 public enum EconomyStatus

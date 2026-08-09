@@ -17,6 +17,11 @@ public class Leader : Character
     // which is fine: fog state is rebuilt at runtime.
     public HashSet<Hex> visibleHexes = new();
     public bool playedLandThisTurn;
+    // Last two cards this leader has paid the cost of, most recent last — capped at 2 since
+    // the only reader (Vaire's Loom) only ever needs "the card played immediately before this
+    // one", not a full history. Updated in DeckManager.ApplyCardCosts, not per-card-type, so it
+    // stays generic rather than hardcoding any specific card's name here.
+    public readonly List<CardData> recentlyPlayedCards = new();
     private readonly Dictionary<Hex, int> tempSeenHexes = new();
     private readonly Dictionary<Hex, int> tempScoutCenters = new();
 

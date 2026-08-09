@@ -200,7 +200,10 @@ public static class AIStrategyLibrary
             TaskId = data.taskId,
             Precondition = ResolveCondition(data.precondition, blankDefaultsToAlways: true, strategyId, "PrimitiveTask precondition"),
             CompletionCondition = ResolveCondition(data.completionCondition, blankDefaultsToAlways: false, strategyId, "PrimitiveTask completion condition"),
-            AdvisorName = data.advisor ?? string.Empty
+            AdvisorName = data.advisor ?? string.Empty,
+            // Filtered against IsKnown the same way card profiles are — a stale/renamed
+            // parameter name in hand-edited JSON silently drops rather than crashing.
+            PreferredParameters = data.preferredParameters?.Where(AIUtilityParameters.IsKnown).ToList() ?? new List<string>()
         };
     }
 

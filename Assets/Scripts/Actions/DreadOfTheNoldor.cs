@@ -51,7 +51,8 @@ public class DreadOfTheNoldor : EventAction
             List<Character> elves = character.hex.GetHexesInRadius(Radius)
                 .Where(h => h != null && h.characters != null)
                 .SelectMany(h => h.characters)
-                .Where(ch => ch != null && !ch.killed && ch.race == RacesEnum.Elf && ch.hex != null)
+                .Where(ch => ch != null && !ch.killed && ch.hex != null
+                    && ch.race == RacesEnum.Elf && ch.GetAlignment() != character.GetAlignment())
                 .Distinct()
                 .ToList();
 
@@ -96,7 +97,8 @@ public class DreadOfTheNoldor : EventAction
             if (character == null || character.hex == null) return false;
 
             return character.hex.GetHexesInRadius(Radius)
-                .Any(h => h != null && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed && ch.race == RacesEnum.Elf));
+                .Any(h => h != null && h.characters != null && h.characters.Any(ch =>
+                    ch != null && !ch.killed && ch.race == RacesEnum.Elf && ch.GetAlignment() != character.GetAlignment()));
         };
 
         asyncEffect = async (character) =>

@@ -8,7 +8,7 @@
                       "cardId":  9001,
                       "name":  "Vaire's Loom",
                       "quote":  "She weaves all things that have ever been in Time into her storied webs.",
-                      "actionEffect":  "Return your entire hand to the deck, shuffle all cards together, and draw the same number of cards you had.",
+                      "actionEffect":  "Unweave the thread of your last card: its cost is fully refunded, and the character may act again this turn.",
                       "type":  "Event",
                       "tags":  [
 
@@ -61,7 +61,7 @@
                       "ironRequired":  0,
                       "steelRequired":  0,
                       "mithrilRequired":  0,
-                      "goldRequired":  0,
+                      "goldRequired":  2,
                       "jokerRequired":  0,
                       "leatherGranted":  0,
                       "mountsGranted":  0,

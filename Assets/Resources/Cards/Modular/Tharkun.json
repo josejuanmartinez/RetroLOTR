@@ -177,7 +177,7 @@
 
                                ],
                       "deckId":  "tharkun",
-                      "actionClassName":  "",
+                      "actionClassName":  "ConscriptArmy",
                       "action":  "",
                       "spriteName":  "ConquerorsOfMoria",
                       "region":  "",
@@ -259,7 +259,7 @@
 
                                ],
                       "deckId":  "tharkun",
-                      "actionClassName":  "",
+                      "actionClassName":  "ConscriptArmy",
                       "action":  "",
                       "spriteName":  "DragonHunters",
                       "region":  "",
@@ -341,7 +341,7 @@
 
                                ],
                       "deckId":  "tharkun",
-                      "actionClassName":  "",
+                      "actionClassName":  "ConscriptArmy",
                       "action":  "",
                       "spriteName":  "DwarvenArchers",
                       "region":  "",
@@ -423,7 +423,7 @@
 
                                ],
                       "deckId":  "tharkun",
-                      "actionClassName":  "",
+                      "actionClassName":  "ConscriptArmy",
                       "action":  "",
                       "spriteName":  "DwarvenAxemen",
                       "region":  "",
@@ -505,7 +505,7 @@
 
                                ],
                       "deckId":  "tharkun",
-                      "actionClassName":  "",
+                      "actionClassName":  "ConscriptArmy",
                       "action":  "",
                       "spriteName":  "DwarvenExplorers",
                       "region":  "",
@@ -587,7 +587,7 @@
 
                                ],
                       "deckId":  "tharkun",
-                      "actionClassName":  "",
+                      "actionClassName":  "ConscriptArmy",
                       "action":  "",
                       "spriteName":  "DwarvenMiners",
                       "region":  "",
@@ -669,7 +669,7 @@
 
                                ],
                       "deckId":  "tharkun",
-                      "actionClassName":  "",
+                      "actionClassName":  "ConscriptArmy",
                       "action":  "",
                       "spriteName":  "DwarvenPikeshields",
                       "region":  "",
@@ -751,7 +751,7 @@
 
                                ],
                       "deckId":  "tharkun",
-                      "actionClassName":  "",
+                      "actionClassName":  "ConscriptArmy",
                       "action":  "",
                       "spriteName":  "DwarvenSiege",
                       "region":  "",
@@ -833,7 +833,7 @@
 
                                ],
                       "deckId":  "tharkun",
-                      "actionClassName":  "",
+                      "actionClassName":  "ConscriptArmy",
                       "action":  "",
                       "spriteName":  "GoatRiders",
                       "region":  "",
@@ -915,7 +915,7 @@
 
                                ],
                       "deckId":  "tharkun",
-                      "actionClassName":  "",
+                      "actionClassName":  "ConscriptArmy",
                       "action":  "",
                       "spriteName":  "Miners",
                       "region":  "",
@@ -997,7 +997,7 @@
 
                                ],
                       "deckId":  "tharkun",
-                      "actionClassName":  "",
+                      "actionClassName":  "ConscriptArmy",
                       "action":  "",
                       "spriteName":  "ReclaimersOfErebor",
                       "region":  "",
@@ -3918,7 +3918,7 @@
                       "cardId":  895,
                       "name":  "Doors of the Deep Delved",
                       "quote":  "Where others see only stone and dark, the house of Durin remembers how to look deeper.",
-                      "actionEffect":  "Look at the top 5 cards of your deck. Put 1 Dwarf, treasure, artifact, or mithril card into your hand. Put the rest on the bottom in random order.",
+                      "actionEffect":  "A hidden door opens into the deep places: the character is delved straight to the nearest Underground hex.",
                       "type":  "Event",
                       "tags":  [
                                    "deep",

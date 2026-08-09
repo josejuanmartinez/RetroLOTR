@@ -33,6 +33,9 @@ public class HTNNodeData
     public List<HTNConditionTerm> completionCondition = new();
     public string advisor = string.Empty;
     public string taskId = string.Empty;
+    // PrimitiveTask only: which specific AIUtilityParameters names this leaf's situation is
+    // about — see HTNPrimitiveTask.PreferredParameters.
+    public List<string> preferredParameters = new();
 }
 
 [Serializable]

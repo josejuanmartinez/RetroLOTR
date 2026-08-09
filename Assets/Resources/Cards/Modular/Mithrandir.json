@@ -345,7 +345,7 @@
 
                                ],
                       "deckId":  "mithrandir",
-                      "actionClassName":  "",
+                      "actionClassName":  "ConscriptArmy",
                       "action":  "",
                       "spriteName":  "Bannerlords",
                       "region":  "",
@@ -427,7 +427,7 @@
 
                                ],
                       "deckId":  "mithrandir",
-                      "actionClassName":  "",
+                      "actionClassName":  "ConscriptArmy",
                       "action":  "",
                       "spriteName":  "ElvenArchers",
                       "region":  "",
@@ -509,7 +509,7 @@
 
                                ],
                       "deckId":  "mithrandir",
-                      "actionClassName":  "",
+                      "actionClassName":  "ConscriptArmy",
                       "action":  "",
                       "spriteName":  "ElvenElkRiders",
                       "region":  "",
@@ -591,7 +591,7 @@
 
                                ],
                       "deckId":  "mithrandir",
-                      "actionClassName":  "",
+                      "actionClassName":  "ConscriptArmy",
                       "action":  "",
                       "spriteName":  "ElvenFleet",
                       "region":  "",
@@ -673,7 +673,7 @@
 
                                ],
                       "deckId":  "mithrandir",
-                      "actionClassName":  "",
+                      "actionClassName":  "ConscriptArmy",
                       "action":  "",
                       "spriteName":  "ElvenkingGuards",
                       "region":  "",
@@ -755,7 +755,7 @@
 
                                ],
                       "deckId":  "mithrandir",
-                      "actionClassName":  "",
+                      "actionClassName":  "ConscriptArmy",
                       "action":  "",
                       "spriteName":  "GaladhrimArchers",
                       "region":  "",
@@ -837,7 +837,7 @@
 
                                ],
                       "deckId":  "mithrandir",
-                      "actionClassName":  "",
+                      "actionClassName":  "ConscriptArmy",
                       "action":  "",
                       "spriteName":  "HalfElves",
                       "region":  "",
@@ -919,7 +919,7 @@
 
                                ],
                       "deckId":  "mithrandir",
-                      "actionClassName":  "",
+                      "actionClassName":  "ConscriptArmy",
                       "action":  "",
                       "spriteName":  "HallGuardsOfThranduil",
                       "region":  "",
@@ -1001,7 +1001,7 @@
 
                                ],
                       "deckId":  "mithrandir",
-                      "actionClassName":  "",
+                      "actionClassName":  "ConscriptArmy",
                       "action":  "",
                       "spriteName":  "NoldoCavalry",
                       "region":  "",
@@ -1083,7 +1083,7 @@
 
                                ],
                       "deckId":  "mithrandir",
-                      "actionClassName":  "",
+                      "actionClassName":  "ConscriptArmy",
                       "action":  "",
                       "spriteName":  "TheGoldenHost",
                       "region":  "",
@@ -1165,7 +1165,7 @@
 
                                ],
                       "deckId":  "mithrandir",
-                      "actionClassName":  "",
+                      "actionClassName":  "ConscriptArmy",
                       "action":  "",
                       "spriteName":  "WoodelfArchers",
                       "region":  "",
@@ -1247,7 +1247,7 @@
 
                                ],
                       "deckId":  "mithrandir",
-                      "actionClassName":  "",
+                      "actionClassName":  "ConscriptArmy",
                       "action":  "",
                       "spriteName":  "WoodelfWarriors",
                       "region":  "",
@@ -1329,7 +1329,7 @@
 
                                ],
                       "deckId":  "mithrandir",
-                      "actionClassName":  "",
+                      "actionClassName":  "ConscriptArmy",
                       "action":  "",
                       "spriteName":  "WoodElves",
                       "region":  "",
@@ -1411,7 +1411,7 @@
 
                                ],
                       "deckId":  "mithrandir",
-                      "actionClassName":  "",
+                      "actionClassName":  "ConscriptArmy",
                       "action":  "",
                       "spriteName":  "ElvenScouts",
                       "region":  "",
@@ -1493,7 +1493,7 @@
 
                                ],
                       "deckId":  "mithrandir",
-                      "actionClassName":  "",
+                      "actionClassName":  "ConscriptArmy",
                       "action":  "",
                       "spriteName":  "ElvenWarriors",
                       "region":  "",
@@ -4299,7 +4299,7 @@
                       "cardId":  893,
                       "name":  "Stay the Dark Tale",
                       "quote":  "Not every shadow must be faced at once; sometimes wisdom is to close the book and choose another hour.",
-                      "actionEffect":  "Remove 1 encounter card from your hand and replace it with 1 drawn card.",
+                      "actionEffect":  "Not every shadow must be faced at once: dismiss one already-discovered encounter at a hex you have found.",
                       "type":  "Event",
                       "tags":  [
                                    "encounter",
@@ -4390,7 +4390,7 @@
 
                                ],
                       "deckId":  "mithrandir",
-                      "actionClassName":  "",
+                      "actionClassName":  "ConscriptArmy",
                       "action":  "",
                       "spriteName":  "SwanFleet",
                       "region":  "",
@@ -4472,7 +4472,7 @@
 
                                ],
                       "deckId":  "mithrandir",
-                      "actionClassName":  "",
+                      "actionClassName":  "ConscriptArmy",
                       "action":  "",
                       "spriteName":  "MountedDunadanRangers",
                       "region":  "",

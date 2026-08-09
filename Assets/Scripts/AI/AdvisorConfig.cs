@@ -95,7 +95,6 @@ public static class AIUtilityParameters
     public const string MilitaristicEnemyPressure = "Militaristic.EnemyPressure";
     public const string MilitaristicMilitaryEdge = "Militaristic.MilitaryEdge";
     public const string EconomicLiquidWealth = "Economic.LiquidWealth";
-    public const string DiplomaticNpcDiscovery = "Diplomatic.NpcDiscovery";
     public const string DiplomaticIndirectSafety = "Diplomatic.IndirectSafety";
     public const string IntelligenceEnemyCharacter = "Intelligence.EnemyCharacter";
     public const string IntelligenceIndirectSafety = "Intelligence.IndirectSafety";
@@ -108,9 +107,15 @@ public static class AIUtilityParameters
     public const string DiplomaticEmissaryStrength = "Diplomatic.EmissaryStrength";
     public const string IntelligenceEnemyPressure = "Intelligence.EnemyPressure";
     public const string IntelligenceAgentStrength = "Intelligence.AgentStrength";
-    public const string MovementReachNpc = "Movement.ReachNpc";
-    public const string MovementInterceptEnemy = "Movement.InterceptEnemy";
-    public const string MovementReachEnemyCharacter = "Movement.ReachEnemyCharacter";
+    // Logistics: reposition our own side (renamed from the old, unsplit "Movement") plus healing.
+    public const string LogisticsReachNpc = "Logistics.ReachNpc";
+    public const string LogisticsInterceptEnemy = "Logistics.InterceptEnemy";
+    public const string LogisticsReachEnemyCharacter = "Logistics.ReachEnemyCharacter";
+    public const string LogisticsHealingNeed = "Logistics.HealingNeed";
+
+    // Disruption: deny/debuff the enemy (halt, block, negative status) — the other half of the
+    // old "Movement" split.
+    public const string DisruptionEnemyPressure = "Disruption.EnemyPressure";
 
     // Target-quality signals (distinct from the proximity/strength terms above): "is there a
     // specific, good target nearby right now", not just "is an advisor generically busy".
@@ -126,16 +131,47 @@ public static class AIUtilityParameters
     public const string MilitaristicOwnPcFortificationNeed = "Militaristic.OwnPcFortificationNeed";
     public const string DiplomaticNplRecruitment = "Diplomatic.NplRecruitment";
 
+    // Same proximity-to-an-undefended-own-PC signal as MilitaristicOwnPcFortificationNeed above
+    // (identical formula), under a distinct name so root.danger.pick's fortify and conscript
+    // leaves can each target their own card family (FortifyPC vs. ConscriptArmy/TrainArmy/Block)
+    // via PreferredParameters independently of one another.
+    public const string MilitaristicOwnPcDefenderNeed = "Militaristic.OwnPcDefenderNeed";
+
+    // Third wave: per-material stockpile balancing for Economic. One Insufficient/Surplus pair
+    // per tradeable ProducesEnum material, each driving that material's own Buy{X}/Sell{X}
+    // cards. Gold has no Buy/Sell card of its own — its Insufficient/Surplus instead bias every
+    // Sell{X}/Buy{X} card respectively (sell anything to raise cash; spend excess cash on
+    // anything), reusing the existing Economy.CriticalBelow/StableBelow thresholds rather than
+    // inventing new ones.
+    public const string EconomicMithrilInsufficient = "Economic.MithrilInsufficient";
+    public const string EconomicMithrilSurplus = "Economic.MithrilSurplus";
+    public const string EconomicSteelInsufficient = "Economic.SteelInsufficient";
+    public const string EconomicSteelSurplus = "Economic.SteelSurplus";
+    public const string EconomicIronInsufficient = "Economic.IronInsufficient";
+    public const string EconomicIronSurplus = "Economic.IronSurplus";
+    public const string EconomicMountsInsufficient = "Economic.MountsInsufficient";
+    public const string EconomicMountsSurplus = "Economic.MountsSurplus";
+    public const string EconomicTimberInsufficient = "Economic.TimberInsufficient";
+    public const string EconomicTimberSurplus = "Economic.TimberSurplus";
+    public const string EconomicLeatherInsufficient = "Economic.LeatherInsufficient";
+    public const string EconomicLeatherSurplus = "Economic.LeatherSurplus";
+    public const string EconomicGoldInsufficient = "Economic.GoldInsufficient";
+    public const string EconomicGoldSurplus = "Economic.GoldSurplus";
+
     public static readonly IReadOnlyList<string> Known = new[]
     {
         MilitaristicEnemyPressure, MilitaristicMilitaryEdge, EconomicLiquidWealth,
-        DiplomaticNpcDiscovery, DiplomaticIndirectSafety,
+        DiplomaticIndirectSafety,
         IntelligenceEnemyCharacter, IntelligenceIndirectSafety,
         MagicArtifactScarcity, MagicArtifactTransfer, MagicEnemyPressure, MagicHiddenArtifacts, MagicMageStrength,
         DiplomaticEnemyPressure, DiplomaticEmissaryStrength, IntelligenceEnemyPressure, IntelligenceAgentStrength,
-        MovementReachNpc, MovementInterceptEnemy, MovementReachEnemyCharacter,
+        LogisticsReachNpc, LogisticsInterceptEnemy, LogisticsReachEnemyCharacter, LogisticsHealingNeed, DisruptionEnemyPressure,
         DiplomaticEnemyPcOpportunity, DiplomaticOwnPcLoyaltyRisk, IntelligenceEnemyPcVulnerability, IntelligenceHighValueEnemyCharacter,
-        MagicSpellOpportunity, MilitaristicOwnPcFortificationNeed, DiplomaticNplRecruitment
+        MagicSpellOpportunity, MilitaristicOwnPcFortificationNeed, DiplomaticNplRecruitment, MilitaristicOwnPcDefenderNeed,
+        EconomicMithrilInsufficient, EconomicMithrilSurplus, EconomicSteelInsufficient, EconomicSteelSurplus,
+        EconomicIronInsufficient, EconomicIronSurplus, EconomicMountsInsufficient, EconomicMountsSurplus,
+        EconomicTimberInsufficient, EconomicTimberSurplus, EconomicLeatherInsufficient, EconomicLeatherSurplus,
+        EconomicGoldInsufficient, EconomicGoldSurplus
     };
 
     public static bool IsKnown(string parameter) => !string.IsNullOrWhiteSpace(parameter)
@@ -149,6 +185,10 @@ public static class AIAdvisorConfig
     public static class Keys
     {
         public const string HTNBiasBonus = "Global.HTNBiasBonus";
+        // Extra nudge (on top of HTNBiasBonus) for a card whose own utility-parameter profile
+        // already uses one of the active HTN leaf's PreferredParameters — "this card's authored
+        // profile already targets this exact situation", not just "this card's advisor matches".
+        public const string HTNSituationBonus = "Global.HTNSituationBonus";
 
         // Single axis: Leader.goldAmount + resources held valued at current market sell
         // price (AIContext.CalculateLiquidWealth) — this game has no passive per-turn
@@ -176,20 +216,24 @@ public static class AIAdvisorConfig
         public const string NpcProximityMax = "Diplomatic.NpcProximityMax";
         public const string DiplomaticViabilityThreshold = "Diplomatic.ViabilityThreshold";
 
-        public const string MovementProximityMax = "Movement.ProximityMax";
-        public const string MovementDistancePenaltyPerHex = "Movement.DistancePenaltyPerHex";
-        public const string MovementViabilityThreshold = "Movement.ViabilityThreshold";
+        public const string LogisticsProximityMax = "Logistics.ProximityMax";
+        public const string LogisticsDistancePenaltyPerHex = "Logistics.DistancePenaltyPerHex";
+        public const string LogisticsViabilityThreshold = "Logistics.ViabilityThreshold";
 
-        public const string DiplomaticNpcDiscoveryThreshold = "Diplomatic.NpcDiscoveryThreshold";
+        public const string DisruptionViabilityThreshold = "Disruption.ViabilityThreshold";
+        public const string DisruptionEnemyPressureThreshold = "Disruption.EnemyPressureThreshold";
+
         public const string DiplomaticIndirectSafetyThreshold = "Diplomatic.IndirectSafetyThreshold";
         public const string IntelligenceEnemyCharacterThreshold = "Intelligence.EnemyCharacterThreshold";
         public const string IntelligenceIndirectSafetyThreshold = "Intelligence.IndirectSafetyThreshold";
         public const string MagicArtifactScarcityThreshold = "Magic.ArtifactScarcityThreshold";
         public const string MagicArtifactTransferThreshold = "Magic.ArtifactTransferThreshold";
         public const string MagicEnemyPressureThreshold = "Magic.EnemyPressureThreshold";
-        public const string MovementReachNpcThreshold = "Movement.ReachNpcThreshold";
-        public const string MovementInterceptEnemyThreshold = "Movement.InterceptEnemyThreshold";
-        public const string MovementReachEnemyCharacterThreshold = "Movement.ReachEnemyCharacterThreshold";
+        public const string LogisticsReachNpcThreshold = "Logistics.ReachNpcThreshold";
+        public const string LogisticsInterceptEnemyThreshold = "Logistics.InterceptEnemyThreshold";
+        public const string LogisticsReachEnemyCharacterThreshold = "Logistics.ReachEnemyCharacterThreshold";
+        public const string LogisticsHealingNeedHealthBelow = "Logistics.HealingNeedHealthBelow";
+        public const string LogisticsHealingNeedThreshold = "Logistics.HealingNeedThreshold";
         public const string MagicHiddenArtifactsWeight = "Magic.HiddenArtifactsWeight";
         public const string MagicMageStrengthWeight = "Magic.MageStrengthWeight";
         public const string DiplomaticEnemyPressureWeight = "Diplomatic.EnemyPressureWeight";
@@ -230,11 +274,28 @@ public static class AIAdvisorConfig
 
         public const string DiplomaticNplRecruitmentProximityMax = "Diplomatic.NplRecruitmentProximityMax";
         public const string DiplomaticNplRecruitmentThreshold = "Diplomatic.NplRecruitmentThreshold";
+
+        // Third wave: per-material stockpile thresholds (Leader's own resource amounts, not
+        // market stock). Starting points only, not balance-tuned — Mithril is tighter since
+        // it's the rarest material (StoresManager.MithrilSellValue/ReferenceStock mark it so).
+        public const string EconomicMithrilInsufficientBelow = "Economic.MithrilInsufficientBelow";
+        public const string EconomicMithrilSurplusAbove = "Economic.MithrilSurplusAbove";
+        public const string EconomicSteelInsufficientBelow = "Economic.SteelInsufficientBelow";
+        public const string EconomicSteelSurplusAbove = "Economic.SteelSurplusAbove";
+        public const string EconomicIronInsufficientBelow = "Economic.IronInsufficientBelow";
+        public const string EconomicIronSurplusAbove = "Economic.IronSurplusAbove";
+        public const string EconomicMountsInsufficientBelow = "Economic.MountsInsufficientBelow";
+        public const string EconomicMountsSurplusAbove = "Economic.MountsSurplusAbove";
+        public const string EconomicTimberInsufficientBelow = "Economic.TimberInsufficientBelow";
+        public const string EconomicTimberSurplusAbove = "Economic.TimberSurplusAbove";
+        public const string EconomicLeatherInsufficientBelow = "Economic.LeatherInsufficientBelow";
+        public const string EconomicLeatherSurplusAbove = "Economic.LeatherSurplusAbove";
     }
 
     public static readonly IReadOnlyList<AdvisorWeightDefinition> KnownWeights = new List<AdvisorWeightDefinition>
     {
         new(Keys.HTNBiasBonus, 4f, "Flat score bonus for cards whose advisor matches the HTN strategy's currently-active task."),
+        new(Keys.HTNSituationBonus, 3f, "Extra score bonus (stacks with HTNBiasBonus) for a card whose own utility-parameter profile already uses one of the active HTN leaf's preferred parameters — a smaller, tie-breaking nudge on top of the underlying situational math, not the primary signal."),
 
         // Fresh thresholds against a fresh metric (liquid wealth) — these are a starting
         // point, not tuned against real playtested economies. Expect to retune.
@@ -261,20 +322,24 @@ public static class AIAdvisorConfig
         new(Keys.NpcProximityMax, 10f, "Diplomatic bonus when an unrevealed NPC is at distance 0; fades by 1 per hex."),
         new(Keys.DiplomaticViabilityThreshold, 0f, "HTN switches to a Diplomatic strategy once Diplomatic's viability (same terms as its situational score above) crosses this."),
 
-        new(Keys.MovementProximityMax, 8f, "Movement bonus at distance 0 from the preferred destination."),
-        new(Keys.MovementDistancePenaltyPerHex, 2f, "How fast the movement bonus fades per hex of distance."),
-        new(Keys.MovementViabilityThreshold, 0f, "HTN switches to a Movement strategy once Movement's viability (same terms as its situational score above) crosses this."),
+        new(Keys.LogisticsProximityMax, 8f, "Logistics bonus at distance 0 from the preferred destination."),
+        new(Keys.LogisticsDistancePenaltyPerHex, 2f, "How fast the Logistics destination bonus fades per hex of distance."),
+        new(Keys.LogisticsViabilityThreshold, 0f, "HTN switches to a Logistics strategy once Logistics's viability (same terms as its situational score above) crosses this."),
 
-        new(Keys.DiplomaticNpcDiscoveryThreshold, 0f, "HTN threshold for direct Diplomatic.NpcDiscovery."),
+        new(Keys.DisruptionViabilityThreshold, 0f, "HTN switches to a Disruption strategy once Disruption's viability (enemy proximity — is there someone nearby to halt/block/debuff) crosses this."),
+
         new(Keys.DiplomaticIndirectSafetyThreshold, 0f, "HTN threshold for direct Diplomatic.IndirectSafety."),
         new(Keys.IntelligenceEnemyCharacterThreshold, 0f, "HTN threshold for direct Intelligence.EnemyCharacter."),
         new(Keys.IntelligenceIndirectSafetyThreshold, 0f, "HTN threshold for direct Intelligence.IndirectSafety."),
         new(Keys.MagicArtifactScarcityThreshold, 0f, "HTN threshold for direct Magic.ArtifactScarcity."),
         new(Keys.MagicArtifactTransferThreshold, 0f, "HTN threshold for direct Magic.ArtifactTransfer."),
         new(Keys.MagicEnemyPressureThreshold, 0f, "HTN threshold for direct Magic.EnemyPressure."),
-        new(Keys.MovementReachNpcThreshold, 0f, "HTN threshold for direct Movement.ReachNpc."),
-        new(Keys.MovementInterceptEnemyThreshold, 0f, "HTN threshold for direct Movement.InterceptEnemy."),
-        new(Keys.MovementReachEnemyCharacterThreshold, 0f, "HTN threshold for direct Movement.ReachEnemyCharacter."),
+        new(Keys.LogisticsReachNpcThreshold, 0f, "HTN threshold for direct Logistics.ReachNpc."),
+        new(Keys.LogisticsInterceptEnemyThreshold, 0f, "HTN threshold for direct Logistics.InterceptEnemy."),
+        new(Keys.LogisticsReachEnemyCharacterThreshold, 0f, "HTN threshold for direct Logistics.ReachEnemyCharacter."),
+        new(Keys.LogisticsHealingNeedHealthBelow, 70f, "An allied character in this hex counts as needing healing when their health is below this (Character.health, 0-100)."),
+        new(Keys.LogisticsHealingNeedThreshold, 0f, "HTN threshold for direct Logistics.HealingNeed (count of wounded allies in this hex)."),
+        new(Keys.DisruptionEnemyPressureThreshold, 0f, "HTN threshold for direct Disruption.EnemyPressure."),
         new(Keys.MagicHiddenArtifactsWeight, 1f, "Magic viability per hidden artifact still on the map."),
         new(Keys.MagicMageStrengthWeight, 0.5f, "Magic viability per total active Mage level under this leader."),
         new(Keys.DiplomaticEnemyPressureWeight, 1f, "Diplomatic viability multiplier for enemy proximity."),
@@ -294,7 +359,11 @@ public static class AIAdvisorConfig
         new(Keys.IntelligenceEnemyPcVulnerabilityProximityMax, 8f, "Intelligence.EnemyPcVulnerability bonus at distance 0 from the nearest qualifying enemy PC; fades by 1 per hex."),
         new(Keys.IntelligenceEnemyPcVulnerabilityThreshold, 0f, "HTN threshold for direct Intelligence.EnemyPcVulnerability."),
 
-        new(Keys.IntelligenceHighValueSkillAtLeast, 4f, "An enemy character counts as a high-value assassination/kidnap target when their Commander+Agent+Emmissary+Mage sum is at least this."),
+        // 6, not 4: card-authored skill requirements across the deck range 1-5 per role (median
+        // ~1-2), so a single near-maxed specialist alone would already clear a threshold of 4 —
+        // too low a bar for "distinctly high-value". 6 requires either two solid skills or one
+        // skill pushed further than any single card demands, i.e. a genuine multi-talented target.
+        new(Keys.IntelligenceHighValueSkillAtLeast, 6f, "An enemy character counts as a high-value assassination/kidnap target when their Commander+Agent+Emmissary+Mage sum is at least this."),
         new(Keys.IntelligenceHighValueEnemyCharacterProximityMax, 8f, "Intelligence.HighValueEnemyCharacter bonus at distance 0 from the nearest qualifying enemy character; fades by 1 per hex."),
         new(Keys.IntelligenceHighValueEnemyCharacterThreshold, 0f, "HTN threshold for direct Intelligence.HighValueEnemyCharacter."),
 
@@ -306,6 +375,23 @@ public static class AIAdvisorConfig
 
         new(Keys.DiplomaticNplRecruitmentProximityMax, 10f, "Diplomatic.NplRecruitment bonus at distance 0 from the nearest NPL capital eligible for StateAllegiance (AFriendOrThree) recruitment; fades by 1 per hex."),
         new(Keys.DiplomaticNplRecruitmentThreshold, 0f, "HTN threshold for direct Diplomatic.NplRecruitment."),
+
+        // Third wave: per-material stockpile thresholds against Leader's own resource amounts
+        // (not market stock). Starting points only, not balance-tuned. Mithril is tighter since
+        // it's the rarest material (StoresManager.MithrilSellValue=7, ReferenceStock=10 vs. 25
+        // for the rest).
+        new(Keys.EconomicMithrilInsufficientBelow, 5f, "Economic.MithrilInsufficient rises when stored mithril falls below this."),
+        new(Keys.EconomicMithrilSurplusAbove, 15f, "Economic.MithrilSurplus rises when stored mithril exceeds this."),
+        new(Keys.EconomicSteelInsufficientBelow, 10f, "Economic.SteelInsufficient rises when stored steel falls below this."),
+        new(Keys.EconomicSteelSurplusAbove, 30f, "Economic.SteelSurplus rises when stored steel exceeds this."),
+        new(Keys.EconomicIronInsufficientBelow, 10f, "Economic.IronInsufficient rises when stored iron falls below this."),
+        new(Keys.EconomicIronSurplusAbove, 30f, "Economic.IronSurplus rises when stored iron exceeds this."),
+        new(Keys.EconomicMountsInsufficientBelow, 10f, "Economic.MountsInsufficient rises when stored mounts falls below this."),
+        new(Keys.EconomicMountsSurplusAbove, 30f, "Economic.MountsSurplus rises when stored mounts exceeds this."),
+        new(Keys.EconomicTimberInsufficientBelow, 10f, "Economic.TimberInsufficient rises when stored timber falls below this."),
+        new(Keys.EconomicTimberSurplusAbove, 30f, "Economic.TimberSurplus rises when stored timber exceeds this."),
+        new(Keys.EconomicLeatherInsufficientBelow, 10f, "Economic.LeatherInsufficient rises when stored leather falls below this."),
+        new(Keys.EconomicLeatherSurplusAbove, 30f, "Economic.LeatherSurplus rises when stored leather exceeds this."),
     };
 
     private static Dictionary<string, float> defaultsByKey;

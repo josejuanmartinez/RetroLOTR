@@ -1127,6 +1127,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             case CardTypeEnum.Event:
             case CardTypeEnum.Land:
             case CardTypeEnum.PC:
+            case CardTypeEnum.Army:
                 (success, actionRollFailed) = await HandleActionCardPlayed(playedSelected);
                 break;
             case CardTypeEnum.Encounter:
@@ -1134,9 +1135,6 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                 break;
             case CardTypeEnum.Character:
                 success = await HandleCharacterCardPlayed(playedSelected);
-                break;
-            case CardTypeEnum.Army:
-                success = await HandleArmyCardPlayed(playedSelected);
                 break;
             case CardTypeEnum.Environmental:
                 success = await HandleEnvironmentalCardPlayed(playedSelected);
@@ -1941,12 +1939,6 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (string.IsNullOrWhiteSpace(group)) return null;
         Character[] characters = FindObjectsByType<Character>(FindObjectsSortMode.None);
         return characters.FirstOrDefault(c => c != null && !c.killed && string.Equals(c.characterGroup, group, System.StringComparison.OrdinalIgnoreCase));
-    }
-
-    private Task<bool> HandleArmyCardPlayed(Character selected)
-    {
-        // Army cards represent mustering troops
-        return Task.FromResult(false);
     }
 
 }

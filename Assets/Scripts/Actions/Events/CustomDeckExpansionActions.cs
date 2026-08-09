@@ -1298,60 +1298,6 @@ public class CounselByFirelightAction : EventAction
     }
 }
 
-public class StayTheDarkTaleAction : EventAction
-{
-    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
-    {
-        var originalEffect = effect;
-        var originalCondition = condition;
-        var originalAsyncEffect = asyncEffect;
-
-        effect = (character) =>
-        {
-            if (originalEffect != null && !originalEffect(character)) return false;
-            if (character == null) return false;
-
-            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
-            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
-            if (game == null || deckManager == null || game.player == null) return false;
-            if (character.GetOwner() != game.player || !deckManager.HasDeckFor(game.player)) return false;
-
-            var hand = deckManager.GetHand(game.player);
-            int maxHand = deckManager.GetHandSize();
-            CardData encounterCard = hand.FirstOrDefault(card => card != null && card.IsEncounterCard());
-            if (encounterCard == null) return false;
-
-            if (!deckManager.TryReturnCardToHand(game.player, encounterCard.name)) return false;
-            if (deckManager.GetHand(game.player).Count >= maxHand) return false;
-            if (!deckManager.TryDrawCard(game.player, out CardData replacement) || replacement == null) return false;
-
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Stay the Dark Tale sets aside {encounterCard.name} and draws a replacement.", Color.magenta);
-            return true;
-        };
-
-        condition = (character) =>
-        {
-            if (originalCondition != null && !originalCondition(character)) return false;
-            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
-            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
-            if (character == null || game == null || deckManager == null || game.player == null) return false;
-            if (character.GetOwner() != game.player || !deckManager.HasDeckFor(game.player)) return false;
-
-            var hand = deckManager.GetHand(game.player);
-            bool hasEncounter = hand.Any(card => card != null && card.IsEncounterCard());
-            return hasEncounter && hand.Count <= deckManager.GetHandSize();
-        };
-
-        asyncEffect = async (character) =>
-        {
-            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
-            return true;
-        };
-
-        base.Initialize(c, condition, effect, asyncEffect);
-    }
-}
-
 public class KingUnderTheMountainAction : EventAction
 {
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
@@ -1385,59 +1331,6 @@ public class KingUnderTheMountainAction : EventAction
             if (originalCondition != null && !originalCondition(character)) return false;
             return character != null && character.hex != null && character.hex.characters != null
                 && character.hex.characters.Any(ch => ch != null && !ch.killed && ch.race == RacesEnum.Dwarf && IsAllied(character, ch));
-        };
-
-        asyncEffect = async (character) =>
-        {
-            if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
-            return true;
-        };
-
-        base.Initialize(c, condition, effect, asyncEffect);
-    }
-}
-
-public class DoorsOfTheDeepDelvedAction : EventAction
-{
-    public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
-    {
-        var originalEffect = effect;
-        var originalCondition = condition;
-        var originalAsyncEffect = asyncEffect;
-
-        effect = (character) =>
-        {
-            if (originalEffect != null && !originalEffect(character)) return false;
-            if (character == null) return false;
-
-            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
-            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
-            if (game == null || deckManager == null || game.player == null) return false;
-            if (character.GetOwner() != game.player || !deckManager.HasDeckFor(game.player)) return false;
-            if (deckManager.GetHand(game.player).Count >= deckManager.GetHandSize()) return false;
-
-            PlayableLeader player = game.player;
-            var drawPile = deckManager.GetDrawPile(player).Take(5).ToList();
-            CardData chosen = drawPile.FirstOrDefault(card => card != null &&
-                ((card.race == RacesEnum.Dwarf)
-                || (!string.IsNullOrWhiteSpace(card.name) && card.name.IndexOf("mithril", StringComparison.OrdinalIgnoreCase) >= 0)
-                || (card.tags != null && card.tags.Any(tag => tag != null && (tag.IndexOf("treasure", StringComparison.OrdinalIgnoreCase) >= 0 || tag.IndexOf("artifact", StringComparison.OrdinalIgnoreCase) >= 0 || tag.IndexOf("dwarf", StringComparison.OrdinalIgnoreCase) >= 0)))));
-            if (chosen == null) return false;
-
-            if (!deckManager.TryAddCardToHand(player, chosen)) return false;
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Doors of the Deep Delved finds {chosen.name} among the deep ways.", Color.yellow);
-            return true;
-        };
-
-        condition = (character) =>
-        {
-            if (originalCondition != null && !originalCondition(character)) return false;
-            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
-            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
-            return character != null && game != null && deckManager != null && game.player != null && character.GetOwner() == game.player
-                && deckManager.HasDeckFor(game.player)
-                && deckManager.GetHand(game.player).Count < deckManager.GetHandSize()
-                && deckManager.GetDrawPile(game.player).Take(5).Any(card => card != null);
         };
 
         asyncEffect = async (character) =>

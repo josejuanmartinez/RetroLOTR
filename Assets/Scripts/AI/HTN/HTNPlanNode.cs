@@ -38,4 +38,12 @@ public class HTNPrimitiveTask : IHTNNode
     // Which AIAdvisorConfig scoring profile this task biases the Utility scorer toward
     // for as long as it stays active. Empty/null = neutral, no bias.
     public string AdvisorName { get; set; } = string.Empty;
+
+    // Which specific AIUtilityParameters names this task's situation is actually about (e.g.
+    // "root.offense.pick.fortify" -> Militaristic.OwnPcFortificationNeed). Cards whose own Card
+    // Board profile already uses one of these get an extra nudge on top of the flat advisor
+    // bias in AIContext.ScoreAction — "this card's own authored profile already targets this
+    // exact situation" is a stronger signal than "this card merely belongs to the favored
+    // advisor". Empty = today's flat-only bias, unchanged.
+    public List<string> PreferredParameters { get; set; } = new();
 }

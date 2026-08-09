@@ -19,34 +19,57 @@ using System.Linq;
 
 public static class HTNPlanner
 {
+    // Tries each candidate Method in priority order; a candidate is only actually chosen if its
+    // precondition holds AND (recursively) its subtree bottoms out at a leaf this character can
+    // act on. A leaf with a real advisor bias is skipped if the character has no role-eligible
+    // card for that advisor anywhere in its deck (AIContext.HasEligibleCard) — otherwise that
+    // bias would be wasted for the whole turn AND would monopolize the branch slot, starving a
+    // lower-priority branch the character could actually use. This is why Decompose recurses
+    // and backtracks (try the next sibling if a chosen candidate's whole subtree turns out
+    // empty) instead of committing greedily to the first precondition match, all the way up to
+    // the root — so an ineligible character still reaches root.fallback (or any other viable
+    // top-level branch) instead of getting nothing for the turn.
     public static List<HTNStackFrame> Decompose(HTNCompoundTask compoundTask, AIContext ctx, AIBlackboard bb)
     {
-        List<HTNStackFrame> frames = new();
-        HTNCompoundTask current = compoundTask;
+        if (compoundTask == null) return new List<HTNStackFrame>();
 
-        while (current != null)
+        foreach (HTNMethod candidate in compoundTask.Methods)
         {
-            HTNMethod chosen = null;
-            foreach (HTNMethod candidate in current.Methods)
+            if (candidate == null) continue;
+            if (candidate.Precondition == null || !candidate.Precondition(ctx, bb)) continue;
+            if (candidate.Subtasks.Count == 0) continue;
+
+            HTNStackFrame ownFrame = new() { MethodTaskId = candidate.TaskId, SubtaskIndex = 0 };
+            IHTNNode firstSubtask = candidate.Subtasks[0];
+
+            if (firstSubtask is HTNPrimitiveTask primitive)
             {
-                if (candidate == null) continue;
-                if (candidate.Precondition != null && candidate.Precondition(ctx, bb))
+                if (!string.IsNullOrEmpty(primitive.AdvisorName)
+                    && Enum.TryParse(primitive.AdvisorName, true, out AdvisorType advisor)
+                    && !ctx.HasEligibleCard(advisor))
                 {
-                    chosen = candidate;
-                    break;
+                    continue; // no eligible card for this leaf's advisor — try the next sibling
                 }
+
+                return new List<HTNStackFrame> { ownFrame };
             }
 
-            if (chosen == null || chosen.Subtasks.Count == 0)
+            if (firstSubtask is HTNCompoundTask nested)
             {
-                return new List<HTNStackFrame>(); // total failure — no partial/malformed stacks
+                List<HTNStackFrame> tail = Decompose(nested, ctx, bb);
+                if (tail.Count == 0) continue; // nothing eligible anywhere in this subtree — try next sibling
+
+                List<HTNStackFrame> frames = new() { ownFrame };
+                frames.AddRange(tail);
+                return frames;
             }
 
-            frames.Add(new HTNStackFrame { MethodTaskId = chosen.TaskId, SubtaskIndex = 0 });
-            current = chosen.Subtasks[0] as HTNCompoundTask;
+            // Neither a primitive nor a compound (malformed) — same tolerance the old walk had:
+            // treat this method's own frame as the terminal result rather than failing outright.
+            return new List<HTNStackFrame> { ownFrame };
         }
 
-        return frames;
+        return new List<HTNStackFrame>(); // total failure — no candidate (at any depth) succeeded
     }
 
     public static HTNPrimitiveTask ResolveActivePrimitive(List<HTNStackFrame> stack, HTNCompoundTask root)

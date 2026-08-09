@@ -82,12 +82,13 @@ public static class HTNRegistry
         new("Magic.Viable", "True when Magic's viability (artifact scarcity + enemy proximity — the same weights shown in the Magic group of the Advisors tab) is above Magic.ViabilityThreshold.",
             (ctx, bb) => ctx.GetAdvisorViability(AdvisorType.Magic) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MagicViabilityThreshold)),
 
-        new("Movement.Viable", "True when Movement's viability (proximity to the preferred destination — the same weights shown in the Movement group of the Advisors tab) is above Movement.ViabilityThreshold.",
-            (ctx, bb) => ctx.GetAdvisorViability(AdvisorType.Movement) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MovementViabilityThreshold)),
+        new("Logistics.Viable", "True when Logistics's viability (proximity to the preferred destination — the same weights shown in the Logistics group of the Advisors tab) is above Logistics.ViabilityThreshold.",
+            (ctx, bb) => ctx.GetAdvisorViability(AdvisorType.Logistics) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.LogisticsViabilityThreshold)),
+
+        new("Disruption.Viable", "True when Disruption's viability (enemy proximity — is there someone nearby to halt/block/debuff) is above Disruption.ViabilityThreshold.",
+            (ctx, bb) => ctx.GetAdvisorViability(AdvisorType.Disruption) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.DisruptionViabilityThreshold)),
         // Fine-grained predicates consume direct, named Advisor parameters only.
         // Each threshold is an authored Advisor weight, so HTN has no hidden score.
-        new("Diplomatic.NpcDiscoveryReady", "Direct Diplomatic.NpcDiscovery is above its authored threshold.",
-            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.DiplomaticNpcDiscovery) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.DiplomaticNpcDiscoveryThreshold)),
         new("Diplomatic.IndirectSafetyReady", "Direct Diplomatic.IndirectSafety is above its authored threshold.",
             (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.DiplomaticIndirectSafety) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.DiplomaticIndirectSafetyThreshold)),
         new("Intelligence.EnemyCharacterReady", "Direct Intelligence.EnemyCharacter is above its authored threshold.",
@@ -100,12 +101,16 @@ public static class HTNRegistry
             (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.MagicArtifactTransfer) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MagicArtifactTransferThreshold)),
         new("Magic.EnemyPressureReady", "Direct Magic.EnemyPressure is above its authored threshold.",
             (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.MagicEnemyPressure) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MagicEnemyPressureThreshold)),
-        new("Movement.ReachNpcReady", "Direct Movement.ReachNpc is above its authored threshold.",
-            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.MovementReachNpc) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MovementReachNpcThreshold)),
-        new("Movement.InterceptEnemyReady", "Direct Movement.InterceptEnemy is above its authored threshold.",
-            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.MovementInterceptEnemy) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MovementInterceptEnemyThreshold)),
-        new("Movement.ReachEnemyCharacterReady", "Direct Movement.ReachEnemyCharacter is above its authored threshold.",
-            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.MovementReachEnemyCharacter) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MovementReachEnemyCharacterThreshold)),
+        new("Logistics.ReachNpcReady", "Direct Logistics.ReachNpc is above its authored threshold.",
+            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.LogisticsReachNpc) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.LogisticsReachNpcThreshold)),
+        new("Logistics.InterceptEnemyReady", "Direct Logistics.InterceptEnemy is above its authored threshold.",
+            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.LogisticsInterceptEnemy) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.LogisticsInterceptEnemyThreshold)),
+        new("Logistics.ReachEnemyCharacterReady", "Direct Logistics.ReachEnemyCharacter is above its authored threshold.",
+            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.LogisticsReachEnemyCharacter) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.LogisticsReachEnemyCharacterThreshold)),
+        new("Logistics.HealingNeedReady", "Direct Logistics.HealingNeed is above its authored threshold — a wounded ally shares this character's hex.",
+            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.LogisticsHealingNeed) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.LogisticsHealingNeedThreshold)),
+        new("Disruption.EnemyPressureReady", "Direct Disruption.EnemyPressure is above its authored threshold.",
+            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.DisruptionEnemyPressure) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.DisruptionEnemyPressureThreshold)),
 
         // Target-quality predicates: gate on "a specific good target exists nearby right now",
         // not just "this advisor is generically busy" — what lets root.diplomacy/root.intelligence
@@ -125,6 +130,23 @@ public static class HTNRegistry
             (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.MilitaristicOwnPcFortificationNeed) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MilitaristicOwnPcFortificationNeedThreshold)),
         new("Diplomatic.NplRecruitmentReady", "Direct Diplomatic.NplRecruitment is above its authored threshold — a nearby NPL capital is eligible for StateAllegiance (AFriendOrThree) recruitment right now.",
             (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.DiplomaticNplRecruitment) > AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.DiplomaticNplRecruitmentThreshold)),
+
+        // Per-material stockpile-balancing predicates: true when this leader's own stock of the
+        // material is either below its Insufficient threshold or above its Surplus threshold —
+        // the max(0, ...) formulas behind each parameter already are the gate, so ">0" on either
+        // is the full "this material needs attention" condition, no separate cutoff needed.
+        new("Economic.MithrilReady", "True when stored mithril is below Economic.MithrilInsufficientBelow or above Economic.MithrilSurplusAbove.",
+            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.EconomicMithrilInsufficient) > 0f || ctx.GetUtilityParameter(AIUtilityParameters.EconomicMithrilSurplus) > 0f),
+        new("Economic.SteelReady", "True when stored steel is below Economic.SteelInsufficientBelow or above Economic.SteelSurplusAbove.",
+            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.EconomicSteelInsufficient) > 0f || ctx.GetUtilityParameter(AIUtilityParameters.EconomicSteelSurplus) > 0f),
+        new("Economic.IronReady", "True when stored iron is below Economic.IronInsufficientBelow or above Economic.IronSurplusAbove.",
+            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.EconomicIronInsufficient) > 0f || ctx.GetUtilityParameter(AIUtilityParameters.EconomicIronSurplus) > 0f),
+        new("Economic.MountsReady", "True when stored mounts is below Economic.MountsInsufficientBelow or above Economic.MountsSurplusAbove.",
+            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.EconomicMountsInsufficient) > 0f || ctx.GetUtilityParameter(AIUtilityParameters.EconomicMountsSurplus) > 0f),
+        new("Economic.TimberReady", "True when stored timber is below Economic.TimberInsufficientBelow or above Economic.TimberSurplusAbove.",
+            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.EconomicTimberInsufficient) > 0f || ctx.GetUtilityParameter(AIUtilityParameters.EconomicTimberSurplus) > 0f),
+        new("Economic.LeatherReady", "True when stored leather is below Economic.LeatherInsufficientBelow or above Economic.LeatherSurplusAbove.",
+            (ctx, bb) => ctx.GetUtilityParameter(AIUtilityParameters.EconomicLeatherInsufficient) > 0f || ctx.GetUtilityParameter(AIUtilityParameters.EconomicLeatherSurplus) > 0f),
     };
 
     private static readonly Dictionary<string, HTNPredicateDefinition> ByKey =
