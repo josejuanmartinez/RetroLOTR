@@ -78,10 +78,6 @@ public class Game : MonoBehaviour
         if (!board) board = FindAnyObjectByType<Board>();
         if (!storesManager) storesManager = FindAnyObjectByType<StoresManager>();
         if (UtilityAIContextCacheManager.Instance == null) gameObject.AddComponent<UtilityAIContextCacheManager>();
-        if (FindFirstObjectByType<NonPlayableLeaderEventManager>() == null)
-        {
-            gameObject.AddComponent<NonPlayableLeaderEventManager>();
-        }
         AIDifficultySettings.CurrentDifficulty = aiDifficulty;
     }
 
@@ -641,7 +637,6 @@ public class Game : MonoBehaviour
         NewTurn();
         board.RefreshRelevantHexes();
 
-        yield return WaitForNpcEvents();
         yield return TryOfferAlliedTradeToPlayer();
 
         currentlyPlaying.NewTurn();
@@ -655,16 +650,6 @@ public class Game : MonoBehaviour
 
         ShowHumanPlayerWidgetsWidgets();
         SelectFirstPlayerCharacter();
-    }
-
-    private IEnumerator WaitForNpcEvents()
-    {
-        NonPlayableLeaderEventManager manager = FindFirstObjectByType<NonPlayableLeaderEventManager>();
-        if (manager == null) yield break;
-        while (manager.IsProcessingTurn)
-        {
-            yield return null;
-        }
     }
 
     private IEnumerator TryOfferAlliedTradeToPlayer()

@@ -361,6 +361,7 @@
       <li><a href="#hierarchical-task-network">The plan: a hierarchical task network</a></li>
       <li><a href="#blackboard">One blackboard per character</a></li>
       <li><a href="#advisors">How a card actually gets chosen: Utility AI</a></li>
+      <li><a href="#mlp-scorer">Training a learned scorer from the action log</a></li>
       <li><a href="#situations">Situations and the cards offered to you</a></li>
       <li><a href="#smaller-machines">The smaller machines</a></li>
       <li><a href="#generative-ai">Some Generative AI</a></li>
@@ -584,7 +585,7 @@
   <p class="mockup-note">this character has no mithril-related card it can play, so the planner skips the whole mithril branch - not just its leaf - and commits to the next sibling instead, rather than winning the turn's bias with a branch it can never act on.</p>
 
   <h4 style="font-size:16px;margin:34px 0 4px;color:var(--ink-soft);">The Rest of the Map Starts Thinking</h4>
-  <p>Non-playable leaders - Sauron's captains and the other rosters that also fire the occasional scripted flourish described below - run through this exact same pipeline: Blackboard, HTN, Utility Scorer, one full character-by-character turn. They don't join the normal per-leader rotation, since that would mean touching the core turn order the campaign game relies on; instead every non-playable leader acts once, in a single batched pass, right after the last playable leader's turn each round and before the next round begins.</p>
+  <p>Non-playable leaders - Sauron's captains and the other non-player rosters - run through this exact same pipeline: Blackboard, HTN, Utility Scorer, one full character-by-character turn. They don't join the normal per-leader rotation, since that would mean touching the core turn order the campaign game relies on; instead every non-playable leader acts once, in a single batched pass, right after the last playable leader's turn each round and before the next round begins.</p>
 
   <div class="widget">
     <div class="widget-bar"><span class="dot"></span>turn order - one full round</div>
@@ -762,6 +763,55 @@
 
   <p>The scoring also runs against the leader's <em>entire</em> deck now, not just the hand it happens to be holding - the same hand-size limit a human plays under. An AI leader considers every card it still owns, drawn or not, and plays the single best one, up to a difficulty setting of one to four cards per character per turn. It's a deliberate, disclosed asymmetry: the AI is worse than a human at long-range tactics, so we compensate by removing draw luck from its side of the table instead of stacking a second handicap on top of a real one.</p>
 
+  <h3 class="section-title logic" id="mlp-scorer"><span class="tick"></span>Teaching the Scorer: an MLP from the Action Log</h3>
+
+  <p>There is a natural next experiment here. Every completed AI order is already appended as one JSON object to <code class="mono">ai_actions.jsonl</code>, under Unity's persistent data folder. It records the acting leader and character, alignment, active HTN task, skills, army strength, health, resources and income, economy state, nearby threats, target information, the chosen action, its cost and difficulty, every action the Utility AI scored, and the changes observed after execution. Once those records have been reviewed and curated, they can train a small <strong>multilayer perceptron</strong>, or MLP, to estimate how suitable a playable card is in a particular state.</p>
+
+  <p>An MLP is a compact stack of fully-connected numeric layers. It has no plan and no memory of its own - which is useful here, because planning and memory already belong to the HTN and Blackboard. Its job would be narrower: accept a fixed-length description of <em>this state and this candidate card</em>, then return one learned value.</p>
+
+  <blockquote>MLP(state before the order, active HTN task, candidate card) &rarr; learned candidate value</blockquote>
+
+  <div class="pipeline">
+    <div class="step">
+      <h4>Turn the log into decision examples</h4>
+      <p>One JSONL line is one decision outcome, but one training example should be one <em>candidate</em>. Each line is therefore expanded into the cards listed in <code class="mono">scoredActions</code>; the shared state is copied to each row and joined with that candidate's card data - advisor, action identity, requirements, cost, difficulty, and target distance. The selected card becomes the positive candidate and the alternatives become comparisons. A better future logger would store these candidate fields as structured JSON rather than the current compact <code class="mono">action|score|distance</code> strings.</p>
+    </div>
+    <div class="step">
+      <h4>Use only information known before acting</h4>
+      <p>The model input uses the <code class="mono">pre*</code> values and pre-order context: skills, health, army strength, resources, income, economy tier, distances, alignment, target type, HTN task, and candidate-card fields. Post-action values and every <code class="mono">*Delta</code> are labels or evaluation signals, never inputs. Feeding them into training would leak the answer - the model would appear brilliant offline while knowing something the running game cannot know.</p>
+    </div>
+    <div class="step">
+      <h4>Encode, normalise, and preserve the recipe</h4>
+      <p>Bounded numbers are scaled to stable ranges. Categories such as alignment, economy tier, advisor, card/action identity, and HTN task become one-hot values or small learned embeddings. Missing targets and distances get an explicit presence mask instead of a magic number. The fitted means, scales, category vocabulary, and exact feature order are exported beside the model; runtime inference must apply precisely the same transformation used during training.</p>
+    </div>
+    <div class="step">
+      <h4>Train a small ranking network</h4>
+      <p>A sensible first network is deliberately modest: perhaps 128, 64, and 32 hidden units with ReLU activations, producing one scalar. Curator-approved choices can train a pairwise ranking loss - the approved card should score above a rejected alternative. Immediate resource, army, health, and victory-point deltas can supply a secondary outcome target for actions that were actually executed, but they are not counterfactual evidence for cards that were never played. Class weighting also matters, or common actions such as trading and scouting will overwhelm rare diplomatic or magical decisions.</p>
+    </div>
+    <div class="step">
+      <h4>Split by match, not by line</h4>
+      <p>Rows from the same campaign are highly related, so randomly splitting individual JSON lines would put near-identical turns in both training and validation. Whole matches, seeds, or save sessions should be held out together; adding a stable <code class="mono">matchId</code> to future log entries makes this reliable. I would compare pairwise accuracy, top-choice accuracy, calibration, and full simulated-game outcomes against both the existing Utility scorer and a simple linear baseline. If the MLP cannot beat the simpler baseline on unseen matches, it has not earned a place in the game.</p>
+    </div>
+  </div>
+
+  <p>The curation is the important part. Training only on the action the existing scorer chose would mostly teach the network to imitate the existing formula, including its mistakes. Useful records need either an explicit human judgement - approved choice, preferred alternative, or rejection reason - or a trustworthy longer-horizon result. The immediate deltas in the current log can say that a trade gained gold or an attack changed army strength; they cannot, by themselves, say whether that choice lost the campaign twelve turns later. Keeping those two kinds of supervision separate prevents a short-term reward from quietly becoming the entire strategy.</p>
+
+  <div class="widget">
+    <div class="widget-bar"><span class="dot"></span>offline training record - one decision expanded by candidate</div>
+    <div class="rows">
+      <div class="row"><span class="pill type">State</span><span class="field">pre-resources + skills + army + distances + economy</span></div>
+      <div class="row"><span class="pill type">Plan</span><span class="field">alignment + active HTN task + preferred target</span></div>
+      <div class="row"><span class="pill type">Candidate</span><span class="field">card/action + advisor + requirements + cost + difficulty</span></div>
+      <div class="row"><span class="pill type">Label</span><span class="field">curator preference; observed outcome only where executed</span></div>
+    </div>
+  </div>
+
+  <p>At runtime the network should remain a scorer, not become a second game controller. The existing rules first remove dead, unaffordable, illegal, or otherwise unplayable cards. The Blackboard and HTN still resolve the active strategy and target. The remaining candidates are encoded as one batch and passed through the exported ONNX model using the Unity Inference package already present in the project. A network this small is cheap enough to run on the CPU, especially when the world-state portion of the feature vector is cached once at the beginning of the turn.</p>
+
+  <blockquote>final score = authored Utility score + &alpha; &times; learned MLP score</blockquote>
+
+  <p>I would ship that gradually. First run the MLP in <em>shadow mode</em>: log its ranking and model version, but let the authored scorer continue choosing. Then use it only to break close ties. Only after held-out matches and automated campaigns show a consistent improvement should <code class="mono">&alpha;</code> rise enough for it to reorder clear Utility choices. The playable-card gate remains absolute, the difficulty setting still caps orders, and a missing model or malformed feature vector falls back to the deterministic scorer. The result is not an opaque neural agent replacing the game AI; it is one learned opinion inside an accountable system whose plan, legal moves, fallback, and final arithmetic can still be inspected.</p>
+
   <h3 class="section-title logic" id="situations"><span class="tick"></span>Situations, and the Cards Offered to <em>You</em></h3>
 
   <p>All of the above runs for AI leaders. The human player gets a related but distinct system: <strong>Opportunity Cards</strong> - a handful of situational cards surfaced automatically when your character walks into a hex that matters (an army sitting outside an enemy PC, a hostage nearby, an unrevealed NPC in range - about twenty such conditions are tracked).</p>
@@ -834,7 +884,6 @@
 
   <ul class="field-list">
     <li><span class="tag real">Real search</span><span>Character and army movement runs on a genuine <strong>A* search</strong> over the hex grid - open/closed sets, a proper admissible hex-distance heuristic, and a real per-tile cost function that accounts for terrain and, for armies, warships needed to cross water. The same pathfinder renders the human player's movement preview and feeds AI movement decisions; a Dijkstra-style flood fill sitting next to it answers "what can I reach this turn" for the range highlight.</span></li>
-    <li><span class="tag real">Real, small</span><span>Non-playable leaders also still fire occasional scripted flourishes, independent of anything above: a roughly 5% per-turn chance, after turn five, to trigger a small authored event and pan the camera to it. It's a coin flip with a script attached, not a decision - it runs alongside the real HTN-driven turns described in <a href="#blackboard">One Blackboard Per Character</a>, not instead of them.</span></li>
     <li><span class="tag not">Not AI</span><span>Encounter cards resolve for AI actors with a flat random pick among the available options - no evaluation of which outcome is better, on purpose. Some moments in the game are meant to be luck, not judgment.</span></li>
     <li><span class="tag not">Not AI</span><span>Nation starting positions come from deterministic procedural generation: a flood fill grows each nation's territory outward from its seed, and a greedy spacing pass keeps capitals from landing on top of each other. Same map shape, same seed, same result - which is exactly what you want from map generation.</span></li>
   </ul>
