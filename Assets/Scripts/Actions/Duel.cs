@@ -54,9 +54,14 @@ public class Duel : CharacterAction
     {
         if (enemies == null || enemies.Count == 0) return null;
         return enemies
-            .OrderByDescending(GetDuelScore)
+            .OrderByDescending(x => EstimateDuelScore(x, null))
             .FirstOrDefault();
     }
+
+    // Reused by UtilityAIContextDataBuilder.CacheDuelSignal so the AI's sensing layer asks
+    // exactly the same "who could I duel right now" question Initialize's own condition does.
+    public List<Character> GetEligibleTargets(Character c) =>
+        FindEnemyCharactersAtHex(c).Where(x => x != null && !x.IsHidden() && !x.IsRefusingDuels() && !x.IsArmyCommander()).ToList();
 
     private void ResolveDuel(Character attacker, Character defender)
     {
@@ -69,8 +74,8 @@ public class Duel : CharacterAction
             return;
         }
 
-        float attackerScore = GetDuelScore(attacker, defender);
-        float defenderScore = GetDuelScore(defender, attacker);
+        float attackerScore = EstimateDuelScore(attacker, defender);
+        float defenderScore = EstimateDuelScore(defender, attacker);
         bool defenderAutoWins = defender.HasDuelSupremacy();
         bool attackerWins = !defenderAutoWins && attackerScore > defenderScore;
         if (!defenderAutoWins && Mathf.Approximately(attackerScore, defenderScore))
@@ -105,8 +110,8 @@ public class Duel : CharacterAction
 
     private void ResolveGuaranteedDefenderWin(Character attacker, Character defender)
     {
-        float attackerScore = GetDuelScore(attacker, defender);
-        float defenderScore = GetDuelScore(defender, attacker);
+        float attackerScore = EstimateDuelScore(attacker, defender);
+        float defenderScore = EstimateDuelScore(defender, attacker);
         Character winner = defender;
         Character loser = attacker;
 
@@ -148,12 +153,10 @@ public class Duel : CharacterAction
             defenderExistingStatusEffects: defender.statusEffects);
     }
 
-    private float GetDuelScore(Character character)
-    {
-        return GetDuelScore(character, null);
-    }
-
-    private float GetDuelScore(Character character, Character opponent)
+    // Reusable win-probability scoring, shared by real duel resolution (ResolveDuel/
+    // ResolveGuaranteedDefenderWin/PickBestTarget) and the AI's sensing layer
+    // (UtilityAIContextDataBuilder.CacheDuelSignal), so both ask the exact same question.
+    public static float EstimateDuelScore(Character character, Character opponent)
     {
         if (character == null) return 0f;
         float baseScore = character.GetBaseCommander() * 1f
@@ -185,7 +188,7 @@ public class Duel : CharacterAction
     private const int MaxArtifactDuelScore = 5;
     private const int MaxArtifactDuelDefense = 5;
 
-    private int GetArtifactCombatScore(Character character, Character opponent)
+    private static int GetArtifactCombatScore(Character character, Character opponent)
     {
         if (character == null || character.objects == null) return 0;
         int score = character.objects.Sum(a => a != null ? a.GetAttackBonus() + a.GetDefenseBonus() : 0);

@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class BuyIron : EmmissaryPCAction
 {
-    protected override AdvisorType DefaultAdvisorType => AdvisorType.Militaristic;
 
     override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
@@ -17,7 +16,7 @@ public class BuyIron : EmmissaryPCAction
         effect = (c) => {
             if (originalEffect != null && !originalEffect(c)) return false;
             if(c.GetOwner() is not PlayableLeader) return false;
-            PlayableLeader playable = (c.GetOwner() as PlayableLeader);
+            Leader playable = c.GetOwner();
             StoresManager stores = FindFirstObjectByType<StoresManager>();
             if (stores == null) return false;
             int quantity = 5;
@@ -35,7 +34,7 @@ public class BuyIron : EmmissaryPCAction
             if (c == null) return false;
             StoresManager stores = FindFirstObjectByType<StoresManager>();
             if (stores == null) return false;
-            PlayableLeader playable = (c.GetOwner() as PlayableLeader);
+            Leader playable = c.GetOwner();
             int quantity = 5;
             int totalCost = stores.GetBuyPrice(ProducesEnum.iron, quantity);
             return stores.HasStock(ProducesEnum.iron, quantity)

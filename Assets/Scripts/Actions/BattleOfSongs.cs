@@ -38,7 +38,7 @@ public class BattleOfSongs : CharacterAction
             }
             else
             {
-                target = targets.OrderByDescending(x => GetSongScore(x)).FirstOrDefault();
+                target = targets.OrderByDescending(x => EstimateSongScore(x)).FirstOrDefault();
             }
 
             if (target == null) return false;
@@ -56,7 +56,14 @@ public class BattleOfSongs : CharacterAction
             .ToList();
     }
 
-    private float GetSongScore(Character character)
+    // Reused by UtilityAIContextDataBuilder.CacheSongDuelSignal so the AI's sensing layer asks
+    // exactly the same "who could I challenge right now" question Initialize's own condition does.
+    public List<Character> GetEligibleMageTargets(Character c) => GetEnemyMagesAtHex(c);
+
+    // Reusable win-probability scoring, shared by real resolution (ResolveBattleOfSongs/the
+    // AI target pick above) and the AI's sensing layer (UtilityAIContextDataBuilder.
+    // CacheSongDuelSignal), so both ask the exact same question.
+    public static float EstimateSongScore(Character character)
     {
         if (character == null) return 0f;
         float score = character.GetBaseMage() * 2f
@@ -75,8 +82,8 @@ public class BattleOfSongs : CharacterAction
         bool defenderAutoWins = defender.HasStatusEffect(StatusEffectEnum.DuelSupremacy);
         if (defenderAutoWins) defender.ClearStatusEffect(StatusEffectEnum.DuelSupremacy);
 
-        float attackerScore = GetSongScore(attacker);
-        float defenderScore = GetSongScore(defender);
+        float attackerScore = EstimateSongScore(attacker);
+        float defenderScore = EstimateSongScore(defender);
         bool attackerWins = !defenderAutoWins && attackerScore > defenderScore;
         if (!defenderAutoWins && Mathf.Approximately(attackerScore, defenderScore))
             attackerWins = UnityEngine.Random.Range(0, 2) == 0;

@@ -28,7 +28,7 @@ public class RobeOfManyColours : EventAction
 
     // Nearest enemy character on the board — the card gives no radius, so target
     // whoever the caster could actually reach, same "closest enemy" tie-break
-    // AIContextDataBuilder.CacheEnemyTargets uses.
+    // UtilityAIContextDataBuilder.CacheEnemyTargets uses.
     private static Character FindNearestEnemy(Character character, Board board)
     {
         if (character?.hex == null || board?.hexes == null) return null;

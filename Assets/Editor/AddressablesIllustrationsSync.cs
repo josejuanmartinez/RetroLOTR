@@ -7,8 +7,8 @@ using UnityEngine;
 public static class AddressablesIllustrationsSync
 {
     private const string ArtRoot = "Assets/Art/";
-    private const string MenuSync = "Tools/Addressables/Sync Art Addresses";
-    private const string MenuReport = "Tools/Addressables/Report Art Address Mismatches";
+    private const string MenuSync = "Tools/RetroLOTR/Addressables/Sync Art Addresses";
+    private const string MenuReport = "Tools/RetroLOTR/Addressables/Report Art Address Mismatches";
 
     [MenuItem(MenuSync)]
     public static void SyncArtAddresses()

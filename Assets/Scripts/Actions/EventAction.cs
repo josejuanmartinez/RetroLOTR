@@ -2,7 +2,6 @@ using System;
 
 public class EventAction : CharacterAction
 {
-    protected override AdvisorType DefaultAdvisorType => AdvisorType.None;
 
     public override bool IsRoleEligible(Character character)
     {

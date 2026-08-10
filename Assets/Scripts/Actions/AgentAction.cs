@@ -2,7 +2,6 @@ using System;
 
 public class AgentAction : CharacterAction
 {
-    protected override AdvisorType DefaultAdvisorType => AdvisorType.Intelligence;
 
     public override bool IsRoleEligible(Character character)
     {

@@ -4,14 +4,19 @@ using System.Linq;
 using UnityEngine;
 
 // ---------------------------------------------------------------------------
-// Serialized form of the advisor tuning: scoring weights AIContext uses when
-// an advisor ranks a character's playable actions, plus per-action advisor
-// ownership overrides (which advisor an action class belongs to).
-// Edited via Window > RetroLOTR > AI Widget > Advisors.
+// Utility AI: the parameter registry, tunable weights, and per-card parameter
+// profiles every AI decision is built from. There is no separate "advisor"
+// concept — a card relates to the system purely by which named UtilityAI
+// parameters it boosts (utilityParameters below), and an HTN leaf relates to
+// it purely by which parameters it prefers (HTNPrimitiveTask.PreferredParameters).
+// A card and a branch align when their parameter lists overlap; nothing is
+// tagged or categorized beyond that.
+//
+// Edited via Window > RetroLOTR > AI Widget.
 // ---------------------------------------------------------------------------
 
 [Serializable]
-public class AdvisorWeightEntry
+public class UtilityWeightEntry
 {
     public string key = string.Empty;
     public float value;
@@ -20,7 +25,7 @@ public class AdvisorWeightEntry
 [Serializable]
 public class ActionUtilityParameterModifier
 {
-    // Must be one of AIUtilityParameters.Known. Empty entries are ignored.
+    // Must be one of UtilityAIParameters.Known. Empty entries are ignored.
     public string parameter = string.Empty;
     // The named utility value is multiplied by this, then bonus is added.
     public float multiplier = 1f;
@@ -37,21 +42,21 @@ public struct ActionScoreFlags
 }
 
 [Serializable]
-public class AdvisorConfigData
+public class UtilityConfigData
 {
-    public List<AdvisorWeightEntry> weights = new();
-    public List<CardAdvisorProfile> cardProfiles = new();
+    public List<UtilityWeightEntry> weights = new();
+    public List<CardParameterProfile> cardProfiles = new();
 }
 
 // One row per printed card — the unit every Card Board authoring choice is
 // keyed against. deckId+cardId is the stable identity (see
-// AIAdvisorConfig.BuildCardProfileKey for why reference/injected cards resolve
-// to their template's deckId+cardId instead of their own). Two cards that
+// UtilityAI.BuildCardProfileKey for why reference/injected cards resolve to
+// their template's deckId+cardId instead of their own). Two cards that
 // happen to share an action class each get their own independent row here —
 // the AI Widget's Card Board tab has a "duplicate to sibling cards" action to
 // seed one from another, but nothing at runtime ever shares a row.
 [Serializable]
-public class CardAdvisorProfile
+public class CardParameterProfile
 {
     public string deckId = string.Empty;
     public int cardId;
@@ -61,25 +66,24 @@ public class CardAdvisorProfile
     public string cardName = string.Empty;
     public string actionClass = string.Empty;
 
-    // Empty = keep the advisor coded on the action class.
-    public string advisor = string.Empty;
     // Flat score adjustment applied whenever the AI scores this action;
-    // lets an action be prioritized over its advisor's other cards.
+    // lets an action be prioritized over other cards regardless of situation.
     public float scoreBonus;
     // Per-action formula composition: true = leave that term out of the score.
     public bool ignoreSituation;
-    // Explicit card-side composition of named Advisor utility parameters. These
-    // entries are also shown and edited in the AI Widget's Card Board tab.
+    // Explicit card-side composition of named UtilityAI parameters — the only
+    // way a card relates to the utility system. These entries are also shown
+    // and edited in the AI Widget's Card Board tab.
     public List<ActionUtilityParameterModifier> utilityParameters = new();
 }
 
-public class AdvisorWeightDefinition
+public class UtilityWeightDefinition
 {
     public readonly string key;
     public readonly float defaultValue;
     public readonly string description;
 
-    public AdvisorWeightDefinition(string key, float defaultValue, string description)
+    public UtilityWeightDefinition(string key, float defaultValue, string description)
     {
         this.key = key;
         this.defaultValue = defaultValue;
@@ -87,10 +91,13 @@ public class AdvisorWeightDefinition
     }
 }
 
-// The complete public vocabulary shared by Advisors, HTN, and card profiles.
-// Values are direct observations from AIContext; they are never inferred from
-// a card, and every card-specific contribution is authored in AdvisorConfig.
-public static class AIUtilityParameters
+// The complete public vocabulary of named, directly-observable situational readings.
+// Values are direct observations computed by UtilityAIContext; they are never
+// inferred from a card, and every card-specific contribution is authored via
+// CardParameterProfile.utilityParameters. The "Militaristic."/"Economic."/etc.
+// prefixes are purely a naming convention for grouping related readings — there
+// is no enum or type behind them, just string namespacing.
+public static class UtilityAIParameters
 {
     public const string MilitaristicEnemyPressure = "Militaristic.EnemyPressure";
     public const string MilitaristicMilitaryEdge = "Militaristic.MilitaryEdge";
@@ -98,11 +105,11 @@ public static class AIUtilityParameters
     public const string DiplomaticIndirectSafety = "Diplomatic.IndirectSafety";
     public const string IntelligenceEnemyCharacter = "Intelligence.EnemyCharacter";
     public const string IntelligenceIndirectSafety = "Intelligence.IndirectSafety";
-    public const string MagicArtifactScarcity = "Magic.ArtifactScarcity";
-    public const string MagicArtifactTransfer = "Magic.ArtifactTransfer";
-    public const string MagicEnemyPressure = "Magic.EnemyPressure";
-    public const string MagicHiddenArtifacts = "Magic.HiddenArtifacts";
-    public const string MagicMageStrength = "Magic.MageStrength";
+    public const string ArtifactsArtifactScarcity = "Artifacts.ArtifactScarcity";
+    public const string ArtifactsArtifactTransfer = "Artifacts.ArtifactTransfer";
+    public const string ArtifactsEnemyPressure = "Artifacts.EnemyPressure";
+    public const string ArtifactsHiddenArtifacts = "Artifacts.HiddenArtifacts";
+    public const string ArtifactsMageStrength = "Artifacts.MageStrength";
     public const string DiplomaticEnemyPressure = "Diplomatic.EnemyPressure";
     public const string DiplomaticEmissaryStrength = "Diplomatic.EmissaryStrength";
     public const string IntelligenceEnemyPressure = "Intelligence.EnemyPressure";
@@ -118,16 +125,17 @@ public static class AIUtilityParameters
     public const string DisruptionEnemyPressure = "Disruption.EnemyPressure";
 
     // Target-quality signals (distinct from the proximity/strength terms above): "is there a
-    // specific, good target nearby right now", not just "is an advisor generically busy".
+    // specific, good target nearby right now", not just "is this category of response generically busy".
     public const string DiplomaticEnemyPcOpportunity = "Diplomatic.EnemyPcOpportunity";
     public const string DiplomaticOwnPcLoyaltyRisk = "Diplomatic.OwnPcLoyaltyRisk";
     public const string IntelligenceEnemyPcVulnerability = "Intelligence.EnemyPcVulnerability";
     public const string IntelligenceHighValueEnemyCharacter = "Intelligence.HighValueEnemyCharacter";
 
-    // Second wave: closes the remaining gaps in each advisor's stated purpose (spells for
-    // Magic, fortification for Militaristic, NPL recruitment for Diplomatic) rather than just
-    // proximity/strength math.
-    public const string MagicSpellOpportunity = "Magic.SpellOpportunity";
+    // Second wave: closes remaining gaps (fortification for Militaristic, NPL recruitment for
+    // Diplomatic) rather than just proximity/strength math. Spells are NOT gated through a
+    // Magic/Artifacts-wide "is any spell castable" signal — each spell card is tagged with
+    // whichever domain parameter its actual effect serves (see UtilityAI.json), so it surfaces
+    // under that domain's own branch instead of being bucketed as "Artifacts" regardless of effect.
     public const string MilitaristicOwnPcFortificationNeed = "Militaristic.OwnPcFortificationNeed";
     public const string DiplomaticNplRecruitment = "Diplomatic.NplRecruitment";
 
@@ -137,12 +145,25 @@ public static class AIUtilityParameters
     // via PreferredParameters independently of one another.
     public const string MilitaristicOwnPcDefenderNeed = "Militaristic.OwnPcDefenderNeed";
 
-    // Third wave: per-material stockpile balancing for Economic. One Insufficient/Surplus pair
-    // per tradeable ProducesEnum material, each driving that material's own Buy{X}/Sell{X}
-    // cards. Gold has no Buy/Sell card of its own — its Insufficient/Surplus instead bias every
-    // Sell{X}/Buy{X} card respectively (sell anything to raise cash; spend excess cash on
-    // anything), reusing the existing Economy.CriticalBelow/StableBelow thresholds rather than
-    // inventing new ones.
+    // Win-probability signals: this character's estimated personal-combat score margin against
+    // the best eligible opponent sharing its hex (Duel.EstimateDuelScore / BattleOfSongs.
+    // EstimateSongScore, self minus opponent) — signed, so a losing matchup contributes
+    // negatively to the card's own score instead of just failing to help, and the HTN only
+    // proactively routes into a duel when the margin clears a safety-margin threshold (see
+    // HTNRegistry.Militaristic.DuelOpportunityReady / SongDuelOpportunityReady).
+    public const string MilitaristicDuelAdvantage = "Militaristic.DuelAdvantage";
+    public const string MilitaristicSongDuelAdvantage = "Militaristic.SongDuelAdvantage";
+
+    // Board-wide (not proximity-based) count of same-alignment NonPlayableLeaders this leader
+    // could still recruit at all (NonPlayableLeader.joined == false) — distinct from
+    // DiplomaticNplRecruitment, which is "is there one specific eligible target nearby right now".
+    public const string DiplomaticNplScarcity = "Diplomatic.NplScarcity";
+
+    // Third wave: per-material stockpile balancing. One Insufficient/Surplus pair per tradeable
+    // ProducesEnum material, each driving that material's own Buy{X}/Sell{X} cards. Gold has no
+    // Buy/Sell card of its own — its Insufficient/Surplus instead bias every Sell{X}/Buy{X} card
+    // respectively (sell anything to raise cash; spend excess cash on anything), reusing the
+    // existing Economy.CriticalBelow/StableBelow thresholds rather than inventing new ones.
     public const string EconomicMithrilInsufficient = "Economic.MithrilInsufficient";
     public const string EconomicMithrilSurplus = "Economic.MithrilSurplus";
     public const string EconomicSteelInsufficient = "Economic.SteelInsufficient";
@@ -163,11 +184,12 @@ public static class AIUtilityParameters
         MilitaristicEnemyPressure, MilitaristicMilitaryEdge, EconomicLiquidWealth,
         DiplomaticIndirectSafety,
         IntelligenceEnemyCharacter, IntelligenceIndirectSafety,
-        MagicArtifactScarcity, MagicArtifactTransfer, MagicEnemyPressure, MagicHiddenArtifacts, MagicMageStrength,
+        ArtifactsArtifactScarcity, ArtifactsArtifactTransfer, ArtifactsEnemyPressure, ArtifactsHiddenArtifacts, ArtifactsMageStrength,
         DiplomaticEnemyPressure, DiplomaticEmissaryStrength, IntelligenceEnemyPressure, IntelligenceAgentStrength,
         LogisticsReachNpc, LogisticsInterceptEnemy, LogisticsReachEnemyCharacter, LogisticsHealingNeed, DisruptionEnemyPressure,
         DiplomaticEnemyPcOpportunity, DiplomaticOwnPcLoyaltyRisk, IntelligenceEnemyPcVulnerability, IntelligenceHighValueEnemyCharacter,
-        MagicSpellOpportunity, MilitaristicOwnPcFortificationNeed, DiplomaticNplRecruitment, MilitaristicOwnPcDefenderNeed,
+        MilitaristicOwnPcFortificationNeed, DiplomaticNplRecruitment, MilitaristicOwnPcDefenderNeed,
+        MilitaristicDuelAdvantage, MilitaristicSongDuelAdvantage, DiplomaticNplScarcity,
         EconomicMithrilInsufficient, EconomicMithrilSurplus, EconomicSteelInsufficient, EconomicSteelSurplus,
         EconomicIronInsufficient, EconomicIronSurplus, EconomicMountsInsufficient, EconomicMountsSurplus,
         EconomicTimberInsufficient, EconomicTimberSurplus, EconomicLeatherInsufficient, EconomicLeatherSurplus,
@@ -178,20 +200,29 @@ public static class AIUtilityParameters
         && Known.Contains(parameter, StringComparer.OrdinalIgnoreCase);
 }
 
-public static class AIAdvisorConfig
+public enum EconomyStatus
 {
-    public const string ResourcePath = "AI/AdvisorConfig";
+    Critical = 0,
+    Weak = 1,
+    Stable = 2,
+    Surplus = 3
+}
+
+public static class UtilityAI
+{
+    public const string ResourcePath = "AI/UtilityAI";
 
     public static class Keys
     {
+        // Bonus for a card whose own utilityParameters list shares a parameter with the HTN
+        // leaf's currently-active PreferredParameters — the only mechanism that ties a card to
+        // "what the current strategy is about". Replaces the old two-tier
+        // advisor-tag-match/parameter-match split (there is no tag to match anymore, only
+        // parameters), so its default folds both of the old bonuses into one.
         public const string HTNBiasBonus = "Global.HTNBiasBonus";
-        // Extra nudge (on top of HTNBiasBonus) for a card whose own utility-parameter profile
-        // already uses one of the active HTN leaf's PreferredParameters — "this card's authored
-        // profile already targets this exact situation", not just "this card's advisor matches".
-        public const string HTNSituationBonus = "Global.HTNSituationBonus";
 
         // Single axis: Leader.goldAmount + resources held valued at current market sell
-        // price (AIContext.CalculateLiquidWealth) — this game has no passive per-turn
+        // price (UtilityAIContext.CalculateLiquidWealth) — this game has no passive per-turn
         // income of any kind, so there is no second "income" axis to threshold against.
         public const string EconomyCriticalBelow = "Economy.CriticalBelow";
         public const string EconomyWeakBelow = "Economy.WeakBelow";
@@ -209,8 +240,8 @@ public static class AIAdvisorConfig
         public const string EnemyCharacterProximityMax = "Intelligence.EnemyCharacterProximityMax";
         public const string IntelligenceViabilityThreshold = "Intelligence.ViabilityThreshold";
 
-        public const string ArtifactScarcityWeight = "Magic.ArtifactScarcityWeight";
-        public const string MagicViabilityThreshold = "Magic.ViabilityThreshold";
+        public const string ArtifactScarcityWeight = "Artifacts.ArtifactScarcityWeight";
+        public const string ArtifactsViabilityThreshold = "Artifacts.ViabilityThreshold";
 
         public const string DiplomaticOutmatchedBonus = "Diplomatic.OutmatchedBonus";
         public const string NpcProximityMax = "Diplomatic.NpcProximityMax";
@@ -226,23 +257,23 @@ public static class AIAdvisorConfig
         public const string DiplomaticIndirectSafetyThreshold = "Diplomatic.IndirectSafetyThreshold";
         public const string IntelligenceEnemyCharacterThreshold = "Intelligence.EnemyCharacterThreshold";
         public const string IntelligenceIndirectSafetyThreshold = "Intelligence.IndirectSafetyThreshold";
-        public const string MagicArtifactScarcityThreshold = "Magic.ArtifactScarcityThreshold";
-        public const string MagicArtifactTransferThreshold = "Magic.ArtifactTransferThreshold";
-        public const string MagicEnemyPressureThreshold = "Magic.EnemyPressureThreshold";
+        public const string ArtifactsArtifactScarcityThreshold = "Artifacts.ArtifactScarcityThreshold";
+        public const string ArtifactsArtifactTransferThreshold = "Artifacts.ArtifactTransferThreshold";
+        public const string ArtifactsEnemyPressureThreshold = "Artifacts.EnemyPressureThreshold";
         public const string LogisticsReachNpcThreshold = "Logistics.ReachNpcThreshold";
         public const string LogisticsInterceptEnemyThreshold = "Logistics.InterceptEnemyThreshold";
         public const string LogisticsReachEnemyCharacterThreshold = "Logistics.ReachEnemyCharacterThreshold";
         public const string LogisticsHealingNeedHealthBelow = "Logistics.HealingNeedHealthBelow";
         public const string LogisticsHealingNeedThreshold = "Logistics.HealingNeedThreshold";
-        public const string MagicHiddenArtifactsWeight = "Magic.HiddenArtifactsWeight";
-        public const string MagicMageStrengthWeight = "Magic.MageStrengthWeight";
+        public const string ArtifactsHiddenArtifactsWeight = "Artifacts.HiddenArtifactsWeight";
+        public const string ArtifactsMageStrengthWeight = "Artifacts.MageStrengthWeight";
         public const string DiplomaticEnemyPressureWeight = "Diplomatic.EnemyPressureWeight";
         public const string DiplomaticEmissaryStrengthWeight = "Diplomatic.EmissaryStrengthWeight";
         public const string IntelligenceEnemyPressureWeight = "Intelligence.EnemyPressureWeight";
         public const string IntelligenceAgentStrengthWeight = "Intelligence.AgentStrengthWeight";
 
         // Target-quality signals: is there a specific good target nearby, not just "is this
-        // advisor generically busy". Each pairs a "what counts as a target" threshold with a
+        // category generically busy". Each pairs a "what counts as a target" threshold with a
         // proximity-falloff window, following the *ProximityMax / *Threshold convention above.
         public const string DiplomaticEnemyPcLoyaltyBelow = "Diplomatic.EnemyPcLoyaltyBelow";
         public const string DiplomaticEnemyPcOpportunityProximityMax = "Diplomatic.EnemyPcOpportunityProximityMax";
@@ -260,20 +291,46 @@ public static class AIAdvisorConfig
         public const string IntelligenceHighValueEnemyCharacterProximityMax = "Intelligence.HighValueEnemyCharacterProximityMax";
         public const string IntelligenceHighValueEnemyCharacterThreshold = "Intelligence.HighValueEnemyCharacterThreshold";
 
-        // Second wave: Magic gets a spell-casting signal (previously artifact-only), Militaristic
-        // gets a fortification-need signal (previously combat-only), Diplomatic gets an
-        // NPL-recruitment-eligibility signal (previously discovery-only). None of these are
-        // folded into GetAdvisorViability — same precedent as Magic.ArtifactTransfer: available
-        // as a direct utility parameter and an HTN "Ready" predicate for sub-branching once
-        // already in that advisor's territory, without widening the outer viability gate.
-        public const string MagicSpellOpportunityThreshold = "Magic.SpellOpportunityThreshold";
-
+        // Second wave: Militaristic gets a fortification-need signal (previously combat-only),
+        // Diplomatic gets an NPL-recruitment-eligibility signal (previously discovery-only).
+        // None of these are folded into a viability aggregate — available as a direct utility
+        // parameter and an HTN "Ready" predicate for sub-branching, without widening any outer gate.
         public const string MilitaristicOwnPcDefenseBelow = "Militaristic.OwnPcDefenseBelow";
         public const string MilitaristicOwnPcFortificationProximityMax = "Militaristic.OwnPcFortificationProximityMax";
         public const string MilitaristicOwnPcFortificationNeedThreshold = "Militaristic.OwnPcFortificationNeedThreshold";
 
         public const string DiplomaticNplRecruitmentProximityMax = "Diplomatic.NplRecruitmentProximityMax";
         public const string DiplomaticNplRecruitmentThreshold = "Diplomatic.NplRecruitmentThreshold";
+
+        // Situations-first restructure: the HTN's highest-priority danger tier reads a raw
+        // (unfaded) distance instead of a continuous proximity score — "is the enemy right on
+        // top of me", not "how strong is proximity pressure overall".
+        public const string ImmediateDangerDistance = "Targeting.ImmediateDangerDistance";
+
+        // Win-probability gating: root.offense now requires an explicit favorable strength
+        // ratio (UtilityAIContext.GetArmyWinRatio) instead of a fuzzy viability sum, so the HTN
+        // never routes into an Attack strategy while outnumbered.
+        public const string MilitaristicMinWinRatioToAttack = "Militaristic.MinWinRatioToAttack";
+
+        // Duel/BattleOfSongs are never proactively sought out by the HTN unless the margin
+        // (UtilityAIParameters.MilitaristicDuelAdvantage/SongDuelAdvantage) clears a comfortable
+        // edge, not just a positive one — Duel.ResolveDuel's near-tie case is a coinflip.
+        public const string MilitaristicDuelSafetyMargin = "Militaristic.DuelSafetyMargin";
+        public const string MilitaristicSongDuelSafetyMargin = "Militaristic.SongDuelSafetyMargin";
+
+        // Diplomacy near/mid distance banding: splits the existing continuous
+        // DiplomaticNplRecruitment/DiplomaticEnemyPcOpportunity proximity signals into two
+        // discrete HTN priority tiers instead of one fading score.
+        public const string DiplomaticNplNearDistance = "Diplomatic.NplNearDistance";
+        public const string DiplomaticNplMidDistance = "Diplomatic.NplMidDistance";
+        public const string DiplomaticEnemyPcOpportunityNearDistance = "Diplomatic.EnemyPcOpportunityNearDistance";
+        public const string DiplomaticEnemyPcOpportunityMidDistance = "Diplomatic.EnemyPcOpportunityMidDistance";
+
+        // Board-wide NPL scarcity: how few same-alignment, not-yet-joined NonPlayableLeaders
+        // count as "few remain" (feeds DiplomaticNplScarcity), and the standard *Threshold gate
+        // for the derived "Ready" predicate.
+        public const string DiplomaticLowNplsCountAtMost = "Diplomatic.LowNplsCountAtMost";
+        public const string DiplomaticNplScarcityThreshold = "Diplomatic.NplScarcityThreshold";
 
         // Third wave: per-material stockpile thresholds (Leader's own resource amounts, not
         // market stock). Starting points only, not balance-tuned — Mithril is tighter since
@@ -292,10 +349,9 @@ public static class AIAdvisorConfig
         public const string EconomicLeatherSurplusAbove = "Economic.LeatherSurplusAbove";
     }
 
-    public static readonly IReadOnlyList<AdvisorWeightDefinition> KnownWeights = new List<AdvisorWeightDefinition>
+    public static readonly IReadOnlyList<UtilityWeightDefinition> KnownWeights = new List<UtilityWeightDefinition>
     {
-        new(Keys.HTNBiasBonus, 4f, "Flat score bonus for cards whose advisor matches the HTN strategy's currently-active task."),
-        new(Keys.HTNSituationBonus, 3f, "Extra score bonus (stacks with HTNBiasBonus) for a card whose own utility-parameter profile already uses one of the active HTN leaf's preferred parameters — a smaller, tie-breaking nudge on top of the underlying situational math, not the primary signal."),
+        new(Keys.HTNBiasBonus, 5f, "Score bonus for a card whose own utility-parameter profile shares a parameter with the HTN strategy's currently-active leaf's PreferredParameters — the sole mechanism biasing card choice toward the active branch."),
 
         // Fresh thresholds against a fresh metric (liquid wealth) — these are a starting
         // point, not tuned against real playtested economies. Expect to retune.
@@ -315,8 +371,8 @@ public static class AIAdvisorConfig
         new(Keys.EnemyCharacterProximityMax, 6f, "Intelligence bonus when an enemy character is at distance 0; fades by 1 per hex."),
         new(Keys.IntelligenceViabilityThreshold, 0f, "HTN switches to an Intelligence strategy once Intelligence's viability (same terms as its situational score above) crosses this."),
 
-        new(Keys.ArtifactScarcityWeight, 2f, "Magic bonus scale for how few artifacts the nation owns (0..1 scarcity times this)."),
-        new(Keys.MagicViabilityThreshold, 0f, "HTN switches to a Magic strategy once Magic's viability (same terms as its situational score above) crosses this."),
+        new(Keys.ArtifactScarcityWeight, 2f, "Artifacts bonus scale for how few artifacts the nation owns (0..1 scarcity times this)."),
+        new(Keys.ArtifactsViabilityThreshold, 0f, "HTN switches to an Artifacts strategy once Artifacts's viability (same terms as its situational score above) crosses this."),
 
         new(Keys.DiplomaticOutmatchedBonus, 2f, "Diplomatic bonus when the army is outmatched (indirect approach)."),
         new(Keys.NpcProximityMax, 10f, "Diplomatic bonus when an unrevealed NPC is at distance 0; fades by 1 per hex."),
@@ -331,17 +387,17 @@ public static class AIAdvisorConfig
         new(Keys.DiplomaticIndirectSafetyThreshold, 0f, "HTN threshold for direct Diplomatic.IndirectSafety."),
         new(Keys.IntelligenceEnemyCharacterThreshold, 0f, "HTN threshold for direct Intelligence.EnemyCharacter."),
         new(Keys.IntelligenceIndirectSafetyThreshold, 0f, "HTN threshold for direct Intelligence.IndirectSafety."),
-        new(Keys.MagicArtifactScarcityThreshold, 0f, "HTN threshold for direct Magic.ArtifactScarcity."),
-        new(Keys.MagicArtifactTransferThreshold, 0f, "HTN threshold for direct Magic.ArtifactTransfer."),
-        new(Keys.MagicEnemyPressureThreshold, 0f, "HTN threshold for direct Magic.EnemyPressure."),
+        new(Keys.ArtifactsArtifactScarcityThreshold, 0f, "HTN threshold for direct Artifacts.ArtifactScarcity."),
+        new(Keys.ArtifactsArtifactTransferThreshold, 0f, "HTN threshold for direct Artifacts.ArtifactTransfer."),
+        new(Keys.ArtifactsEnemyPressureThreshold, 0f, "HTN threshold for direct Artifacts.EnemyPressure."),
         new(Keys.LogisticsReachNpcThreshold, 0f, "HTN threshold for direct Logistics.ReachNpc."),
         new(Keys.LogisticsInterceptEnemyThreshold, 0f, "HTN threshold for direct Logistics.InterceptEnemy."),
         new(Keys.LogisticsReachEnemyCharacterThreshold, 0f, "HTN threshold for direct Logistics.ReachEnemyCharacter."),
         new(Keys.LogisticsHealingNeedHealthBelow, 70f, "An allied character in this hex counts as needing healing when their health is below this (Character.health, 0-100)."),
         new(Keys.LogisticsHealingNeedThreshold, 0f, "HTN threshold for direct Logistics.HealingNeed (count of wounded allies in this hex)."),
         new(Keys.DisruptionEnemyPressureThreshold, 0f, "HTN threshold for direct Disruption.EnemyPressure."),
-        new(Keys.MagicHiddenArtifactsWeight, 1f, "Magic viability per hidden artifact still on the map."),
-        new(Keys.MagicMageStrengthWeight, 0.5f, "Magic viability per total active Mage level under this leader."),
+        new(Keys.ArtifactsHiddenArtifactsWeight, 1f, "Artifacts viability per hidden artifact still on the map."),
+        new(Keys.ArtifactsMageStrengthWeight, 0.5f, "Artifacts viability per total active Mage level under this leader."),
         new(Keys.DiplomaticEnemyPressureWeight, 1f, "Diplomatic viability multiplier for enemy proximity."),
         new(Keys.DiplomaticEmissaryStrengthWeight, 0.5f, "Diplomatic viability per total active Emissary level under this leader."),
         new(Keys.IntelligenceEnemyPressureWeight, 1f, "Intelligence viability multiplier for enemy proximity."),
@@ -367,8 +423,6 @@ public static class AIAdvisorConfig
         new(Keys.IntelligenceHighValueEnemyCharacterProximityMax, 8f, "Intelligence.HighValueEnemyCharacter bonus at distance 0 from the nearest qualifying enemy character; fades by 1 per hex."),
         new(Keys.IntelligenceHighValueEnemyCharacterThreshold, 0f, "HTN threshold for direct Intelligence.HighValueEnemyCharacter."),
 
-        new(Keys.MagicSpellOpportunityThreshold, 0f, "HTN threshold for direct Magic.SpellOpportunity (count of currently-playable Spell actions)."),
-
         new(Keys.MilitaristicOwnPcDefenseBelow, 6f, "One of this leader's own PCs counts as needing fortification when its PC.GetDefense() is below this."),
         new(Keys.MilitaristicOwnPcFortificationProximityMax, 10f, "Militaristic.OwnPcFortificationNeed bonus at distance 0 from the nearest under-fortified own PC; fades by 1 per hex."),
         new(Keys.MilitaristicOwnPcFortificationNeedThreshold, 0f, "HTN threshold for direct Militaristic.OwnPcFortificationNeed."),
@@ -376,27 +430,49 @@ public static class AIAdvisorConfig
         new(Keys.DiplomaticNplRecruitmentProximityMax, 10f, "Diplomatic.NplRecruitment bonus at distance 0 from the nearest NPL capital eligible for StateAllegiance (AFriendOrThree) recruitment; fades by 1 per hex."),
         new(Keys.DiplomaticNplRecruitmentThreshold, 0f, "HTN threshold for direct Diplomatic.NplRecruitment."),
 
+        // Situations-first restructure: immediate-danger radius, win-probability gates for
+        // Offense/Duel/BattleOfSongs, Diplomacy near/mid banding, and board-wide NPL scarcity.
+        // Starting points only, not balance-tuned — expect to retune via the AI Widget.
+        new(Keys.ImmediateDangerDistance, 1.5f, "Raw hex distance to the nearest non-neutral enemy (or any enemy if none), combined with being outmatched, at or below which the HTN's highest-priority ImmediateDanger response fires."),
+        new(Keys.MilitaristicMinWinRatioToAttack, 1.15f, "This character's army offence must be at least this many times the nearest enemy's estimated strength (UtilityAIContext.GetArmyWinRatio) for root.offense to be considered — replaces the old fuzzy Militaristic.Viable gate."),
+        new(Keys.MilitaristicDuelSafetyMargin, 1.0f, "Militaristic.DuelAdvantage (this character's EstimateDuelScore minus the best eligible opponent's) must clear this before the HTN proactively routes into a Duel — a comfortable edge, not just a positive one, since Duel.ResolveDuel's near-tie case is a coinflip."),
+        new(Keys.MilitaristicSongDuelSafetyMargin, 1.0f, "Same as Militaristic.DuelSafetyMargin, for Battle of Songs."),
+
+        new(Keys.DiplomaticNplNearDistance, 3f, "Raw distance to the nearest recruitment-eligible NPL capital (Diplomatic.NplRecruitment's target) at or below which Diplomacy's near-band recruit push fires."),
+        new(Keys.DiplomaticNplMidDistance, 8f, "Same, wider band."),
+        new(Keys.DiplomaticEnemyPcOpportunityNearDistance, 3f, "Raw distance to the nearest low-loyalty enemy PC (Diplomatic.EnemyPcOpportunity's target) at or below which Diplomacy's near-band influence-out push fires."),
+        new(Keys.DiplomaticEnemyPcOpportunityMidDistance, 8f, "Same, wider band."),
+
+        new(Keys.DiplomaticLowNplsCountAtMost, 2f, "Diplomatic.NplScarcity input — how many same-alignment, not-yet-joined NonPlayableLeaders board-wide count as \"few remain,\" triggering a wide-radius recruit push."),
+        new(Keys.DiplomaticNplScarcityThreshold, 0f, "HTN threshold for direct Diplomatic.NplScarcity."),
+
         // Third wave: per-material stockpile thresholds against Leader's own resource amounts
-        // (not market stock). Starting points only, not balance-tuned. Mithril is tighter since
-        // it's the rarest material (StoresManager.MithrilSellValue=7, ReferenceStock=10 vs. 25
-        // for the rest).
-        new(Keys.EconomicMithrilInsufficientBelow, 5f, "Economic.MithrilInsufficient rises when stored mithril falls below this."),
-        new(Keys.EconomicMithrilSurplusAbove, 15f, "Economic.MithrilSurplus rises when stored mithril exceeds this."),
-        new(Keys.EconomicSteelInsufficientBelow, 10f, "Economic.SteelInsufficient rises when stored steel falls below this."),
-        new(Keys.EconomicSteelSurplusAbove, 30f, "Economic.SteelSurplus rises when stored steel exceeds this."),
-        new(Keys.EconomicIronInsufficientBelow, 10f, "Economic.IronInsufficient rises when stored iron falls below this."),
-        new(Keys.EconomicIronSurplusAbove, 30f, "Economic.IronSurplus rises when stored iron exceeds this."),
-        new(Keys.EconomicMountsInsufficientBelow, 10f, "Economic.MountsInsufficient rises when stored mounts falls below this."),
-        new(Keys.EconomicMountsSurplusAbove, 30f, "Economic.MountsSurplus rises when stored mounts exceeds this."),
-        new(Keys.EconomicTimberInsufficientBelow, 10f, "Economic.TimberInsufficient rises when stored timber falls below this."),
-        new(Keys.EconomicTimberSurplusAbove, 30f, "Economic.TimberSurplus rises when stored timber exceeds this."),
-        new(Keys.EconomicLeatherInsufficientBelow, 10f, "Economic.LeatherInsufficient rises when stored leather falls below this."),
-        new(Keys.EconomicLeatherSurplusAbove, 30f, "Economic.LeatherSurplus rises when stored leather exceeds this."),
+        // (not market stock) deviates from what the leader's own deck actually needs — see
+        // NationBlackboard (the per-material share of the deck's total material cost) and
+        // UtilityAIContext.GetResourceInsufficientScore/GetResourceSurplusScore. Each key here
+        // is now a scale factor on a 0..100 percentage-point deviation, not an absolute unit
+        // threshold — e.g. Insufficient = max(0, deck target share − current stockpile share) *
+        // 100 * this weight. Mithril is tuned more reactive since it's the rarest material
+        // (StoresManager.MithrilSellValue=7, ReferenceStock=10 vs. 25 for the rest). Starting
+        // points only, not balance-tuned — use the widget's Materials scenario inputs (stockpile
+        // amounts + deck target share sliders) to preview and retune by feel.
+        new(Keys.EconomicMithrilInsufficientBelow, 0.3f, "Economic.MithrilInsufficient scale — how strongly a mithril stockpile-share shortfall (vs. the deck's target share) biases toward BuyMithril."),
+        new(Keys.EconomicMithrilSurplusAbove, 0.3f, "Economic.MithrilSurplus scale — how strongly a mithril stockpile-share excess (vs. the deck's target share) biases toward SellMithril."),
+        new(Keys.EconomicSteelInsufficientBelow, 0.15f, "Economic.SteelInsufficient scale — how strongly a steel stockpile-share shortfall (vs. the deck's target share) biases toward BuySteel."),
+        new(Keys.EconomicSteelSurplusAbove, 0.15f, "Economic.SteelSurplus scale — how strongly a steel stockpile-share excess (vs. the deck's target share) biases toward SellSteel."),
+        new(Keys.EconomicIronInsufficientBelow, 0.15f, "Economic.IronInsufficient scale — how strongly an iron stockpile-share shortfall (vs. the deck's target share) biases toward BuyIron."),
+        new(Keys.EconomicIronSurplusAbove, 0.15f, "Economic.IronSurplus scale — how strongly an iron stockpile-share excess (vs. the deck's target share) biases toward SellIron."),
+        new(Keys.EconomicMountsInsufficientBelow, 0.15f, "Economic.MountsInsufficient scale — how strongly a mounts stockpile-share shortfall (vs. the deck's target share) biases toward BuyMounts."),
+        new(Keys.EconomicMountsSurplusAbove, 0.15f, "Economic.MountsSurplus scale — how strongly a mounts stockpile-share excess (vs. the deck's target share) biases toward SellMounts."),
+        new(Keys.EconomicTimberInsufficientBelow, 0.15f, "Economic.TimberInsufficient scale — how strongly a timber stockpile-share shortfall (vs. the deck's target share) biases toward BuyTimber."),
+        new(Keys.EconomicTimberSurplusAbove, 0.15f, "Economic.TimberSurplus scale — how strongly a timber stockpile-share excess (vs. the deck's target share) biases toward SellTimber."),
+        new(Keys.EconomicLeatherInsufficientBelow, 0.15f, "Economic.LeatherInsufficient scale — how strongly a leather stockpile-share shortfall (vs. the deck's target share) biases toward BuyLeather."),
+        new(Keys.EconomicLeatherSurplusAbove, 0.15f, "Economic.LeatherSurplus scale — how strongly a leather stockpile-share excess (vs. the deck's target share) biases toward SellLeather."),
     };
 
     private static Dictionary<string, float> defaultsByKey;
     private static Dictionary<string, float> loadedWeights;
-    private static Dictionary<string, CardAdvisorProfile> loadedCardProfiles;
+    private static Dictionary<string, CardParameterProfile> loadedCardProfiles;
     private static bool loaded;
 
     public static void Reload()
@@ -419,33 +495,18 @@ public static class AIAdvisorConfig
         return defaultsByKey.TryGetValue(key, out float value) ? value : 0f;
     }
 
-    // The advisor an action belongs to for AI decision-making: authored
-    // override first, then the action's own default.
-    public static AdvisorType ResolveAdvisor(CharacterAction action)
-    {
-        if (action == null) return AdvisorType.None;
-        EnsureLoaded();
-        if (TryGetProfile(action.card, out CardAdvisorProfile profile)
-            && !string.IsNullOrWhiteSpace(profile.advisor)
-            && Enum.TryParse(profile.advisor, true, out AdvisorType overridden))
-        {
-            return overridden;
-        }
-        return action.GetAdvisorType();
-    }
-
     // Flat, user-authored score adjustment for this action (0 when unset).
     public static float GetActionScoreBonus(CharacterAction action)
     {
         if (action == null) return 0f;
         EnsureLoaded();
-        return TryGetProfile(action.card, out CardAdvisorProfile profile) ? profile.scoreBonus : 0f;
+        return TryGetProfile(action.card, out CardParameterProfile profile) ? profile.scoreBonus : 0f;
     }
 
     // Single source of truth for how liquid wealth (gold + resources at current market
-    // price — see AIContext.CalculateLiquidWealth) maps to an economy status. This game has
-    // no passive per-turn income to threshold against, so there is only one axis. Thresholds
-    // are editable in the AI Widget (Economic tab).
+    // price — see UtilityAIContext.CalculateLiquidWealth) maps to an economy status. This game
+    // has no passive per-turn income to threshold against, so there is only one axis.
+    // Thresholds are editable in the AI Widget (Economic tab).
     public static EconomyStatus EvaluateEconomyStatus(float liquidWealth)
     {
         if (liquidWealth < GetWeight(Keys.EconomyCriticalBelow)) return EconomyStatus.Critical;
@@ -459,7 +520,7 @@ public static class AIAdvisorConfig
     {
         if (action == null) return default;
         EnsureLoaded();
-        return TryGetProfile(action.card, out CardAdvisorProfile profile)
+        return TryGetProfile(action.card, out CardParameterProfile profile)
             ? new ActionScoreFlags { ignoreSituation = profile.ignoreSituation }
             : default;
     }
@@ -470,15 +531,16 @@ public static class AIAdvisorConfig
     {
         if (action == null) return Array.Empty<ActionUtilityParameterModifier>();
         EnsureLoaded();
-        return TryGetProfile(action.card, out CardAdvisorProfile profile) && profile.utilityParameters?.Count > 0
+        return TryGetProfile(action.card, out CardParameterProfile profile) && profile.utilityParameters?.Count > 0
             ? profile.utilityParameters
             : Array.Empty<ActionUtilityParameterModifier>();
     }
 
-    private static bool TryGetProfile(CardData card, out CardAdvisorProfile profile)
+    public static bool TryGetProfile(CardData card, out CardParameterProfile profile)
     {
         profile = null;
         string key = BuildCardProfileKey(card);
+        EnsureLoaded();
         return !string.IsNullOrEmpty(key) && loadedCardProfiles != null && loadedCardProfiles.TryGetValue(key, out profile);
     }
 
@@ -503,22 +565,22 @@ public static class AIAdvisorConfig
         if (loaded) return;
         loaded = true;
         loadedWeights = new Dictionary<string, float>(StringComparer.OrdinalIgnoreCase);
-        loadedCardProfiles = new Dictionary<string, CardAdvisorProfile>(StringComparer.OrdinalIgnoreCase);
+        loadedCardProfiles = new Dictionary<string, CardParameterProfile>(StringComparer.OrdinalIgnoreCase);
 
         TextAsset asset = Resources.Load<TextAsset>(ResourcePath);
         if (asset == null || string.IsNullOrWhiteSpace(asset.text)) return;
 
-        AdvisorConfigData data = null;
-        try { data = JsonUtility.FromJson<AdvisorConfigData>(asset.text); }
+        UtilityConfigData data = null;
+        try { data = JsonUtility.FromJson<UtilityConfigData>(asset.text); }
         catch (Exception e)
         {
-            Debug.LogWarning($"AIAdvisorConfig: could not parse {ResourcePath}.json — using default weights. {e.Message}");
+            Debug.LogWarning($"UtilityAI: could not parse {ResourcePath}.json — using default weights. {e.Message}");
             return;
         }
 
         if (data?.weights != null)
         {
-            foreach (AdvisorWeightEntry entry in data.weights)
+            foreach (UtilityWeightEntry entry in data.weights)
             {
                 if (entry == null || string.IsNullOrWhiteSpace(entry.key)) continue;
                 loadedWeights[entry.key] = entry.value;
@@ -527,26 +589,22 @@ public static class AIAdvisorConfig
 
         if (data?.cardProfiles != null)
         {
-            foreach (CardAdvisorProfile entry in data.cardProfiles)
+            foreach (CardParameterProfile entry in data.cardProfiles)
             {
                 string key = BuildCardProfileKey(entry?.deckId, entry?.cardId ?? 0);
                 if (string.IsNullOrEmpty(key)) continue;
 
                 List<ActionUtilityParameterModifier> valid = entry.utilityParameters?
-                    .Where(p => p != null && AIUtilityParameters.IsKnown(p.parameter))
+                    .Where(p => p != null && UtilityAIParameters.IsKnown(p.parameter))
                     .Select(p => new ActionUtilityParameterModifier { parameter = p.parameter, multiplier = p.multiplier, bonus = p.bonus })
                     .ToList() ?? new List<ActionUtilityParameterModifier>();
 
-                AdvisorType parsedAdvisor = AdvisorType.None;
-                bool hasAdvisorOverride = !string.IsNullOrWhiteSpace(entry.advisor) && Enum.TryParse(entry.advisor, true, out parsedAdvisor);
-
-                loadedCardProfiles[key] = new CardAdvisorProfile
+                loadedCardProfiles[key] = new CardParameterProfile
                 {
                     deckId = entry.deckId,
                     cardId = entry.cardId,
                     cardName = entry.cardName,
                     actionClass = entry.actionClass,
-                    advisor = hasAdvisorOverride ? parsedAdvisor.ToString() : string.Empty,
                     scoreBonus = entry.scoreBonus,
                     ignoreSituation = entry.ignoreSituation,
                     utilityParameters = valid

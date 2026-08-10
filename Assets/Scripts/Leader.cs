@@ -102,7 +102,12 @@ public class Leader : Character
     {
         return leaderBiome.alignment;
     }
-    new public void NewTurn()
+    // Everything NewTurn does except kicking off WaitUntilEndOfTurn — split out so
+    // NonPlayableLeader batch processing (see Game.ProcessNonPlayableLeaderTurns) can reuse
+    // this safely. WaitUntilEndOfTurn unconditionally calls game.NextPlayer() for any leader
+    // that isn't game.player, which is always true for an NPL — looping that per NPL would
+    // corrupt the real PlayableLeader turn rotation, so NPLs must never reach it.
+    public void RefreshForNewTurn()
     {
         playedLandThisTurn = false;
         DecrementTemporarySeenHexes();
@@ -126,7 +131,12 @@ public class Leader : Character
 
         turnsSinceLastPcFoundingOffer++;
         TryOfferPcFoundingOpportunity();
+    }
 
+    new public void NewTurn()
+    {
+        RefreshForNewTurn();
+        if (killed) return;
         StartCoroutine(WaitUntilEndOfTurn());
     }
 
@@ -144,34 +154,7 @@ public class Leader : Character
         }
         Debug.Log($"[PCGrant] RunTurnStartResourceGrants for {name}, {controlledCharacters.Count(c => c != null && !c.killed)} live character(s).");
 
-        var grantedPcNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        var grantedRegions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-        foreach (Character c in controlledCharacters)
-        {
-            if (c == null || c.killed || c.hex == null) continue;
-            Hex hex = c.hex;
-
-            PC pc = hex.GetPCData();
-            if (pc != null && pc.owner == this)
-            {
-                string pcKey = PcDescriptionBuilder.NormalizeLookupKey(pc.pcName);
-                if (grantedPcNames.Add(pcKey))
-                {
-                    board.TriggerOwnPcGrantIfStandingOnOne(c, hex, quickTurnStartSequence: true);
-                }
-            }
-
-            string region = hex.GetLandRegion();
-            if (!string.IsNullOrWhiteSpace(region))
-            {
-                string regionKey = PcDescriptionBuilder.NormalizeLookupKey(region);
-                if (grantedRegions.Add(regionKey))
-                {
-                    board.TriggerRegionLandGrant(c, hex, quickTurnStartSequence: true);
-                }
-            }
-        }
+        board.TriggerTurnStartResourceGrants(controlledCharacters);
     }
 
     private void TryOfferPcFoundingOpportunity()

@@ -53,9 +53,6 @@ public class CharacterAction
     // Function delegate that returns a bool to determine if action is available
     public Func<Character, bool> condition;
 
-    [Header("AI")]
-    public AdvisorType advisorType = AdvisorType.None;
-
     [Header("Effect")]
     // Function delegate that returns a bool to determine if action is available
     public Func<Character, bool> effect;
@@ -103,8 +100,6 @@ public class CharacterAction
         VictoryPoints.RecalculateAndAssign(g);
     }
 
-    protected virtual AdvisorType DefaultAdvisorType => AdvisorType.None;
-
     // Passive/automatic grants (see MaterialRetrieval) fire constantly as AI leaders re-enter
     // their own PCs/regions every turn — a generic "AI did something visible" floating text +
     // event icon for each of these is noise, not information. Rumours are still recorded above
@@ -126,12 +121,6 @@ public class CharacterAction
         return cachedDefaultActionName;
     }
 
-    public AdvisorType GetAdvisorType()
-    {
-        return advisorType == AdvisorType.None ? DefaultAdvisorType : advisorType;
-    }
-
-
     public virtual void Initialize(Character character, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, Task<bool>> asyncEffect = null)
     {
         try
@@ -139,7 +128,6 @@ public class CharacterAction
             var originalCondition = condition;
             this.character = character;
 
-            if (advisorType == AdvisorType.None) advisorType = DefaultAdvisorType;
             string defaultActionName = GetDefaultActionName();
 
             this.condition = (character) => { return

@@ -8,7 +8,7 @@ using UnityEngine;
 
 public static class AITurnController
 {
-    public static IEnumerator ExecuteLeaderTurn(PlayableLeader leader)
+    public static IEnumerator ExecuteLeaderTurn(Leader leader)
     {
         if (leader == null) yield break;
 
@@ -29,15 +29,15 @@ public static class AITurnController
         foreach (Character character in leader.controlledCharacters.Where(c => c != null && !c.killed))
         {
             // HTN strategy is decided per character, from that character's own local situation
-            // (its own AIContext) — not once for the whole nation from an arbitrary "first"
-            // character. A leader-wide gate (e.g. Economic.Critical) still ends up uniform
-            // across characters for free, since that predicate doesn't depend on position; a
-            // position-dependent one (Militaristic.Danger, an opportunity nearby) now only
-            // biases the character it's actually about.
-            AIBlackboard blackboard = AIBlackboardStore.GetOrCreate(leader, character);
-            (string biasedAdvisorName, string activeHtnTaskId, IReadOnlyList<string> preferredParameters, Hex activeHtnTargetHex) = AdvanceHtnStrategy(leader, character, blackboard);
+            // (its own UtilityAIContext) — not once for the whole nation from an arbitrary
+            // "first" character. A leader-wide gate (e.g. Economic.Critical) still ends up
+            // uniform across characters for free, since that predicate doesn't depend on
+            // position; a position-dependent one (Militaristic.Danger, an opportunity nearby)
+            // now only biases the character it's actually about.
+            CharacterBlackboard blackboard = CharacterBlackboardStore.GetOrCreate(leader, character);
+            (string activeHtnTaskId, IReadOnlyList<string> preferredParameters, Hex activeHtnTargetHex) = AdvanceHtnStrategy(leader, character, blackboard);
 
-            Task task = ExecuteCharacterAsync(leader, character, actionsManager, biasedAdvisorName, activeHtnTaskId, preferredParameters, activeHtnTargetHex);
+            Task task = ExecuteCharacterAsync(leader, character, actionsManager, activeHtnTaskId, preferredParameters, activeHtnTargetHex);
             while (!task.IsCompleted) yield return null;
 
             if (task.IsFaulted && task.Exception != null)
@@ -51,15 +51,17 @@ public static class AITurnController
 
     // Once per character-turn: re-evaluate that character's own persistent HTN strategy
     // (priority-interrupt scan, failure check, completion-driven advancement — see
-    // HTNPlanner), using an AIContext built from THIS character's own position, and return
-    // the advisor name + taskId + preferred utility parameters its currently-active primitive
-    // task biases scoring toward (null/empty for a neutral, no-bias fallback task).
-    private static (string advisorName, string taskId, IReadOnlyList<string> preferredParameters, Hex targetHex) AdvanceHtnStrategy(PlayableLeader leader, Character character, AIBlackboard blackboard)
+    // HTNPlanner), using a UtilityAIContext built from THIS character's own position, and
+    // return the taskId + preferred utility parameters its currently-active primitive task
+    // biases scoring toward (null/empty for a neutral, no-bias fallback task).
+    // Public so AIBlackboardDebugPanel can force a fresh evaluation for a character the AI
+    // turn loop hasn't reached yet (e.g. inspecting mid-round, before its turn comes up).
+    public static (string taskId, IReadOnlyList<string> preferredParameters, Hex targetHex) AdvanceHtnStrategy(Leader leader, Character character, CharacterBlackboard blackboard)
     {
-        AIContext.AIContextPrecomputedData? precomputed = AIContextCacheManager.Instance != null
-            ? AIContextCacheManager.Instance.GetCached(leader, character)
+        UtilityAIContext.PrecomputedData? precomputed = UtilityAIContextCacheManager.Instance != null
+            ? UtilityAIContextCacheManager.Instance.GetCached(leader, character)
             : null;
-        AIContext sensingContext = new(leader, character, new List<CharacterAction>(), null, precomputed);
+        UtilityAIContext sensingContext = new(leader, character, new List<CharacterAction>(), null, precomputed);
 
         HTNCompoundTask strategyRoot = AIStrategyLibrary.GetStrategyFor(leader);
         List<HTNStackFrame> previousStack = blackboard.ActiveStack;
@@ -82,9 +84,10 @@ public static class AITurnController
         blackboard.TargetHex = targetHex;
 
         string stackDescription = string.Join(">", newStack.Select(f => $"{f.MethodTaskId}[{f.SubtaskIndex}]"));
-        Debug.Log($"[HTN] {leader.characterName}/{character.characterName} difficulty={AIDifficultySettings.CurrentDifficulty} turnsOnTask={blackboard.TurnsOnCurrentTask} stack={stackDescription} advisor={activePrimitive?.AdvisorName} targetHex={targetHex?.GetHoverV2()}");
+        string preferredParamsDescription = activePrimitive?.PreferredParameters is { Count: > 0 } ? string.Join(",", activePrimitive.PreferredParameters) : "(none)";
+        Debug.Log($"[HTN] {leader.characterName}/{character.characterName} difficulty={AIDifficultySettings.CurrentDifficulty} turnsOnTask={blackboard.TurnsOnCurrentTask} stack={stackDescription} preferredParams={preferredParamsDescription} targetHex={targetHex?.GetHoverV2()}");
 
-        return (activePrimitive?.AdvisorName, activePrimitive?.TaskId, activePrimitive?.PreferredParameters, targetHex);
+        return (activePrimitive?.TaskId, activePrimitive?.PreferredParameters, targetHex);
     }
 
     private static bool StacksEqual(List<HTNStackFrame> a, List<HTNStackFrame> b)
@@ -98,7 +101,7 @@ public static class AITurnController
         return true;
     }
 
-    private static async Task ConsumeAiResourceCardsAsync(PlayableLeader leader, ActionsManager actionsManager)
+    private static async Task ConsumeAiResourceCardsAsync(Leader leader, ActionsManager actionsManager)
     {
         if (leader == null || actionsManager == null) return;
 
@@ -123,7 +126,8 @@ public static class AITurnController
             if (succeeded)
             {
                 deckManager.ApplyMapRevealForPlayedCard(leader, consumedCard);
-                leader.RecordPlayedCard(consumedCard);
+                // RecordPlayedCard (played-land/PC-card history) is PlayableLeader-only bookkeeping.
+                if (leader is PlayableLeader playableLeader) playableLeader.RecordPlayedCard(consumedCard);
             }
         }
     }
@@ -147,7 +151,7 @@ public static class AITurnController
         return ok;
     }
 
-    // Public: also used by AIContext.HasEligibleCard, which needs the same actionRef ->
+    // Public: also used by UtilityAIContext.HasEligibleCard, which needs the same actionRef ->
     // CharacterAction resolution to check role eligibility across the leader's full deck.
     public static CharacterAction ResolveActionByRef(string actionRef, ActionsManager actionsManager = null)
     {
@@ -229,7 +233,7 @@ public static class AITurnController
     // Re-scores from scratch each pick since executing a card changes affordability/available
     // cards for the next one. Stops early on an empty candidate pool or a failed execution;
     // falls back to a single Pass if literally nothing was played.
-    private static async Task ExecuteCharacterAsync(PlayableLeader leader, Character character, ActionsManager actionsManager, string biasedAdvisorName, string activeHtnTaskId, IReadOnlyList<string> preferredParameters, Hex activeHtnTargetHex)
+    private static async Task ExecuteCharacterAsync(Leader leader, Character character, ActionsManager actionsManager, string activeHtnTaskId, IReadOnlyList<string> preferredParameters, Hex activeHtnTargetHex)
     {
         DeckManager deckManager = DeckManager.Instance != null
             ? DeckManager.Instance
@@ -247,26 +251,25 @@ public static class AITurnController
             movedFirst = true;
         }
 
-        // Moving invalidates AIContextCacheManager's cached proximity data (built from this
-        // character's pre-move position) — rebuild fresh rather than score off a stale hex.
-        AIContext.AIContextPrecomputedData? precomputed = movedFirst
-            ? AIContextDataBuilder.Build(leader, character)
-            : (AIContextCacheManager.Instance != null ? AIContextCacheManager.Instance.GetCached(leader, character) : null);
-        float advisorBiasBonus = AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.HTNBiasBonus);
+        // Moving invalidates UtilityAIContextCacheManager's cached proximity data (built from
+        // this character's pre-move position) — rebuild fresh rather than score off a stale hex.
+        UtilityAIContext.PrecomputedData? precomputed = movedFirst
+            ? UtilityAIContextDataBuilder.Build(leader, character)
+            : (UtilityAIContextCacheManager.Instance != null ? UtilityAIContextCacheManager.Instance.GetCached(leader, character) : null);
 
         int picksRemaining = (int)AIDifficultySettings.CurrentDifficulty;
         HashSet<CardData> playedThisCharacter = new();
-        AIContext lastContext = null;
+        UtilityAIContext lastContext = null;
 
         while (picksRemaining > 0 && deckManager != null && deckManager.HasDeckFor(leader))
         {
-            CardData chosenCard = ScoreFullDeck(leader, character, actionsManager, deckManager, precomputed, playedThisCharacter, advisorBiasBonus, biasedAdvisorName, preferredParameters)
+            CardData chosenCard = ScoreFullDeck(leader, character, actionsManager, deckManager, precomputed, playedThisCharacter, preferredParameters)
                 .OrderByDescending(scored => scored.score)
                 .Select(scored => scored.card)
                 .FirstOrDefault();
             if (chosenCard == null) break;
 
-            AIContext context = await ExecuteChosenCardAsync(leader, character, actionsManager, precomputed, chosenCard, activeHtnTaskId, activeHtnTargetHex);
+            UtilityAIContext context = await ExecuteChosenCardAsync(leader, character, actionsManager, precomputed, chosenCard, activeHtnTaskId, activeHtnTargetHex);
             lastContext = context;
 
             bool shouldLog = context.LastChosenAction == null || context.LastChosenAction.LastExecutionSucceeded;
@@ -280,7 +283,7 @@ public static class AITurnController
 
         if (lastContext == null)
         {
-            lastContext = new AIContext(leader, character, new List<CharacterAction>(), null, precomputed) { ActiveHtnTaskId = activeHtnTaskId, ActiveHtnTargetHex = activeHtnTargetHex };
+            lastContext = new UtilityAIContext(leader, character, new List<CharacterAction>(), null, precomputed) { ActiveHtnTaskId = activeHtnTaskId, ActiveHtnTargetHex = activeHtnTargetHex };
             await lastContext.PassAsync();
             AIActionLogger.Log(lastContext.BuildLogEntry());
         }
@@ -300,7 +303,7 @@ public static class AITurnController
     // instance returned by ResolveActionByRef is a shared singleton per action *type*
     // (ActionsManager caches one CharacterAction component per class), so it must never be
     // reused across candidates without a fresh Initialize immediately before each use.
-    private static async Task<AIContext> ExecuteChosenCardAsync(PlayableLeader leader, Character character, ActionsManager actionsManager, AIContext.AIContextPrecomputedData? precomputed, CardData chosenCard, string activeHtnTaskId, Hex activeHtnTargetHex)
+    private static async Task<UtilityAIContext> ExecuteChosenCardAsync(Leader leader, Character character, ActionsManager actionsManager, UtilityAIContext.PrecomputedData? precomputed, CardData chosenCard, string activeHtnTaskId, Hex activeHtnTargetHex)
     {
         if (chosenCard != null)
         {
@@ -309,30 +312,30 @@ public static class AITurnController
             if (action != null)
             {
                 action.Initialize(character, chosenCard);
-                AdvisorType advisor = AIAdvisorConfig.ResolveAdvisor(action);
                 Dictionary<CharacterAction, CardData> actionCards = new() { [action] = chosenCard };
-                AIContext context = new(leader, character, new List<CharacterAction> { action }, actionCards, precomputed) { ActiveHtnTaskId = activeHtnTaskId, ActiveHtnTargetHex = activeHtnTargetHex };
-                bool executed = await context.TryExecuteChosenActionAsync(action, advisor);
+                UtilityAIContext context = new(leader, character, new List<CharacterAction> { action }, actionCards, precomputed) { ActiveHtnTaskId = activeHtnTaskId, ActiveHtnTargetHex = activeHtnTargetHex };
+                bool executed = await context.TryExecuteChosenActionAsync(action);
                 if (!executed) await context.PassAsync();
                 return context;
             }
         }
 
-        AIContext passContext = new(leader, character, new List<CharacterAction>(), null, precomputed) { ActiveHtnTaskId = activeHtnTaskId, ActiveHtnTargetHex = activeHtnTargetHex };
+        UtilityAIContext passContext = new(leader, character, new List<CharacterAction>(), null, precomputed) { ActiveHtnTaskId = activeHtnTaskId, ActiveHtnTargetHex = activeHtnTargetHex };
         await passContext.PassAsync();
         return passContext;
     }
 
     // Scores every playable card in the leader's full deck (not just the drawn hand) for this
     // character — one candidate at a time, each freshly Initialized immediately before it's
-    // scored via a throwaway single-card AIContext, since scoring depends on the shared action
-    // singleton's current card/character state. advisorBiasBonus/biasedAdvisorName/
-    // preferredParameters let the HTN layer tilt the ranking toward its currently-active
-    // strategy (and specific situation within it) without restricting which cards are eligible
-    // (see AIDifficulty loop in ExecuteLeaderTurn). Public: also reused read-only by
-    // AIBlackboardDebugPanel for its live "cards that would be suitable" preview — scoring
-    // itself never executes/mutates anything, so calling it outside a real AI turn is safe.
-    public static List<(CardData card, float score)> ScoreFullDeck(PlayableLeader leader, Character character, ActionsManager actionsManager, DeckManager deckManager, AIContext.AIContextPrecomputedData? precomputed, HashSet<CardData> excluded, float advisorBiasBonus, string biasedAdvisorName, IReadOnlyList<string> preferredParameters)
+    // scored via a throwaway single-card UtilityAIContext, since scoring depends on the shared
+    // action singleton's current card/character state. preferredParameters lets the HTN layer
+    // tilt the ranking toward its currently-active strategy's specific situation, purely via
+    // whether a card's own utilityParameters overlap it (see UtilityAIContext.ScoreAction) —
+    // without restricting which cards are eligible (see AIDifficulty loop in
+    // ExecuteLeaderTurn). Public: also reused read-only by AIBlackboardDebugPanel for its live
+    // "cards that would be suitable" preview — scoring itself never executes/mutates anything,
+    // so calling it outside a real AI turn is safe.
+    public static List<(CardData card, float score)> ScoreFullDeck(Leader leader, Character character, ActionsManager actionsManager, DeckManager deckManager, UtilityAIContext.PrecomputedData? precomputed, HashSet<CardData> excluded, IReadOnlyList<string> preferredParameters)
     {
         List<(CardData card, float score)> scored = new();
         if (leader == null || character == null || actionsManager == null || deckManager == null) return scored;
@@ -353,12 +356,9 @@ public static class AITurnController
             bool playable = card.EvaluatePlayability(character, null, _ => action.FulfillsConditions());
             if (!playable) continue;
 
-            AdvisorType advisor = AIAdvisorConfig.ResolveAdvisor(action);
-            float bias = !string.IsNullOrEmpty(biasedAdvisorName) && advisor.ToString() == biasedAdvisorName ? advisorBiasBonus : 0f;
-
             Dictionary<CharacterAction, CardData> actionCards = new() { [action] = card };
-            AIContext scoringContext = new(leader, character, new List<CharacterAction> { action }, actionCards, precomputed);
-            float score = scoringContext.ScoreAction(action, advisor, bias, preferredParameters);
+            UtilityAIContext scoringContext = new(leader, character, new List<CharacterAction> { action }, actionCards, precomputed);
+            float score = scoringContext.ScoreAction(action, preferredParameters);
 
             scored.Add((card, score));
         }
@@ -366,7 +366,7 @@ public static class AITurnController
         return scored;
     }
 
-    private static async Task MoveTowardsTargetAsync(AIContext context)
+    private static async Task MoveTowardsTargetAsync(UtilityAIContext context)
     {
         if (context == null || context.Character == null) return;
         await MoveCharacterTowardsHexAsync(context.Character, context.GetPreferredMovementTarget());

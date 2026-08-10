@@ -12,10 +12,10 @@ using UnityEngine;
 // folder of Mixamo animation drops before any real transition graph gets built.
 public static class PreviewAnimatorBuilder
 {
-    [MenuItem("Assets/Animation/Populate States From Folder", true)]
+    [MenuItem("Assets/RetroLOTR/Animation/Populate States From Folder", true)]
     private static bool ValidateBuild() => Selection.activeObject is AnimatorController;
 
-    [MenuItem("Assets/Animation/Populate States From Folder")]
+    [MenuItem("Assets/RetroLOTR/Animation/Populate States From Folder")]
     private static void Build()
     {
         var controller = Selection.activeObject as AnimatorController;

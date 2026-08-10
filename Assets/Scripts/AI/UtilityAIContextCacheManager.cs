@@ -4,12 +4,12 @@ using System.Linq;
 using UnityEngine;
 using System.Diagnostics;
 
-public class AIContextCacheManager : MonoBehaviour
+public class UtilityAIContextCacheManager : MonoBehaviour
 {
-    public static AIContextCacheManager Instance { get; private set; }
+    public static UtilityAIContextCacheManager Instance { get; private set; }
 
-    private readonly Dictionary<int, AIContext.AIContextPrecomputedData> cache = new();
-    private readonly Queue<(PlayableLeader leader, Character character)> workQueue = new();
+    private readonly Dictionary<int, UtilityAIContext.PrecomputedData> cache = new();
+    private readonly Queue<(Leader leader, Character character)> workQueue = new();
     private Coroutine precomputeRoutine;
     private Game game;
     private bool rebuildRequested = false;
@@ -43,11 +43,11 @@ public class AIContextCacheManager : MonoBehaviour
         EnsureRoutine();
     }
 
-    public AIContext.AIContextPrecomputedData? GetCached(PlayableLeader leader, Character character)
+    public UtilityAIContext.PrecomputedData? GetCached(Leader leader, Character character)
     {
         if (leader == null || character == null) return null;
         int key = BuildKey(leader, character);
-        if (cache.TryGetValue(key, out AIContext.AIContextPrecomputedData data)) return data;
+        if (cache.TryGetValue(key, out UtilityAIContext.PrecomputedData data)) return data;
         return null;
     }
 
@@ -94,11 +94,11 @@ public class AIContextCacheManager : MonoBehaviour
                     break;
                 }
 
-                (PlayableLeader leader, Character character) item = workQueue.Dequeue();
+                (Leader leader, Character character) item = workQueue.Dequeue();
                 if (item.leader == null || item.character == null || item.leader.killed || item.character.killed) continue;
                 // Clamp per-item build time so a single heavy build cannot stall the frame.
                 float perItemBudget = Mathf.Max(0.5f, budgetMs);
-                cache[BuildKey(item.leader, item.character)] = AIContextDataBuilder.Build(item.leader, item.character, perItemBudget);
+                cache[BuildKey(item.leader, item.character)] = UtilityAIContextDataBuilder.Build(item.leader, item.character, perItemBudget);
                 processedThisFrame++;
                 currentQueueProcessed++;
             }
@@ -135,6 +135,20 @@ public class AIContextCacheManager : MonoBehaviour
             }
         }
 
+        if (game.npcs != null)
+        {
+            foreach (NonPlayableLeader leader in game.npcs.Where(c => c != null && !c.killed))
+            {
+                foreach (Character character in leader.controlledCharacters.Where(c => c != null && !c.killed))
+                {
+                    workQueue.Enqueue((leader, character));
+                    string leaderName = !string.IsNullOrEmpty(leader.characterName) ? leader.characterName : leader.name;
+                    string charName = !string.IsNullOrEmpty(character.characterName) ? character.characterName : character.name;
+                    detailItems.Add($"{leaderName}/{charName}");
+                }
+            }
+        }
+
         currentQueueTotal = workQueue.Count;
         currentQueueProcessed = 0;
         queueCompletionLogged = false;
@@ -143,7 +157,7 @@ public class AIContextCacheManager : MonoBehaviour
         UnityEngine.Debug.Log($"[AIContextCache] Queued {currentQueueTotal} items for caching (turn {game?.turn}, active={game?.currentlyPlaying?.characterName ?? "?"}); items: {lastQueueDetail}");
     }
 
-    private int BuildKey(PlayableLeader leader, Character character)
+    private int BuildKey(Leader leader, Character character)
     {
         unchecked
         {

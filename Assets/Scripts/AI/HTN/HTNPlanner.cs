@@ -14,22 +14,23 @@ using System.Linq;
 //          condition firing moves execution to the next subtask in its
 //          Method's sequence, cascading upward through the stack as needed)
 // Planning is lazy/interleaved: each CompoundTask is only decomposed against
-// the real current AIContext/Blackboard state once execution reaches it.
+// the real current UtilityAIContext/Blackboard state once execution reaches it.
 // ---------------------------------------------------------------------------
 
 public static class HTNPlanner
 {
     // Tries each candidate Method in priority order; a candidate is only actually chosen if its
     // precondition holds AND (recursively) its subtree bottoms out at a leaf this character can
-    // act on. A leaf with a real advisor bias is skipped if the character has no role-eligible
-    // card for that advisor anywhere in its deck (AIContext.HasEligibleCard) — otherwise that
-    // bias would be wasted for the whole turn AND would monopolize the branch slot, starving a
-    // lower-priority branch the character could actually use. This is why Decompose recurses
-    // and backtracks (try the next sibling if a chosen candidate's whole subtree turns out
-    // empty) instead of committing greedily to the first precondition match, all the way up to
-    // the root — so an ineligible character still reaches root.fallback (or any other viable
-    // top-level branch) instead of getting nothing for the turn.
-    public static List<HTNStackFrame> Decompose(HTNCompoundTask compoundTask, AIContext ctx, AIBlackboard bb)
+    // act on. A leaf with PreferredParameters is skipped if the character has no role-eligible
+    // card anywhere in its deck whose own utilityParameters overlap that list
+    // (UtilityAIContext.HasEligibleCard) — otherwise that bias would be wasted for the whole
+    // turn AND would monopolize the branch slot, starving a lower-priority branch the character
+    // could actually use. This is why Decompose recurses and backtracks (try the next sibling
+    // if a chosen candidate's whole subtree turns out empty) instead of committing greedily to
+    // the first precondition match, all the way up to the root — so an ineligible character
+    // still reaches root.fallback (or any other viable top-level branch) instead of getting
+    // nothing for the turn.
+    public static List<HTNStackFrame> Decompose(HTNCompoundTask compoundTask, UtilityAIContext ctx, CharacterBlackboard bb)
     {
         if (compoundTask == null) return new List<HTNStackFrame>();
 
@@ -44,11 +45,9 @@ public static class HTNPlanner
 
             if (firstSubtask is HTNPrimitiveTask primitive)
             {
-                if (!string.IsNullOrEmpty(primitive.AdvisorName)
-                    && Enum.TryParse(primitive.AdvisorName, true, out AdvisorType advisor)
-                    && !ctx.HasEligibleCard(advisor))
+                if (primitive.PreferredParameters is { Count: > 0 } && !ctx.HasEligibleCard(primitive.PreferredParameters))
                 {
-                    continue; // no eligible card for this leaf's advisor — try the next sibling
+                    continue; // no eligible card for this leaf's parameters — try the next sibling
                 }
 
                 return new List<HTNStackFrame> { ownFrame };
@@ -78,7 +77,7 @@ public static class HTNPlanner
         return ResolvePrimitive(stack, BuildIndex(root));
     }
 
-    public static List<HTNStackFrame> AdvanceStack(List<HTNStackFrame> stack, HTNCompoundTask root, AIContext ctx, AIBlackboard bb)
+    public static List<HTNStackFrame> AdvanceStack(List<HTNStackFrame> stack, HTNCompoundTask root, UtilityAIContext ctx, CharacterBlackboard bb)
     {
         if (root == null) return new List<HTNStackFrame>();
         if (stack == null || stack.Count == 0) return Decompose(root, ctx, bb);
@@ -119,7 +118,7 @@ public static class HTNPlanner
         return Advance(stack, index, root, ctx, bb);
     }
 
-    private static List<HTNStackFrame> ReplaceFrom(List<HTNStackFrame> stack, int i, HTNCompoundTask owner, AIContext ctx, AIBlackboard bb)
+    private static List<HTNStackFrame> ReplaceFrom(List<HTNStackFrame> stack, int i, HTNCompoundTask owner, UtilityAIContext ctx, CharacterBlackboard bb)
     {
         List<HTNStackFrame> head = stack.Take(i).ToList();
         if (owner == null) return head;
@@ -128,7 +127,7 @@ public static class HTNPlanner
         return head;
     }
 
-    private static List<HTNStackFrame> Advance(List<HTNStackFrame> stack, Index index, HTNCompoundTask root, AIContext ctx, AIBlackboard bb)
+    private static List<HTNStackFrame> Advance(List<HTNStackFrame> stack, Index index, HTNCompoundTask root, UtilityAIContext ctx, CharacterBlackboard bb)
     {
         List<HTNStackFrame> current = new(stack);
 

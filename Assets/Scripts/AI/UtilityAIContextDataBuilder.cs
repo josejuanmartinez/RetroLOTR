@@ -1,11 +1,11 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
 using UnityEngine;
 
-public static class AIContextDataBuilder
+public static class UtilityAIContextDataBuilder
 {
-    public static AIContext.AIContextPrecomputedData Build(PlayableLeader leader, Character character, float maxMilliseconds = -1f)
+    public static UtilityAIContext.PrecomputedData Build(Leader leader, Character character, float maxMilliseconds = -1f)
     {
         Stopwatch stopwatch = null;
         if (maxMilliseconds > 0f)
@@ -15,13 +15,18 @@ public static class AIContextDataBuilder
 
         Board board = Object.FindFirstObjectByType<Board>();
         StoresManager stores = Object.FindFirstObjectByType<StoresManager>();
-        var data = new AIContext.AIContextPrecomputedData
+        var data = new UtilityAIContext.PrecomputedData
         {
-            LiquidWealth = AIContext.CalculateLiquidWealth(leader, stores),
+            LiquidWealth = UtilityAIContext.CalculateLiquidWealth(leader, stores),
             NationPercentageArtifacts = CalculateNationArtifacts(leader),
             HiddenArtifactsRemaining = CountHiddenArtifacts(board),
-            ClosestEnemy = new AIContext.EnemyTarget(null, float.MaxValue, false, 0f),
-            ClosestNonNeutralEnemy = new AIContext.EnemyTarget(null, float.MaxValue, false, 0f),
+            // Leader-wide (not character-position-dependent), so computed here rather than
+            // gated behind the character/hex early-return below.
+            UnrecruitedSameAlignmentNplCount = CountUnrecruitedSameAlignmentNpls(leader),
+            DuelAdvantage = 0f,
+            SongDuelAdvantage = 0f,
+            ClosestEnemy = new UtilityAIContext.EnemyTarget(null, float.MaxValue, false, 0f),
+            ClosestNonNeutralEnemy = new UtilityAIContext.EnemyTarget(null, float.MaxValue, false, 0f),
             NearestUnrevealedNpcDistance = float.MaxValue,
             NearestEnemyCharacterDistance = float.MaxValue,
             NearestEnemyPcOpportunityDistance = float.MaxValue,
@@ -30,7 +35,7 @@ public static class AIContextDataBuilder
             NearestHighValueEnemyCharacterDistance = float.MaxValue,
             NearestOwnPcFortificationNeedDistance = float.MaxValue,
             NearestNplRecruitmentDistance = float.MaxValue,
-            ArtifactTransferCandidates = new List<AIContext.ArtifactTransferCandidate>(),
+            ArtifactTransferCandidates = new List<UtilityAIContext.ArtifactTransferCandidate>(),
             BestArtifactTransferScore = 0f
         };
 
@@ -45,21 +50,77 @@ public static class AIContextDataBuilder
 
         CacheOwnPcSignals(leader, character, ref data);
 
+        CacheDuelSignal(character, ref data);
+        CacheSongDuelSignal(character, ref data);
+
         BuildArtifactTransfers(board, leader, character, ref data, stopwatch, maxMilliseconds);
 
         return data;
     }
 
-    private static void CacheEnemyTargets(Board board, Character character, PlayableLeader leader, ref AIContext.AIContextPrecomputedData data, Stopwatch stopwatch, float maxMilliseconds)
+    // Win-probability signal for the HTN's ImmediateDanger/Danger PersonalCombat pick: the
+    // AI's own likely target choice (Duel.EstimateDuelScore(x, null), same ordering
+    // Duel.PickBestTarget itself uses) compared against this character's score in that same
+    // matchup — signed, so a losing opportunity contributes negatively rather than just failing
+    // to help (see UtilityAIParameters.MilitaristicDuelAdvantage).
+    private static void CacheDuelSignal(Character character, ref UtilityAIContext.PrecomputedData data)
+    {
+        data.DuelAdvantage = 0f;
+        if (character == null || character.IsRefusingDuels()) return;
+
+        ActionsManager actionsManager = Object.FindFirstObjectByType<ActionsManager>();
+        if (AITurnController.ResolveActionByRef("Duel", actionsManager) is not Duel duelAction) return;
+
+        duelAction.Initialize(character);
+        List<Character> candidates = duelAction.GetEligibleTargets(character);
+        if (candidates.Count == 0) return;
+
+        Character target = candidates.OrderByDescending(x => Duel.EstimateDuelScore(x, null)).First();
+        data.DuelAdvantage = Duel.EstimateDuelScore(character, target) - Duel.EstimateDuelScore(target, character);
+    }
+
+    // Same shape as CacheDuelSignal, for Battle of Songs (mage-vs-mage) — see
+    // UtilityAIParameters.MilitaristicSongDuelAdvantage.
+    private static void CacheSongDuelSignal(Character character, ref UtilityAIContext.PrecomputedData data)
+    {
+        data.SongDuelAdvantage = 0f;
+        if (character == null || character.GetMage() < 1) return;
+
+        ActionsManager actionsManager = Object.FindFirstObjectByType<ActionsManager>();
+        if (AITurnController.ResolveActionByRef("BattleOfSongs", actionsManager) is not BattleOfSongs songAction) return;
+
+        songAction.Initialize(character);
+        List<Character> candidates = songAction.GetEligibleMageTargets(character);
+        if (candidates.Count == 0) return;
+
+        Character target = candidates.OrderByDescending(x => BattleOfSongs.EstimateSongScore(x)).First();
+        data.SongDuelAdvantage = BattleOfSongs.EstimateSongScore(character) - BattleOfSongs.EstimateSongScore(target);
+    }
+
+    // Board-wide (not proximity-based) count of same-alignment NonPlayableLeaders this leader
+    // could still recruit at all — NonPlayableLeader.joined is a single global "has joined
+    // ANY leader" flag, not per-leader (see NonPlayableLeader.cs), so !joined + matching
+    // alignment is the full "still available to recruit" test at this coarse, board-wide level.
+    // Deep per-target eligibility (HasPlayedPcCard/capital gate) stays on DiplomaticNplRecruitment
+    // in CacheNpcTargets below, which is about "is there one specific target nearby right now".
+    private static int CountUnrecruitedSameAlignmentNpls(Leader leader)
+    {
+        if (leader == null) return 0;
+        Game game = Object.FindFirstObjectByType<Game>();
+        if (game?.npcs == null) return 0;
+        return game.npcs.Count(npc => npc != null && !npc.killed && !npc.joined && npc.GetAlignment() == leader.GetAlignment());
+    }
+
+    private static void CacheEnemyTargets(Board board, Character character, Leader leader, ref UtilityAIContext.PrecomputedData data, Stopwatch stopwatch, float maxMilliseconds)
     {
         IEnumerable<Hex> hexes = board.hexes != null ? board.hexes.Values : Enumerable.Empty<Hex>();
         float myStrength = character.IsArmyCommander() && character.GetArmy() != null ? character.GetArmy().GetOffence() : 0f;
 
         // Target-quality thresholds for the enemy-PC/enemy-character signals below — read once
         // per turn rather than per hex.
-        float enemyPcLoyaltyBelow = AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.DiplomaticEnemyPcLoyaltyBelow);
-        float enemyPcDefenseBelow = AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.IntelligenceEnemyPcDefenseBelow);
-        float highValueSkillAtLeast = AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.IntelligenceHighValueSkillAtLeast);
+        float enemyPcLoyaltyBelow = UtilityAI.GetWeight(UtilityAI.Keys.DiplomaticEnemyPcLoyaltyBelow);
+        float enemyPcDefenseBelow = UtilityAI.GetWeight(UtilityAI.Keys.IntelligenceEnemyPcDefenseBelow);
+        float highValueSkillAtLeast = UtilityAI.GetWeight(UtilityAI.Keys.IntelligenceHighValueSkillAtLeast);
 
         foreach (Hex hex in hexes)
         {
@@ -77,12 +138,12 @@ public static class AIContextDataBuilder
 
             if (distanceScore < data.ClosestEnemy.Score)
             {
-                data.ClosestEnemy = new AIContext.EnemyTarget(hex, distance, isNeutral, strength);
+                data.ClosestEnemy = new UtilityAIContext.EnemyTarget(hex, distance, isNeutral, strength);
             }
 
             if (!isNeutral && distance < data.ClosestNonNeutralEnemy.Distance)
             {
-                data.ClosestNonNeutralEnemy = new AIContext.EnemyTarget(hex, distance, isNeutral, strength);
+                data.ClosestNonNeutralEnemy = new UtilityAIContext.EnemyTarget(hex, distance, isNeutral, strength);
             }
 
             if (hasEnemyCharacter && distance < data.NearestEnemyCharacterDistance)
@@ -122,8 +183,8 @@ public static class AIContextDataBuilder
             }
         }
 
-        AIContext.EnemyTarget best = data.ClosestNonNeutralEnemy.Hex != null ? data.ClosestNonNeutralEnemy : data.ClosestEnemy;
-        float outmatchedRatio = AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.OutmatchedStrengthRatio);
+        UtilityAIContext.EnemyTarget best = data.ClosestNonNeutralEnemy.Hex != null ? data.ClosestNonNeutralEnemy : data.ClosestEnemy;
+        float outmatchedRatio = UtilityAI.GetWeight(UtilityAI.Keys.OutmatchedStrengthRatio);
         if (best.Hex != null && best.Strength > myStrength * outmatchedRatio) data.NeedsIndirectApproach = true;
     }
 
@@ -131,12 +192,12 @@ public static class AIContextDataBuilder
     // nearest one falling below each "needs attention" threshold — loyalty (needs influencing
     // up) and defense (needs fortifying) are independent qualities of the same PC, same as the
     // enemy-side opportunity/vulnerability pair in CacheEnemyTargets above.
-    private static void CacheOwnPcSignals(PlayableLeader leader, Character character, ref AIContext.AIContextPrecomputedData data)
+    private static void CacheOwnPcSignals(Leader leader, Character character, ref UtilityAIContext.PrecomputedData data)
     {
         if (leader?.controlledPcs == null || character == null || character.hex == null) return;
 
-        float ownPcLoyaltyBelow = AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.DiplomaticOwnPcLoyaltyBelow);
-        float ownPcDefenseBelow = AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MilitaristicOwnPcDefenseBelow);
+        float ownPcLoyaltyBelow = UtilityAI.GetWeight(UtilityAI.Keys.DiplomaticOwnPcLoyaltyBelow);
+        float ownPcDefenseBelow = UtilityAI.GetWeight(UtilityAI.Keys.MilitaristicOwnPcDefenseBelow);
         foreach (PC pc in leader.controlledPcs)
         {
             if (pc == null || pc.hex == null) continue;
@@ -155,7 +216,7 @@ public static class AIContextDataBuilder
         }
     }
 
-    private static void CacheNpcTargets(Board board, Character character, PlayableLeader leader, ref AIContext.AIContextPrecomputedData data, Stopwatch stopwatch, float maxMilliseconds)
+    private static void CacheNpcTargets(Board board, Character character, Leader leader, ref UtilityAIContext.PrecomputedData data, Stopwatch stopwatch, float maxMilliseconds)
     {
         Game game = GameObject.FindFirstObjectByType<Game>();
         if (board == null || character == null || character.hex == null || game == null) return;
@@ -180,7 +241,7 @@ public static class AIContextDataBuilder
             // already checks joined/killed/alignment/HasPlayedPcCard internally, so this is the
             // same gate StateAllegiance (the AFriendOrThree card) itself uses before letting the
             // trivia gauntlet run.
-            if (pc.isCapital && leader != null && npc.CanJoinWithStateAllegiance(leader) && distance < data.NearestNplRecruitmentDistance)
+            if (pc.isCapital && leader is PlayableLeader recruitingLeader && npc.CanJoinWithStateAllegiance(recruitingLeader) && distance < data.NearestNplRecruitmentDistance)
             {
                 data.NearestNplRecruitmentDistance = distance;
                 data.NearestNplRecruitmentHex = hex;
@@ -188,7 +249,7 @@ public static class AIContextDataBuilder
         }
     }
 
-    private static void BuildArtifactTransfers(Board board, PlayableLeader leader, Character character, ref AIContext.AIContextPrecomputedData data, Stopwatch stopwatch, float maxMilliseconds)
+    private static void BuildArtifactTransfers(Board board, Leader leader, Character character, ref UtilityAIContext.PrecomputedData data, Stopwatch stopwatch, float maxMilliseconds)
     {
         if (board == null || character == null || character.hex == null || leader == null) return;
 
@@ -241,7 +302,7 @@ public static class AIContextDataBuilder
                     score -= 5f;
                 }
 
-                data.ArtifactTransferCandidates.Add(new AIContext.ArtifactTransferCandidate(art.name, target.characterName, score, distance));
+                data.ArtifactTransferCandidates.Add(new UtilityAIContext.ArtifactTransferCandidate(art.name, target.characterName, score, distance));
                 bestScore = Mathf.Max(bestScore, score);
             }
         }
@@ -249,7 +310,7 @@ public static class AIContextDataBuilder
         data.BestArtifactTransferScore = Mathf.Max(0f, bestScore / 3f);
     }
 
-    private static bool IsEnemy(Leader other, PlayableLeader leader)
+    private static bool IsEnemy(Leader other, Leader leader)
     {
         if (other == null || leader == null) return false;
         if (other == leader) return false;
@@ -262,7 +323,7 @@ public static class AIContextDataBuilder
         return otherAlignment != myAlignment || otherAlignment == AlignmentEnum.neutral;
     }
 
-    private static Leader GetEnemyLeaderOnHex(Hex hex, PlayableLeader leader)
+    private static Leader GetEnemyLeaderOnHex(Hex hex, Leader leader)
     {
         if (hex == null) return null;
 
@@ -275,7 +336,7 @@ public static class AIContextDataBuilder
         return null;
     }
 
-    private static float EstimateEnemyStrength(Hex hex, PlayableLeader leader)
+    private static float EstimateEnemyStrength(Hex hex, Leader leader)
     {
         if (hex == null) return 0f;
 
@@ -300,7 +361,7 @@ public static class AIContextDataBuilder
         return strength;
     }
 
-    private static float CalculateNationArtifacts(PlayableLeader leader)
+    private static float CalculateNationArtifacts(Leader leader)
     {
         if (leader == null) return 0f;
         DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : UnityEngine.Object.FindFirstObjectByType<DeckManager>();

@@ -7,7 +7,6 @@ public class BuyFood : EmmissaryPCAction
 {
     private const int GoldPerArmy = 2;
 
-    protected override AdvisorType DefaultAdvisorType => AdvisorType.Militaristic;
 
     public override void Initialize(
         Character c,

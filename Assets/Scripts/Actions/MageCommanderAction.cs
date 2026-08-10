@@ -2,7 +2,6 @@ using System;
 
 public class MageCommanderAction : CharacterAction
 {
-    protected override AdvisorType DefaultAdvisorType => AdvisorType.Magic;
 
     public override bool IsRoleEligible(Character character)
     {

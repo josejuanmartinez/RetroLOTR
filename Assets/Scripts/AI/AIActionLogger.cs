@@ -89,7 +89,6 @@ public class AIActionLogEntry
     public Vector2Int preferredTarget;
     public float preferredTargetDistance;
     public string actionName;
-    public string advisorType;
     public int actionDifficulty;
     public int actionGoldCost;
     public List<string> scoredActions;

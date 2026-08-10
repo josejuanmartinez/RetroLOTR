@@ -25,7 +25,7 @@ public static class AIStrategyLibrary
         loaded = false;
     }
 
-    public static HTNCompoundTask GetStrategyFor(PlayableLeader leader)
+    public static HTNCompoundTask GetStrategyFor(Leader leader)
     {
         EnsureLoaded();
 
@@ -48,7 +48,7 @@ public static class AIStrategyLibrary
         return HTNStrategyBuilder.BuildDefault();
     }
 
-    private static string ResolveStrategyId(PlayableLeader leader)
+    private static string ResolveStrategyId(Leader leader)
     {
         if (leader == null || loadedData?.assignments == null) return DefaultStrategyId;
 
@@ -200,10 +200,9 @@ public static class AIStrategyLibrary
             TaskId = data.taskId,
             Precondition = ResolveCondition(data.precondition, blankDefaultsToAlways: true, strategyId, "PrimitiveTask precondition"),
             CompletionCondition = ResolveCondition(data.completionCondition, blankDefaultsToAlways: false, strategyId, "PrimitiveTask completion condition"),
-            AdvisorName = data.advisor ?? string.Empty,
             // Filtered against IsKnown the same way card profiles are — a stale/renamed
             // parameter name in hand-edited JSON silently drops rather than crashing.
-            PreferredParameters = data.preferredParameters?.Where(AIUtilityParameters.IsKnown).ToList() ?? new List<string>()
+            PreferredParameters = data.preferredParameters?.Where(UtilityAIParameters.IsKnown).ToList() ?? new List<string>()
         };
     }
 
@@ -211,19 +210,19 @@ public static class AIStrategyLibrary
     // terms on one Method row, becomes a single evaluable predicate. An empty/all-blank list
     // means "no gate" for a precondition (Always) or "never completes" for a completion
     // condition (Never) — both already exist in HTNRegistry.
-    private static Func<AIContext, AIBlackboard, bool> ResolveCondition(List<HTNConditionTerm> terms, bool blankDefaultsToAlways, string strategyId, string role)
+    private static Func<UtilityAIContext, CharacterBlackboard, bool> ResolveCondition(List<HTNConditionTerm> terms, bool blankDefaultsToAlways, string strategyId, string role)
     {
         List<HTNConditionTerm> validTerms = terms?.FindAll(t => t != null && !string.IsNullOrWhiteSpace(t.name)) ?? new List<HTNConditionTerm>();
         if (validTerms.Count == 0)
         {
-            HTNRegistry.TryGetPredicate(blankDefaultsToAlways ? "Always" : "Never", out Func<AIContext, AIBlackboard, bool> fallback);
+            HTNRegistry.TryGetPredicate(blankDefaultsToAlways ? "Always" : "Never", out Func<UtilityAIContext, CharacterBlackboard, bool> fallback);
             return fallback;
         }
 
-        List<Func<AIContext, AIBlackboard, bool>> resolved = new();
+        List<Func<UtilityAIContext, CharacterBlackboard, bool>> resolved = new();
         foreach (HTNConditionTerm term in validTerms)
         {
-            if (!HTNRegistry.TryGetPredicate(term.name, out Func<AIContext, AIBlackboard, bool> predicate))
+            if (!HTNRegistry.TryGetPredicate(term.name, out Func<UtilityAIContext, CharacterBlackboard, bool> predicate))
             {
                 Debug.LogWarning($"AIStrategyLibrary: strategy '{strategyId}' references unknown {role} term '{term.name}' — treating it as always-false.");
                 predicate = (_, _) => false;

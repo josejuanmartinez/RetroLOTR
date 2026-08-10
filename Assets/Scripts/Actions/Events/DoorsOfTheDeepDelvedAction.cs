@@ -7,7 +7,6 @@ using UnityEngine;
 // and offers a choice among the 3 closest other underground hexes) — this is the entry point.
 public class DoorsOfTheDeepDelvedAction : EventAction
 {
-    protected override AdvisorType DefaultAdvisorType => AdvisorType.Logistics;
 
     private static void MoveCharacterToHex(Character character, Hex targetHex)
     {

@@ -9,7 +9,7 @@ using UnityEngine.TextCore;
 public sealed class ExtractSpriteSlices : EditorWindow
 {
     private const string DefaultOutputFolder = "Assets/Art/UI/ExtractedSprites";
-    private const string MenuPath = "Tools/Sprites/Extract Sliced Sprites";
+    private const string MenuPath = "Tools/RetroLOTR/Sprites/Extract Sliced Sprites";
     private const string BatchMethodName = "ExtractSpriteSlices.ExtractFromCommandLine";
 
     [SerializeField] private DefaultAsset outputFolderAsset;
@@ -365,7 +365,7 @@ public sealed class ExtractSpriteSlices : EditorWindow
     private const string StatusSpriteAssetPath = "Assets/Art/Fonts/Spritesheets/common_spritesheet.asset";
     private const string StatusSpriteOutputFolder = "Assets/Art/UI/Statuses";
 
-    [MenuItem("Tools/Sprites/Extract Status Effect Sprites")]
+    [MenuItem("Tools/RetroLOTR/Sprites/Extract Status Effect Sprites")]
     public static void ExtractStatusEffectSprites()
     {
         TMP_SpriteAsset spriteAsset = AssetDatabase.LoadAssetAtPath<TMP_SpriteAsset>(StatusSpriteAssetPath);

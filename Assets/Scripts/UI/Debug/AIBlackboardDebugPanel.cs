@@ -7,17 +7,19 @@ using UnityEngine;
 using UnityEngine.UI;
 
 // Runtime debug overlay — Ctrl+Tab toggles a top-right panel where typing a character's name
-// and pressing Enter (or the Show button) renders that character's current AI blackboard: the
-// active HTN branch/leaf, its preferred-parameter scores, advisor viability, the resolved
+// and pressing Enter (or the Show button) renders that character's current CharacterBlackboard:
+// the active HTN branch/leaf, its preferred-parameter scores, category viability, the resolved
 // target hex, and a live re-score of which cards would currently be most suitable.
 //
 // Entirely self-built at runtime (no prefab/scene wiring) — bootstrapped via
 // RuntimeInitializeOnLoadMethod so dropping this script into the project is enough; no manual
 // scene setup required.
 //
-// Strictly read-only: never calls AITurnController.AdvanceHtnStrategy or anything else that
-// mutates AIBlackboard/HTNPlanner state. It only reads whatever the blackboard already holds
-// from the AI's last real turn, plus fresh (non-mutating) AIContext/ScoreFullDeck snapshots.
+// Otherwise read-only: it only reads whatever the blackboard already holds from the AI's last
+// real turn, plus fresh (non-mutating) UtilityAIContext/ScoreFullDeck snapshots. The one
+// exception is a character that has never been processed by an AI turn yet (no blackboard) —
+// rather than just reporting that, it triggers a real AITurnController.AdvanceHtnStrategy
+// evaluation on the spot so the panel always shows a live result instead of "nothing yet".
 public class AIBlackboardDebugPanel : MonoBehaviour
 {
     private const int MaxSuitableCardsShown = 12;
@@ -83,99 +85,230 @@ public class AIBlackboardDebugPanel : MonoBehaviour
         sb.AppendLine($"Owner: {(owner != null ? owner.characterName : "none")}   Hex: {(character.hex != null ? character.hex.GetHoverV2() : "none")}");
         sb.AppendLine();
 
-        if (owner is not PlayableLeader leader)
+        if (owner is not Leader leader)
         {
-            sb.AppendLine("Not AI-controlled (owner is not a PlayableLeader) — no blackboard.");
+            sb.AppendLine("Not AI-controlled (no owning leader) — no blackboard.");
             return sb.ToString();
         }
 
-        if (!AIBlackboardStore.TryGet(leader, character, out AIBlackboard blackboard))
+        bool hadBlackboard = CharacterBlackboardStore.TryGet(leader, character, out CharacterBlackboard blackboard);
+        blackboard ??= CharacterBlackboardStore.GetOrCreate(leader, character);
+        if (!hadBlackboard)
         {
-            sb.AppendLine("No blackboard yet — this character hasn't been processed by an AI turn.");
-            return sb.ToString();
-        }
-
-        HTNCompoundTask strategyRoot = AIStrategyLibrary.GetStrategyFor(leader);
-        HTNPrimitiveTask activePrimitive = HTNPlanner.ResolveActivePrimitive(blackboard.ActiveStack, strategyRoot);
-        string stackDescription = blackboard.ActiveStack is { Count: > 0 }
-            ? string.Join(" > ", blackboard.ActiveStack.Select(f => $"{f.MethodTaskId}[{f.SubtaskIndex}]"))
-            : "(empty)";
-
-        sb.AppendLine("<b>Blackboard</b>");
-        sb.AppendLine($"Stack: {stackDescription}");
-        sb.AppendLine($"Turns on current task: {blackboard.TurnsOnCurrentTask}");
-        sb.AppendLine($"Target hex: {(blackboard.TargetHex != null ? blackboard.TargetHex.GetHoverV2() : "none")}");
-        sb.AppendLine();
-
-        sb.AppendLine("<b>Active HTN task</b>");
-        if (activePrimitive == null)
-        {
-            sb.AppendLine("(none resolved)");
-        }
-        else
-        {
-            sb.AppendLine($"Task ID: {activePrimitive.TaskId}");
-            sb.AppendLine($"Advisor: {(string.IsNullOrEmpty(activePrimitive.AdvisorName) ? "(none)" : activePrimitive.AdvisorName)}");
-            sb.AppendLine($"Preferred parameters: {(activePrimitive.PreferredParameters is { Count: > 0 } ? string.Join(", ", activePrimitive.PreferredParameters) : "(none)")}");
-        }
-        sb.AppendLine();
-
-        // Fresh, non-mutating snapshot — AIContext construction and ScoreFullDeck only read
-        // board/leader/character state, they never touch AIBlackboard or execute anything.
-        AIContext.AIContextPrecomputedData precomputed = AIContextDataBuilder.Build(leader, character);
-        AIContext ctx = new(leader, character, new List<CharacterAction>(), null, precomputed);
-
-        if (activePrimitive?.PreferredParameters is { Count: > 0 })
-        {
-            sb.AppendLine("<b>Preferred parameter values</b>");
-            foreach (string parameter in activePrimitive.PreferredParameters)
-            {
-                Hex targetHex = ctx.GetTargetHexForParameter(parameter);
-                sb.AppendLine($"{parameter}: {ctx.GetUtilityParameter(parameter):0.##}" + (targetHex != null ? $"  @ {targetHex.GetHoverV2()}" : ""));
-            }
+            AITurnController.AdvanceHtnStrategy(leader, character, blackboard);
+            sb.AppendLine("<color=#80c0ff>(no blackboard yet — triggered a fresh HTN evaluation)</color>");
             sb.AppendLine();
         }
 
-        sb.AppendLine("<b>Advisor viability</b>");
-        foreach (AdvisorType advisor in Enum.GetValues(typeof(AdvisorType)))
+        // The real PC/Region turn-start gathering phase (Leader.RunTurnStartResourceGrants)
+        // only runs once this character's leader actually reaches the start of its own turn —
+        // for an NPL inspected mid-round, or any leader inspected before its turn comes up,
+        // that means the real stockpile is understated relative to what it's about to become.
+        // Simulate it one turn ahead: apply the same grants the real phase would apply, run the
+        // whole rest of this report (resource shares, advisor viability, card scoring) against
+        // that projected stockpile, then revert exactly what was added — the panel stays
+        // non-mutating from any caller's perspective, it just borrows the leader's fields for
+        // the duration of this synchronous method.
+        Dictionary<ProducesEnum, int> projectedGrants = ComputeProjectedTurnStartGrants(leader);
+        ApplyProjectedGrants(leader, projectedGrants, apply: true);
+        try
         {
-            if (advisor == AdvisorType.None) continue;
-            bool eligible = ctx.HasEligibleCard(advisor);
-            sb.AppendLine($"{advisor}: {ctx.GetAdvisorViability(advisor):0.##}{(eligible ? "" : "  <color=#ff8080>(no eligible card)</color>")}");
-        }
-        sb.AppendLine();
+            HTNCompoundTask strategyRoot = AIStrategyLibrary.GetStrategyFor(leader);
+            HTNPrimitiveTask activePrimitive = HTNPlanner.ResolveActivePrimitive(blackboard.ActiveStack, strategyRoot);
+            string stackDescription = blackboard.ActiveStack is { Count: > 0 }
+                ? string.Join(" > ", blackboard.ActiveStack.Select(f => $"{f.MethodTaskId}[{f.SubtaskIndex}]"))
+                : "(empty)";
 
-        sb.AppendLine("<b>Cards that would be suitable now</b>");
-        ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
-        if (actionsManager == null || deckManager == null || !deckManager.HasDeckFor(leader))
-        {
-            sb.AppendLine("(deck/actions manager unavailable)");
-        }
-        else
-        {
-            float advisorBiasBonus = AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.HTNBiasBonus);
-            List<(CardData card, float score)> scored = AITurnController.ScoreFullDeck(
-                leader, character, actionsManager, deckManager, precomputed, new HashSet<CardData>(),
-                advisorBiasBonus, activePrimitive?.AdvisorName, activePrimitive?.PreferredParameters);
+            sb.AppendLine("<b>Blackboard</b>");
+            sb.AppendLine($"Stack: {stackDescription}");
+            sb.AppendLine($"Turns on current task: {blackboard.TurnsOnCurrentTask}");
+            sb.AppendLine($"Target hex: {(blackboard.TargetHex != null ? blackboard.TargetHex.GetHoverV2() : "none")}");
+            sb.AppendLine();
 
-            if (scored.Count == 0)
+            sb.AppendLine("<b>Active HTN task</b>");
+            if (activePrimitive == null)
             {
-                sb.AppendLine("(no playable card found)");
+                sb.AppendLine("(none resolved)");
             }
             else
             {
-                int rank = 1;
-                foreach ((CardData card, float score) in scored.OrderByDescending(s => s.score).Take(MaxSuitableCardsShown))
+                sb.AppendLine($"Task ID: {activePrimitive.TaskId}");
+                sb.AppendLine($"Preferred parameters: {(activePrimitive.PreferredParameters is { Count: > 0 } ? string.Join(", ", activePrimitive.PreferredParameters) : "(none)")}");
+            }
+            sb.AppendLine();
+
+            // Built while the projected grants above are applied, so this snapshot (and the
+            // scoring below that reuses it) already reflects the post-gathering stockpile —
+            // not a separate mutation of its own.
+            UtilityAIContext.PrecomputedData precomputed = UtilityAIContextDataBuilder.Build(leader, character);
+            UtilityAIContext ctx = new(leader, character, new List<CharacterAction>(), null, precomputed);
+
+            if (activePrimitive?.PreferredParameters is { Count: > 0 })
+            {
+                // The exact eligibility check HTNPlanner.Decompose performed for this branch —
+                // there is no per-category eligibility concept anymore (no advisor tag), only
+                // "does some role-eligible card's own parameters overlap this leaf's".
+                bool eligible = ctx.HasEligibleCard(activePrimitive.PreferredParameters);
+                sb.AppendLine($"Eligible card for these parameters: {(eligible ? "yes" : "<color=#ff8080>no</color>")}");
+                sb.AppendLine();
+            }
+
+            if (activePrimitive?.PreferredParameters is { Count: > 0 })
+            {
+                sb.AppendLine("<b>Preferred parameter values</b>");
+                foreach (string parameter in activePrimitive.PreferredParameters)
                 {
-                    AdvisorType cardAdvisor = AIAdvisorConfig.ResolveAdvisor(AITurnController.ResolveActionByRef(AITurnController.NormalizeActionRef(card.GetActionRef()), actionsManager));
-                    sb.AppendLine($"{rank}. {card.name} — {score:0.##}  [{cardAdvisor}]");
-                    rank++;
+                    Hex targetHex = ctx.GetTargetHexForParameter(parameter);
+                    sb.AppendLine($"{parameter}: {ctx.GetUtilityParameter(parameter):0.##}" + (targetHex != null ? $"  @ {targetHex.GetHoverV2()}" : ""));
                 }
+                sb.AppendLine();
+            }
+
+            bool anyGrantProjected = projectedGrants.Values.Any(v => v > 0);
+            sb.AppendLine("<b>Resource distribution (deck target vs current stockpile share)</b>");
+            if (anyGrantProjected)
+            {
+                sb.AppendLine("<color=#80c0ff>(includes this turn's not-yet-applied PC/Region gathering, simulated one turn ahead)</color>");
+            }
+            ProducesEnum[] tradeableMaterials = { ProducesEnum.leather, ProducesEnum.mounts, ProducesEnum.timber, ProducesEnum.iron, ProducesEnum.steel, ProducesEnum.mithril };
+            float totalHeld = 0f;
+            foreach (ProducesEnum material in tradeableMaterials) totalHeld += leader.GetResourceAmount(material);
+            foreach (ProducesEnum material in tradeableMaterials)
+            {
+                float target = blackboard.DeckResourceShare != null && blackboard.DeckResourceShare.TryGetValue(material, out float t) ? t : 1f / tradeableMaterials.Length;
+                float current = totalHeld > 0f ? leader.GetResourceAmount(material) / totalHeld : 0f;
+                string grantNote = projectedGrants.TryGetValue(material, out int granted) && granted > 0 ? $" [+{granted} gathering]" : "";
+                sb.AppendLine($"{material}: target {target:P0}  current {current:P0}  (stock {leader.GetResourceAmount(material)}{grantNote})");
+            }
+            sb.AppendLine();
+
+            // Coarse "is this whole category of response worth considering" aggregates — the
+            // same gates HTNRegistry's *.Viable predicates read. Economic has no aggregate of
+            // its own (see UtilityAIContext.GetMilitaristicViability's doc comment); its branch
+            // gates on the liquid-wealth tier instead, shown here for the same purpose.
+            sb.AppendLine("<b>Category viability</b>");
+            sb.AppendLine($"Militaristic: {ctx.GetMilitaristicViability():0.##}");
+            sb.AppendLine($"Intelligence: {ctx.GetIntelligenceViability():0.##}");
+            sb.AppendLine($"Artifacts: {ctx.GetArtifactsViability():0.##}");
+            sb.AppendLine($"Diplomatic: {ctx.GetDiplomaticViability():0.##}");
+            sb.AppendLine($"Logistics: {ctx.GetLogisticsViability():0.##}");
+            sb.AppendLine($"Disruption: {ctx.GetDisruptionViability():0.##}");
+            sb.AppendLine($"Economic: {ctx.EconomyStatus} (liquid-wealth tier, not a viability score)");
+            sb.AppendLine();
+
+            sb.AppendLine("<b>Cards that would be suitable now</b>");
+            ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
+            DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+            if (actionsManager == null || deckManager == null || !deckManager.HasDeckFor(leader))
+            {
+                sb.AppendLine("(deck/actions manager unavailable)");
+            }
+            else
+            {
+                List<(CardData card, float score)> scored = AITurnController.ScoreFullDeck(
+                    leader, character, actionsManager, deckManager, precomputed, new HashSet<CardData>(),
+                    activePrimitive?.PreferredParameters);
+
+                if (scored.Count == 0)
+                {
+                    sb.AppendLine("(no playable card found)");
+                }
+                else
+                {
+                    int rank = 1;
+                    foreach ((CardData card, float score) in scored.OrderByDescending(s => s.score).Take(MaxSuitableCardsShown))
+                    {
+                        // Which of this card's own parameters (if any) overlap the active
+                        // branch's PreferredParameters — the only thing driving its HTNBiasBonus.
+                        string matched = UtilityAI.TryGetProfile(card, out CardParameterProfile profile) && profile.utilityParameters != null && activePrimitive?.PreferredParameters is { Count: > 0 }
+                            ? string.Join(",", profile.utilityParameters.Select(p => p.parameter).Where(p => activePrimitive.PreferredParameters.Contains(p, StringComparer.OrdinalIgnoreCase)))
+                            : string.Empty;
+                        string matchNote = string.IsNullOrEmpty(matched) ? "" : $"  [matches: {matched}]";
+                        sb.AppendLine($"{rank}. {card.name} — {score:0.##}{matchNote}");
+                        rank++;
+                    }
+                }
+            }
+
+            return sb.ToString();
+        }
+        finally
+        {
+            ApplyProjectedGrants(leader, projectedGrants, apply: false);
+        }
+    }
+
+    // Mirrors Leader.RunTurnStartResourceGrants' own dedup-by-PC-name/region-name loop, but
+    // reads each resolved PC/Land card's Granted fields directly instead of calling
+    // Board.TriggerOwnPcGrantIfStandingOnOne/TriggerRegionLandGrant — those mutate the leader,
+    // play UI animations, and are async; this stays a pure, synchronous read. FindPcCardByPcName/
+    // FindLandCardByRegion read DeckManager's global card catalog (built from every loaded
+    // deck), not the leader's own deck, so an NPL's still-empty alignment deck has no bearing
+    // on whether this resolves correctly.
+    private static Dictionary<ProducesEnum, int> ComputeProjectedTurnStartGrants(Leader leader)
+    {
+        Dictionary<ProducesEnum, int> totals = new()
+        {
+            [ProducesEnum.leather] = 0, [ProducesEnum.mounts] = 0, [ProducesEnum.timber] = 0,
+            [ProducesEnum.iron] = 0, [ProducesEnum.steel] = 0, [ProducesEnum.mithril] = 0, [ProducesEnum.gold] = 0,
+        };
+        if (leader?.controlledCharacters == null) return totals;
+
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        if (deckManager == null) return totals;
+
+        void AddCardGrant(CardData grantCard)
+        {
+            if (grantCard == null) return;
+            totals[ProducesEnum.leather] += grantCard.leatherGranted;
+            totals[ProducesEnum.mounts] += grantCard.mountsGranted;
+            totals[ProducesEnum.timber] += grantCard.timberGranted;
+            totals[ProducesEnum.iron] += grantCard.ironGranted;
+            totals[ProducesEnum.steel] += grantCard.steelGranted;
+            totals[ProducesEnum.mithril] += grantCard.mithrilGranted;
+            totals[ProducesEnum.gold] += grantCard.goldGranted;
+        }
+
+        var grantedPcNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var grantedRegions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (Character c in leader.controlledCharacters)
+        {
+            if (c == null || c.killed || c.hex == null) continue;
+            Hex hex = c.hex;
+
+            PC pc = hex.GetPCData();
+            if (pc != null && pc.owner == leader && grantedPcNames.Add(PcDescriptionBuilder.NormalizeLookupKey(pc.pcName)))
+            {
+                AddCardGrant(deckManager.FindPcCardByPcName(pc.pcName));
+            }
+
+            string region = hex.GetLandRegion();
+            if (!string.IsNullOrWhiteSpace(region) && grantedRegions.Add(PcDescriptionBuilder.NormalizeLookupKey(region)))
+            {
+                AddCardGrant(deckManager.FindLandCardByRegion(region));
             }
         }
 
-        return sb.ToString();
+        return totals;
+    }
+
+    // Mutates the raw stockpile fields directly rather than calling Leader.AddX/RemoveX —
+    // those also drive StoresManager's resource-gain pulse animation for the human player
+    // (TryPulseStoreResourceGain/TryPulseStoreGoldGain), which would flash visibly on apply
+    // and silently fail to un-flash on revert (the pulse methods guard out non-positive
+    // amounts, so a symmetric Add(+n)/Add(-n) pair isn't actually symmetric in side effects).
+    // A direct field adjustment nets to exactly zero with no UI side effect either way.
+    private static void ApplyProjectedGrants(Leader leader, Dictionary<ProducesEnum, int> grants, bool apply)
+    {
+        if (leader == null) return;
+        int sign = apply ? 1 : -1;
+        leader.leatherAmount += sign * grants[ProducesEnum.leather];
+        leader.mountsAmount += sign * grants[ProducesEnum.mounts];
+        leader.timberAmount += sign * grants[ProducesEnum.timber];
+        leader.ironAmount += sign * grants[ProducesEnum.iron];
+        leader.steelAmount += sign * grants[ProducesEnum.steel];
+        leader.mithrilAmount += sign * grants[ProducesEnum.mithril];
+        leader.goldAmount += sign * grants[ProducesEnum.gold];
     }
 
     // ------------------------------------------------------------------
@@ -234,25 +367,30 @@ public class AIBlackboardDebugPanel : MonoBehaviour
         viewportRect.offsetMax = Vector2.zero;
         viewportGo.AddComponent<RectMask2D>();
 
-        GameObject contentGo = new("Content", typeof(RectTransform));
-        contentGo.transform.SetParent(viewportGo.transform, false);
-        RectTransform contentRect = contentGo.GetComponent<RectTransform>();
-        contentRect.anchorMin = new Vector2(0f, 1f);
-        contentRect.anchorMax = new Vector2(1f, 1f);
-        contentRect.pivot = new Vector2(0.5f, 1f);
-        contentRect.anchoredPosition = Vector2.zero;
-        ContentSizeFitter fitter = contentGo.AddComponent<ContentSizeFitter>();
+        reportText = CreateText(viewportGo.transform, "ReportText", "Type a character name and press Enter.", 14, FontStyles.Normal);
+        RectTransform reportRect = reportText.rectTransform;
+        reportRect.anchorMin = new Vector2(0f, 1f);
+        reportRect.anchorMax = new Vector2(1f, 1f);
+        reportRect.pivot = new Vector2(0.5f, 1f);
+        reportRect.anchoredPosition = Vector2.zero;
+        // Stretch anchors alone don't zero out Unity's default 100x100 sizeDelta on a fresh
+        // RectTransform, so without this the content is ~100px wider than the viewport and
+        // centered — the extra width hangs off both sides and gets clipped by the viewport's
+        // RectMask2D, leaving only a strip from the middle of each line visible.
+        reportRect.sizeDelta = new Vector2(0f, reportRect.sizeDelta.y);
+        reportText.textWrappingMode = TextWrappingModes.Normal;
+        // ContentSizeFitter must live on the same GameObject as the TMP component it's sizing
+        // around — LayoutUtility only looks for ILayoutElements on the fitter's own GameObject,
+        // not its children. Putting it on an empty parent "Content" wrapper (as this used to)
+        // finds nothing, so the fitter never grows to fit the text, ScrollRect.content's height
+        // never reflects how much text there actually is, and the scrollbar has nothing to
+        // scroll to even though the report is still rendering (and getting clipped) below the
+        // visible area. reportText's own rect now doubles as the scroll content directly.
+        ContentSizeFitter fitter = reportText.gameObject.AddComponent<ContentSizeFitter>();
         fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
-        reportText = CreateText(contentGo.transform, "ReportText", "Type a character name and press Enter.", 14, FontStyles.Normal);
-        reportText.rectTransform.anchorMin = new Vector2(0f, 1f);
-        reportText.rectTransform.anchorMax = new Vector2(1f, 1f);
-        reportText.rectTransform.pivot = new Vector2(0.5f, 1f);
-        reportText.rectTransform.anchoredPosition = Vector2.zero;
-        reportText.textWrappingMode = TextWrappingModes.Normal;
-
         scrollRect.viewport = viewportRect;
-        scrollRect.content = contentRect;
+        scrollRect.content = reportRect;
     }
 
     private static GameObject CreatePanel(Transform parent, string name, Color color, float width, float height)

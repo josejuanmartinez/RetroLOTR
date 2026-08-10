@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class MaterialRetrieval : CharacterAction
 {
-    protected override AdvisorType DefaultAdvisorType => AdvisorType.Economic;
     protected override bool ConsumesAction => false;
     protected virtual bool GrantsResourcesImmediately => true;
     protected override bool ShowsVisibleAiActionNotification => false;

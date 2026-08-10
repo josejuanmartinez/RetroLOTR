@@ -4,7 +4,6 @@ public class Pass : CharacterAction
 {
     public const string ActionRef = "Pass";
 
-    protected override AdvisorType DefaultAdvisorType => AdvisorType.None;
 
     override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {

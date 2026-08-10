@@ -10,7 +10,6 @@ using UnityEngine;
 // you haven't found yet.
 public class StayTheDarkTaleAction : EventAction
 {
-    protected override AdvisorType DefaultAdvisorType => AdvisorType.Militaristic;
 
     private static List<Hex> FindDiscoveredPendingEncounterHexes(Character character)
     {

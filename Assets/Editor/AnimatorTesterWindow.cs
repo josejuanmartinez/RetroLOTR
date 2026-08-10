@@ -38,7 +38,7 @@ public class AnimatorTesterWindow : EditorWindow
     private static readonly Color ColPlaying  = new(1f,    0.75f, 0.1f);
 
     // ─────────────────────────────────────────────────────────────────
-    [MenuItem("Tools/Animator Tester")]
+    [MenuItem("Tools/RetroLOTR/Animation/Animator Tester")]
     public static void Open()
     {
         var w = GetWindow<AnimatorTesterWindow>("Animator Tester");

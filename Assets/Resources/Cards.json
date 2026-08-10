@@ -1,5 +1,5 @@
 {
-    "deckCount": 21,
+    "deckCount": 24,
     "decks": [
         {
             "deckId": "shared_base",
@@ -11,7 +11,8 @@
             "sharedToAll": true,
             "parentDeckId": "",
             "isBaseDeck": false,
-            "deckSpriteName": "sharedDeck"
+            "deckSpriteName": "sharedDeck",
+            "excluded": false
         },
         {
             "deckId": "encounter_shared",
@@ -23,7 +24,8 @@
             "sharedToAll": true,
             "parentDeckId": "",
             "isBaseDeck": false,
-            "deckSpriteName": "sharedDeck"
+            "deckSpriteName": "sharedDeck",
+            "excluded": true
         },
         {
             "deckId": "objects_shared",
@@ -35,7 +37,8 @@
             "sharedToAll": true,
             "parentDeckId": "",
             "isBaseDeck": false,
-            "deckSpriteName": "sharedDeck"
+            "deckSpriteName": "sharedDeck",
+            "excluded": true
         },
         {
             "deckId": "actions_deck",
@@ -47,7 +50,8 @@
             "sharedToAll": true,
             "parentDeckId": "",
             "isBaseDeck": false,
-            "deckSpriteName": "sharedDeck"
+            "deckSpriteName": "sharedDeck",
+            "excluded": false
         },
         {
             "deckId": "spells_deck",
@@ -56,10 +60,11 @@
             "alignment": 2,
             "resourcePath": "Cards/Modular/SpellsDeck",
             "cardCount": 25,
-            "sharedToAll": false,
+            "sharedToAll": true,
             "parentDeckId": "",
             "isBaseDeck": false,
-            "deckSpriteName": "sharedDeck"
+            "deckSpriteName": "sharedDeck",
+            "excluded": false
         },
         {
             "deckId": "gandalf_base",
@@ -71,7 +76,8 @@
             "sharedToAll": false,
             "parentDeckId": "",
             "isBaseDeck": true,
-            "deckSpriteName": "gandalfDeck"
+            "deckSpriteName": "gandalfDeck",
+            "excluded": false
         },
         {
             "deckId": "gandalf_the_white",
@@ -83,7 +89,8 @@
             "sharedToAll": false,
             "parentDeckId": "gandalf_base",
             "isBaseDeck": false,
-            "deckSpriteName": "gandalfTheWhiteSubdeck"
+            "deckSpriteName": "gandalfTheWhiteSubdeck",
+            "excluded": false
         },
         {
             "deckId": "mithrandir",
@@ -95,7 +102,8 @@
             "sharedToAll": false,
             "parentDeckId": "gandalf_base",
             "isBaseDeck": false,
-            "deckSpriteName": "mithrandirSubdeck"
+            "deckSpriteName": "mithrandirSubdeck",
+            "excluded": false
         },
         {
             "deckId": "stormcrow",
@@ -107,7 +115,8 @@
             "sharedToAll": false,
             "parentDeckId": "gandalf_base",
             "isBaseDeck": false,
-            "deckSpriteName": "stormcrowSubdeck"
+            "deckSpriteName": "stormcrowSubdeck",
+            "excluded": false
         },
         {
             "deckId": "disturber_of_the_peace",
@@ -119,7 +128,8 @@
             "sharedToAll": false,
             "parentDeckId": "gandalf_base",
             "isBaseDeck": false,
-            "deckSpriteName": "disturberOfThePeaceSubdeck"
+            "deckSpriteName": "disturberOfThePeaceSubdeck",
+            "excluded": false
         },
         {
             "deckId": "tharkun",
@@ -131,7 +141,8 @@
             "sharedToAll": false,
             "parentDeckId": "gandalf_base",
             "isBaseDeck": false,
-            "deckSpriteName": "tharkunSubdeck"
+            "deckSpriteName": "tharkunSubdeck",
+            "excluded": false
         },
         {
             "deckId": "saruman_base",
@@ -143,7 +154,8 @@
             "sharedToAll": false,
             "parentDeckId": "",
             "isBaseDeck": true,
-            "deckSpriteName": "sarumanDeck"
+            "deckSpriteName": "sarumanDeck",
+            "excluded": false
         },
         {
             "deckId": "saruman_the_white",
@@ -155,7 +167,8 @@
             "sharedToAll": false,
             "parentDeckId": "saruman_base",
             "isBaseDeck": false,
-            "deckSpriteName": "sarumanTheWhiteSubdeck"
+            "deckSpriteName": "sarumanTheWhiteSubdeck",
+            "excluded": false
         },
         {
             "deckId": "of_many_colours",
@@ -167,7 +180,8 @@
             "sharedToAll": false,
             "parentDeckId": "saruman_base",
             "isBaseDeck": false,
-            "deckSpriteName": "sarumanMulticolouredSubdeck"
+            "deckSpriteName": "sarumanMulticolouredSubdeck",
+            "excluded": false
         },
         {
             "deckId": "the_white_hand",
@@ -179,7 +193,8 @@
             "sharedToAll": false,
             "parentDeckId": "saruman_base",
             "isBaseDeck": false,
-            "deckSpriteName": "sarumanTheWhiteHandSubdeck"
+            "deckSpriteName": "sarumanTheWhiteHandSubdeck",
+            "excluded": false
         },
         {
             "deckId": "sharkey",
@@ -191,7 +206,8 @@
             "sharedToAll": false,
             "parentDeckId": "saruman_base",
             "isBaseDeck": false,
-            "deckSpriteName": "sharkeySubdeck"
+            "deckSpriteName": "sharkeySubdeck",
+            "excluded": false
         },
         {
             "deckId": "sauron_base",
@@ -203,7 +219,8 @@
             "sharedToAll": false,
             "parentDeckId": "",
             "isBaseDeck": true,
-            "deckSpriteName": "sauronDeck"
+            "deckSpriteName": "sauronDeck",
+            "excluded": false
         },
         {
             "deckId": "the_dark_eye",
@@ -215,7 +232,8 @@
             "sharedToAll": false,
             "parentDeckId": "sauron_base",
             "isBaseDeck": false,
-            "deckSpriteName": "theDarkEyeSubdeck"
+            "deckSpriteName": "theDarkEyeSubdeck",
+            "excluded": false
         },
         {
             "deckId": "the_deceiver",
@@ -227,7 +245,8 @@
             "sharedToAll": false,
             "parentDeckId": "sauron_base",
             "isBaseDeck": false,
-            "deckSpriteName": "theDeceiverSubdeck"
+            "deckSpriteName": "theDeceiverSubdeck",
+            "excluded": false
         },
         {
             "deckId": "the_necromancer",
@@ -239,7 +258,8 @@
             "sharedToAll": false,
             "parentDeckId": "sauron_base",
             "isBaseDeck": false,
-            "deckSpriteName": "theNecromancerSubdeck"
+            "deckSpriteName": "theNecromancerSubdeck",
+            "excluded": false
         },
         {
             "deckId": "shadow_of_the_east",
@@ -251,7 +271,8 @@
             "sharedToAll": false,
             "parentDeckId": "sauron_base",
             "isBaseDeck": false,
-            "deckSpriteName": "shadowOfTheEastSubdeck"
+            "deckSpriteName": "shadowOfTheEastSubdeck",
+            "excluded": false
         },
         {
             "deckId": "the_iron_crown",
@@ -263,7 +284,47 @@
             "sharedToAll": false,
             "parentDeckId": "sauron_base",
             "isBaseDeck": false,
-            "deckSpriteName": "theIronCrownSubdeck"
+            "deckSpriteName": "theIronCrownSubdeck",
+            "excluded": false
+        },
+        {
+            "deckId": "nonplayableleader_darkservants",
+            "nation": "Dark Servants",
+            "thematic": "Card pool for non-playable Dark-Servants-aligned leaders — the same HTN/advisor scoring built for playable leaders drives these once wired up, drawing only from this deck.",
+            "alignment": 1,
+            "resourcePath": "Cards/Modular/NonPlayableLeaderDeckDarkServants",
+            "cardCount": 0,
+            "sharedToAll": false,
+            "parentDeckId": "",
+            "isBaseDeck": false,
+            "deckSpriteName": "sharedDeck",
+            "excluded": false
+        },
+        {
+            "deckId": "nonplayableleader_freepeople",
+            "nation": "Free People",
+            "thematic": "Card pool for non-playable Free-People-aligned leaders — the same HTN/advisor scoring built for playable leaders drives these once wired up, drawing only from this deck.",
+            "alignment": 0,
+            "resourcePath": "Cards/Modular/NonPlayableLeaderDeckFreePeople",
+            "cardCount": 0,
+            "sharedToAll": false,
+            "parentDeckId": "",
+            "isBaseDeck": false,
+            "deckSpriteName": "sharedDeck",
+            "excluded": false
+        },
+        {
+            "deckId": "nonplayableleader_neutral",
+            "nation": "Neutral",
+            "thematic": "Card pool for non-playable neutral-aligned leaders — the same HTN/advisor scoring built for playable leaders drives these once wired up, drawing only from this deck.",
+            "alignment": 2,
+            "resourcePath": "Cards/Modular/NonPlayableLeaderDeckNeutral",
+            "cardCount": 0,
+            "sharedToAll": false,
+            "parentDeckId": "",
+            "isBaseDeck": false,
+            "deckSpriteName": "sharedDeck",
+            "excluded": false
         }
     ]
 }

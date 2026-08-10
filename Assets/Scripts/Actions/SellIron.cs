@@ -2,7 +2,6 @@ using System;
 
 public class SellIron : EmmissaryPCAction
 {
-    protected override AdvisorType DefaultAdvisorType => AdvisorType.Economic;
 
     override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
@@ -13,7 +12,7 @@ public class SellIron : EmmissaryPCAction
         var originalAsyncEffect = asyncEffect;
         effect = (c) => {
             if (originalEffect != null && !originalEffect(c)) return false;
-            PlayableLeader playable = (c.GetOwner() as PlayableLeader);
+            Leader playable = c.GetOwner();
             if (playable == null) return false;
             StoresManager stores = FindFirstObjectByType<StoresManager>();
             if (stores == null) return false;

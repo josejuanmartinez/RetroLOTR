@@ -109,7 +109,7 @@ public class AnimationSpritesheetBaker : EditorWindow
     // hands off into a facing-specific walk/idle/action sheet baked at a slightly different
     // angle. Measuring the real rotation and deriving all 4 facings from it keeps every
     // transition seamless.
-    private bool _bakeAllFacings;
+    private bool _bakeAllFacings = true;
     private int _turnLeftStateIndex = -1;
     private int _turnRightStateIndex = -1;
     private float _measuredLeftYaw;
@@ -144,7 +144,7 @@ public class AnimationSpritesheetBaker : EditorWindow
     private bool _autoPlay;
     private double _lastEditorTime;
 
-    [MenuItem("Tools/Animation Spritesheet Baker")]
+    [MenuItem("Tools/RetroLOTR/Animation/Spritesheet Baker/Open")]
     public static void Open()
     {
         var w = GetWindow<AnimationSpritesheetBaker>("Spritesheet Baker");
@@ -179,10 +179,10 @@ public class AnimationSpritesheetBaker : EditorWindow
         Repaint();
     }
 
-    [MenuItem("Assets/Animation/Bake Spritesheet From Controller", true)]
+    [MenuItem("Assets/RetroLOTR/Animation/Bake Spritesheet From Controller", true)]
     private static bool ValidateOpenFromController() => Selection.activeObject is AnimatorController;
 
-    [MenuItem("Assets/Animation/Bake Spritesheet From Controller")]
+    [MenuItem("Assets/RetroLOTR/Animation/Bake Spritesheet From Controller")]
     private static void OpenFromController()
     {
         var w = GetWindow<AnimationSpritesheetBaker>("Spritesheet Baker");
@@ -1254,7 +1254,7 @@ public class AnimationSpritesheetBaker : EditorWindow
     // set at bake time, and goes stale. Resets every AnimationSpritesheets entry's address back
     // to AddressableAssetEntry.AssetPath (which always resolves live from the GUID), so a moved
     // file's address matches where it actually lives again.
-    [MenuItem("Tools/Animation Spritesheet Baker/Resync Addressable Paths")]
+    [MenuItem("Tools/RetroLOTR/Animation/Spritesheet Baker/Resync Addressable Paths")]
     static void ResyncSpritesheetAddresses()
     {
         AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;

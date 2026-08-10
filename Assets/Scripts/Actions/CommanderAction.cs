@@ -2,7 +2,6 @@ using System;
 
 public class CommanderAction : CharacterAction
 {
-    protected override AdvisorType DefaultAdvisorType => AdvisorType.Militaristic;
 
     public override bool IsRoleEligible(Character character)
     {

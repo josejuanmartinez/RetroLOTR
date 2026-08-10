@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class VaireLoom : EventAction
 {
-    protected override AdvisorType DefaultAdvisorType => AdvisorType.Economic;
 
     private static CardData GetPreviousCard(Leader leader)
     {

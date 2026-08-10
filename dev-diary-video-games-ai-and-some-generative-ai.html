@@ -309,6 +309,31 @@
   .game-card .gc-reqs .badge { font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 10px; border: 1px solid var(--frame); border-radius: 2px; padding: 1px 6px; color: var(--ink-soft); }
   .game-card .gc-quote { padding: 9px 11px 3px; font-size: 11.5px; font-style: italic; color: var(--ink-faint); }
   .game-card .gc-desc { padding: 2px 11px 11px; font-size: 12.5px; color: var(--ink-soft); flex: 1; }
+
+  .row .field.skip { color: var(--old); }
+
+  .share-compare { margin: 24px 0 8px; border: 1px solid var(--paper-line); background: var(--paper-deep); }
+  .share-row { display: grid; grid-template-columns: 76px 1fr 172px; gap: 14px; align-items: center; padding: 10px 16px; border-top: 1px solid var(--paper-line); }
+  .share-row:first-child { border-top: none; }
+  .share-row .share-label { font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 12.5px; color: var(--ink); }
+  .share-track { position: relative; height: 15px; background: var(--paper); border: 1px solid var(--paper-line); }
+  .share-fill { position: absolute; top: 0; bottom: 0; left: 0; background: var(--accent-logic); opacity: 0.8; }
+  .share-target { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--accent-art-strong); }
+  .share-pct { font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 11px; color: var(--ink-faint); text-align: right; }
+  .share-legend { display: flex; gap: 20px; padding: 9px 16px; font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 10.5px; color: var(--ink-faint); border-top: 1px solid var(--paper-line); }
+  .share-legend .sw { display: inline-block; width: 9px; height: 9px; margin-right: 6px; vertical-align: -1px; }
+  .share-legend .sw.held { background: var(--accent-logic); opacity: 0.8; }
+  .share-legend .sw.target { background: var(--accent-art-strong); width: 2px; }
+  @media (max-width: 560px) {
+    .share-row { grid-template-columns: 56px 1fr; }
+    .share-pct { grid-column: 1 / -1; text-align: left; }
+  }
+
+  .report-panel { padding: 14px 18px; font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 12px; line-height: 1.95; color: var(--ink-soft); }
+  .report-panel .rp-head { color: var(--ink); font-weight: 700; }
+  .report-panel .rp-flag { color: var(--accent-art-strong); }
+  .report-panel .rp-warn { color: var(--old); }
+  .report-panel .rp-dim { color: var(--ink-faint); }
 </style>
 
 <div class="page">
@@ -332,9 +357,10 @@
     <h2 id="article-index-title">In this article</h2>
     <ol>
       <li><a href="#video-game-ai">Video Game AI</a></li>
-      <li><a href="#behaviour-trees">Where we started: behaviour trees</a></li>
-      <li><a href="#hierarchical-task-network">The new mind: a hierarchical task network</a></li>
-      <li><a href="#advisors">How a card actually gets chosen</a></li>
+      <li><a href="#foundations">Behaviour trees, HTNs, and a blackboard</a></li>
+      <li><a href="#hierarchical-task-network">The plan: a hierarchical task network</a></li>
+      <li><a href="#blackboard">One blackboard per character</a></li>
+      <li><a href="#advisors">How a card actually gets chosen: Utility AI</a></li>
       <li><a href="#situations">Situations and the cards offered to you</a></li>
       <li><a href="#smaller-machines">The smaller machines</a></li>
       <li><a href="#generative-ai">Some Generative AI</a></li>
@@ -359,12 +385,12 @@
   <div class="part-divider"><span class="roman">Part I</span><span class="rule"></span></div>
   <h2 class="part-title logic" id="video-game-ai">Video Game AI</h2>
 
-  <h3 class="section-title old" id="behaviour-trees"><span class="tick"></span>Where We Started: Behaviour Trees</h3>
+  <h3 class="section-title logic" id="foundations"><span class="tick"></span>Behaviour Trees, HTNs, and a Blackboard</h3>
 
-  <p>A Behaviour Tree is the workhorse of game AI, and has been since roughly Halo 2: a small vocabulary of node types, walked top to bottom, every tick. A <strong>Selector</strong> tries its children in order and stops at the first that succeeds. A <strong>Sequence</strong> runs its children in order and stops at the first that fails. <strong>Condition</strong> and <strong>Action</strong> nodes are the leaves. Our old AI leaders ran one, and it read almost like a sentence:</p>
+  <p>Three ideas carry the whole system, and it's worth naming them before going further. A <strong>Behaviour Tree</strong> is the workhorse of game AI, and has been since roughly Halo 2: a small vocabulary of node types, walked top to bottom, every tick. A <strong>Selector</strong> tries its children in order and stops at the first that succeeds. A <strong>Sequence</strong> runs its children in order and stops at the first that fails. <strong>Condition</strong> and <strong>Action</strong> nodes are the leaves. A simple strategy-game decision, built out of exactly those pieces, reads almost like a sentence:</p>
 
   <div class="widget">
-    <div class="widget-bar"><span class="dot" style="background:var(--old)"></span>the old default behaviour tree</div>
+    <div class="widget-bar"><span class="dot" style="background:var(--old)"></span>a behaviour tree, for illustration</div>
     <div class="rows">
       <div class="row"><span class="conn">TRY</span><span class="pill type">Sequence</span></div>
       <div class="row" style="padding-left:24px"><span class="conn">IF</span><span class="pill">Condition</span><span class="field">NeedsEconomicHelp <b>IS TRUE</b></span></div>
@@ -384,23 +410,20 @@
       <div class="row" style="padding-left:24px"><span class="conn">OR ELSE</span><span class="pill">Action</span><span class="field">Pass</span></div>
     </div>
   </div>
-  <p class="mockup-note">reconstruction of the actual default tree, read literally: "if the economy needs help, hand the turn to Economic. Otherwise, if there's an enemy target, try Militaristic; if it has nothing to play, fall to Intelligence, then Magic, then Diplomatic. Otherwise, if nothing urgent is happening, prioritize movement. Otherwise just play the best card, or pass."</p>
+  <p class="mockup-note">read literally: "if the economy needs help, hand the turn to Economic. Otherwise, if there's an enemy target, try Militaristic; if it has nothing to play, fall to Intelligence, then Magic, then Diplomatic. Otherwise, if nothing urgent is happening, prioritize movement. Otherwise just play the best card, or pass."</p>
 
-  <p>It's genuinely fine reasoning, once. The problem is it happens <em>every single turn, from nothing</em>. A behaviour tree has no memory - there's no field anywhere holding "what am I in the middle of." If the economy dipped into trouble two turns ago and the AI has been quietly rebuilding it, the tree doesn't know that; it re-derives "economy needs help, go to Economic" fresh, indistinguishable from doing it for the first time. It can execute one action per tick, but it can't hold a <em>plan</em> - "fix the economy, then go on the offensive" isn't representable, because a Sequence either finishes in one tick or it doesn't exist.</p>
+  <p>It's genuinely fine reasoning, once - and plenty of shipped games never need more than this. The limit is memory: there's no field anywhere holding "what am I in the middle of." A tree like this re-derives "economy needs help, go to Economic" fresh, every single tick, indistinguishable from doing it for the first time, even if the economy dipped into trouble two turns ago and something has been quietly rebuilding it since. It can execute one action per tick, but it can't hold a <em>plan</em> - "fix the economy, then go on the offensive" isn't representable, because a Sequence either finishes in one tick or it doesn't exist.</p>
 
-  <figure class="gameplay-figure">
-    <img src="dev-diary-assets/behaviour-tree-economy-turn.png" alt="RetroLOTR gameplay illustration of the White Hand choosing an economic caravan card while its resources are depleted" />
-    <figcaption><span class="fig-label">In play</span>The old tree sees an empty treasury and chooses Economic. It can make the right move now; it cannot remember what that move was meant to lead into next turn.</figcaption>
-  </figure>
-
-  <h3 class="section-title logic" id="hierarchical-task-network"><span class="tick"></span>The New Mind: A Hierarchical Task Network</h3>
-
-  <p>The replacement is a genuine <strong>Hierarchical Task Network</strong> - the planning family SHOP2 and Killzone 2's squad AI belong to, not the simplified "priority list" a lot of shipped games settle for. Every AI leader now owns a persistent <em>Blackboard</em>, a small memory that survives from turn to turn, holding a strategy decomposed into an ordered plan. Where the old tree could only ever say "do Economic," the new one can say <code class="mono">root.recover</code>: build infrastructure until the economy is no longer critical, <em>then</em> - not instead, <em>then</em> - shift into establishing trade until it's stable. A real multi-step sequence, executed over several turns, not a single choice re-rolled every time.</p>
+  <p>RetroLOTR's AI leaders need that kind of plan, so they run a genuine <strong>Hierarchical Task Network</strong> instead - the planning family SHOP2 and Killzone 2's squad AI belong to, not the simplified "priority list" a lot of shipped games settle for. What makes that possible is the third idea: every character the AI controls owns a persistent <strong>Blackboard</strong>, a small memory that survives from turn to turn, holding a strategy already decomposed into an ordered plan. Where a behaviour tree can only ever re-decide "do Economic" from nothing, the HTN can hold <code class="mono">root.recover</code>: build infrastructure until the economy is no longer critical, <em>then</em> - not instead, <em>then</em> - shift into establishing trade until it's stable. A real multi-step sequence, executed over several turns, read back out of the Blackboard rather than re-rolled every time.</p>
 
   <figure class="gameplay-figure">
     <img src="dev-diary-assets/htn-persistent-recovery-plan.png" alt="RetroLOTR gameplay illustration of a persistent recovery plan advancing from rebuilding the economy to establishing trade" />
-    <figcaption><span class="fig-label">A later turn</span>The treasury has recovered enough for the stored plan to advance. The leader establishes trade instead of rebuilding the entire decision from scratch.</figcaption>
+    <figcaption><span class="fig-label">Two turns later</span>The treasury has recovered enough for the stored plan to advance on its own. The leader establishes trade instead of rebuilding the entire decision from scratch.</figcaption>
   </figure>
+
+  <h3 class="section-title logic" id="hierarchical-task-network"><span class="tick"></span>The Plan: A Hierarchical Task Network</h3>
+
+  <p>Concretely, the Blackboard holds a stack of tasks, and the HTN planner is the thing that reads and rewrites that stack every turn. A <code class="mono">CompoundTask</code> like <code class="mono">root</code> owns an ordered list of <code class="mono">Method</code>s, tried top to bottom; the first whose condition holds is the one committed to. A <code class="mono">Method</code> decomposes into a sequence of <code class="mono">Primitive</code>s, run in order, each one biasing the Utility Scorer toward a specific advisor until its own exit condition is met:</p>
 
   <div class="widget">
     <div class="widget-bar"><span class="dot"></span>ai widget - strategies tab (editor mockup, reproducing the shipped default strategy)</div>
@@ -421,7 +444,7 @@
   </div>
   <p class="mockup-note">Row order does double duty here: it's the priority a fresh decision is made in (TRY, then OR ELSE, then OR ELSE&hellip;) <em>and</em> the order steps execute in inside a Method (DO, then THEN). We didn't have a live Editor session to screenshot for this piece, so this reproduces the actual shipped default strategy field-for-field rather than faking a screen.</p>
 
-  <p>Committing to a plan for its own sake is dangerous, though - and we found that out the hard way in design review, before it ever shipped. A leader mid-offensive would, in the naive version of this system, keep attacking while its treasury quietly hit zero, because "stay committed to the current task" never re-examined whether staying committed was still smart. The fix reuses something we already had rather than inventing a new concept: the same row order above is also <strong>priority</strong>. A task ranked higher is always free to interrupt a running lower one, mid-plan, however invested the AI is; a task ranked lower never can. <code class="mono">root.recover</code>, sitting above <code class="mono">root.offense</code> in the list, will always break in and take over if the economy collapses - but a marginally-better military opportunity, ranked below whatever's already running, gets ignored until the AI is actually done with its current step. Commitment and self-preservation, from one piece of data.</p>
+  <p>Committing to a plan for its own sake would be dangerous: a leader mid-offensive that kept attacking while its treasury quietly hit zero, just because "stay committed to the current task" never re-examines whether staying committed is still smart, isn't a plan worth having. The row order above deliberately does double duty as <strong>priority</strong> to prevent exactly that: a task ranked higher is always free to interrupt a running lower one, mid-plan, however invested the AI already is; a task ranked lower never can. <code class="mono">root.recover</code>, sitting above <code class="mono">root.offense</code> in the list, will always break in and take over if the economy collapses - but a marginally-better military opportunity, ranked below whatever's already running, is ignored until the AI is actually done with its current step. Commitment and self-preservation, from one piece of data.</p>
 
   <figure class="diagram-figure">
     <svg viewBox="0 0 920 300" role="img" aria-label="Diagram showing one AI leader-turn: the Blackboard holds a persisted task stack, the HTN planner checks it for interrupts, failures, or completed steps, resolves the currently active task's advisor bias, which tilts the Utility scorer as it ranks every card in the full deck, and the winning card's execution writes a new stack back to the Blackboard for next turn.">
@@ -462,6 +485,166 @@
     </svg>
     <figcaption><span class="fig-label">Fig. 1</span>One AI leader-turn. The stack persists in the Blackboard; only the small strip in the middle - is anything higher-priority true, has the current step's own condition broken, has it finished - gets re-checked. Everything else is inherited from last turn.</figcaption>
   </figure>
+
+  <h3 class="section-title logic" id="blackboard"><span class="tick"></span>One Blackboard Per Character</h3>
+
+  <p>Fig. 1 describes a single decision. The full system makes that decision independently for every character an AI leader controls, and a handful of details make that hold up across a whole roster rather than just a single leader in isolation.</p>
+
+  <h4 style="font-size:16px;margin:34px 0 4px;color:var(--ink-soft);">Keyed Per Character, Not Per Leader</h4>
+  <p>The Blackboard is keyed per <code class="mono">(leader, character)</code>, not per leader: <code class="mono">AITurnController</code> asks the HTN a fresh question, from that character's own <code class="mono">AIContext</code>, once for every character it controls. An Emissary sitting quietly at the capital and a Commander three provinces away standing next to an enemy end up on genuinely different plans - <code class="mono">root.diplomacy</code> and <code class="mono">root.offense</code> respectively - each fitted to the character holding it, not one plan borrowed from whichever character happened to be evaluated first.</p>
+
+  <figure class="diagram-figure">
+    <svg viewBox="0 0 470 270" role="img" aria-label="Diagram of three characters, each holding an independent Blackboard with a task suited to that character's own situation.">
+      <text x="235" y="24" text-anchor="middle" font-size="12" letter-spacing="1" fill="var(--accent-logic-strong)">ONE BLACKBOARD PER CHARACTER</text>
+      <rect x="100" y="42" width="100" height="40" fill="none" stroke="var(--accent-logic-strong)"/>
+      <text x="150" y="66" text-anchor="middle" font-size="10.5" fill="var(--accent-logic-strong)">Blackboard</text>
+      <rect x="210" y="42" width="100" height="40" fill="none" stroke="var(--accent-logic-strong)"/>
+      <text x="260" y="66" text-anchor="middle" font-size="10.5" fill="var(--accent-logic-strong)">Blackboard</text>
+      <rect x="320" y="42" width="100" height="40" fill="none" stroke="var(--accent-logic-strong)"/>
+      <text x="370" y="66" text-anchor="middle" font-size="10.5" fill="var(--accent-logic-strong)">Blackboard</text>
+      <line x1="150" y1="82" x2="150" y2="176" stroke="var(--accent-logic-strong)" opacity="0.8"/>
+      <line x1="260" y1="82" x2="260" y2="176" stroke="var(--accent-logic-strong)" opacity="0.8"/>
+      <line x1="370" y1="82" x2="370" y2="176" stroke="var(--accent-logic-strong)" opacity="0.8"/>
+      <circle cx="150" cy="192" r="16" fill="none" stroke="currentColor"/>
+      <circle cx="260" cy="192" r="16" fill="none" stroke="currentColor"/>
+      <circle cx="370" cy="192" r="16" fill="none" stroke="currentColor"/>
+      <text x="150" y="225" text-anchor="middle" font-size="10.5" fill="currentColor">Emissary</text>
+      <text x="260" y="225" text-anchor="middle" font-size="10.5" fill="currentColor">Commander</text>
+      <text x="370" y="225" text-anchor="middle" font-size="10.5" fill="currentColor">Agent</text>
+      <text x="150" y="240" text-anchor="middle" font-size="10" fill="var(--accent-logic-strong)" opacity="0.9">root.diplomacy</text>
+      <text x="260" y="240" text-anchor="middle" font-size="10" fill="var(--accent-logic-strong)" opacity="0.9">root.offense</text>
+      <text x="370" y="240" text-anchor="middle" font-size="10" fill="var(--accent-logic-strong)" opacity="0.9">root.recover</text>
+      <text x="260" y="258" text-anchor="middle" font-size="10.5" fill="currentColor" opacity="0.7">each plan fits the character holding it</text>
+    </svg>
+    <figcaption><span class="fig-label">Fig. 2</span>Each character an AI leader controls resolves its own task independently, from its own <code class="mono">AIContext</code>, once per turn - not one plan applied to the whole roster.</figcaption>
+  </figure>
+
+  <h4 style="font-size:16px;margin:34px 0 4px;color:var(--ink-soft);">Giving the Plan an Address</h4>
+  <p>An active task can also carry a situational signal - <code class="mono">Militaristic.EnemyPressure</code>, say - without that being enough on its own to say <em>where</em> the pressure is coming from. The score goes up correctly, but nothing yet points a character at the hex actually responsible for it. So every preferred parameter that has a location resolves to one:</p>
+
+  <figure class="diagram-figure">
+    <svg viewBox="0 0 900 190" role="img" aria-label="Diagram of the active HTN task resolving through GetTargetHexForParameter into a specific hex, written to Blackboard.TargetHex, with a dashed line indicating the character travels there before acting.">
+      <defs>
+        <marker id="arrowB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+        </marker>
+      </defs>
+      <rect x="10" y="45" width="200" height="80" fill="none" stroke="currentColor"/>
+      <text x="110" y="70" text-anchor="middle" font-size="12" fill="currentColor">Active task</text>
+      <text x="110" y="88" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.75">root.offense.pick.mil.leaf</text>
+      <text x="110" y="104" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.75">wants EnemyPressure</text>
+      <line x1="210" y1="85" x2="264" y2="85" stroke="currentColor" marker-end="url(#arrowB)"/>
+      <rect x="266" y="30" width="230" height="110" fill="none" stroke="currentColor"/>
+      <text x="381" y="65" text-anchor="middle" font-size="12" fill="currentColor">GetTargetHexForParameter</text>
+      <text x="381" y="85" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.75">maps the parameter name to the</text>
+      <text x="381" y="100" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.75">specific hex behind it - nearest</text>
+      <text x="381" y="115" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.75">enemy, PC at risk, unrevealed NPC</text>
+      <line x1="496" y1="85" x2="550" y2="85" stroke="var(--accent-logic-strong)" marker-end="url(#arrowB)"/>
+      <rect x="552" y="45" width="200" height="80" fill="none" stroke="var(--accent-logic-strong)"/>
+      <text x="652" y="76" text-anchor="middle" font-size="12" fill="var(--accent-logic-strong)">Blackboard.TargetHex</text>
+      <text x="652" y="96" text-anchor="middle" font-size="10" fill="var(--accent-logic-strong)" opacity="0.85">the one hex this turn's plan is about</text>
+      <path d="M 652 128 C 652 175, 110 175, 110 128" fill="none" stroke="currentColor" stroke-dasharray="3 4" marker-end="url(#arrowB)"/>
+      <text x="381" y="182" text-anchor="middle" font-size="10.5" fill="currentColor" opacity="0.75">the character travels here before acting</text>
+    </svg>
+    <figcaption><span class="fig-label">Fig. 3</span>Every preferred parameter that has a location resolves to one; parameters that don't (Economic stockpile signals, the generic fallback) correctly resolve to nothing, and movement falls back to its own separate opportunistic logic instead.</figcaption>
+  </figure>
+
+  <h4 style="font-size:16px;margin:34px 0 4px;color:var(--ink-soft);">Travel, Then Act</h4>
+  <p>That target hex is also why turn order runs evaluate, then travel, then act, and never the other way around: acting first from wherever a character already happens to be standing, then wandering only afterward toward whatever looks interesting, would have nothing to do with what was just done. Three steps, run in this order every turn:</p>
+
+  <div class="pipeline">
+    <div class="step">
+      <h4>Evaluate</h4>
+      <p>The HTN resolves this character's active task from its own Blackboard and, if the task has one, the target hex behind it.</p>
+    </div>
+    <div class="step">
+      <h4>Travel, if needed</h4>
+      <p>If the character isn't already standing on that hex, it moves there first. The cached <code class="mono">AIContext</code> is now stale, so it's rebuilt fresh from the character's new position rather than reused.</p>
+    </div>
+    <div class="step">
+      <h4>Act</h4>
+      <p>The full deck is scored and played from where the character actually stands now - not from wherever it started the turn.</p>
+    </div>
+  </div>
+
+  <h4 style="font-size:16px;margin:34px 0 4px;color:var(--ink-soft);">A Branch That Wins, But Can't Play</h4>
+  <p>A high-priority branch winning selection doesn't, by itself, guarantee it's the right thing to bias toward: the Utility Scorer always ranks the character's <em>entire</em> deck regardless of which branch is active, so a character is never left doing nothing - it always falls through to whatever it can actually play. But branch <em>selection</em> still needs to know whether a branch's cards are playable at all, or a high-priority branch a character has nothing eligible for would win anyway, and in winning would deny its situational bias to whatever other branch the character could genuinely act on that turn.</p>
+
+  <p>This is handled with a role-eligibility check - not a full affordability check, deliberately; a character who's just temporarily short on gold should still be considered eligible - run while walking the tree: at any leaf, <code class="mono">AIContext.HasEligibleCard(advisor)</code> asks whether this character has at least one card, anywhere in the deck, whose action resolves to that advisor and is playable by their role. If not, the planner backtracks to the next sibling in priority order, all the way down to the guaranteed fallback if nothing else qualifies.</p>
+
+  <div class="widget">
+    <div class="widget-bar"><span class="dot"></span>htn planner - backtracking through root.recover (excerpt)</div>
+    <div class="rows">
+      <div class="row"><span class="conn">TRY</span><span class="pill type">Method</span><span class="taskid">root.recover.mithril</span><span class="field">WHEN <b>MithrilInsufficient</b></span></div>
+      <div class="row" style="padding-left:24px"><span class="conn">DO</span><span class="pill type">Primitive</span><span class="taskid">&hellip;mithril.leaf</span><span class="field art">bias <b>Economic</b></span><span class="field skip">HasEligibleCard fails &mdash; skipped</span></div>
+      <div class="row"><span class="conn">OR ELSE</span><span class="pill type">Method</span><span class="taskid">root.recover.timber</span><span class="field">WHEN <b>TimberInsufficient</b></span></div>
+      <div class="row" style="padding-left:24px"><span class="conn">DO</span><span class="pill type">Primitive</span><span class="taskid">&hellip;timber.leaf</span><span class="field art">bias <b>Economic</b></span><span class="field">HasEligibleCard passes &mdash; <b>committed</b></span></div>
+    </div>
+  </div>
+  <p class="mockup-note">this character has no mithril-related card it can play, so the planner skips the whole mithril branch - not just its leaf - and commits to the next sibling instead, rather than winning the turn's bias with a branch it can never act on.</p>
+
+  <h4 style="font-size:16px;margin:34px 0 4px;color:var(--ink-soft);">The Rest of the Map Starts Thinking</h4>
+  <p>Non-playable leaders - Sauron's captains and the other rosters that also fire the occasional scripted flourish described below - run through this exact same pipeline: Blackboard, HTN, Utility Scorer, one full character-by-character turn. They don't join the normal per-leader rotation, since that would mean touching the core turn order the campaign game relies on; instead every non-playable leader acts once, in a single batched pass, right after the last playable leader's turn each round and before the next round begins.</p>
+
+  <div class="widget">
+    <div class="widget-bar"><span class="dot"></span>turn order - one full round</div>
+    <div class="rows">
+      <div class="row"><span class="pill type">Player</span><span class="field">&rarr;</span><span class="pill type">Competitor 1</span><span class="field">&rarr;</span><span class="pill type">Competitor 2</span><span class="field">&rarr; &hellip;</span></div>
+      <div class="row"><span class="pill type" style="border-color:var(--accent-logic-strong);color:var(--accent-logic-strong)">All non-playable leaders</span><span class="field">batched, one HTN turn each</span><span class="field">&rarr;</span><span class="pill type">Player</span><span class="field">next round</span></div>
+    </div>
+  </div>
+  <p>They also don't share a deck with any single nation, since a non-playable leader isn't tied to one: each draws instead from one of three alignment decks - Dark Servants, Free Peoples, or Neutral - alongside the same shared Action and Spell pools every playable leader draws from too. Khamul, say, is a Dark Servant regardless of which nation happens to be nearby, and plays accordingly.</p>
+
+  <h4 style="font-size:16px;margin:34px 0 4px;color:var(--ink-soft);">An Economy That Knows Its Own Deck</h4>
+  <p>The Economic advisor's "insufficient" and "surplus" signals aren't a flat, identical bar applied to every leader in the game - a leather-heavy Dark Servant roster and a mithril-hungry one don't get held to the same line, because they don't spend the same way.</p>
+
+  <p>Each leader's deck is scanned once, when it's built, summing what every card in it actually costs to play, per material, into a target distribution: the <em>share</em> of its total material spend that deck wants to be holding in mithril versus timber versus leather, and so on. That target is cached once per nation and copied down to every character's own Blackboard. Every turn, the leader's actual stockpile share is measured the same way and compared against it - the <em>gap</em>, not the raw amount, is what drives Buy and Sell bias. A mithril-heavy, timber-light deck sells timber to buy mithril, chasing its own deck's mean, not a number picked once for every leader in the game.</p>
+
+  <div class="share-compare">
+    <div class="share-row">
+      <span class="share-label">Mithril</span>
+      <div class="share-track"><div class="share-fill" style="width:6%"></div><div class="share-target" style="left:35%"></div></div>
+      <span class="share-pct">6% held &middot; 35% target</span>
+    </div>
+    <div class="share-row">
+      <span class="share-label">Timber</span>
+      <div class="share-track"><div class="share-fill" style="width:41%"></div><div class="share-target" style="left:10%"></div></div>
+      <span class="share-pct">41% held &middot; 10% target</span>
+    </div>
+    <div class="share-row">
+      <span class="share-label">Leather</span>
+      <div class="share-track"><div class="share-fill" style="width:26%"></div><div class="share-target" style="left:5%"></div></div>
+      <span class="share-pct">26% held &middot; 5% target</span>
+    </div>
+    <div class="share-legend"><span><span class="sw held"></span>currently held</span><span><span class="sw target"></span>deck's target share</span></div>
+  </div>
+  <p class="mockup-note">Khamul's stockpile, early game: heavy on timber and leather relative to what his own deck actually needs. Economic.MithrilInsufficient rises, Economic.TimberSurplus and Economic.LeatherSurplus rise - BuyMithril climbs the ranking, SellTimber and SellLeather along with it.</p>
+
+  <h4 style="font-size:16px;margin:34px 0 4px;color:var(--ink-soft);">Seeing It Work: A Debug Panel</h4>
+  <p>None of the above is worth much if it can only be trusted from reading the code, so it has its own inspector: <code class="mono">Ctrl+Tab</code> opens a runtime panel, type a character's name, and it renders that character's Blackboard exactly as the AI itself sees it - live, not a log dump after the fact. Stack, target hex, resource distribution, advisor viability, and the actual candidate cards, side by side, is enough to catch the kind of mismatch that stays invisible without a way to just ask the AI what it's thinking - a correctly-elevated Economic score, say, paired with an empty list where a purchase should have been.</p>
+
+  <div class="widget">
+    <div class="widget-bar"><span class="dot"></span>ai blackboard panel - khamul</div>
+    <div class="report-panel">
+      <div class="rp-head">Khamul</div>
+      <div class="rp-dim">Owner: Khamul &middot; Hex: (14, 22)</div>
+      <br/>
+      <div><b>Stack:</b> root.recover[0] &gt; root.recover.mithril[0]</div>
+      <div><b>Target hex:</b> none &middot; <b>Turns on task:</b> 2</div>
+      <br/>
+      <div class="rp-head">Resource distribution</div>
+      <div>mithril: target 35% &nbsp;current 6% &nbsp;<span class="rp-flag">(stock 3)</span></div>
+      <div>timber: target 10% &nbsp;current 41% &nbsp;<span class="rp-flag">(stock 22)</span></div>
+      <br/>
+      <div class="rp-head">Advisor viability</div>
+      <div>Economic: 29.0</div>
+      <div>Militaristic: 4.0</div>
+      <br/>
+      <div class="rp-head">Cards that would be suitable now</div>
+      <div class="rp-warn">(no playable card found)</div>
+    </div>
+  </div>
+  <p class="mockup-note">reconstructed from the panel's real output format: Khamul's Economic score is correctly elevated, but the candidate list behind it is empty - exactly the kind of gap between "the score is right" and "there's nothing to actually play" the panel exists to surface.</p>
 
   <h3 class="section-title logic" id="advisors"><span class="tick"></span>How a Card Actually Gets Chosen: Advisors</h3>
 
@@ -612,10 +795,10 @@
       <text x="258" y="191" text-anchor="middle" font-size="10" fill="var(--paper)">4</text>
       <text x="276" y="191" font-size="11" fill="currentColor" opacity="0.7">Unrevealed NPC (lower score)</text>
     </svg>
-    <figcaption><span class="fig-label">Fig. 2</span>Redrawn from an actual play session: a small bloom of ranked icons appears at the character's hex, not full card art. Only the top few by score make it into the bloom at all.</figcaption>
+    <figcaption><span class="fig-label">Fig. 4</span>Redrawn from an actual play session: a small bloom of ranked icons appears at the character's hex, not full card art. Only the top few by score make it into the bloom at all.</figcaption>
   </figure>
 
-  <p>Which situations even make it into that bloom used to be decided by a fixed, hand-authored priority list: whichever situation ranked highest got exactly one matching card, picked by whatever order it happened to sit in the deck file. If ten cards all matched the same situation, the same one card won, every time - the other nine were unreachable.</p>
+  <p>Which situations make it into that bloom is decided by score, not a fixed hand-authored priority order. Each situation still carries a hand-tuned rank, drag-to-reorder in the AI Widget - but that rank now feeds a numeric bonus (ten minus position) into the scoring pass below, rather than acting as a hard cutoff that lets only the single top-ranked match through:</p>
 
   <div class="widget">
     <div class="widget-bar"><span class="dot"></span>ai widget - situations tab (ranking, excerpt)</div>
@@ -627,29 +810,18 @@
       <div class="rank-row"><span class="n">5</span><span>Army at Enemy PC or Enemy Army</span><span class="bonus">+6</span></div>
     </div>
   </div>
-  <p class="mockup-note">the same drag-to-reorder list as before - but the rank now feeds a score bonus (10 minus position) instead of a hard cutoff.</p>
-
-  <div class="ba-compare">
-    <div class="ba-panel before">
-      <p class="ba-label">Before - first match wins</p>
-      <div class="dots-row">
-        <div class="dot-card picked old"></div>
-        <div class="dot-card"></div><div class="dot-card"></div><div class="dot-card"></div><div class="dot-card"></div>
-        <div class="dot-card"></div><div class="dot-card"></div><div class="dot-card"></div><div class="dot-card"></div><div class="dot-card"></div>
-      </div>
-      <p>Ten cards match the situation. Deck-file order decides. The same one card is offered every time; the other nine never surface.</p>
-    </div>
+  <div style="max-width:340px;margin:22px 0 8px;">
     <div class="ba-panel after">
-      <p class="ba-label">After - scored and ranked</p>
+      <p class="ba-label">Scored and ranked</p>
       <div class="dots-row">
         <div class="dot-card picked"></div><div class="dot-card picked"></div><div class="dot-card picked"></div><div class="dot-card picked"></div><div class="dot-card picked"></div>
         <div class="dot-card"></div><div class="dot-card"></div><div class="dot-card"></div><div class="dot-card"></div><div class="dot-card"></div>
       </div>
-      <p>The whole eligible pool - situation matches, plus Spells and Events - is scored together. The top five, by relevance to <em>this</em> character, fill the bloom.</p>
+      <p>The whole eligible pool - situation matches, plus Spells and Events - is scored together. The top five, by relevance to <em>this</em> character, fill the bloom; two cards can share the same situation and both make the cut.</p>
     </div>
   </div>
 
-  <p>The score itself is deliberately simpler than the AI's - no HTN, no advisor bias, since a human isn't following a machine-authored strategy. It's a base score, a small bonus for skills the card actually needs, and the same situational ranking above turned into a numeric gradient instead of a gate. A card requiring high Commander skill scores higher in the hands of a character who actually has it; a card matching the top-ranked active situation scores higher than one matching the fifth. Two cards can now come from the same situation and both make the cut, which was never possible before.</p>
+  <p>The score itself is deliberately simpler than the AI's - no HTN, no advisor bias, since a human isn't following a machine-authored strategy. It's a base score, a small bonus for skills the card actually needs, and the same situational ranking above turned into a numeric gradient instead of a gate. A card requiring high Commander skill scores higher in the hands of a character who actually has it; a card matching the top-ranked active situation scores higher than one matching the fifth.</p>
 
   <h3 class="section-title logic" id="smaller-machines"><span class="tick"></span>The Smaller Machines</h3>
 
@@ -662,7 +834,7 @@
 
   <ul class="field-list">
     <li><span class="tag real">Real search</span><span>Character and army movement runs on a genuine <strong>A* search</strong> over the hex grid - open/closed sets, a proper admissible hex-distance heuristic, and a real per-tile cost function that accounts for terrain and, for armies, warships needed to cross water. The same pathfinder renders the human player's movement preview and feeds AI movement decisions; a Dijkstra-style flood fill sitting next to it answers "what can I reach this turn" for the range highlight.</span></li>
-    <li><span class="tag real">Real, small</span><span>Non-playable leaders - the ones who never take a real campaign turn - still fire occasional scripted flourishes: a roughly 5% per-turn chance, after turn five, to trigger a small authored event and pan the camera to it. It's a coin flip with a script attached, not a decision.</span></li>
+    <li><span class="tag real">Real, small</span><span>Non-playable leaders also still fire occasional scripted flourishes, independent of anything above: a roughly 5% per-turn chance, after turn five, to trigger a small authored event and pan the camera to it. It's a coin flip with a script attached, not a decision - it runs alongside the real HTN-driven turns described in <a href="#blackboard">One Blackboard Per Character</a>, not instead of them.</span></li>
     <li><span class="tag not">Not AI</span><span>Encounter cards resolve for AI actors with a flat random pick among the available options - no evaluation of which outcome is better, on purpose. Some moments in the game are meant to be luck, not judgment.</span></li>
     <li><span class="tag not">Not AI</span><span>Nation starting positions come from deterministic procedural generation: a flood fill grows each nation's territory outward from its seed, and a greedy spacing pass keeps capitals from landing on top of each other. Same map shape, same seed, same result - which is exactly what you want from map generation.</span></li>
   </ul>
@@ -786,7 +958,7 @@
     </div>
 
     <p class="lora-note"><b>Under the hood:</b> instead of retraining every large weight matrix <em>W</em>, LoRA learns two small low-rank matrices whose product forms a targeted adjustment: <em>W' = W + BA</em>. Qwen stays frozen; only <em>A</em> and <em>B</em> are trained and saved.</p>
-    <figcaption><span class="fig-label">Fig. 3</span>Your pipeline in two passes: build the small adapter from corrected paintings, then load that adapter beside Qwen Image whenever RetroLOTR needs a new illustration.</figcaption>
+    <figcaption><span class="fig-label">Fig. 5</span>Your pipeline in two passes: build the small adapter from corrected paintings, then load that adapter beside Qwen Image whenever RetroLOTR needs a new illustration.</figcaption>
   </figure>
 
   <p>A few real cards, rendered the same way as the worked examples above:</p>

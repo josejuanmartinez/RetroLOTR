@@ -16,7 +16,7 @@ public class StealLeather : AgentPCAction
             if (maxSteal < 1) return false;
             int toSteal = UnityEngine.Random.Range(1, maxSteal + 1);
             if (toSteal < 1) return false;
-            PlayableLeader playable = (c.GetOwner() as PlayableLeader);
+            Leader playable = c.GetOwner();
             if (playable == null) return false;
             playable.AddLeather(toSteal);
             pc.owner.RemoveLeather(toSteal);

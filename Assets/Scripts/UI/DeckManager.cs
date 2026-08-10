@@ -28,6 +28,10 @@ public class DeckManifestEntry
     public string parentDeckId;
     public bool isBaseDeck;
     public string deckSpriteName;
+    // Orthogonal to sharedToAll: sharedToAll means "not tied to one nation", excluded means
+    // "this deck's cards are world content (artifacts, encounters), never part of any leader's
+    // own drawable pool" — see GetSharedDecks(). A deck can be both (objects_shared) or neither.
+    public bool excluded;
 }
 
 [Serializable]
@@ -37,6 +41,26 @@ public class DeckData
     public string nation;
     public int alignment;
     public List<CardData> cards = new();
+}
+
+public enum SituationCardOfferSource
+{
+    Situation,
+    AI
+}
+
+public sealed class SituationCardOffer
+{
+    public CardData Card { get; }
+    public SituationCardOfferSource Source { get; }
+    public bool IsPlayable { get; }
+
+    public SituationCardOffer(CardData card, SituationCardOfferSource source, bool isPlayable)
+    {
+        Card = card;
+        Source = source;
+        IsPlayable = isPlayable;
+    }
 }
 
 [Serializable]
@@ -920,7 +944,7 @@ public class DeckManager : MonoBehaviour
 
     private readonly Dictionary<string, DeckManifestEntry> deckManifestById = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, DeckData> loadedDecksById = new(StringComparer.OrdinalIgnoreCase);
-    private readonly Dictionary<PlayableLeader, PlayerDeckState> playerDecks = new();
+    private readonly Dictionary<Leader, PlayerDeckState> playerDecks = new();
 
     private bool loaded;
 
@@ -1057,6 +1081,7 @@ public class DeckManager : MonoBehaviour
         if (game.competitors != null) leaders.AddRange(game.competitors.Where(x => x != null));
 
         InitializeHands(leaders);
+        InitializeNonPlayableLeaderHands(game.npcs);
         if (game.player != null && playerDecks.TryGetValue(game.player, out PlayerDeckState humanState))
         {
             EnsureRegionCardInHand(humanState);
@@ -1083,7 +1108,24 @@ public class DeckManager : MonoBehaviour
         }
     }
 
-    public IReadOnlyList<CardData> GetHand(PlayableLeader leader)
+    // Called after InitializeHands (which clears playerDecks) — never clears the dict itself,
+    // so it's safe to add NPL entries alongside the PlayableLeader ones already populated.
+    public void InitializeNonPlayableLeaderHands(IEnumerable<NonPlayableLeader> leaders)
+    {
+        if (leaders == null) return;
+
+        foreach (NonPlayableLeader leader in leaders.Distinct())
+        {
+            if (leader == null) continue;
+            PlayerDeckState state = BuildDeckStateForLeader(leader);
+            if (state != null)
+            {
+                playerDecks[leader] = state;
+            }
+        }
+    }
+
+    public IReadOnlyList<CardData> GetHand(Leader leader)
     {
         if (leader == null) return Array.Empty<CardData>();
         return playerDecks.TryGetValue(leader, out PlayerDeckState state) ? state.hand : Array.Empty<CardData>();
@@ -1095,15 +1137,15 @@ public class DeckManager : MonoBehaviour
     // uses. Deliberately excludes discardPile (already played, not consumable again until a
     // reshuffle moves it back into drawPile) and situationPool (a separate non-drawable
     // opportunity-card pool).
-    public IReadOnlyList<CardData> GetFullDeck(PlayableLeader leader)
+    public IReadOnlyList<CardData> GetFullDeck(Leader leader)
     {
         if (leader == null || !playerDecks.TryGetValue(leader, out PlayerDeckState state)) return Array.Empty<CardData>();
         return state.drawPile.Concat(state.hand).ToList();
     }
 
     // Score for ranking player-facing Opportunity Cards. Deliberately not a reuse of
-    // AIContext.ScoreAction — that class is AI-only (board-wide enemy scans, economy status,
-    // advisor switches) and the human isn't following an HTN strategy. Base score is the same
+    // UtilityAIContext.ScoreAction — that class is AI-only (board-wide enemy scans, economy
+    // status, HTN branch bias) and the human isn't following an HTN strategy. Base score is the same
     // conceptual starting point as AI scoring; the situational bonus reuses the Situations
     // tab's authored ranking (SituationEvaluator.GetActiveSituations) as a score gradient
     // instead of the old hard gate/first-match-wins order.
@@ -1169,6 +1211,110 @@ public class DeckManager : MonoBehaviour
         return result;
     }
 
+    // Builds the human-facing opportunity offer from two independent recommendation sources:
+    // up to three cards matched by the authored Situations priority, and up to two cards ranked
+    // by the same HTN/blackboard Utility AI used for automated leaders. Either source may fill
+    // vacancies left by the other, up to the configured hand size.
+    public List<SituationCardOffer> GetSituationCardOffers(PlayableLeader leader, Character character, Hex hex)
+    {
+        List<SituationCardOffer> result = new();
+        if (leader == null || character == null || hex == null) return result;
+        if (!playerDecks.TryGetValue(leader, out PlayerDeckState state)) return result;
+
+        int maxCards = GetHandSize();
+        if (maxCards <= 0) return result;
+
+        ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
+        List<CardSituationEnum> activeSituations = SituationEvaluator.GetActiveSituations(character, hex);
+        PC currentPc = hex.GetPCData();
+
+        List<CardData> matchedSituationCards = state.situationPool
+            .Where(c => c != null && (
+                (currentPc != null && c.GetCardType() == CardTypeEnum.Character
+                    && !string.IsNullOrWhiteSpace(c.startingPC)
+                    && CardNameUtility.Equals(c.startingPC, currentPc.pcName))
+                || (c.GetSituation() != CardSituationEnum.None && activeSituations.Contains(c.GetSituation()))
+                || c.GetCardType() == CardTypeEnum.Spell
+                || c.GetCardType() == CardTypeEnum.Event))
+            .OrderByDescending(c => ScoreOpportunityCard(c, character, activeSituations))
+            .ToList();
+
+        List<CardData> playableSituationCards = matchedSituationCards
+            .Where(c => IsFullyPlayableOpportunityCard(c, character, actionsManager))
+            .ToList();
+
+        List<CardData> aiCards = new();
+        if (actionsManager != null)
+        {
+            CharacterBlackboard blackboard = CharacterBlackboardStore.GetOrCreate(leader, character);
+            (_, IReadOnlyList<string> preferredParameters, _) = AITurnController.AdvanceHtnStrategy(leader, character, blackboard);
+            UtilityAIContext.PrecomputedData? precomputed = UtilityAIContextCacheManager.Instance != null
+                ? UtilityAIContextCacheManager.Instance.GetCached(leader, character)
+                : UtilityAIContextDataBuilder.Build(leader, character);
+
+            aiCards = AITurnController.ScoreFullDeck(
+                    leader, character, actionsManager, this, precomputed, null, preferredParameters)
+                .OrderByDescending(scored => scored.score)
+                .Select(scored => scored.card)
+                .ToList();
+        }
+
+        HashSet<string> selected = new(StringComparer.OrdinalIgnoreCase);
+        AddOffers(playableSituationCards, SituationCardOfferSource.Situation, Mathf.Min(3, maxCards), result, selected);
+        AddOffers(aiCards, SituationCardOfferSource.AI, Mathf.Min(2, maxCards - result.Count), result, selected);
+
+        // Preserve the intended 3+2 split first, then let either list fill unused capacity.
+        AddOffers(playableSituationCards, SituationCardOfferSource.Situation, maxCards - result.Count, result, selected);
+        AddOffers(aiCards, SituationCardOfferSource.AI, maxCards - result.Count, result, selected);
+
+        // With no legal play at all, expose the best authored situational match as a visible
+        // explanation of the missed opportunity. SituationCardsUI renders it red and disables it.
+        if (result.Count == 0 && matchedSituationCards.Count > 0)
+        {
+            result.Add(new SituationCardOffer(matchedSituationCards[0], SituationCardOfferSource.Situation, false));
+        }
+
+        return result;
+    }
+
+    private static void AddOffers(
+        IEnumerable<CardData> candidates,
+        SituationCardOfferSource source,
+        int count,
+        List<SituationCardOffer> destination,
+        HashSet<string> selected)
+    {
+        if (candidates == null || count <= 0) return;
+        foreach (CardData card in candidates)
+        {
+            if (card == null || !selected.Add(GetOfferCardKey(card))) continue;
+            destination.Add(new SituationCardOffer(card, source, true));
+            if (--count <= 0) break;
+        }
+    }
+
+    private static string GetOfferCardKey(CardData card)
+    {
+        if (card == null) return string.Empty;
+        if (!string.IsNullOrWhiteSpace(card.deckId) && card.cardId > 0)
+            return $"{card.deckId.Trim()}::{card.cardId}";
+        return card.name?.Trim() ?? string.Empty;
+    }
+
+    private static bool IsFullyPlayableOpportunityCard(CardData card, Character character, ActionsManager actionsManager)
+    {
+        if (card == null || character == null) return false;
+
+        string actionRef = card.GetActionRef();
+        if (string.IsNullOrWhiteSpace(actionRef)) return card.EvaluatePlayability(character);
+        if (actionsManager == null) return false;
+
+        CharacterAction action = actionsManager.ResolveActionByRef(actionRef, card);
+        if (action == null) return false;
+        action.Initialize(character, card);
+        return card.EvaluatePlayability(character, null, _ => action.FulfillsConditions());
+    }
+
     // A Spell opportunity requires an actual mage rank (ArcaneInsight grants one via
     // Character.GetMage()'s status-effect bonus), and at most one Event card may appear at
     // once — events are rarer, higher-impact interrupts than routine situational offers.
@@ -1232,7 +1378,7 @@ public class DeckManager : MonoBehaviour
         return handSize;
     }
 
-    public bool TryDrawCard(PlayableLeader leader, out CardData card)
+    public bool TryDrawCard(Leader leader, out CardData card)
     {
         card = null;
         if (leader == null) return false;
@@ -1252,12 +1398,8 @@ public class DeckManager : MonoBehaviour
         card.hasShownHandAnimation = false;
         state.drawPile.RemoveAt(0);
 
-        if (card.GetCardType() == CardTypeEnum.Encounter)
-        {
-            PlaceEncounterOnBoard(card, leader);
-            card = null;
-            return false; // encounter never occupies a hand slot
-        }
+        // Encounters are world content now (Board.SpawnEncounters) — ShouldIncludeCardInDeck
+        // already keeps them out of drawPile entirely, so no diversion is needed here anymore.
 
         state.hand.Add(card);
         RefreshHumanPlayerHandUIIfHuman(leader);
@@ -1280,7 +1422,7 @@ public class DeckManager : MonoBehaviour
         return true;
     }
 
-    public bool TryConsumeCard(PlayableLeader leader, string cardName, bool drawReplacement, out CardData consumedCard)
+    public bool TryConsumeCard(Leader leader, string cardName, bool drawReplacement, out CardData consumedCard)
     {
         consumedCard = null;
         if (leader == null || string.IsNullOrWhiteSpace(cardName)) return false;
@@ -1341,15 +1483,15 @@ public class DeckManager : MonoBehaviour
         return true;
     }
 
-    public bool HasDeckFor(PlayableLeader leader)
+    public bool HasDeckFor(Leader leader)
     {
         return leader != null && playerDecks.ContainsKey(leader);
     }
 
     public bool HasActionCardInDeck(Leader leader, string actionClassName)
     {
-        if (leader is not PlayableLeader playableLeader) return true;
-        if (!playerDecks.TryGetValue(playableLeader, out PlayerDeckState state)) return false;
+        if (leader == null) return true;
+        if (!playerDecks.TryGetValue(leader, out PlayerDeckState state)) return false;
 
         bool Matches(CardData card)
         {
@@ -1367,16 +1509,16 @@ public class DeckManager : MonoBehaviour
 
     public bool HasActionCardInHand(Leader leader, string actionClassName, Character selectedCharacter = null, Func<Character, bool> resourceCheck = null, Func<Character, bool> conditionCheck = null)
     {
-        if (leader is not PlayableLeader playableLeader) return true;
-        if (!playerDecks.TryGetValue(playableLeader, out PlayerDeckState state)) return false;
+        if (leader == null) return true;
+        if (!playerDecks.TryGetValue(leader, out PlayerDeckState state)) return false;
         return FindMatchingActionCardIndex(state.hand, actionClassName, selectedCharacter, resourceCheck, conditionCheck) >= 0;
     }
 
     public bool TryGetActionCardInHand(Leader leader, string actionClassName, out CardData card, Character selectedCharacter = null, Func<Character, bool> resourceCheck = null, Func<Character, bool> conditionCheck = null)
     {
         card = null;
-        if (leader is not PlayableLeader playableLeader) return false;
-        if (!playerDecks.TryGetValue(playableLeader, out PlayerDeckState state)) return false;
+        if (leader == null) return false;
+        if (!playerDecks.TryGetValue(leader, out PlayerDeckState state)) return false;
 
         int handIndex = FindMatchingActionCardIndex(state.hand, actionClassName, selectedCharacter, resourceCheck, conditionCheck);
         if (handIndex < 0) return false;
@@ -1396,17 +1538,17 @@ public class DeckManager : MonoBehaviour
     public bool TryConsumeActionCard(Leader leader, string actionClassName, bool drawReplacement, out CardData consumedCard, string preferredCardName = null)
     {
         consumedCard = null;
-        if (leader is not PlayableLeader playableLeader) return true;
-        if (!playerDecks.TryGetValue(playableLeader, out PlayerDeckState state)) return false;
+        if (leader == null) return true;
+        if (!playerDecks.TryGetValue(leader, out PlayerDeckState state)) return false;
 
-        return TryConsumeActionCardFromList(playableLeader, state, state.hand, actionClassName, preferredCardName, drawReplacement, out consumedCard);
+        return TryConsumeActionCardFromList(leader, state, state.hand, actionClassName, preferredCardName, drawReplacement, out consumedCard);
     }
 
     // AI full-deck scoring (see GetFullDeck/AITurnController) can select a card that hasn't
     // been drawn into hand yet — this generalizes consumption to also search drawPile.
     // TryConsumeActionCard above stays hand-only, since the human's play-from-hand path
     // must never reach into an undrawn pile.
-    public bool TryConsumeActionCardFromFullDeck(PlayableLeader leader, string actionClassName, CardData preferredCard, out CardData consumedCard)
+    public bool TryConsumeActionCardFromFullDeck(Leader leader, string actionClassName, CardData preferredCard, out CardData consumedCard)
     {
         consumedCard = null;
         if (leader == null || !playerDecks.TryGetValue(leader, out PlayerDeckState state)) return false;
@@ -1416,7 +1558,7 @@ public class DeckManager : MonoBehaviour
         return TryConsumeActionCardFromList(leader, state, state.drawPile, actionClassName, preferredCardName, drawReplacement: false, out consumedCard);
     }
 
-    private bool TryConsumeActionCardFromList(PlayableLeader playableLeader, PlayerDeckState state, List<CardData> sourceList, string actionClassName, string preferredCardName, bool drawReplacement, out CardData consumedCard)
+    private bool TryConsumeActionCardFromList(Leader playableLeader, PlayerDeckState state, List<CardData> sourceList, string actionClassName, string preferredCardName, bool drawReplacement, out CardData consumedCard)
     {
         consumedCard = null;
 
@@ -1463,7 +1605,7 @@ public class DeckManager : MonoBehaviour
         return true;
     }
 
-    public void ApplyMapRevealForPlayedCard(PlayableLeader leader, CardData card)
+    public void ApplyMapRevealForPlayedCard(Leader leader, CardData card)
     {
         if (leader == null || card == null) return;
 
@@ -1509,8 +1651,8 @@ public class DeckManager : MonoBehaviour
 
     public bool TryReturnActionCardToHand(Leader leader, string actionClassName)
     {
-        if (leader is not PlayableLeader playableLeader) return false;
-        if (!playerDecks.TryGetValue(playableLeader, out PlayerDeckState state)) return false;
+        if (leader == null) return false;
+        if (!playerDecks.TryGetValue(leader, out PlayerDeckState state)) return false;
         if (state.discardPile == null || state.discardPile.Count == 0) return false;
 
         int discardIndex = -1;
@@ -1527,14 +1669,14 @@ public class DeckManager : MonoBehaviour
         CardData returnedCard = state.discardPile[discardIndex];
         state.discardPile.RemoveAt(discardIndex);
         state.hand.Add(returnedCard);
-        RefreshHumanPlayerHandUIIfHuman(playableLeader);
+        RefreshHumanPlayerHandUIIfHuman(leader);
         return true;
     }
 
     public bool TryReturnCardToHand(Leader leader, string cardName)
     {
-        if (leader is not PlayableLeader playableLeader) return false;
-        if (!playerDecks.TryGetValue(playableLeader, out PlayerDeckState state)) return false;
+        if (leader == null) return false;
+        if (!playerDecks.TryGetValue(leader, out PlayerDeckState state)) return false;
         if (state.discardPile == null || state.discardPile.Count == 0) return false;
 
         int discardIndex = state.discardPile.FindLastIndex(card => card != null && string.Equals(card.name, cardName, StringComparison.OrdinalIgnoreCase));
@@ -1543,7 +1685,7 @@ public class DeckManager : MonoBehaviour
         CardData returnedCard = state.discardPile[discardIndex];
         state.discardPile.RemoveAt(discardIndex);
         state.hand.Add(returnedCard);
-        RefreshHumanPlayerHandUIIfHuman(playableLeader);
+        RefreshHumanPlayerHandUIIfHuman(leader);
         return true;
     }
 
@@ -1589,7 +1731,7 @@ public class DeckManager : MonoBehaviour
 
     public void SetHumanHandVisible(bool visible) { }
 
-    private void RefillHandToCount(PlayerDeckState state, int targetCount, PlayableLeader leader = null)
+    private void RefillHandToCount(PlayerDeckState state, int targetCount, Leader leader = null)
     {
         if (state == null) return;
 
@@ -1613,51 +1755,10 @@ public class DeckManager : MonoBehaviour
             EnsureSubdeckCardIfNeeded(state);
             CardData card = state.drawPile[0];
             state.drawPile.RemoveAt(0);
-            if (card.GetCardType() == CardTypeEnum.Encounter)
-            {
-                PlaceEncounterOnBoard(card, leader);
-                continue; // encounter never occupies a hand slot
-            }
+            // Encounters are world content now (Board.SpawnEncounters) — ShouldIncludeCardInDeck
+            // already keeps them out of drawPile entirely, so no diversion is needed here anymore.
             state.hand.Add(card);
         }
-    }
-
-    private void PlaceEncounterOnBoard(CardData card, PlayableLeader leader)
-    {
-        Hex targetHex = AssignEncounterTargetHex(leader);
-        if (targetHex == null) return;
-        // A hex may hold at most one encounter. If the target already has one, don't place
-        // this card and don't raise an event icon for it. The icon for a successful
-        // placement is raised by Hex.UpdateEncounterVisibility once the encounter is visible
-        // (immediately if the hex is already seen, otherwise when it is revealed).
-        if (!targetHex.AddPendingEncounter(card)) return;
-        card.encounterTargetHex = targetHex;
-        card.hasShownHandAnimation = true;
-    }
-
-    private static Hex AssignEncounterTargetHex(PlayableLeader leader)
-    {
-        if (leader == null) return null;
-        var candidates = new HashSet<Hex>();
-        // A hex may never hold more than one encounter, so anything that already has one
-        // is excluded from the candidate set up front.
-        if (leader.hex != null && !leader.killed)
-        {
-            foreach (Hex h in leader.hex.GetHexesInRadius(5))
-                if (!h.HasPendingEncounters) candidates.Add(h);
-        }
-        if (leader.controlledCharacters != null)
-        {
-            foreach (Character c in leader.controlledCharacters)
-            {
-                if (c == null || c.killed || c.hex == null) continue;
-                foreach (Hex h in c.hex.GetHexesInRadius(5))
-                    if (!h.HasPendingEncounters) candidates.Add(h);
-            }
-        }
-        if (candidates.Count == 0) return null;
-        var list = new List<Hex>(candidates);
-        return list[UnityEngine.Random.Range(0, list.Count)];
     }
 
     public static void NotifyEncounterPlaced(Hex targetHex)
@@ -1847,6 +1948,22 @@ public class DeckManager : MonoBehaviour
         if (!loaded && !InitializeFromResources()) return new List<CardData>();
         return cards
             .Where(card => card != null && card.GetCardType() == CardTypeEnum.Object)
+            .SelectMany(card => Enumerable.Repeat(card, Math.Max(1, card.copies)))
+            .Select(CloneCard)
+            .Where(card => card != null)
+            .ToList();
+    }
+
+    // Fresh clones of every Encounter card in the catalog — Board's world-scatter placement
+    // pass (SpawnEncounters) draws from this, mirroring GetAllObjectCardClones above.
+    // Encounters are world content, not part of any leader's own drawable pool (see
+    // ShouldIncludeCardInDeck), so they're sourced directly from the master catalog rather
+    // than through any leader's deck.
+    public List<CardData> GetAllEncounterCardClones()
+    {
+        if (!loaded && !InitializeFromResources()) return new List<CardData>();
+        return cards
+            .Where(card => card != null && card.GetCardType() == CardTypeEnum.Encounter)
             .SelectMany(card => Enumerable.Repeat(card, Math.Max(1, card.copies)))
             .Select(CloneCard)
             .Where(card => card != null)
@@ -2566,12 +2683,17 @@ public class DeckManager : MonoBehaviour
         if (totalGoldCost > 0) owner.RemoveGold(totalGoldCost, false);
     }
 
-    private PlayerDeckState BuildDeckStateForLeader(PlayableLeader leader)
+    private PlayerDeckState BuildDeckStateForLeader(Leader leader)
     {
-        string deckId = ResolveDeckIdForLeader(leader);
+        string deckId = leader switch
+        {
+            PlayableLeader pl => ResolveDeckIdForLeader(pl),
+            NonPlayableLeader npl => ResolveDeckIdForNonPlayableLeader(npl),
+            _ => null
+        };
         if (string.IsNullOrWhiteSpace(deckId)) return null;
 
-        bool isVariantSelection = leader != null && !string.IsNullOrWhiteSpace(leader.GetSelectedVariantName());
+        bool isVariantSelection = leader is PlayableLeader variantLeader && !string.IsNullOrWhiteSpace(variantLeader.GetSelectedVariantName());
         PlayerDeckState state = new PlayerDeckState
         {
             deckId = deckId
@@ -2661,7 +2783,46 @@ public class DeckManager : MonoBehaviour
 
         PopulateSituationPool(state, deckId);
 
+        // Snapshot the deck's required-material distribution now, while drawPile+hand together
+        // still equal the complete composed deck (nothing has been played/discarded yet) — see
+        // NationBlackboard. Doing this later (e.g. lazily on first AI turn) would risk
+        // computing it from a partial deck if cards had already moved to the discard pile.
+        NationBlackboard.SetDeckResourceShare(leader, ComputeDeckResourceShare(state));
+
         return state;
+    }
+
+    // Sums each card's material cost (leatherRequired..mithrilRequired — the 6 tradeable
+    // materials; gold is currency, not a card-cost material, so it's excluded) across the
+    // leader's full composed deck and normalizes to a 0..1 share per material. Falls back to
+    // an even split if the deck has no material costs at all (e.g. a still-empty NPL deck).
+    private static IReadOnlyDictionary<ProducesEnum, float> ComputeDeckResourceShare(PlayerDeckState state)
+    {
+        Dictionary<ProducesEnum, float> totals = new()
+        {
+            [ProducesEnum.leather] = 0f,
+            [ProducesEnum.mounts] = 0f,
+            [ProducesEnum.timber] = 0f,
+            [ProducesEnum.iron] = 0f,
+            [ProducesEnum.steel] = 0f,
+            [ProducesEnum.mithril] = 0f,
+        };
+
+        foreach (CardData card in state.drawPile.Concat(state.hand))
+        {
+            if (card == null) continue;
+            totals[ProducesEnum.leather] += card.leatherRequired;
+            totals[ProducesEnum.mounts] += card.mountsRequired;
+            totals[ProducesEnum.timber] += card.timberRequired;
+            totals[ProducesEnum.iron] += card.ironRequired;
+            totals[ProducesEnum.steel] += card.steelRequired;
+            totals[ProducesEnum.mithril] += card.mithrilRequired;
+        }
+
+        float sum = totals.Values.Sum();
+        Dictionary<ProducesEnum, float> share = new();
+        foreach (var kvp in totals) share[kvp.Key] = sum > 0f ? kvp.Value / sum : 1f / totals.Count;
+        return share;
     }
 
     private void PopulateSituationPool(PlayerDeckState state, string deckId)
@@ -2868,13 +3029,11 @@ public class DeckManager : MonoBehaviour
     {
         if (card == null) return false;
 
-        // Encounters must come only from EncounterDeck.json.
-        // Shared/base modular decks may contain legacy duplicate encounter definitions,
-        // but they are not the source of truth for live encounter gameplay.
-        if (card.IsEncounterCard())
-        {
-            return string.Equals(sourceDeckId, "encounter_shared", StringComparison.OrdinalIgnoreCase);
-        }
+        // Encounters are world content now (see Board.SpawnEncounters) — scattered onto the
+        // map directly from the master catalog (DeckManager.GetAllEncounterCardClones), not
+        // drawn from any leader's own deck. Never part of a drawable pool, same reasoning as
+        // Object below.
+        if (card.IsEncounterCard()) return false;
 
         // Object cards are lookup-only data records (see EvaluatePlayability) — never part
         // of a drawable deck/hand pool.
@@ -2900,7 +3059,7 @@ public class DeckManager : MonoBehaviour
     {
         foreach (DeckManifestEntry entry in deckManifestById.Values)
         {
-            if (entry == null || !entry.sharedToAll) continue;
+            if (entry == null || !entry.sharedToAll || entry.excluded) continue;
             if (string.IsNullOrWhiteSpace(entry.deckId)) continue;
             if (loadedDecksById.TryGetValue(entry.deckId, out DeckData deckData) && deckData != null)
             {
@@ -2962,6 +3121,31 @@ public class DeckManager : MonoBehaviour
         return byAlignment?.deckId;
     }
 
+    // NPLs aren't tied to a nation, so they draw from one of three fixed alignment-based decks
+    // instead of ResolveDeckIdForLeader's nation/subdeck/base-deck resolution above (that
+    // method's own alignment fallback specifically requires isBaseDeck: true, which these
+    // NPL decks deliberately aren't — they're not a PlayableLeader "nation base", so a
+    // dedicated resolver is simpler than overloading that fallback's meaning).
+    private string ResolveDeckIdForNonPlayableLeader(NonPlayableLeader leader)
+    {
+        if (leader == null) return null;
+
+        string deckId = leader.alignment switch
+        {
+            AlignmentEnum.freePeople => "nonplayableleader_freepeople",
+            AlignmentEnum.darkServants => "nonplayableleader_darkservants",
+            AlignmentEnum.neutral => "nonplayableleader_neutral",
+            _ => "nonplayableleader_neutral"
+        };
+
+        if (!deckManifestById.ContainsKey(deckId))
+        {
+            Debug.LogWarning($"DeckManager: NPL deck '{deckId}' not found in manifest for {leader.characterName}.");
+            return null;
+        }
+        return deckId;
+    }
+
     private static void Shuffle<T>(List<T> list)
     {
         if (list == null) return;
@@ -2980,7 +3164,7 @@ public class DeckManager : MonoBehaviour
             .ToList();
     }
 
-    private void RefreshHumanPlayerHandUIIfHuman(PlayableLeader leader)
+    private void RefreshHumanPlayerHandUIIfHuman(Leader leader)
     {
         if (leader == null) return;
         Game game = FindFirstObjectByType<Game>();

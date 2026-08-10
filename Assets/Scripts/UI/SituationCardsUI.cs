@@ -204,9 +204,18 @@ public class SituationCardsUI : MonoBehaviour
     public void Show(List<CardData> cards, Character character)
     {
         if (cards == null || cards.Count == 0) return;
+        Show(cards.Select(card => new SituationCardOffer(
+            card,
+            SituationCardOfferSource.Situation,
+            IsCardPlayable(card, character))).ToList(), character);
+    }
+
+    public void Show(List<SituationCardOffer> offers, Character character)
+    {
+        if (offers == null || offers.Count == 0) return;
         IsShowing = true;
         if (showCoroutine != null) StopCoroutine(showCoroutine);
-        showCoroutine = StartCoroutine(bloom ? ShowBloomCoroutine(cards, character) : ShowCoroutine(cards, character));
+        showCoroutine = StartCoroutine(bloom ? ShowBloomCoroutine(offers, character) : ShowCoroutine(offers, character));
     }
 
     private void Dismiss()
@@ -215,7 +224,7 @@ public class SituationCardsUI : MonoBehaviour
         showCoroutine = StartCoroutine(FadeOut());
     }
 
-    private IEnumerator ShowCoroutine(List<CardData> cards, Character character)
+    private IEnumerator ShowCoroutine(List<SituationCardOffer> offers, Character character)
     {
         ClearCards();
 
@@ -235,8 +244,9 @@ public class SituationCardsUI : MonoBehaviour
 
         // First pass: instantiate each card in its RealCard (expanded) representation.
         var rects = new List<RectTransform>();
-        foreach (CardData card in cards)
+        foreach (SituationCardOffer offer in offers)
         {
+            CardData card = offer.Card;
             GameObject go = Instantiate(template, cardContainer.transform);
             go.SetActive(true);
 
@@ -250,14 +260,14 @@ public class SituationCardsUI : MonoBehaviour
                 // Display-only: clicks go through the CardClickArea overlay, so the card
                 // itself must never react to hover (which would flip it back into a token).
                 cardComp.SuppressHoverEffects = true;
-                cardComp.SetUnplayableRealCardTint(!cardComp.EvaluateIsPlayable(character));
+                cardComp.SetUnplayableRealCardTint(!offer.IsPlayable);
             }
 
             // Disable card's own raycasts so drag/hover don't fire
             var cg = go.GetComponent<CanvasGroup>();
             if (cg != null) { cg.blocksRaycasts = false; cg.interactable = false; }
 
-            AddCardClickButton(go, card, character, leader);
+            if (offer.IsPlayable) AddCardClickButton(go, offer, character, leader);
 
             cardInstances.Add(go);
             rects.Add(go.GetComponent<RectTransform>());
@@ -282,7 +292,7 @@ public class SituationCardsUI : MonoBehaviour
         }
 
         float available = Screen.width * 0.92f;
-        float perCard = (available - cardSpacing * (cards.Count - 1)) / cards.Count;
+        float perCard = (available - cardSpacing * (offers.Count - 1)) / offers.Count;
         float scale = Mathf.Clamp(perCard / maxWidth, 0.4f, maxCardScale);
 
         for (int i = 0; i < rects.Count; i++)
@@ -330,7 +340,7 @@ public class SituationCardsUI : MonoBehaviour
     // handed to DeckManager's CardBloomWheel (its sole purpose — there is no hand display),
     // repositioned over the acting character's hex for the duration of the offer, then
     // emptied and hidden again once resolved or dismissed (see DismissBloom).
-    private IEnumerator ShowBloomCoroutine(List<CardData> cards, Character character)
+    private IEnumerator ShowBloomCoroutine(List<SituationCardOffer> offers, Character character)
     {
         CardBloomWheel wheel = DeckManager.Instance?.GetCardBloomWheel();
         // TokenCard.prefab (not Card.prefab's real-card-only template) — the two were split
@@ -341,7 +351,7 @@ public class SituationCardsUI : MonoBehaviour
         {
             // No wheel to bloom from (or nowhere to anchor it) — fall back to the normal
             // center-screen presentation rather than silently showing nothing.
-            yield return ShowCoroutine(cards, character);
+            yield return ShowCoroutine(offers, character);
             yield break;
         }
 
@@ -349,8 +359,9 @@ public class SituationCardsUI : MonoBehaviour
 
         PlayableLeader leader = character.GetOwner() as PlayableLeader;
 
-        foreach (CardData card in cards)
+        foreach (SituationCardOffer offer in offers)
         {
+            CardData card = offer.Card;
             GameObject go = Instantiate(template, wheel.transform);
             go.SetActive(true);
 
@@ -359,6 +370,7 @@ public class SituationCardsUI : MonoBehaviour
             {
                 cardComp.Initialize(card);
                 cardComp.SuppressHoverEffects = true;
+                if (!offer.IsPlayable) cardComp.SetTokenTint(0.35f, 1f);
             }
 
             // The wheel drives clicks via its own geometric hit test (see SetCards), not
@@ -371,7 +383,7 @@ public class SituationCardsUI : MonoBehaviour
         }
 
         activeBloomWheel = wheel;
-        wheel.SetCards(cardInstances, index => OnBloomCardClicked(index, cards, character, leader));
+        wheel.SetCards(cardInstances, index => OnBloomCardClicked(index, offers, character, leader));
         wheel.SetWorldAnchor(character.hex.transform.position, Camera.main);
         wheel.SetVisible(true);
         wheel.SetForcedOpen(true);
@@ -411,12 +423,13 @@ public class SituationCardsUI : MonoBehaviour
         bloomDismissCatcher = null;
     }
 
-    private void OnBloomCardClicked(int index, List<CardData> cards, Character character, PlayableLeader leader)
+    private void OnBloomCardClicked(int index, List<SituationCardOffer> offers, Character character, PlayableLeader leader)
     {
-        if (cards == null || index < 0 || index >= cards.Count) return;
-        CardData cardData = cards[index];
+        if (offers == null || index < 0 || index >= offers.Count) return;
+        SituationCardOffer offer = offers[index];
+        if (offer == null || !offer.IsPlayable) return;
         DismissBloom();
-        ResolveCardAction(cardData, character, leader);
+        ResolveCardAction(offer, character, leader);
     }
 
     // Tears down the bloom presentation: the wheel is exclusively an opportunity-card
@@ -483,7 +496,7 @@ public class SituationCardsUI : MonoBehaviour
         cardInstances.Add(go); // ensure cleanup if dismissed mid-burst
     }
 
-    private void AddCardClickButton(GameObject cardGo, CardData cardData, Character character, PlayableLeader leader)
+    private void AddCardClickButton(GameObject cardGo, SituationCardOffer offer, Character character, PlayableLeader leader)
     {
         var btnGo = new GameObject("CardClickArea");
         btnGo.transform.SetParent(cardGo.transform, false);
@@ -511,23 +524,25 @@ public class SituationCardsUI : MonoBehaviour
 
         var btn = btnGo.AddComponent<Button>();
         btn.transition = Selectable.Transition.None;
-        btn.onClick.AddListener(() => OnCardClicked(cardData, character, leader));
+        btn.onClick.AddListener(() => OnCardClicked(offer, character, leader));
     }
 
     // Center-tray click: fade the overlay out, then resolve the card via the shared path.
-    private void OnCardClicked(CardData cardData, Character character, PlayableLeader leader)
+    private void OnCardClicked(SituationCardOffer offer, Character character, PlayableLeader leader)
     {
+        if (offer == null || !offer.IsPlayable) return;
         if (showCoroutine != null) StopCoroutine(showCoroutine);
         showCoroutine = StartCoroutine(FadeOut());
-        ResolveCardAction(cardData, character, leader);
+        ResolveCardAction(offer, character, leader);
     }
 
     // Resolves and executes the card's action right away, the same way a hand card
     // resolves on click (Card.HandleActionCardPlayed) — the "Act now!" presentation
     // promises an immediate effect, not a card quietly parked in hand for later. Shared by
     // both the center-tray click (OnCardClicked) and the bloom-wheel click (OnBloomCardClicked).
-    private async void ResolveCardAction(CardData cardData, Character character, PlayableLeader leader)
+    private async void ResolveCardAction(SituationCardOffer offer, Character character, PlayableLeader leader)
     {
+        CardData cardData = offer?.Card;
         if (cardData == null || character == null || leader == null || DeckManager.Instance == null)
         {
             Debug.Log($"[SituationCards] click aborted — cardData={cardData != null} character={character != null} leader={leader != null} deckManager={DeckManager.Instance != null}");
@@ -567,14 +582,13 @@ public class SituationCardsUI : MonoBehaviour
         // Route through the normal hand-consume path so resource costs, discard-pile
         // bookkeeping, and card history are applied exactly as they are for a card
         // played straight out of hand.
-        if (!DeckManager.Instance.TryAddCardToHand(leader, cardData))
+        bool consumed = offer.Source == SituationCardOfferSource.AI
+            ? DeckManager.Instance.TryConsumeActionCardFromFullDeck(leader, actionRef, cardData, out _)
+            : DeckManager.Instance.TryAddCardToHand(leader, cardData)
+                && DeckManager.Instance.TryConsumeActionCard(leader, actionRef, false, out _, cardData.name);
+        if (!consumed)
         {
-            Debug.Log($"[SituationCards] click aborted — TryAddCardToHand failed for '{cardData.name}'");
-            return;
-        }
-        if (!DeckManager.Instance.TryConsumeActionCard(leader, actionRef, false, out _, cardData.name))
-        {
-            Debug.Log($"[SituationCards] click aborted — TryConsumeActionCard failed for '{cardData.name}' (actionRef={actionRef})");
+            Debug.Log($"[SituationCards] click aborted — could not consume '{cardData.name}' from {offer.Source} source (actionRef={actionRef})");
             return;
         }
 
@@ -589,6 +603,19 @@ public class SituationCardsUI : MonoBehaviour
         {
             leader.RecordPlayedCard(cardData);
         }
+    }
+
+    private static bool IsCardPlayable(CardData cardData, Character character)
+    {
+        if (cardData == null || character == null) return false;
+        string actionRef = cardData.GetActionRef();
+        if (string.IsNullOrWhiteSpace(actionRef)) return cardData.EvaluatePlayability(character);
+
+        ActionsManager manager = FindFirstObjectByType<ActionsManager>();
+        CharacterAction action = manager != null ? manager.ResolveActionByRef(actionRef, cardData) : null;
+        if (action == null) return false;
+        action.Initialize(character, cardData);
+        return cardData.EvaluatePlayability(character, null, _ => action.FulfillsConditions());
     }
 
     private static bool ResolveCharacterOpportunity(CardData cardData, Character actor, PlayableLeader leader)

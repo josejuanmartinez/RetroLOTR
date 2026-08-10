@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
-using K = AIAdvisorConfig.Keys;
+using K = UtilityAI.Keys;
 
 public class AIWidgetWindow : EditorWindow
 {
@@ -19,11 +19,11 @@ public class AIWidgetWindow : EditorWindow
         NN = 4
     }
 
-    private static readonly string[] TabLabels = { "Situations", "HTN", "Advisors", "Card Board", "NN" };
+    private static readonly string[] TabLabels = { "Situations", "HTN", "Utility AI", "Card Board", "NN" };
 
     private const string PriorityAssetPath = "Assets/Resources/" + SituationEvaluator.PriorityResourcePath + ".json";
     private const string StrategiesAssetPath = "Assets/Resources/" + AIStrategyLibrary.ResourcePath + ".json";
-    private const string AdvisorAssetPath = "Assets/Resources/" + AIAdvisorConfig.ResourcePath + ".json";
+    private const string AdvisorAssetPath = "Assets/Resources/" + UtilityAI.ResourcePath + ".json";
 
     private Tab currentTab = Tab.Situations;
 
@@ -72,9 +72,16 @@ public class AIWidgetWindow : EditorWindow
         compactBadgeStyle = new GUIStyle(EditorStyles.miniBoldLabel) { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.white } };
     }
 
+    // Built fresh per call rather than cached on EnsureAdvisorStyles — that cache is guarded by
+    // a single "already initialized" check on an unrelated field, which silently skips newly
+    // added styles when domain reload is disabled and an old AIWidgetWindow instance survives a
+    // recompile (this bit us once: a null GUIStyle mid-OnGUI corrupts the whole layout pass).
+    private static GUIStyle BuildWarningLabelStyle() =>
+        new(EditorStyles.miniBoldLabel) { normal = { textColor = new Color(0.85f, 0.45f, 0.35f) } };
+
     // Live TRUE/FALSE for any HTNRegistry predicate key, under the current "Live effect"
     // scenario inputs — the same signal HTNRegistry's own lambda would return at runtime,
-    // computed via the widget's Simulated* mirrors since there's no live AIContext here.
+    // computed via the widget's Simulated* mirrors since there's no live UtilityAIContext here.
     // This is what lets every condition shown in the widget (not just the one currently
     // active tier) carry its own live state, instead of the reader having to infer the other
     // three tiers are false from the one tier that's shown true.
@@ -94,16 +101,13 @@ public class AIWidgetWindow : EditorWindow
             case "Militaristic.Danger": return SimulatedDanger();
         }
 
-        // Every remaining predicate follows the "<Advisor>.Viable" pattern.
-        string advisorPart = key.Contains('.') ? key.Split('.')[0] : key;
-        if (Enum.TryParse(advisorPart, out AdvisorType advisor))
+        // Every remaining predicate follows the "<Group>.Viable" pattern.
+        string groupPart = key.Contains('.') ? key.Split('.')[0] : key;
+        string thresholdKey = ViabilityThresholdKeyFor(groupPart);
+        if (thresholdKey != null)
         {
-            string thresholdKey = ViabilityThresholdKeyFor(advisor);
-            if (thresholdKey != null)
-            {
-                float threshold = advisorWeights.TryGetValue(thresholdKey, out float t) ? t : AIAdvisorConfig.GetDefaultWeight(thresholdKey);
-                return SimulateViability(advisor) > threshold;
-            }
+            float threshold = advisorWeights.TryGetValue(thresholdKey, out float t) ? t : UtilityAI.GetDefaultWeight(thresholdKey);
+            return SimulateViability(groupPart) > threshold;
         }
         return false;
     }
@@ -122,14 +126,14 @@ public class AIWidgetWindow : EditorWindow
     // Advisors tab
     private Vector2 advisorsScroll;
     private readonly Dictionary<string, float> advisorWeights = new(StringComparer.OrdinalIgnoreCase);
-    // Keyed by AIAdvisorConfig.BuildCardProfileKey(deckId, cardId) — one independent row per
+    // Keyed by UtilityAI.BuildCardProfileKey(deckId, cardId) — one independent row per
     // printed card. Cards sharing an action class each get their own entry (see
     // DuplicateProfileToSiblingCards for the "seed one from another" authoring shortcut).
-    private readonly Dictionary<string, CardAdvisorProfile> cardProfiles = new(StringComparer.OrdinalIgnoreCase);
-    private List<(string actionClass, AdvisorType defaultAdvisor)> actionCatalog;
+    private readonly Dictionary<string, CardParameterProfile> cardProfiles = new(StringComparer.OrdinalIgnoreCase);
+    private List<string> actionCatalog;
     private Dictionary<string, List<CardUsage>> cardsByActionRef;
     private bool advisorsDirty;
-    private int simBiasedAdvisorIndex; // index into Enum.GetNames(typeof(AdvisorType)); 0 = None
+    private int simBiasedGroupIndex; // index into ParameterGroups; 0 = Unassigned
     private bool scenarioFoldout;
     private readonly Dictionary<string, bool> htnParamFoldouts = new(StringComparer.OrdinalIgnoreCase);
 
@@ -141,7 +145,6 @@ public class AIWidgetWindow : EditorWindow
     private int simMage = 2;
     private int simArtifactsCarried;
     private int simHiddenArtifacts;
-    private int simSpellsAvailable;
     private int simUtilityActionIndex;
     private bool simLeadingArmy;
     private bool simHostageToRescue;
@@ -154,6 +157,16 @@ public class AIWidgetWindow : EditorWindow
     private int simMountsAmount = 10;
     private int simTimberAmount = 10;
     private int simLeatherAmount = 10;
+    // This leader's deck-required material distribution (NationBlackboard in the real
+    // game) — what share of the deck's total material cost each one makes up, 0..1. Defaults to
+    // an even 1/6 split; tweak these to preview how a mithril-heavy or timber-light deck biases
+    // Buy/Sell scoring differently than the flat default.
+    private float simMithrilShare = 1f / 6f;
+    private float simSteelShare = 1f / 6f;
+    private float simIronShare = 1f / 6f;
+    private float simMountsShare = 1f / 6f;
+    private float simTimberShare = 1f / 6f;
+    private float simLeatherShare = 1f / 6f;
     private int simMyArmyStrength = 100;
     private int simEnemyStrength = 100;
     private float simEnemyDistance = 5f;
@@ -164,6 +177,13 @@ public class AIWidgetWindow : EditorWindow
     private float simOwnPcFortificationDistance = 99f;
     private float simNplRecruitmentDistance = 99f;
     private int simWoundedAllies;
+    // Direct signed margins (this character's estimated score minus the best eligible
+    // opponent's), same "direct slider" shape as simArtifactShare above — Duel/BattleOfSongs
+    // scoring depends on several skills + artifact bonuses on both sides, not worth
+    // reconstructing from primitive inputs here.
+    private float simDuelAdvantage;
+    private float simSongDuelAdvantage;
+    private int simUnrecruitedNplCount = 2;
 
     private class CardUsage
     {
@@ -176,33 +196,51 @@ public class AIWidgetWindow : EditorWindow
         public int cardId;
     }
 
-    // Card Board tab — drag-and-drop reclassification, writing directly to
-    // cardProfiles (the same dictionary Save/Load round-trips to AdvisorConfig.json).
+    // Card Board tab — a browsable, filterable list of every printed card, writing directly to
+    // cardProfiles (the same dictionary Save/Load round-trips to UtilityAI.json). A card has no
+    // single "advisor"/type-like tag driving membership here — the bucket bar below groups by
+    // the card's own real CardData.type (Action/Event/Spell/PC/Land/...) purely for navigation;
+    // whether a card has any Utility AI parameters configured ("assigned") is a separate,
+    // orthogonal thing you check per row (and can filter down to via cardBoardHideAssigned).
     private Vector2 cardBoardScroll;
     private string cardBoardSearch = string.Empty;
     private bool cardBoardHideAssigned;
-    private string dragPayloadCardKey; // deckId::cardId of the card being dragged, null when idle
-    private string dragPayloadCardName;
-    private string dragPayloadActionClass; // needed on drop to resolve the action's coded default advisor
-    private Vector2 dragPointerPos;
-    private readonly Dictionary<AdvisorType, Rect> cardBoardBucketRects = new();
+    // Empty = show every type. Set by clicking a bucket in DrawCardBoardBuckets; clicking the
+    // active bucket again clears it.
+    private string cardBoardTypeFilter = string.Empty;
 
-    private static readonly AdvisorType[] CardBoardBuckets =
+    private const string NoCardType = "(no type)";
+
+    // Stable color per CardData.type string — assigned once, first-seen order, from a fixed
+    // palette, so a type's color never changes across an OnGUI pass or between sessions as long
+    // as the type set doesn't change.
+    private readonly Dictionary<string, Color> cardTypeColors = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly Color[] CardTypePalette =
     {
-        AdvisorType.None, AdvisorType.Militaristic, AdvisorType.Economic, AdvisorType.Diplomatic,
-        AdvisorType.Intelligence, AdvisorType.Magic, AdvisorType.Disruption, AdvisorType.Logistics
+        new(0.63f, 0.24f, 0.20f), new(0.66f, 0.47f, 0.12f), new(0.18f, 0.48f, 0.45f),
+        new(0.24f, 0.42f, 0.54f), new(0.36f, 0.30f, 0.62f), new(0.55f, 0.30f, 0.55f),
+        new(0.24f, 0.48f, 0.32f), new(0.45f, 0.45f, 0.20f), new(0.50f, 0.34f, 0.24f)
     };
 
-    private static Color CardBoardBucketColor(AdvisorType advisor) => advisor switch
+    private Color CardTypeColor(string cardType)
     {
-        AdvisorType.Militaristic => new Color(0.63f, 0.24f, 0.20f),
-        AdvisorType.Economic => new Color(0.66f, 0.47f, 0.12f),
-        AdvisorType.Diplomatic => new Color(0.18f, 0.48f, 0.45f),
-        AdvisorType.Intelligence => new Color(0.24f, 0.42f, 0.54f),
-        AdvisorType.Magic => new Color(0.36f, 0.30f, 0.62f),
-        AdvisorType.Disruption => new Color(0.55f, 0.30f, 0.55f),
-        AdvisorType.Logistics => new Color(0.24f, 0.48f, 0.32f),
-        _ => new Color(0.35f, 0.35f, 0.35f)
+        string key = string.IsNullOrWhiteSpace(cardType) ? NoCardType : cardType;
+        if (!cardTypeColors.TryGetValue(key, out Color color))
+        {
+            color = CardTypePalette[cardTypeColors.Count % CardTypePalette.Length];
+            cardTypeColors[key] = color;
+        }
+        return color;
+    }
+
+    // "Unassigned" plus the distinct namespace prefixes in UtilityAIParameters.Known — the
+    // vocabulary for the HTN bias preview simulation (Scenario inputs / Utility AI tab), not
+    // related to Card Board's type buckets below. There is no enum backing either.
+    private const string UnassignedGroup = "Unassigned";
+    private static readonly string[] ParameterGroups =
+    {
+        UnassignedGroup, "Militaristic", "Economic", "Diplomatic",
+        "Intelligence", "Artifacts", "Disruption", "Logistics"
     };
 
     private static readonly string[] NodeTypeLabels = { "CompoundTask", "Method", "PrimitiveTask" };
@@ -549,7 +587,7 @@ public class AIWidgetWindow : EditorWindow
                 {
                     new() { depth = 0, type = "CompoundTask", taskId = "root" },
                     new() { depth = 1, type = "Method", precondition = Cond("Global.Always"), taskId = "root.fallback" },
-                    new() { depth = 2, type = "PrimitiveTask", advisor = string.Empty, completionCondition = Cond("Global.Never"), taskId = "root.fallback.leaf" }
+                    new() { depth = 2, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.fallback.leaf" }
                 }
             };
             strategyLibrary.strategies.Add(strategy);
@@ -640,7 +678,6 @@ public class AIWidgetWindow : EditorWindow
         int pendingOp = -1; // 0 up, 1 down, 2 outdent, 3 indent, 4 insert-after, 5 delete
         int pendingIndex = -1;
         int hoverEnd = -1; // exclusive end of the hovered subtree's row range
-        string[] advisorOptions = Enum.GetNames(typeof(AdvisorType));
 
         for (int i = 0; i < nodes.Count; i++)
         {
@@ -668,7 +705,7 @@ public class AIWidgetWindow : EditorWindow
                 strategiesDirty = true;
             }
 
-            string newTaskId = EditorGUILayout.DelayedTextField(node.taskId, GUILayout.Width(220f));
+            string newTaskId = EditorGUILayout.DelayedTextField(node.taskId, GUILayout.Width(260f));
             if (!string.Equals(newTaskId, node.taskId, StringComparison.Ordinal))
             {
                 node.taskId = newTaskId;
@@ -680,23 +717,13 @@ public class AIWidgetWindow : EditorWindow
             {
                 case HTNNodeType.Method:
                 {
-                    DrawConditionTermsInline(node.precondition, 110f);
+                    DrawConditionTermsInline(node.precondition, 260f);
                     break;
                 }
                 case HTNNodeType.PrimitiveTask:
                 {
-                    string currentAdvisor = string.IsNullOrEmpty(node.advisor) ? nameof(AdvisorType.None) : node.advisor;
-                    int advisorIndex = Mathf.Max(0, Array.IndexOf(advisorOptions, currentAdvisor));
-                    int pickedAdvisorIndex = EditorGUILayout.Popup(advisorIndex, advisorOptions, GUILayout.Width(110f));
-                    string pickedAdvisor = advisorOptions[pickedAdvisorIndex] == nameof(AdvisorType.None) ? string.Empty : advisorOptions[pickedAdvisorIndex];
-                    if (!string.Equals(pickedAdvisor, node.advisor ?? string.Empty, StringComparison.Ordinal))
-                    {
-                        node.advisor = pickedAdvisor;
-                        strategiesDirty = true;
-                    }
-
                     GUILayout.Label("until", EditorStyles.miniLabel, GUILayout.Width(28f));
-                    DrawConditionTermsInline(node.completionCondition, 110f);
+                    DrawConditionTermsInline(node.completionCondition, 260f);
                     break;
                 }
                 default:
@@ -731,10 +758,9 @@ public class AIWidgetWindow : EditorWindow
                 EditorGUILayout.EndHorizontal();
             }
 
-            // Which specific AIUtilityParameters this leaf's situation is about — lets cards
-            // whose own Card Board profile already targets this exact situation outscore cards
-            // that merely share the same advisor (see AIContext.ScoreAction). PrimitiveTask
-            // only, same reasoning as the advisor dropdown above.
+            // Which specific UtilityAIParameters this leaf's situation is about — the only
+            // thing tying a card to this branch: cards whose own Card Board profile shares one
+            // of these get HTNBiasBonus (see UtilityAIContext.ScoreAction). PrimitiveTask only.
             if (nodeType == HTNNodeType.PrimitiveTask)
             {
                 node.preferredParameters ??= new List<string>();
@@ -743,9 +769,9 @@ public class AIWidgetWindow : EditorWindow
                 GUILayout.Label("prefers:", EditorStyles.miniLabel, GUILayout.Width(50f));
                 foreach (string param in node.preferredParameters.ToList())
                 {
-                    int paramIndex = Mathf.Max(0, AIUtilityParameters.Known.ToList().FindIndex(p => string.Equals(p, param, StringComparison.OrdinalIgnoreCase)));
-                    int pickedParamIndex = EditorGUILayout.Popup(paramIndex, AIUtilityParameters.Known.ToArray(), GUILayout.Width(220f));
-                    string pickedParam = AIUtilityParameters.Known[pickedParamIndex];
+                    int paramIndex = Mathf.Max(0, UtilityAIParameters.Known.ToList().FindIndex(p => string.Equals(p, param, StringComparison.OrdinalIgnoreCase)));
+                    int pickedParamIndex = EditorGUILayout.Popup(paramIndex, UtilityAIParameters.Known.ToArray(), GUILayout.Width(260f));
+                    string pickedParam = UtilityAIParameters.Known[pickedParamIndex];
                     if (!string.Equals(pickedParam, param, StringComparison.Ordinal))
                     {
                         int paramListIndex = node.preferredParameters.IndexOf(param);
@@ -760,8 +786,8 @@ public class AIWidgetWindow : EditorWindow
                 }
                 if (GUILayout.Button("+", EditorStyles.miniButton, GUILayout.Width(24f)))
                 {
-                    string firstUnused = AIUtilityParameters.Known.FirstOrDefault(p => !node.preferredParameters.Contains(p, StringComparer.OrdinalIgnoreCase))
-                        ?? AIUtilityParameters.Known[0];
+                    string firstUnused = UtilityAIParameters.Known.FirstOrDefault(p => !node.preferredParameters.Contains(p, StringComparer.OrdinalIgnoreCase))
+                        ?? UtilityAIParameters.Known[0];
                     node.preferredParameters.Add(firstUnused);
                     strategiesDirty = true;
                 }
@@ -901,7 +927,7 @@ public class AIWidgetWindow : EditorWindow
     }
 
     private static HTNNodeData NewLeafNode(int depth = 0)
-        => new() { depth = depth, type = HTNNodeType.PrimitiveTask.ToString(), advisor = string.Empty, completionCondition = Cond("Global.Never"), taskId = string.Empty };
+        => new() { depth = depth, type = HTNNodeType.PrimitiveTask.ToString(), completionCondition = Cond("Global.Never"), taskId = string.Empty };
 
     // Fills in blank/duplicate taskIds after a structural edit. Never touches an
     // already-unique non-blank id — the Blackboard's persisted execution stack
@@ -1142,84 +1168,106 @@ public class AIWidgetWindow : EditorWindow
             nodes = new List<HTNNodeData>
             {
                 new() { depth = 0, type = "CompoundTask", taskId = "root" },
+
+                new() { depth = 1, type = "Method", precondition = Cond("Global.ImmediateDanger"), taskId = "root.immediatedanger" },
+                new() { depth = 2, type = "CompoundTask", taskId = "root.immediatedanger.pick" },
+                new() { depth = 3, type = "Method", precondition = Cond("Militaristic.OwnPcFortificationNeedReady"), taskId = "root.immediatedanger.pick.fortify" },
+                new() { depth = 4, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.immediatedanger.pick.fortify.leaf", preferredParameters = new() { "Militaristic.OwnPcFortificationNeed" } },
+                new() { depth = 3, type = "Method", precondition = Cond("Intelligence.EnemyCharacterReady"), taskId = "root.immediatedanger.pick.intelligence" },
+                new() { depth = 4, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.immediatedanger.pick.intelligence.leaf", preferredParameters = new() { "Intelligence.EnemyCharacter", "Intelligence.IndirectSafety", "Logistics.ReachEnemyCharacter" } },
+                new() { depth = 3, type = "Method", precondition = Cond("Militaristic.DuelOpportunityReady"), taskId = "root.immediatedanger.pick.duel" },
+                new() { depth = 4, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.immediatedanger.pick.duel.leaf", preferredParameters = new() { "Militaristic.DuelAdvantage" } },
+                new() { depth = 3, type = "Method", precondition = Cond("Militaristic.SongDuelOpportunityReady"), taskId = "root.immediatedanger.pick.songduel" },
+                new() { depth = 4, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.immediatedanger.pick.songduel.leaf", preferredParameters = new() { "Militaristic.SongDuelAdvantage" } },
+                new() { depth = 3, type = "Method", precondition = Cond("Global.Always"), taskId = "root.immediatedanger.pick.conscript" },
+                new() { depth = 4, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.immediatedanger.pick.conscript.leaf", preferredParameters = new() { "Militaristic.OwnPcDefenderNeed" } },
+
                 new() { depth = 1, type = "Method", precondition = Cond("Militaristic.Danger"), taskId = "root.danger" },
                 new() { depth = 2, type = "CompoundTask", taskId = "root.danger.pick" },
                 new() { depth = 3, type = "Method", precondition = Cond("Militaristic.OwnPcFortificationNeedReady"), taskId = "root.danger.pick.fortify" },
-                new() { depth = 4, type = "PrimitiveTask", advisor = "Militaristic", completionCondition = Cond("Global.Never"), taskId = "root.danger.pick.fortify.leaf", preferredParameters = new() { "Militaristic.OwnPcFortificationNeed" } },
+                new() { depth = 4, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.danger.pick.fortify.leaf", preferredParameters = new() { "Militaristic.OwnPcFortificationNeed" } },
+                new() { depth = 3, type = "Method", precondition = Cond("Intelligence.EnemyCharacterReady"), taskId = "root.danger.pick.intelligence" },
+                new() { depth = 4, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.danger.pick.intelligence.leaf", preferredParameters = new() { "Intelligence.EnemyCharacter", "Intelligence.IndirectSafety", "Logistics.ReachEnemyCharacter" } },
+                new() { depth = 3, type = "Method", precondition = Cond("Militaristic.DuelOpportunityReady"), taskId = "root.danger.pick.duel" },
+                new() { depth = 4, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.danger.pick.duel.leaf", preferredParameters = new() { "Militaristic.DuelAdvantage" } },
+                new() { depth = 3, type = "Method", precondition = Cond("Militaristic.SongDuelOpportunityReady"), taskId = "root.danger.pick.songduel" },
+                new() { depth = 4, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.danger.pick.songduel.leaf", preferredParameters = new() { "Militaristic.SongDuelAdvantage" } },
                 new() { depth = 3, type = "Method", precondition = Cond("Global.Always"), taskId = "root.danger.pick.conscript" },
-                new() { depth = 4, type = "PrimitiveTask", advisor = "Militaristic", completionCondition = Cond("Global.Never"), taskId = "root.danger.pick.conscript.leaf", preferredParameters = new() { "Militaristic.OwnPcDefenderNeed" } },
+                new() { depth = 4, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.danger.pick.conscript.leaf", preferredParameters = new() { "Militaristic.OwnPcDefenderNeed" } },
 
                 new() { depth = 1, type = "Method", precondition = Cond("Economic.Critical", "Economic.Weak"), taskId = "root.recover" },
                 new() { depth = 2, type = "CompoundTask", taskId = "root.recover.pick" },
                 new() { depth = 3, type = "Method", precondition = Cond("Economic.MithrilReady"), taskId = "root.recover.pick.mithril" },
-                new() { depth = 4, type = "PrimitiveTask", advisor = "Economic", completionCondition = Cond("Global.Never"), taskId = "root.recover.pick.mithril.leaf", preferredParameters = new() { "Economic.MithrilInsufficient", "Economic.MithrilSurplus" } },
+                new() { depth = 4, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.recover.pick.mithril.leaf", preferredParameters = new() { "Economic.MithrilInsufficient", "Economic.MithrilSurplus" } },
                 new() { depth = 3, type = "Method", precondition = Cond("Economic.SteelReady"), taskId = "root.recover.pick.steel" },
-                new() { depth = 4, type = "PrimitiveTask", advisor = "Economic", completionCondition = Cond("Global.Never"), taskId = "root.recover.pick.steel.leaf", preferredParameters = new() { "Economic.SteelInsufficient", "Economic.SteelSurplus" } },
+                new() { depth = 4, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.recover.pick.steel.leaf", preferredParameters = new() { "Economic.SteelInsufficient", "Economic.SteelSurplus" } },
                 new() { depth = 3, type = "Method", precondition = Cond("Economic.IronReady"), taskId = "root.recover.pick.iron" },
-                new() { depth = 4, type = "PrimitiveTask", advisor = "Economic", completionCondition = Cond("Global.Never"), taskId = "root.recover.pick.iron.leaf", preferredParameters = new() { "Economic.IronInsufficient", "Economic.IronSurplus" } },
+                new() { depth = 4, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.recover.pick.iron.leaf", preferredParameters = new() { "Economic.IronInsufficient", "Economic.IronSurplus" } },
                 new() { depth = 3, type = "Method", precondition = Cond("Economic.MountsReady"), taskId = "root.recover.pick.mounts" },
-                new() { depth = 4, type = "PrimitiveTask", advisor = "Economic", completionCondition = Cond("Global.Never"), taskId = "root.recover.pick.mounts.leaf", preferredParameters = new() { "Economic.MountsInsufficient", "Economic.MountsSurplus" } },
+                new() { depth = 4, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.recover.pick.mounts.leaf", preferredParameters = new() { "Economic.MountsInsufficient", "Economic.MountsSurplus" } },
                 new() { depth = 3, type = "Method", precondition = Cond("Economic.TimberReady"), taskId = "root.recover.pick.timber" },
-                new() { depth = 4, type = "PrimitiveTask", advisor = "Economic", completionCondition = Cond("Global.Never"), taskId = "root.recover.pick.timber.leaf", preferredParameters = new() { "Economic.TimberInsufficient", "Economic.TimberSurplus" } },
+                new() { depth = 4, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.recover.pick.timber.leaf", preferredParameters = new() { "Economic.TimberInsufficient", "Economic.TimberSurplus" } },
                 new() { depth = 3, type = "Method", precondition = Cond("Economic.LeatherReady"), taskId = "root.recover.pick.leather" },
-                new() { depth = 4, type = "PrimitiveTask", advisor = "Economic", completionCondition = Cond("Global.Never"), taskId = "root.recover.pick.leather.leaf", preferredParameters = new() { "Economic.LeatherInsufficient", "Economic.LeatherSurplus" } },
+                new() { depth = 4, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.recover.pick.leather.leaf", preferredParameters = new() { "Economic.LeatherInsufficient", "Economic.LeatherSurplus" } },
                 new() { depth = 3, type = "Method", precondition = Cond("Global.Always"), taskId = "root.recover.pick.fallback" },
-                new() { depth = 4, type = "PrimitiveTask", advisor = "Economic", completionCondition = Cond("Global.Never"), taskId = "root.recover.pick.fallback.leaf", preferredParameters = new() { "Economic.LiquidWealth" } },
+                new() { depth = 4, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.recover.pick.fallback.leaf", preferredParameters = new() { "Economic.LiquidWealth" } },
 
-                new() { depth = 1, type = "Method", precondition = Cond("Militaristic.Viable"), taskId = "root.offense" },
+                new() { depth = 1, type = "Method", precondition = Cond("Diplomatic.LowNplsReady"), taskId = "root.diplomacy.lownpls" },
+                new() { depth = 2, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.diplomacy.lownpls.leaf", preferredParameters = new() { "Diplomatic.NplRecruitment", "Diplomatic.NplScarcity" } },
+
+                new() { depth = 1, type = "Method", precondition = Cond("Artifacts.ArtifactScarcityReady"), taskId = "root.artifacts.lowartifacts" },
+                new() { depth = 2, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.artifacts.lowartifacts.leaf", preferredParameters = new() { "Artifacts.ArtifactScarcity", "Artifacts.HiddenArtifacts" } },
+
+                new() { depth = 1, type = "Method", precondition = Cond("Militaristic.OffenseWinRatioReady"), taskId = "root.offense" },
                 new() { depth = 2, type = "CompoundTask", taskId = "root.offense.pick" },
                 new() { depth = 3, type = "Method", precondition = Cond("Militaristic.OwnPcFortificationNeedReady"), taskId = "root.offense.pick.fortify" },
-                new() { depth = 4, type = "PrimitiveTask", advisor = "Militaristic", completionCondition = Cond("Global.Never"), taskId = "root.offense.pick.fortify.leaf", preferredParameters = new() { "Militaristic.OwnPcFortificationNeed" } },
+                new() { depth = 4, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.offense.pick.fortify.leaf", preferredParameters = new() { "Militaristic.OwnPcFortificationNeed" } },
+                new() { depth = 3, type = "Method", precondition = Cond("Disruption.EnemyPressureReady"), taskId = "root.offense.pick.disrupt" },
+                new() { depth = 4, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.offense.pick.disrupt.leaf", preferredParameters = new() { "Disruption.EnemyPressure" } },
                 new() { depth = 3, type = "Method", precondition = Cond("Global.Always"), taskId = "root.offense.pick.attack" },
-                new() { depth = 4, type = "PrimitiveTask", advisor = "Militaristic", completionCondition = Cond("Global.Never"), taskId = "root.offense.pick.attack.leaf", preferredParameters = new() { "Militaristic.MilitaryEdge", "Militaristic.EnemyPressure" } },
+                new() { depth = 4, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.offense.pick.attack.leaf", preferredParameters = new() { "Militaristic.MilitaryEdge", "Militaristic.EnemyPressure", "Logistics.InterceptEnemy" } },
 
-                new() { depth = 1, type = "Method", precondition = Cond("Magic.Viable"), taskId = "root.magic" },
-                new() { depth = 2, type = "CompoundTask", taskId = "root.magic.pick" },
-                new() { depth = 3, type = "Method", precondition = Cond("Magic.ArtifactScarcityReady"), taskId = "root.magic.pick.retrieve" },
-                new() { depth = 4, type = "PrimitiveTask", advisor = "Magic", completionCondition = Cond("Global.Never"), taskId = "root.magic.pick.retrieve.leaf", preferredParameters = new() { "Magic.ArtifactScarcity", "Magic.HiddenArtifacts" } },
-                new() { depth = 3, type = "Method", precondition = Cond("Magic.SpellOpportunityReady"), taskId = "root.magic.pick.cast" },
-                new() { depth = 4, type = "PrimitiveTask", advisor = "Magic", completionCondition = Cond("Global.Never"), taskId = "root.magic.pick.cast.leaf", preferredParameters = new() { "Magic.SpellOpportunity", "Magic.MageStrength" } },
-                new() { depth = 3, type = "Method", precondition = Cond("Global.Always"), taskId = "root.magic.pick.fallback" },
-                new() { depth = 4, type = "PrimitiveTask", advisor = "Magic", completionCondition = Cond("Global.Never"), taskId = "root.magic.pick.fallback.leaf" },
+                new() { depth = 1, type = "Method", precondition = Cond("Intelligence.HighValueEnemyCharacterReady", "Intelligence.EnemyPcVulnerabilityReady"), taskId = "root.intelligence.offense" },
+                new() { depth = 2, type = "CompoundTask", taskId = "root.intelligence.offense.pick" },
+                new() { depth = 3, type = "Method", precondition = Cond("Intelligence.HighValueEnemyCharacterReady"), taskId = "root.intelligence.offense.pick.highvalue" },
+                new() { depth = 4, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.intelligence.offense.pick.highvalue.leaf", preferredParameters = new() { "Intelligence.HighValueEnemyCharacter", "Logistics.ReachEnemyCharacter" } },
+                new() { depth = 3, type = "Method", precondition = Cond("Intelligence.EnemyPcVulnerabilityReady"), taskId = "root.intelligence.offense.pick.sabotage" },
+                new() { depth = 4, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.intelligence.offense.pick.sabotage.leaf", preferredParameters = new() { "Intelligence.EnemyPcVulnerability", "Logistics.InterceptEnemy" } },
+                new() { depth = 3, type = "Method", precondition = Cond("Global.Always"), taskId = "root.intelligence.offense.pick.fallback" },
+                new() { depth = 4, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.intelligence.offense.pick.fallback.leaf" },
 
-                new() { depth = 1, type = "Method", precondition = Cond("Diplomatic.Viable"), taskId = "root.diplomacy" },
-                new() { depth = 2, type = "CompoundTask", taskId = "root.diplomacy.pick" },
-                new() { depth = 3, type = "Method", precondition = Cond("Diplomatic.NplRecruitmentReady"), taskId = "root.diplomacy.pick.recruit" },
-                new() { depth = 4, type = "PrimitiveTask", advisor = "Diplomatic", completionCondition = Cond("Global.Never"), taskId = "root.diplomacy.pick.recruit.leaf", preferredParameters = new() { "Diplomatic.NplRecruitment" } },
-                new() { depth = 3, type = "Method", precondition = Cond("Diplomatic.EnemyPcOpportunityReady"), taskId = "root.diplomacy.pick.flip" },
-                new() { depth = 4, type = "PrimitiveTask", advisor = "Diplomatic", completionCondition = Cond("Global.Never"), taskId = "root.diplomacy.pick.flip.leaf", preferredParameters = new() { "Diplomatic.EnemyPcOpportunity" } },
-                new() { depth = 3, type = "Method", precondition = Cond("Diplomatic.OwnPcLoyaltyRiskReady"), taskId = "root.diplomacy.pick.shore" },
-                new() { depth = 4, type = "PrimitiveTask", advisor = "Diplomatic", completionCondition = Cond("Global.Never"), taskId = "root.diplomacy.pick.shore.leaf", preferredParameters = new() { "Diplomatic.OwnPcLoyaltyRisk" } },
-                new() { depth = 3, type = "Method", precondition = Cond("Global.Always"), taskId = "root.diplomacy.pick.fallback" },
-                new() { depth = 4, type = "PrimitiveTask", advisor = "Diplomatic", completionCondition = Cond("Global.Never"), taskId = "root.diplomacy.pick.fallback.leaf" },
+                new() { depth = 1, type = "Method", precondition = Cond("Diplomatic.NplsNearReady"), taskId = "root.diplomacy.nplsnear" },
+                new() { depth = 2, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.diplomacy.nplsnear.leaf", preferredParameters = new() { "Diplomatic.NplRecruitment" } },
 
-                new() { depth = 1, type = "Method", precondition = Cond("Intelligence.Viable"), taskId = "root.intelligence" },
-                new() { depth = 2, type = "CompoundTask", taskId = "root.intelligence.pick" },
-                new() { depth = 3, type = "Method", precondition = Cond("Intelligence.HighValueEnemyCharacterReady"), taskId = "root.intelligence.pick.highvalue" },
-                new() { depth = 4, type = "PrimitiveTask", advisor = "Intelligence", completionCondition = Cond("Global.Never"), taskId = "root.intelligence.pick.highvalue.leaf", preferredParameters = new() { "Intelligence.HighValueEnemyCharacter" } },
-                new() { depth = 3, type = "Method", precondition = Cond("Intelligence.EnemyPcVulnerabilityReady"), taskId = "root.intelligence.pick.sabotage" },
-                new() { depth = 4, type = "PrimitiveTask", advisor = "Intelligence", completionCondition = Cond("Global.Never"), taskId = "root.intelligence.pick.sabotage.leaf", preferredParameters = new() { "Intelligence.EnemyPcVulnerability" } },
-                new() { depth = 3, type = "Method", precondition = Cond("Global.Always"), taskId = "root.intelligence.pick.fallback" },
-                new() { depth = 4, type = "PrimitiveTask", advisor = "Intelligence", completionCondition = Cond("Global.Never"), taskId = "root.intelligence.pick.fallback.leaf" },
+                new() { depth = 1, type = "Method", precondition = Cond("Diplomatic.NplsMidReady"), taskId = "root.diplomacy.nplsmid" },
+                new() { depth = 2, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.diplomacy.nplsmid.leaf", preferredParameters = new() { "Diplomatic.NplRecruitment" } },
 
-                new() { depth = 1, type = "Method", precondition = Cond("Logistics.Viable"), taskId = "root.logistics" },
-                new() { depth = 2, type = "CompoundTask", taskId = "root.logistics.pick" },
-                new() { depth = 3, type = "Method", precondition = Cond("Logistics.ReachNpcReady"), taskId = "root.logistics.pick.reachnpc" },
-                new() { depth = 4, type = "PrimitiveTask", advisor = "Logistics", completionCondition = Cond("Global.Never"), taskId = "root.logistics.pick.reachnpc.leaf", preferredParameters = new() { "Logistics.ReachNpc" } },
-                new() { depth = 3, type = "Method", precondition = Cond("Logistics.InterceptEnemyReady"), taskId = "root.logistics.pick.intercept" },
-                new() { depth = 4, type = "PrimitiveTask", advisor = "Logistics", completionCondition = Cond("Global.Never"), taskId = "root.logistics.pick.intercept.leaf", preferredParameters = new() { "Logistics.InterceptEnemy" } },
-                new() { depth = 3, type = "Method", precondition = Cond("Logistics.ReachEnemyCharacterReady"), taskId = "root.logistics.pick.reachcharacter" },
-                new() { depth = 4, type = "PrimitiveTask", advisor = "Logistics", completionCondition = Cond("Global.Never"), taskId = "root.logistics.pick.reachcharacter.leaf", preferredParameters = new() { "Logistics.ReachEnemyCharacter" } },
-                new() { depth = 3, type = "Method", precondition = Cond("Logistics.HealingNeedReady"), taskId = "root.logistics.pick.heal" },
-                new() { depth = 4, type = "PrimitiveTask", advisor = "Logistics", completionCondition = Cond("Global.Never"), taskId = "root.logistics.pick.heal.leaf", preferredParameters = new() { "Logistics.HealingNeed" } },
-                new() { depth = 3, type = "Method", precondition = Cond("Global.Always"), taskId = "root.logistics.pick.fallback" },
-                new() { depth = 4, type = "PrimitiveTask", advisor = "Logistics", completionCondition = Cond("Global.Never"), taskId = "root.logistics.pick.fallback.leaf" },
+                new() { depth = 1, type = "Method", precondition = Cond("Diplomatic.EnemyPcOpportunityNearReady"), taskId = "root.diplomacy.enemiesnear" },
+                new() { depth = 2, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.diplomacy.enemiesnear.leaf", preferredParameters = new() { "Diplomatic.EnemyPcOpportunity" } },
 
-                new() { depth = 1, type = "Method", precondition = Cond("Disruption.Viable"), taskId = "root.disruption" },
-                new() { depth = 2, type = "PrimitiveTask", advisor = "Disruption", completionCondition = Cond("Global.Never"), taskId = "root.disruption.leaf", preferredParameters = new() { "Disruption.EnemyPressure" } },
+                new() { depth = 1, type = "Method", precondition = Cond("Diplomatic.EnemyPcOpportunityMidReady"), taskId = "root.diplomacy.enemiesmid" },
+                new() { depth = 2, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.diplomacy.enemiesmid.leaf", preferredParameters = new() { "Diplomatic.EnemyPcOpportunity" } },
+
+                new() { depth = 1, type = "Method", precondition = Cond("Diplomatic.OwnPcLoyaltyRiskReady"), taskId = "root.diplomacy.shore" },
+                new() { depth = 2, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.diplomacy.shore.leaf", preferredParameters = new() { "Diplomatic.OwnPcLoyaltyRisk" } },
+
+                new() { depth = 1, type = "Method", precondition = Cond("Artifacts.ArtifactTransferReady"), taskId = "root.artifacts.surplus" },
+                new() { depth = 2, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.artifacts.surplus.leaf", preferredParameters = new() { "Artifacts.ArtifactTransfer" } },
+
+                new() { depth = 1, type = "Method", precondition = Cond("Global.Always"), taskId = "root.militaristic.build" },
+                new() { depth = 2, type = "CompoundTask", taskId = "root.militaristic.build.pick" },
+                new() { depth = 3, type = "Method", precondition = Cond("Logistics.HealingNeedReady"), taskId = "root.militaristic.build.pick.heal" },
+                new() { depth = 4, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.militaristic.build.pick.heal.leaf", preferredParameters = new() { "Logistics.HealingNeed" } },
+                new() { depth = 3, type = "Method", precondition = Cond("Militaristic.OwnPcFortificationNeedReady"), taskId = "root.militaristic.build.pick.fortify" },
+                new() { depth = 4, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.militaristic.build.pick.fortify.leaf", preferredParameters = new() { "Militaristic.OwnPcFortificationNeed" } },
+                new() { depth = 3, type = "Method", precondition = Cond("Global.Always"), taskId = "root.militaristic.build.pick.conscript" },
+                new() { depth = 4, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.militaristic.build.pick.conscript.leaf", preferredParameters = new() { "Militaristic.OwnPcDefenderNeed" } },
+
+                new() { depth = 1, type = "Method", precondition = Cond("Global.Always"), taskId = "root.intelligence.build" },
+                new() { depth = 2, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.intelligence.build.leaf", preferredParameters = new() { "Intelligence.EnemyCharacter", "Logistics.ReachNpc" } },
 
                 new() { depth = 1, type = "Method", precondition = Cond("Global.Always"), taskId = "root.fallback" },
-                new() { depth = 2, type = "PrimitiveTask", advisor = string.Empty, completionCondition = Cond("Global.Never"), taskId = "root.fallback.leaf" }
+                new() { depth = 2, type = "PrimitiveTask", completionCondition = Cond("Global.Never"), taskId = "root.fallback.leaf" }
             }
         };
     }
@@ -1262,32 +1310,45 @@ public class AIWidgetWindow : EditorWindow
     // MouseDrag/MouseUp and hit-test against Rects captured fresh every OnGUI call.
     // ------------------------------------------------------------------
 
-    private AdvisorType ResolvedAdvisorFor(string cardKey, AdvisorType defaultAdvisor) =>
-        cardProfiles.TryGetValue(cardKey, out CardAdvisorProfile p)
-            && !string.IsNullOrWhiteSpace(p.advisor)
-            && Enum.TryParse(p.advisor, true, out AdvisorType advisor)
-            ? advisor
-            : defaultAdvisor;
+    // A card's Card Board group membership is derived live from which parameter-name prefixes
+    // its own configured utilityParameters touch — there is no stored "advisor" field to read.
+    // A card can belong to more than one group, or none (Unassigned) if it has no parameters
+    // configured yet.
+    private static List<string> ResolvedGroupsFor(string cardKey, Dictionary<string, CardParameterProfile> profiles)
+    {
+        if (!profiles.TryGetValue(cardKey, out CardParameterProfile p) || p.utilityParameters == null || p.utilityParameters.Count == 0)
+        {
+            return new List<string> { UnassignedGroup };
+        }
 
-    private static bool IsProfileEmpty(CardAdvisorProfile p) =>
-        p == null || (string.IsNullOrWhiteSpace(p.advisor) && Mathf.Approximately(p.scoreBonus, 0f)
+        List<string> groups = p.utilityParameters
+            .Where(m => m != null && !string.IsNullOrWhiteSpace(m.parameter) && m.parameter.Contains('.'))
+            .Select(m => m.parameter.Split('.')[0])
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+        return groups.Count > 0 ? groups : new List<string> { UnassignedGroup };
+    }
+
+    private List<string> ResolvedGroupsFor(string cardKey) => ResolvedGroupsFor(cardKey, cardProfiles);
+
+    private static bool IsProfileEmpty(CardParameterProfile p) =>
+        p == null || (Mathf.Approximately(p.scoreBonus, 0f)
             && !p.ignoreSituation && (p.utilityParameters == null || p.utilityParameters.Count == 0));
 
-    private void SetOrPruneProfile(string cardKey, CardAdvisorProfile profile)
+    private void SetOrPruneProfile(string cardKey, CardParameterProfile profile)
     {
         if (IsProfileEmpty(profile)) cardProfiles.Remove(cardKey);
         else cardProfiles[cardKey] = profile;
     }
 
-    // Every (card, actionClass) pair the Card Board currently lists, with its coded default
-    // advisor — the flattened view DrawCardBoardBuckets/DrawHtnBiasSimulation count over, now
-    // that advisor assignment is per-card rather than per-action-class.
-    private IEnumerable<(CardUsage card, string actionClass, AdvisorType defaultAdvisor)> AllCardBoardCards()
+    // Every (card, actionClass) pair the Card Board currently lists — the flattened view
+    // DrawCardBoardBuckets/DrawHtnBiasSimulation count over.
+    private IEnumerable<(CardUsage card, string actionClass)> AllCardBoardCards()
     {
-        foreach ((string actionClass, AdvisorType defaultAdvisor) in actionCatalog)
+        foreach (string actionClass in actionCatalog)
         {
             if (!cardsByActionRef.TryGetValue(actionClass, out List<CardUsage> cards)) continue;
-            foreach (CardUsage card in cards) yield return (card, actionClass, defaultAdvisor);
+            foreach (CardUsage card in cards) yield return (card, actionClass);
         }
     }
 
@@ -1309,14 +1370,15 @@ public class AIWidgetWindow : EditorWindow
         EditorGUILayout.Space(4f);
 
         EditorGUILayout.HelpBox(
-            "Drag a row onto a bucket below to set its advisor override — same data the Advisors tab's per-card "
-            + "dropdowns edit, just dragged instead of picked. Drop on \"Unadvised\" to force no advisor; dropping "
-            + "on a card's own coded default clears the override entirely (shown as the colored dot going back to grey).",
+            "Click a bucket below to filter the list to that card type; click it again to show every type. Each "
+            + "card's own Utility AI parameters are edited in the profile editor under its row — the dot color here "
+            + "is just the card's type, it has nothing to do with whether parameters are assigned. Use \"Hide cards "
+            + "with parameters assigned\" to see only the ones still needing attention.",
             MessageType.None);
 
         EditorGUILayout.BeginHorizontal();
         cardBoardSearch = EditorGUILayout.TextField("Filter", cardBoardSearch);
-        cardBoardHideAssigned = GUILayout.Toggle(cardBoardHideAssigned, "Hide already-assigned cards", GUILayout.Width(190f));
+        cardBoardHideAssigned = GUILayout.Toggle(cardBoardHideAssigned, "Hide cards with parameters assigned", GUILayout.Width(260f));
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.Space(6f);
 
@@ -1326,31 +1388,45 @@ public class AIWidgetWindow : EditorWindow
         cardBoardScroll = EditorGUILayout.BeginScrollView(cardBoardScroll);
         DrawCardBoardList();
         EditorGUILayout.EndScrollView();
-
-        HandleCardBoardDragGlobal();
     }
 
+    // Buckets by the card's own real CardData.type — pure navigation, not an assignable
+    // property, so clicking one sets/clears cardBoardTypeFilter rather than accepting a drop.
     private void DrawCardBoardBuckets()
     {
-        cardBoardBucketRects.Clear();
         GUIStyle nameStyle = new(EditorStyles.boldLabel) { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.white } };
         GUIStyle countStyle = new(EditorStyles.miniLabel) { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.white } };
 
-        List<(CardUsage card, string actionClass, AdvisorType defaultAdvisor)> allCards = AllCardBoardCards().ToList();
+        List<(CardUsage card, string actionClass)> allCards = AllCardBoardCards().ToList();
+        List<string> types = allCards
+            .Select(e => string.IsNullOrWhiteSpace(e.card.cardType) ? NoCardType : e.card.cardType)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(t => t, StringComparer.OrdinalIgnoreCase)
+            .ToList();
 
         EditorGUILayout.BeginHorizontal();
-        foreach (AdvisorType advisor in CardBoardBuckets)
+        foreach (string type in types)
         {
-            int count = allCards.Count(e => ResolvedAdvisorFor(AIAdvisorConfig.BuildCardProfileKey(e.card.deckId, e.card.cardId), e.defaultAdvisor) == advisor);
-            Color color = CardBoardBucketColor(advisor);
+            int count = allCards.Count(e => string.Equals(string.IsNullOrWhiteSpace(e.card.cardType) ? NoCardType : e.card.cardType, type, StringComparison.OrdinalIgnoreCase));
+            Color color = CardTypeColor(type);
+            bool selected = string.Equals(cardBoardTypeFilter, type, StringComparison.OrdinalIgnoreCase);
 
             Rect r = GUILayoutUtility.GetRect(0, 46f, GUILayout.ExpandWidth(true));
-            bool hovered = dragPayloadCardKey != null && r.Contains(dragPointerPos);
-            EditorGUI.DrawRect(r, hovered ? Color.Lerp(color, Color.white, 0.35f) : color);
-            GUI.Label(new Rect(r.x, r.y + 4f, r.width, 18f), advisor == AdvisorType.None ? "Unadvised" : advisor.ToString(), nameStyle);
+            EditorGUI.DrawRect(r, selected ? Color.Lerp(color, Color.white, 0.35f) : color);
+            if (selected)
+            {
+                EditorGUI.DrawRect(new Rect(r.x, r.y, r.width, 3f), Color.white);
+            }
+            GUI.Label(new Rect(r.x, r.y + 4f, r.width, 18f), type, nameStyle);
             GUI.Label(new Rect(r.x, r.y + 24f, r.width, 18f), $"{count} card{(count == 1 ? "" : "s")}", countStyle);
 
-            cardBoardBucketRects[advisor] = r;
+            if (Event.current.type == EventType.MouseDown && r.Contains(Event.current.mousePosition))
+            {
+                cardBoardTypeFilter = selected ? string.Empty : type;
+                Event.current.Use();
+                Repaint();
+            }
+
             GUILayout.Space(4f);
         }
         EditorGUILayout.EndHorizontal();
@@ -1359,7 +1435,7 @@ public class AIWidgetWindow : EditorWindow
     private void DrawCardBoardList()
     {
         string filter = cardBoardSearch?.Trim();
-        foreach ((string actionClass, AdvisorType defaultAdvisor) in actionCatalog.OrderBy(e => e.actionClass, StringComparer.OrdinalIgnoreCase))
+        foreach (string actionClass in actionCatalog.OrderBy(e => e, StringComparer.OrdinalIgnoreCase))
         {
             cardsByActionRef.TryGetValue(actionClass, out List<CardUsage> cards);
             bool used = cards != null && cards.Count > 0;
@@ -1375,29 +1451,37 @@ public class AIWidgetWindow : EditorWindow
             {
                 foreach (CardUsage card in cards.OrderBy(c => c.cardName, StringComparer.OrdinalIgnoreCase))
                 {
-                    string cardKey = AIAdvisorConfig.BuildCardProfileKey(card.deckId, card.cardId);
-                    AdvisorType resolved = ResolvedAdvisorFor(cardKey, defaultAdvisor);
-                    if (cardBoardHideAssigned && resolved != AdvisorType.None) continue;
-                    DrawCardBoardRow(card, actionClass, resolved);
+                    if (!string.IsNullOrEmpty(cardBoardTypeFilter))
+                    {
+                        string type = string.IsNullOrWhiteSpace(card.cardType) ? NoCardType : card.cardType;
+                        if (!string.Equals(type, cardBoardTypeFilter, StringComparison.OrdinalIgnoreCase)) continue;
+                    }
+
+                    string cardKey = UtilityAI.BuildCardProfileKey(card.deckId, card.cardId);
+                    List<string> resolved = ResolvedGroupsFor(cardKey);
+                    bool unassigned = resolved.Count == 1 && resolved[0] == UnassignedGroup;
+                    if (cardBoardHideAssigned && !unassigned) continue;
+                    DrawCardBoardRow(card, actionClass, resolved, unassigned);
                 }
                 continue;
             }
 
-            // No printed card uses this action class — there's no card identity to attach a
-            // per-card override to, so this is a read-only display of the coded default only.
-            if (cardBoardHideAssigned && defaultAdvisor != AdvisorType.None) continue;
+            // No printed card uses this action class — nothing to attach a per-card parameter
+            // profile to, so this is a read-only "this action class exists but no card
+            // currently references it" notice. Not subject to the type filter (there's no
+            // CardUsage.cardType to filter by without a card).
+            if (cardBoardHideAssigned || !string.IsNullOrEmpty(cardBoardTypeFilter)) continue;
 
             EditorGUILayout.BeginVertical(weightRowBoxStyle);
 
             EditorGUILayout.BeginHorizontal();
             Rect dotRect = GUILayoutUtility.GetRect(10f, 18f, GUILayout.Width(10f));
-            EditorGUI.DrawRect(dotRect, CardBoardBucketColor(defaultAdvisor));
+            EditorGUI.DrawRect(dotRect, CardTypeColor(NoCardType));
             GUILayout.Space(6f);
 
             GUILayout.Label(ObjectNames.NicifyVariableName(actionClass), weightLabelStyle, GUILayout.Width(200f));
-            GUILayout.Label("(no card references this class)", GUILayout.Width(220f));
+            GUILayout.Label("(no card references this class)", GUILayout.Width(260f));
             GUILayout.FlexibleSpace();
-            GUILayout.Label(defaultAdvisor == AdvisorType.None ? "Unadvised" : defaultAdvisor.ToString(), EditorStyles.miniLabel, GUILayout.Width(90f));
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.LabelField("(no effect text on this card)", weightDescStyle);
@@ -1405,21 +1489,22 @@ public class AIWidgetWindow : EditorWindow
         }
     }
 
-    private void DrawCardBoardRow(CardUsage card, string actionClass, AdvisorType resolved)
+    private void DrawCardBoardRow(CardUsage card, string actionClass, List<string> resolved, bool unassigned)
     {
-        string cardKey = AIAdvisorConfig.BuildCardProfileKey(card.deckId, card.cardId);
-        bool isDragging = string.Equals(dragPayloadCardKey, cardKey, StringComparison.Ordinal);
-        if (isDragging) GUI.color = new Color(1f, 1f, 1f, 0.35f);
+        string cardKey = UtilityAI.BuildCardProfileKey(card.deckId, card.cardId);
         EditorGUILayout.BeginVertical(weightRowBoxStyle);
         EditorGUILayout.BeginHorizontal();
         Rect dotRect = GUILayoutUtility.GetRect(10f, 18f, GUILayout.Width(10f));
-        EditorGUI.DrawRect(dotRect, CardBoardBucketColor(resolved));
+        EditorGUI.DrawRect(dotRect, CardTypeColor(card.cardType));
         GUILayout.Space(6f);
-        GUILayout.Label(card.cardName, weightLabelStyle, GUILayout.Width(220f));
+        GUILayout.Label(card.cardName, weightLabelStyle, GUILayout.Width(260f));
         GUILayout.Label(ObjectNames.NicifyVariableName(actionClass), EditorStyles.miniLabel, GUILayout.Width(180f));
-        GUILayout.Label(string.IsNullOrWhiteSpace(card.cardType) ? "(no type)" : card.cardType, EditorStyles.miniLabel, GUILayout.Width(90f));
+        GUILayout.Label(string.IsNullOrWhiteSpace(card.cardType) ? NoCardType : card.cardType, EditorStyles.miniLabel, GUILayout.Width(90f));
         GUILayout.FlexibleSpace();
-        GUILayout.Label(resolved == AdvisorType.None ? "Unadvised" : resolved.ToString(), EditorStyles.miniLabel, GUILayout.Width(90f));
+        // Assigned/none is orthogonal to the type dot above — spelled out here since color no
+        // longer carries that meaning.
+        GUIStyle statusStyle = unassigned ? BuildWarningLabelStyle() : EditorStyles.miniLabel;
+        GUILayout.Label(unassigned ? "No parameters" : string.Join(", ", resolved), statusStyle, GUILayout.Width(160f));
         bool hasSiblings = cardsByActionRef.TryGetValue(actionClass, out List<CardUsage> siblings) && siblings.Count > 1;
         using (new EditorGUI.DisabledScope(!hasSiblings || !cardProfiles.ContainsKey(cardKey)))
         {
@@ -1432,39 +1517,36 @@ public class AIWidgetWindow : EditorWindow
         EditorGUILayout.LabelField(string.IsNullOrEmpty(card.effect) ? "(no effect text on this card)" : card.effect, weightDescStyle);
         DrawCardUtilityProfile(cardKey, card.deckId, card.cardId, card.cardName, actionClass);
         EditorGUILayout.EndVertical();
-        if (isDragging) GUI.color = Color.white;
-        HandleCardBoardDragSource(GUILayoutUtility.GetLastRect(), cardKey, card.cardName, actionClass);
     }
 
-    // Copies this card's full profile (advisor/bonus/flags/utility params) as an independent
-    // copy onto every other printed card sharing its action class. Cards keep their own rows
-    // after this — nothing at runtime ever shares one.
+    // Copies this card's full profile (bonus/flags/utility params) as an independent copy onto
+    // every other printed card sharing its action class. Cards keep their own rows after this
+    // — nothing at runtime ever shares one.
     private void DuplicateProfileToSiblingCards(string sourceCardKey, string actionClass)
     {
-        if (!cardProfiles.TryGetValue(sourceCardKey, out CardAdvisorProfile source)) return;
+        if (!cardProfiles.TryGetValue(sourceCardKey, out CardParameterProfile source)) return;
         if (!cardsByActionRef.TryGetValue(actionClass, out List<CardUsage> siblings)) return;
 
         List<CardUsage> targets = siblings
-            .Where(c => !string.Equals(AIAdvisorConfig.BuildCardProfileKey(c.deckId, c.cardId), sourceCardKey, StringComparison.Ordinal))
+            .Where(c => !string.Equals(UtilityAI.BuildCardProfileKey(c.deckId, c.cardId), sourceCardKey, StringComparison.Ordinal))
             .ToList();
         if (targets.Count == 0) return;
 
-        int overwriteCount = targets.Count(c => cardProfiles.ContainsKey(AIAdvisorConfig.BuildCardProfileKey(c.deckId, c.cardId)));
-        string message = $"Copy this card's advisor tuning to {targets.Count} other card(s) using {actionClass}"
+        int overwriteCount = targets.Count(c => cardProfiles.ContainsKey(UtilityAI.BuildCardProfileKey(c.deckId, c.cardId)));
+        string message = $"Copy this card's parameter tuning to {targets.Count} other card(s) using {actionClass}"
             + (overwriteCount > 0 ? $" ({overwriteCount} already have their own tuning and will be overwritten)" : "")
             + "?";
         if (!EditorUtility.DisplayDialog("Duplicate Profile", message, "Duplicate", "Cancel")) return;
 
         foreach (CardUsage target in targets)
         {
-            string key = AIAdvisorConfig.BuildCardProfileKey(target.deckId, target.cardId);
-            cardProfiles[key] = new CardAdvisorProfile
+            string key = UtilityAI.BuildCardProfileKey(target.deckId, target.cardId);
+            cardProfiles[key] = new CardParameterProfile
             {
                 deckId = target.deckId,
                 cardId = target.cardId,
                 cardName = target.cardName,
                 actionClass = actionClass,
-                advisor = source.advisor,
                 scoreBonus = source.scoreBonus,
                 ignoreSituation = source.ignoreSituation,
                 utilityParameters = source.utilityParameters?
@@ -1475,26 +1557,42 @@ public class AIWidgetWindow : EditorWindow
         advisorsDirty = true;
     }
 
-    // This is intentionally on Card Board: these are card/action authoring
-    // choices, not Advisor sensing weights. Every value appears verbatim in
-    // AdvisorConfig.json and contributes exactly parameter * multiplier + bonus.
+    // This is intentionally on Card Board: these are card/action authoring choices, not
+    // sensing weights. Every value appears verbatim in UtilityAI.json and contributes exactly
+    // parameter * multiplier + bonus. A card's Card Board group membership (the dot color and
+    // bucket counts above) is entirely derived from this list — there is nothing else to it.
     private void DrawCardUtilityProfile(string cardKey, string deckId, int cardId, string cardName, string actionClass)
     {
-        cardProfiles.TryGetValue(cardKey, out CardAdvisorProfile existing);
+        cardProfiles.TryGetValue(cardKey, out CardParameterProfile existing);
+        float scoreBonus = existing?.scoreBonus ?? 0f;
+        bool ignoreSituation = existing?.ignoreSituation ?? false;
         List<ActionUtilityParameterModifier> modifiers = existing?.utilityParameters
             ?.Select(p => new ActionUtilityParameterModifier { parameter = p.parameter, multiplier = p.multiplier, bonus = p.bonus }).ToList()
             ?? new List<ActionUtilityParameterModifier>();
         bool changedProfile = false;
 
+        // The complete per-card score formula, top to bottom: scoreBonus always applies; the
+        // utility profile list below only applies when Ignore Situation is off. See
+        // UtilityAIContext.ScoreAction for the authoritative implementation.
         EditorGUILayout.Space(6f);
-        EditorGUILayout.LabelField("Utility profile — each line is: parameter × multiplier + bonus", EditorStyles.miniBoldLabel);
+        EditorGUILayout.LabelField("Score = Score bonus + (utility profile below, unless Ignore Situation is on)", EditorStyles.miniBoldLabel);
+        EditorGUILayout.BeginHorizontal();
+        EditorGUI.BeginChangeCheck();
+        scoreBonus = EditorGUILayout.FloatField(new GUIContent("Score bonus", "Flat amount added to this card's score every time it's scored, regardless of board state or Ignore Situation."), scoreBonus, GUILayout.MinWidth(240f));
+        ignoreSituation = EditorGUILayout.ToggleLeft(new GUIContent("Ignore situation", "When on, the entire utility profile below is skipped — this card always scores exactly Score bonus, never anything situational."), ignoreSituation, GUILayout.Width(220f));
+        changedProfile |= EditorGUI.EndChangeCheck();
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.Space(6f);
+        EditorGUILayout.LabelField("Utility profile — each line is: parameter × multiplier + bonus"
+            + (ignoreSituation ? "  (currently ignored — Ignore Situation is on)" : ""), EditorStyles.miniBoldLabel);
         foreach (ActionUtilityParameterModifier modifier in modifiers.ToList())
         {
             EditorGUILayout.BeginVertical(weightRowBoxStyle);
             EditorGUI.BeginChangeCheck();
-            int index = Mathf.Max(0, AIUtilityParameters.Known.ToList().FindIndex(p => string.Equals(p, modifier.parameter, StringComparison.OrdinalIgnoreCase)));
-            int changed = EditorGUILayout.Popup("Advisor parameter", index, AIUtilityParameters.Known.ToArray());
-            modifier.parameter = AIUtilityParameters.Known[changed];
+            int index = Mathf.Max(0, UtilityAIParameters.Known.ToList().FindIndex(p => string.Equals(p, modifier.parameter, StringComparison.OrdinalIgnoreCase)));
+            int changed = EditorGUILayout.Popup("Utility parameter", index, UtilityAIParameters.Known.ToArray());
+            modifier.parameter = UtilityAIParameters.Known[changed];
             EditorGUILayout.BeginHorizontal();
             modifier.multiplier = EditorGUILayout.FloatField("Multiplier", modifier.multiplier, GUILayout.MinWidth(160f));
             modifier.bonus = EditorGUILayout.FloatField("Bonus", modifier.bonus, GUILayout.MinWidth(160f));
@@ -1510,100 +1608,39 @@ public class AIWidgetWindow : EditorWindow
 
         if (GUILayout.Button("Add utility parameter", GUILayout.Width(180f), GUILayout.Height(24f)))
         {
-            string firstUnused = AIUtilityParameters.Known.FirstOrDefault(p => !modifiers.Any(m => string.Equals(m.parameter, p, StringComparison.OrdinalIgnoreCase)))
-                ?? AIUtilityParameters.Known[0];
+            string firstUnused = UtilityAIParameters.Known.FirstOrDefault(p => !modifiers.Any(m => string.Equals(m.parameter, p, StringComparison.OrdinalIgnoreCase)))
+                ?? UtilityAIParameters.Known[0];
             modifiers.Add(new ActionUtilityParameterModifier { parameter = firstUnused, multiplier = 1f, bonus = 0f });
             changedProfile = true;
         }
 
-        CardAdvisorProfile profile = existing ?? new CardAdvisorProfile { deckId = deckId, cardId = cardId, cardName = cardName, actionClass = actionClass };
+        CardParameterProfile profile = existing ?? new CardParameterProfile { deckId = deckId, cardId = cardId, cardName = cardName, actionClass = actionClass };
+        profile.scoreBonus = scoreBonus;
+        profile.ignoreSituation = ignoreSituation;
         profile.utilityParameters = modifiers;
         SetOrPruneProfile(cardKey, profile);
         if (changedProfile) advisorsDirty = true;
     }
 
-    private void HandleCardBoardDragSource(Rect rowRect, string cardKey, string cardName, string actionClass)
-    {
-        Event e = Event.current;
-        if (e.type == EventType.MouseDown && e.button == 0 && rowRect.Contains(e.mousePosition))
-        {
-            dragPayloadCardKey = cardKey;
-            dragPayloadCardName = cardName;
-            dragPayloadActionClass = actionClass;
-            dragPointerPos = e.mousePosition;
-            e.Use();
-            Repaint();
-        }
-    }
-
-    private void HandleCardBoardDragGlobal()
-    {
-        if (dragPayloadCardKey == null) return;
-        Event e = Event.current;
-
-        if (e.type == EventType.MouseDrag)
-        {
-            dragPointerPos = e.mousePosition;
-            Repaint();
-        }
-        else if (e.type == EventType.MouseUp)
-        {
-            foreach (KeyValuePair<AdvisorType, Rect> bucket in cardBoardBucketRects)
-            {
-                if (bucket.Value.Contains(e.mousePosition))
-                {
-                    ApplyCardBoardDrop(dragPayloadCardKey, dragPayloadActionClass, bucket.Key);
-                    break;
-                }
-            }
-            dragPayloadCardKey = null;
-            dragPayloadCardName = null;
-            dragPayloadActionClass = null;
-            Repaint();
-        }
-
-        if (dragPayloadCardKey != null)
-        {
-            GUIContent content = new(dragPayloadCardName);
-            Vector2 size = EditorStyles.helpBox.CalcSize(content);
-            Rect labelRect = new(dragPointerPos.x + 12f, dragPointerPos.y + 12f, size.x + 16f, size.y);
-            GUI.Box(labelRect, content, EditorStyles.helpBox);
-        }
-    }
-
-    private void ApplyCardBoardDrop(string cardKey, string actionClass, AdvisorType target)
-    {
-        var entry = actionCatalog.FirstOrDefault(e => string.Equals(e.actionClass, actionClass, StringComparison.Ordinal));
-        if (entry.actionClass == null) return;
-        if (!cardsByActionRef.TryGetValue(actionClass, out List<CardUsage> cards)) return;
-        CardUsage card = cards.FirstOrDefault(c => string.Equals(AIAdvisorConfig.BuildCardProfileKey(c.deckId, c.cardId), cardKey, StringComparison.Ordinal));
-        if (card == null) return;
-
-        cardProfiles.TryGetValue(cardKey, out CardAdvisorProfile profile);
-        profile ??= new CardAdvisorProfile { deckId = card.deckId, cardId = card.cardId, cardName = card.cardName, actionClass = actionClass };
-        profile.advisor = target == entry.defaultAdvisor ? string.Empty : target.ToString();
-        SetOrPruneProfile(cardKey, profile);
-        advisorsDirty = true;
-    }
-
-    // "Shared" holds everything not specific to one advisor (base score, difficulty,
-    // HTN bias bonus, Always/Never, ...). The rest match AdvisorType names exactly, so a
-    // single string doubles as both the toolbar label and (parsed) the AdvisorType filter.
-    private static readonly string[] AdvisorProfileNames = { "Shared", "Militaristic", "Economic", "Diplomatic", "Intelligence", "Magic", "Disruption", "Logistics" };
+    // "Shared" holds everything not specific to one parameter group (base score, difficulty,
+    // HTN bias bonus, Always/Never, ...). The rest match the ParameterGroups names exactly, so
+    // a single string doubles as both the toolbar label and the group filter — there is no
+    // enum backing any of this.
+    private static readonly string[] AdvisorProfileNames = { "Shared", "Militaristic", "Economic", "Diplomatic", "Intelligence", "Artifacts", "Disruption", "Logistics" };
     private int selectedAdvisorProfile;
 
     private void DrawAdvisorsSection()
     {
         EditorGUILayout.HelpBox(
-            "Pick an advisor to see everything about it in one place: its scoring weights, the HTN conditions that read "
-            + "its state, which authored HTN tasks bias toward it, and which cards it owns (with a live score example). "
-            + "\"Shared\" holds the handful of things every advisor uses.\n\n"
+            "Pick a parameter group to see everything about it in one place: its scoring weights, the HTN conditions "
+            + "that read its state, which authored HTN tasks prefer its parameters, and a live score example. "
+            + "\"Shared\" holds the handful of things every group uses.\n\n"
             + $"Saved to {AdvisorAssetPath}.",
             MessageType.Info);
 
-        if (GUILayout.Button("Reset Advisor Tuning To Default", GUILayout.Width(220f)))
+        if (GUILayout.Button("Reset Utility AI Tuning To Default", GUILayout.Width(260f)))
         {
-            foreach (AdvisorWeightDefinition definition in AIAdvisorConfig.KnownWeights)
+            foreach (UtilityWeightDefinition definition in UtilityAI.KnownWeights)
             {
                 advisorWeights[definition.key] = definition.defaultValue;
             }
@@ -1618,7 +1655,7 @@ public class AIWidgetWindow : EditorWindow
         DrawAdvisorProfile(AdvisorProfileNames[selectedAdvisorProfile]);
     }
 
-    // AIAdvisorConfig.Keys groups don't all match an advisor name literally (Affinity.X.*,
+    // UtilityAI.Keys groups don't all match an advisor name literally (Affinity.X.*,
     // Economy.* for Economic, Targeting.* shared by several) — this is the one place that
     // mapping lives, so "which advisor is this weight about" has a single source of truth.
     private static string AdvisorGroupForWeightKey(string key)
@@ -1639,7 +1676,7 @@ public class AIWidgetWindow : EditorWindow
 
     // One HTN Parameter (predicate) this advisor drives: its live simulation, and exactly the
     // weights that feed its formula — nothing more. "Params involved" is hand-mapped to each
-    // predicate's real formula (see AIContext.GetAdvisorViability / HTNRegistry), not derived
+    // predicate's real formula (see UtilityAIContext.GetAdvisorViability / HTNRegistry), not derived
     // from AdvisorGroupForWeightKey's naming-prefix grouping, since a weight like
     // Targeting.EnemyProximityMax genuinely feeds five different advisors' predicates at once —
     // it shows up under every one of them, not just wherever its key prefix happens to live.
@@ -1663,7 +1700,6 @@ public class AIWidgetWindow : EditorWindow
     private void DrawAdvisorProfile(string advisorGroup)
     {
         EnsureAdvisorStyles();
-        Enum.TryParse(advisorGroup, out AdvisorType advisor); // AdvisorType.None if "Shared" or unparseable
 
         scenarioFoldout = EditorGUILayout.Foldout(scenarioFoldout, "Scenario inputs (used by every simulation below)", true, EditorStyles.foldoutHeader);
         if (scenarioFoldout) DrawScenarioInputs();
@@ -1672,10 +1708,10 @@ public class AIWidgetWindow : EditorWindow
         DrawCardUtilityScoreSimulation();
         EditorGUILayout.Space(10f);
 
-        List<HtnParamGroup> groups = BuildHtnParamGroups(advisorGroup, advisor);
+        List<HtnParamGroup> groups = BuildHtnParamGroups(advisorGroup);
         foreach (HtnParamGroup group in groups) DrawHtnParamFoldout(advisorGroup, group);
 
-        List<AdvisorWeightDefinition> other = GetOtherWeights(advisorGroup);
+        List<UtilityWeightDefinition> other = GetOtherWeights(advisorGroup);
         if (other.Count > 0) DrawOtherWeightsFoldout(advisorGroup, other);
     }
 
@@ -1700,8 +1736,8 @@ public class AIWidgetWindow : EditorWindow
         }
 
         (string cardName, string actionClass, string deckId, int cardId) = cards[simUtilityActionIndex - 1];
-        string cardKey = AIAdvisorConfig.BuildCardProfileKey(deckId, cardId);
-        if (!cardProfiles.TryGetValue(cardKey, out CardAdvisorProfile profile) || profile.utilityParameters == null || profile.utilityParameters.Count == 0)
+        string cardKey = UtilityAI.BuildCardProfileKey(deckId, cardId);
+        if (!cardProfiles.TryGetValue(cardKey, out CardParameterProfile profile) || profile.utilityParameters == null || profile.utilityParameters.Count == 0)
         {
             EditorGUILayout.HelpBox($"{cardName} has no Card Board utility parameters: Advisor utility contribution is exactly 0.", MessageType.None);
             return;
@@ -1723,59 +1759,65 @@ public class AIWidgetWindow : EditorWindow
 
     private float SimulateUtilityParameter(string parameter)
     {
-        float W(string key) => advisorWeights.TryGetValue(key, out float value) ? value : AIAdvisorConfig.GetDefaultWeight(key);
+        float W(string key) => advisorWeights.TryGetValue(key, out float value) ? value : UtilityAI.GetDefaultWeight(key);
         float enemyPressure = Mathf.Max(0f, W(K.EnemyProximityMax) - simEnemyDistance);
         return parameter switch
         {
-            AIUtilityParameters.MilitaristicEnemyPressure => enemyPressure,
-            AIUtilityParameters.MilitaristicMilitaryEdge => !simLeadingArmy ? W(K.NoArmyPenalty) : MilitaristicEdge(W),
-            AIUtilityParameters.EconomicLiquidWealth => simGoldBuffer + simResourceNetWorth,
-            AIUtilityParameters.DiplomaticIndirectSafety => SimulatedOutmatched() ? W(K.DiplomaticOutmatchedBonus) : 0f,
-            AIUtilityParameters.DiplomaticEnemyPressure => enemyPressure,
-            AIUtilityParameters.DiplomaticEmissaryStrength => simEmissary,
-            AIUtilityParameters.IntelligenceEnemyCharacter => Mathf.Max(0f, W(K.EnemyCharacterProximityMax) - simEnemyCharacterDistance),
-            AIUtilityParameters.IntelligenceIndirectSafety => SimulatedOutmatched() ? W(K.IntelligenceOutmatchedBonus) : 0f,
-            AIUtilityParameters.IntelligenceEnemyPressure => enemyPressure,
-            AIUtilityParameters.IntelligenceAgentStrength => simAgent,
-            AIUtilityParameters.MagicArtifactScarcity => (1f - Mathf.Clamp01(simArtifactShare)) * W(K.ArtifactScarcityWeight),
-            AIUtilityParameters.MagicArtifactTransfer => 0f,
-            AIUtilityParameters.MagicEnemyPressure => enemyPressure,
-            AIUtilityParameters.MagicHiddenArtifacts => simHiddenArtifacts,
-            AIUtilityParameters.MagicMageStrength => simMage,
-            AIUtilityParameters.LogisticsReachNpc => Mathf.Max(0f, W(K.LogisticsProximityMax) - simNpcDistance * W(K.LogisticsDistancePenaltyPerHex)),
-            AIUtilityParameters.LogisticsInterceptEnemy => Mathf.Max(0f, W(K.LogisticsProximityMax) - simEnemyDistance * W(K.LogisticsDistancePenaltyPerHex)),
-            AIUtilityParameters.LogisticsReachEnemyCharacter => Mathf.Max(0f, W(K.LogisticsProximityMax) - simEnemyCharacterDistance * W(K.LogisticsDistancePenaltyPerHex)),
-            AIUtilityParameters.LogisticsHealingNeed => simWoundedAllies,
-            AIUtilityParameters.DisruptionEnemyPressure => enemyPressure,
-            AIUtilityParameters.MagicSpellOpportunity => simSpellsAvailable,
-            AIUtilityParameters.MilitaristicOwnPcFortificationNeed => Mathf.Max(0f, W(K.MilitaristicOwnPcFortificationProximityMax) - simOwnPcFortificationDistance),
-            AIUtilityParameters.DiplomaticNplRecruitment => Mathf.Max(0f, W(K.DiplomaticNplRecruitmentProximityMax) - simNplRecruitmentDistance),
+            UtilityAIParameters.MilitaristicEnemyPressure => enemyPressure,
+            UtilityAIParameters.MilitaristicMilitaryEdge => !simLeadingArmy ? W(K.NoArmyPenalty) : MilitaristicEdge(W),
+            UtilityAIParameters.EconomicLiquidWealth => simGoldBuffer + simResourceNetWorth,
+            UtilityAIParameters.DiplomaticIndirectSafety => SimulatedOutmatched() ? W(K.DiplomaticOutmatchedBonus) : 0f,
+            UtilityAIParameters.DiplomaticEnemyPressure => enemyPressure,
+            UtilityAIParameters.DiplomaticEmissaryStrength => simEmissary,
+            UtilityAIParameters.IntelligenceEnemyCharacter => Mathf.Max(0f, W(K.EnemyCharacterProximityMax) - simEnemyCharacterDistance),
+            UtilityAIParameters.IntelligenceIndirectSafety => SimulatedOutmatched() ? W(K.IntelligenceOutmatchedBonus) : 0f,
+            UtilityAIParameters.IntelligenceEnemyPressure => enemyPressure,
+            UtilityAIParameters.IntelligenceAgentStrength => simAgent,
+            UtilityAIParameters.ArtifactsArtifactScarcity => (1f - Mathf.Clamp01(simArtifactShare)) * W(K.ArtifactScarcityWeight),
+            UtilityAIParameters.ArtifactsArtifactTransfer => 0f,
+            UtilityAIParameters.ArtifactsEnemyPressure => enemyPressure,
+            UtilityAIParameters.ArtifactsHiddenArtifacts => simHiddenArtifacts,
+            UtilityAIParameters.ArtifactsMageStrength => simMage,
+            UtilityAIParameters.LogisticsReachNpc => Mathf.Max(0f, W(K.LogisticsProximityMax) - simNpcDistance * W(K.LogisticsDistancePenaltyPerHex)),
+            UtilityAIParameters.LogisticsInterceptEnemy => Mathf.Max(0f, W(K.LogisticsProximityMax) - simEnemyDistance * W(K.LogisticsDistancePenaltyPerHex)),
+            UtilityAIParameters.LogisticsReachEnemyCharacter => Mathf.Max(0f, W(K.LogisticsProximityMax) - simEnemyCharacterDistance * W(K.LogisticsDistancePenaltyPerHex)),
+            UtilityAIParameters.LogisticsHealingNeed => simWoundedAllies,
+            UtilityAIParameters.DisruptionEnemyPressure => enemyPressure,
+            UtilityAIParameters.MilitaristicDuelAdvantage => simDuelAdvantage,
+            UtilityAIParameters.MilitaristicSongDuelAdvantage => simSongDuelAdvantage,
+            UtilityAIParameters.DiplomaticNplScarcity => Mathf.Max(0f, W(K.DiplomaticLowNplsCountAtMost) - simUnrecruitedNplCount),
+            UtilityAIParameters.MilitaristicOwnPcFortificationNeed => Mathf.Max(0f, W(K.MilitaristicOwnPcFortificationProximityMax) - simOwnPcFortificationDistance),
+            UtilityAIParameters.DiplomaticNplRecruitment => Mathf.Max(0f, W(K.DiplomaticNplRecruitmentProximityMax) - simNplRecruitmentDistance),
             // Same formula as MilitaristicOwnPcFortificationNeed above — see the constant's doc
             // comment in AdvisorConfig.cs.
-            AIUtilityParameters.MilitaristicOwnPcDefenderNeed => Mathf.Max(0f, W(K.MilitaristicOwnPcFortificationProximityMax) - simOwnPcFortificationDistance),
-            AIUtilityParameters.EconomicMithrilInsufficient => Mathf.Max(0f, W(K.EconomicMithrilInsufficientBelow) - simMithrilAmount),
-            AIUtilityParameters.EconomicMithrilSurplus => Mathf.Max(0f, simMithrilAmount - W(K.EconomicMithrilSurplusAbove)),
-            AIUtilityParameters.EconomicSteelInsufficient => Mathf.Max(0f, W(K.EconomicSteelInsufficientBelow) - simSteelAmount),
-            AIUtilityParameters.EconomicSteelSurplus => Mathf.Max(0f, simSteelAmount - W(K.EconomicSteelSurplusAbove)),
-            AIUtilityParameters.EconomicIronInsufficient => Mathf.Max(0f, W(K.EconomicIronInsufficientBelow) - simIronAmount),
-            AIUtilityParameters.EconomicIronSurplus => Mathf.Max(0f, simIronAmount - W(K.EconomicIronSurplusAbove)),
-            AIUtilityParameters.EconomicMountsInsufficient => Mathf.Max(0f, W(K.EconomicMountsInsufficientBelow) - simMountsAmount),
-            AIUtilityParameters.EconomicMountsSurplus => Mathf.Max(0f, simMountsAmount - W(K.EconomicMountsSurplusAbove)),
-            AIUtilityParameters.EconomicTimberInsufficient => Mathf.Max(0f, W(K.EconomicTimberInsufficientBelow) - simTimberAmount),
-            AIUtilityParameters.EconomicTimberSurplus => Mathf.Max(0f, simTimberAmount - W(K.EconomicTimberSurplusAbove)),
-            AIUtilityParameters.EconomicLeatherInsufficient => Mathf.Max(0f, W(K.EconomicLeatherInsufficientBelow) - simLeatherAmount),
-            AIUtilityParameters.EconomicLeatherSurplus => Mathf.Max(0f, simLeatherAmount - W(K.EconomicLeatherSurplusAbove)),
-            AIUtilityParameters.EconomicGoldInsufficient => Mathf.Max(0f, W(K.EconomyCriticalBelow) - simGoldBuffer),
-            AIUtilityParameters.EconomicGoldSurplus => Mathf.Max(0f, simGoldBuffer - W(K.EconomyStableBelow)),
+            UtilityAIParameters.MilitaristicOwnPcDefenderNeed => Mathf.Max(0f, W(K.MilitaristicOwnPcFortificationProximityMax) - simOwnPcFortificationDistance),
+            // Deviation from this leader's deck-required share (simMithrilShare etc.), not a
+            // flat unit threshold — mirrors UtilityAIContext.GetResourceInsufficientScore/
+            // GetResourceSurplusScore. The per-material weight now scales a percentage-point
+            // deviation rather than marking an absolute unit floor/ceiling.
+            UtilityAIParameters.EconomicMithrilInsufficient => Mathf.Max(0f, simMithrilShare - SimulatedResourceShare(simMithrilAmount)) * 100f * W(K.EconomicMithrilInsufficientBelow),
+            UtilityAIParameters.EconomicMithrilSurplus => Mathf.Max(0f, SimulatedResourceShare(simMithrilAmount) - simMithrilShare) * 100f * W(K.EconomicMithrilSurplusAbove),
+            UtilityAIParameters.EconomicSteelInsufficient => Mathf.Max(0f, simSteelShare - SimulatedResourceShare(simSteelAmount)) * 100f * W(K.EconomicSteelInsufficientBelow),
+            UtilityAIParameters.EconomicSteelSurplus => Mathf.Max(0f, SimulatedResourceShare(simSteelAmount) - simSteelShare) * 100f * W(K.EconomicSteelSurplusAbove),
+            UtilityAIParameters.EconomicIronInsufficient => Mathf.Max(0f, simIronShare - SimulatedResourceShare(simIronAmount)) * 100f * W(K.EconomicIronInsufficientBelow),
+            UtilityAIParameters.EconomicIronSurplus => Mathf.Max(0f, SimulatedResourceShare(simIronAmount) - simIronShare) * 100f * W(K.EconomicIronSurplusAbove),
+            UtilityAIParameters.EconomicMountsInsufficient => Mathf.Max(0f, simMountsShare - SimulatedResourceShare(simMountsAmount)) * 100f * W(K.EconomicMountsInsufficientBelow),
+            UtilityAIParameters.EconomicMountsSurplus => Mathf.Max(0f, SimulatedResourceShare(simMountsAmount) - simMountsShare) * 100f * W(K.EconomicMountsSurplusAbove),
+            UtilityAIParameters.EconomicTimberInsufficient => Mathf.Max(0f, simTimberShare - SimulatedResourceShare(simTimberAmount)) * 100f * W(K.EconomicTimberInsufficientBelow),
+            UtilityAIParameters.EconomicTimberSurplus => Mathf.Max(0f, SimulatedResourceShare(simTimberAmount) - simTimberShare) * 100f * W(K.EconomicTimberSurplusAbove),
+            UtilityAIParameters.EconomicLeatherInsufficient => Mathf.Max(0f, simLeatherShare - SimulatedResourceShare(simLeatherAmount)) * 100f * W(K.EconomicLeatherInsufficientBelow),
+            UtilityAIParameters.EconomicLeatherSurplus => Mathf.Max(0f, SimulatedResourceShare(simLeatherAmount) - simLeatherShare) * 100f * W(K.EconomicLeatherSurplusAbove),
+            UtilityAIParameters.EconomicGoldInsufficient => Mathf.Max(0f, W(K.EconomyCriticalBelow) - simGoldBuffer),
+            UtilityAIParameters.EconomicGoldSurplus => Mathf.Max(0f, simGoldBuffer - W(K.EconomyStableBelow)),
             _ => 0f
         };
     }
 
-    // Hand-mapped: which HTN predicates does this advisor drive, and which weight keys does
-    // each predicate's real formula actually read? See AIContext.GetAdvisorViability,
-    // AIContext.IsEnemyNear/IsOutmatched, and HTNRegistry's predicate lambdas for the source
-    // of truth this mirrors.
-    private List<HtnParamGroup> BuildHtnParamGroups(string advisorGroup, AdvisorType advisor)
+    // Hand-mapped: which HTN predicates does this group drive, and which weight keys does
+    // each predicate's real formula actually read? See UtilityAIContext's named
+    // GetMilitaristicViability/GetIntelligenceViability/etc. methods, IsEnemyNear/IsOutmatched,
+    // and HTNRegistry's predicate lambdas for the source of truth this mirrors.
+    private List<HtnParamGroup> BuildHtnParamGroups(string advisorGroup)
     {
         List<HtnParamGroup> groups = new();
 
@@ -1794,9 +1836,9 @@ public class AIWidgetWindow : EditorWindow
             return groups;
         }
 
-        switch (advisor)
+        switch (advisorGroup)
         {
-            case AdvisorType.Militaristic:
+            case "Militaristic":
                 groups.Add(new HtnParamGroup
                 {
                     title = "Militaristic.EnemyNear",
@@ -1823,13 +1865,23 @@ public class AIWidgetWindow : EditorWindow
                 groups.Add(new HtnParamGroup
                 {
                     title = "Militaristic.Viable",
-                    description = "True when Militaristic's viability (enemy proximity + army edge) is above its threshold — the HTN switches to an offense Method.",
+                    description = "True when Militaristic's viability (enemy proximity + army edge) is above its threshold. Not used by the default HTN tree (superseded by Militaristic.OffenseWinRatioReady) — kept for a hand-authored Strategies.json.",
                     weightKeys = new[] { K.EnemyProximityMax, K.NoArmyPenalty, K.FarTargetPenalty, K.MilitaristicViabilityThreshold },
-                    drawSimulation = () => DrawViableSimulation("Militaristic", AdvisorType.Militaristic)
+                    drawSimulation = () => DrawViableSimulation("Militaristic")
                 });
+                groups.Add(new HtnParamGroup
+                {
+                    title = "Militaristic.OffenseWinRatioReady",
+                    description = "True when not in danger AND this character's army offence is at least Militaristic.MinWinRatioToAttack times the nearest enemy's estimated strength — gates root.offense in the default HTN strategy, replacing the old fuzzy Militaristic.Viable gate so a losing/marginal matchup never routes into Attack.",
+                    weightKeys = new[] { K.MilitaristicMinWinRatioToAttack }
+                });
+                AddDirectUtilityGroup(groups, "Militaristic.DuelAdvantage", "Militaristic.DuelOpportunityReady", "This character's estimated Duel.EstimateDuelScore minus the best eligible opponent's — signed, so a losing matchup contributes negatively. Gates the ImmediateDanger/Danger duel pick branches in the default HTN strategy.",
+                    K.MilitaristicDuelSafetyMargin);
+                AddDirectUtilityGroup(groups, "Militaristic.SongDuelAdvantage", "Militaristic.SongDuelOpportunityReady", "Same as Militaristic.DuelAdvantage, for Battle of Songs (mage-vs-mage). Gates the ImmediateDanger/Danger song-duel pick branches in the default HTN strategy.",
+                    K.MilitaristicSongDuelSafetyMargin);
                 break;
 
-            case AdvisorType.Economic:
+            case "Economic":
                 groups.Add(new HtnParamGroup
                 {
                     title = "Economic Tier (Critical / Weak / Stable / Surplus)",
@@ -1837,29 +1889,29 @@ public class AIWidgetWindow : EditorWindow
                     weightKeys = new[] { K.EconomyCriticalBelow, K.EconomyWeakBelow, K.EconomyStableBelow },
                     drawSimulation = DrawEconomicTierSimulation
                 });
-                AddDirectUtilityGroup(groups, "Economic.MithrilInsufficient", "Economic.MithrilReady", "max(0, Economic.MithrilInsufficientBelow − stored mithril). Biases toward BuyMithril. Gates root.recover.pick.mithril in the default HTN strategy.",
+                AddDirectUtilityGroup(groups, "Economic.MithrilInsufficient", "Economic.MithrilReady", "max(0, deck's target mithril share − this leader's current mithril share of its stockpile) × 100 × Economic.MithrilInsufficientBelow (now a deviation scale, not a unit floor). Deck target share comes from NationBlackboard — sum of mithrilRequired across the leader's whole deck, normalized. Biases toward BuyMithril. Gates root.recover.pick.mithril in the default HTN strategy.",
                     K.EconomicMithrilInsufficientBelow);
-                AddDirectUtilityGroup(groups, "Economic.MithrilSurplus", "Economic.MithrilReady", "max(0, stored mithril − Economic.MithrilSurplusAbove). Biases toward SellMithril. Gates root.recover.pick.mithril in the default HTN strategy.",
+                AddDirectUtilityGroup(groups, "Economic.MithrilSurplus", "Economic.MithrilReady", "max(0, current mithril share − deck's target mithril share) × 100 × Economic.MithrilSurplusAbove (now a deviation scale, not a unit ceiling). Biases toward SellMithril. Gates root.recover.pick.mithril in the default HTN strategy.",
                     K.EconomicMithrilSurplusAbove);
-                AddDirectUtilityGroup(groups, "Economic.SteelInsufficient", "Economic.SteelReady", "max(0, Economic.SteelInsufficientBelow − stored steel). Biases toward BuySteel. Gates root.recover.pick.steel in the default HTN strategy.",
+                AddDirectUtilityGroup(groups, "Economic.SteelInsufficient", "Economic.SteelReady", "max(0, deck's target steel share − current steel share) × 100 × Economic.SteelInsufficientBelow (deviation scale). Biases toward BuySteel. Gates root.recover.pick.steel in the default HTN strategy.",
                     K.EconomicSteelInsufficientBelow);
-                AddDirectUtilityGroup(groups, "Economic.SteelSurplus", "Economic.SteelReady", "max(0, stored steel − Economic.SteelSurplusAbove). Biases toward SellSteel. Gates root.recover.pick.steel in the default HTN strategy.",
+                AddDirectUtilityGroup(groups, "Economic.SteelSurplus", "Economic.SteelReady", "max(0, current steel share − deck's target steel share) × 100 × Economic.SteelSurplusAbove (deviation scale). Biases toward SellSteel. Gates root.recover.pick.steel in the default HTN strategy.",
                     K.EconomicSteelSurplusAbove);
-                AddDirectUtilityGroup(groups, "Economic.IronInsufficient", "Economic.IronReady", "max(0, Economic.IronInsufficientBelow − stored iron). Biases toward BuyIron. Gates root.recover.pick.iron in the default HTN strategy.",
+                AddDirectUtilityGroup(groups, "Economic.IronInsufficient", "Economic.IronReady", "max(0, deck's target iron share − current iron share) × 100 × Economic.IronInsufficientBelow (deviation scale). Biases toward BuyIron. Gates root.recover.pick.iron in the default HTN strategy.",
                     K.EconomicIronInsufficientBelow);
-                AddDirectUtilityGroup(groups, "Economic.IronSurplus", "Economic.IronReady", "max(0, stored iron − Economic.IronSurplusAbove). Biases toward SellIron. Gates root.recover.pick.iron in the default HTN strategy.",
+                AddDirectUtilityGroup(groups, "Economic.IronSurplus", "Economic.IronReady", "max(0, current iron share − deck's target iron share) × 100 × Economic.IronSurplusAbove (deviation scale). Biases toward SellIron. Gates root.recover.pick.iron in the default HTN strategy.",
                     K.EconomicIronSurplusAbove);
-                AddDirectUtilityGroup(groups, "Economic.MountsInsufficient", "Economic.MountsReady", "max(0, Economic.MountsInsufficientBelow − stored mounts). Biases toward BuyMounts. Gates root.recover.pick.mounts in the default HTN strategy.",
+                AddDirectUtilityGroup(groups, "Economic.MountsInsufficient", "Economic.MountsReady", "max(0, deck's target mounts share − current mounts share) × 100 × Economic.MountsInsufficientBelow (deviation scale). Biases toward BuyMounts. Gates root.recover.pick.mounts in the default HTN strategy.",
                     K.EconomicMountsInsufficientBelow);
-                AddDirectUtilityGroup(groups, "Economic.MountsSurplus", "Economic.MountsReady", "max(0, stored mounts − Economic.MountsSurplusAbove). Biases toward SellMounts. Gates root.recover.pick.mounts in the default HTN strategy.",
+                AddDirectUtilityGroup(groups, "Economic.MountsSurplus", "Economic.MountsReady", "max(0, current mounts share − deck's target mounts share) × 100 × Economic.MountsSurplusAbove (deviation scale). Biases toward SellMounts. Gates root.recover.pick.mounts in the default HTN strategy.",
                     K.EconomicMountsSurplusAbove);
-                AddDirectUtilityGroup(groups, "Economic.TimberInsufficient", "Economic.TimberReady", "max(0, Economic.TimberInsufficientBelow − stored timber). Biases toward BuyTimber. Gates root.recover.pick.timber in the default HTN strategy.",
+                AddDirectUtilityGroup(groups, "Economic.TimberInsufficient", "Economic.TimberReady", "max(0, deck's target timber share − current timber share) × 100 × Economic.TimberInsufficientBelow (deviation scale). Biases toward BuyTimber. Gates root.recover.pick.timber in the default HTN strategy.",
                     K.EconomicTimberInsufficientBelow);
-                AddDirectUtilityGroup(groups, "Economic.TimberSurplus", "Economic.TimberReady", "max(0, stored timber − Economic.TimberSurplusAbove). Biases toward SellTimber. Gates root.recover.pick.timber in the default HTN strategy.",
+                AddDirectUtilityGroup(groups, "Economic.TimberSurplus", "Economic.TimberReady", "max(0, current timber share − deck's target timber share) × 100 × Economic.TimberSurplusAbove (deviation scale). Biases toward SellTimber. Gates root.recover.pick.timber in the default HTN strategy.",
                     K.EconomicTimberSurplusAbove);
-                AddDirectUtilityGroup(groups, "Economic.LeatherInsufficient", "Economic.LeatherReady", "max(0, Economic.LeatherInsufficientBelow − stored leather). Biases toward BuyLeather. Gates root.recover.pick.leather in the default HTN strategy.",
+                AddDirectUtilityGroup(groups, "Economic.LeatherInsufficient", "Economic.LeatherReady", "max(0, deck's target leather share − current leather share) × 100 × Economic.LeatherInsufficientBelow (deviation scale). Biases toward BuyLeather. Gates root.recover.pick.leather in the default HTN strategy.",
                     K.EconomicLeatherInsufficientBelow);
-                AddDirectUtilityGroup(groups, "Economic.LeatherSurplus", "Economic.LeatherReady", "max(0, stored leather − Economic.LeatherSurplusAbove). Biases toward SellLeather. Gates root.recover.pick.leather in the default HTN strategy.",
+                AddDirectUtilityGroup(groups, "Economic.LeatherSurplus", "Economic.LeatherReady", "max(0, current leather share − deck's target leather share) × 100 × Economic.LeatherSurplusAbove (deviation scale). Biases toward SellLeather. Gates root.recover.pick.leather in the default HTN strategy.",
                     K.EconomicLeatherSurplusAbove);
                 groups.Add(new HtnParamGroup
                 {
@@ -1875,25 +1927,37 @@ public class AIWidgetWindow : EditorWindow
                 });
                 break;
 
-            case AdvisorType.Diplomatic:
+            case "Diplomatic":
                 AddDirectUtilityGroup(groups, "Diplomatic.IndirectSafety", "Diplomatic.IndirectSafetyReady", "Outmatched-response value. It is either zero or Diplomatic.OutmatchedBonus, using the shared outmatched definition.",
                     K.OutmatchedStrengthRatio, K.DiplomaticOutmatchedBonus, K.DiplomaticIndirectSafetyThreshold);
                 AddDirectUtilityGroup(groups, "Diplomatic.EnemyPcOpportunity", "Diplomatic.EnemyPcOpportunityReady", "Proximity to the nearest enemy-owned PC whose loyalty is below Diplomatic.EnemyPcLoyaltyBelow — an influence-out target. Gates root.diplomacy.pick.flip in the default HTN strategy.",
                     K.DiplomaticEnemyPcLoyaltyBelow, K.DiplomaticEnemyPcOpportunityProximityMax, K.DiplomaticEnemyPcOpportunityThreshold);
                 AddDirectUtilityGroup(groups, "Diplomatic.OwnPcLoyaltyRisk", "Diplomatic.OwnPcLoyaltyRiskReady", "Proximity to the nearest own PC whose loyalty is below Diplomatic.OwnPcLoyaltyBelow — needs influencing up. Gates root.diplomacy.pick.shore in the default HTN strategy.",
                     K.DiplomaticOwnPcLoyaltyBelow, K.DiplomaticOwnPcLoyaltyRiskProximityMax, K.DiplomaticOwnPcLoyaltyRiskThreshold);
-                AddDirectUtilityGroup(groups, "Diplomatic.NplRecruitment", "Diplomatic.NplRecruitmentReady", "Proximity to the nearest NPL capital currently eligible for StateAllegiance (AFriendOrThree) recruitment — same eligibility gate the card itself uses (alignment match + capital's PC card already played), not a fabricated relationship counter. Gates root.diplomacy.pick.recruit in the default HTN strategy.",
+                AddDirectUtilityGroup(groups, "Diplomatic.NplRecruitment", "Diplomatic.NplRecruitmentReady", "Proximity to the nearest NPL capital currently eligible for StateAllegiance (AFriendOrThree) recruitment — same eligibility gate the card itself uses (alignment match + capital's PC card already played), not a fabricated relationship counter. Also gates root.diplomacy.nplsnear/nplsmid (near/mid distance banding) in the default HTN strategy.",
                     K.DiplomaticNplRecruitmentProximityMax, K.DiplomaticNplRecruitmentThreshold);
                 groups.Add(new HtnParamGroup
                 {
+                    title = "Diplomatic.NplScarcity",
+                    description = "max(0, Diplomatic.LowNplsCountAtMost − board-wide count of same-alignment, not-yet-joined NonPlayableLeaders). Board-wide, not proximity-based — gates root.diplomacy.lownpls (a wide-radius recruit push) in the default HTN strategy, the top diplomatic priority.",
+                    weightKeys = new[] { K.DiplomaticLowNplsCountAtMost, K.DiplomaticNplScarcityThreshold }
+                });
+                groups.Add(new HtnParamGroup
+                {
+                    title = "Diplomatic Near/Mid Banding",
+                    description = "Diplomatic.NplsNearReady/NplsMidReady and Diplomatic.EnemyPcOpportunityNearReady/MidReady split the continuous NplRecruitment/EnemyPcOpportunity proximity signals above into two discrete HTN priority tiers (root.diplomacy.nplsnear/nplsmid, root.diplomacy.enemiesnear/enemiesmid) instead of one fading score.",
+                    weightKeys = new[] { K.DiplomaticNplNearDistance, K.DiplomaticNplMidDistance, K.DiplomaticEnemyPcOpportunityNearDistance, K.DiplomaticEnemyPcOpportunityMidDistance }
+                });
+                groups.Add(new HtnParamGroup
+                {
                     title = "Diplomatic.Viable",
-                    description = "True when Diplomatic's viability (NPC proximity + outmatched bonus) is above its threshold.",
+                    description = "True when Diplomatic's viability (NPC proximity + outmatched bonus) is above its threshold. Not used by the default HTN tree — kept for a hand-authored Strategies.json.",
                     weightKeys = new[] { K.NpcProximityMax, K.EnemyProximityMax, K.NeutralTargetExtraDistance, K.OutmatchedStrengthRatio, K.DiplomaticOutmatchedBonus, K.DiplomaticEnemyPressureWeight, K.DiplomaticEmissaryStrengthWeight, K.DiplomaticViabilityThreshold },
-                    drawSimulation = () => DrawViableSimulation("Diplomatic", AdvisorType.Diplomatic)
+                    drawSimulation = () => DrawViableSimulation("Diplomatic")
                 });
                 break;
 
-            case AdvisorType.Intelligence:
+            case "Intelligence":
                 AddDirectUtilityGroup(groups, "Intelligence.EnemyCharacter", "Intelligence.EnemyCharacterReady", "Nearest enemy-character proximity, published directly by the Intelligence Advisor.",
                     K.EnemyCharacterProximityMax, K.IntelligenceEnemyCharacterThreshold);
                 AddDirectUtilityGroup(groups, "Intelligence.IndirectSafety", "Intelligence.IndirectSafetyReady", "Outmatched-response value. It is either zero or Intelligence.OutmatchedBonus, using the shared outmatched definition.",
@@ -1911,29 +1975,27 @@ public class AIWidgetWindow : EditorWindow
                         K.EnemyCharacterProximityMax, K.EnemyProximityMax, K.NeutralTargetExtraDistance,
                         K.OutmatchedStrengthRatio, K.IntelligenceOutmatchedBonus, K.IntelligenceEnemyPressureWeight, K.IntelligenceAgentStrengthWeight, K.IntelligenceViabilityThreshold
                     },
-                    drawSimulation = () => DrawViableSimulation("Intelligence", AdvisorType.Intelligence)
+                    drawSimulation = () => DrawViableSimulation("Intelligence")
                 });
                 break;
 
-            case AdvisorType.Magic:
-                AddDirectUtilityGroup(groups, "Magic.ArtifactScarcity", "Magic.ArtifactScarcityReady", "Nation artifact scarcity multiplied by Magic.ArtifactScarcityWeight.",
-                    K.ArtifactScarcityWeight, K.MagicArtifactScarcityThreshold);
-                AddDirectUtilityGroup(groups, "Magic.ArtifactTransfer", "Magic.ArtifactTransferReady", "Best legal artifact-transfer opportunity published by the Magic Advisor.",
-                    K.MagicArtifactTransferThreshold);
-                AddDirectUtilityGroup(groups, "Magic.EnemyPressure", "Magic.EnemyPressureReady", "Enemy proximity, including the shared neutral-target adjustment.",
-                    K.EnemyProximityMax, K.NeutralTargetExtraDistance, K.MagicEnemyPressureThreshold);
-                AddDirectUtilityGroup(groups, "Magic.SpellOpportunity", "Magic.SpellOpportunityReady", "Count of Spell-derived actions this character can currently play (AvailableActions.Count(a => a is Spell)) — the same 'is there a legal opportunity of this shape' gate Magic.ArtifactTransfer uses, published as a count instead of a bool. Gates root.magic.pick.cast in the default HTN strategy.",
-                    K.MagicSpellOpportunityThreshold);
+            case "Artifacts":
+                AddDirectUtilityGroup(groups, "Artifacts.ArtifactScarcity", "Artifacts.ArtifactScarcityReady", "Nation artifact scarcity multiplied by Artifacts.ArtifactScarcityWeight. Gates root.artifacts.lowartifacts in the default HTN strategy.",
+                    K.ArtifactScarcityWeight, K.ArtifactsArtifactScarcityThreshold);
+                AddDirectUtilityGroup(groups, "Artifacts.ArtifactTransfer", "Artifacts.ArtifactTransferReady", "Best legal artifact-transfer opportunity published by the Artifacts Advisor — \"mages have many artifacts, consolidate/protect them.\" Gates root.artifacts.surplus in the default HTN strategy.",
+                    K.ArtifactsArtifactTransferThreshold);
+                AddDirectUtilityGroup(groups, "Artifacts.EnemyPressure", "Artifacts.EnemyPressureReady", "Enemy proximity, including the shared neutral-target adjustment.",
+                    K.EnemyProximityMax, K.NeutralTargetExtraDistance, K.ArtifactsEnemyPressureThreshold);
                 groups.Add(new HtnParamGroup
                 {
-                    title = "Magic.Viable",
-                    description = "True when Magic's viability (artifact scarcity + enemy proximity) is above its threshold.",
-                    weightKeys = new[] { K.ArtifactScarcityWeight, K.EnemyProximityMax, K.NeutralTargetExtraDistance, K.MagicHiddenArtifactsWeight, K.MagicMageStrengthWeight, K.MagicViabilityThreshold },
-                    drawSimulation = () => DrawViableSimulation("Magic", AdvisorType.Magic)
+                    title = "Artifacts.Viable",
+                    description = "True when Artifacts's viability (artifact scarcity + enemy proximity) is above its threshold. Not used by the default HTN tree (superseded by Artifacts.ArtifactScarcityReady/ArtifactTransferReady) — kept for a hand-authored Strategies.json.",
+                    weightKeys = new[] { K.ArtifactScarcityWeight, K.EnemyProximityMax, K.NeutralTargetExtraDistance, K.ArtifactsHiddenArtifactsWeight, K.ArtifactsMageStrengthWeight, K.ArtifactsViabilityThreshold },
+                    drawSimulation = () => DrawViableSimulation("Artifacts")
                 });
                 break;
 
-            case AdvisorType.Logistics:
+            case "Logistics":
                 AddDirectUtilityGroup(groups, "Logistics.ReachNpc", "Logistics.ReachNpcReady", "Distance to the nearest unrevealed NPC destination.",
                     K.LogisticsProximityMax, K.LogisticsDistancePenaltyPerHex, K.LogisticsReachNpcThreshold);
                 AddDirectUtilityGroup(groups, "Logistics.InterceptEnemy", "Logistics.InterceptEnemyReady", "Distance to the closest enemy destination.",
@@ -1947,11 +2009,11 @@ public class AIWidgetWindow : EditorWindow
                     title = "Logistics.Viable",
                     description = "True when Logistics's viability (proximity to the preferred destination) is above its threshold.",
                     weightKeys = new[] { K.LogisticsProximityMax, K.LogisticsDistancePenaltyPerHex, K.LogisticsViabilityThreshold },
-                    drawSimulation = () => DrawViableSimulation("Logistics", AdvisorType.Logistics)
+                    drawSimulation = () => DrawViableSimulation("Logistics")
                 });
                 break;
 
-            case AdvisorType.Disruption:
+            case "Disruption":
                 AddDirectUtilityGroup(groups, "Disruption.EnemyPressure", "Disruption.EnemyPressureReady", "Enemy proximity — is there someone nearby to halt/block/debuff.",
                     K.EnemyProximityMax, K.NeutralTargetExtraDistance, K.DisruptionEnemyPressureThreshold);
                 groups.Add(new HtnParamGroup
@@ -1959,7 +2021,7 @@ public class AIWidgetWindow : EditorWindow
                     title = "Disruption.Viable",
                     description = "True when Disruption's viability (enemy proximity) is above its threshold.",
                     weightKeys = new[] { K.EnemyProximityMax, K.NeutralTargetExtraDistance, K.DisruptionViabilityThreshold },
-                    drawSimulation = () => DrawViableSimulation("Disruption", AdvisorType.Disruption)
+                    drawSimulation = () => DrawViableSimulation("Disruption")
                 });
                 break;
         }
@@ -1977,7 +2039,7 @@ public class AIWidgetWindow : EditorWindow
         });
     }
 
-    // Union of every weight key referenced by ANY advisor's HTN parameters — computed fresh
+    // Union of every weight key referenced by ANY group's HTN parameters — computed fresh
     // each call (cheap: ~30 keys, only runs while the "leftover" check is being drawn) so a
     // weight only ever shows up as uncategorized if it's truly unaccounted-for everywhere.
     // In the normal case this covers every known weight — there is no other role left for
@@ -1987,17 +2049,16 @@ public class AIWidgetWindow : EditorWindow
         HashSet<string> keys = new(StringComparer.OrdinalIgnoreCase);
         foreach (string name in AdvisorProfileNames)
         {
-            Enum.TryParse(name, out AdvisorType adv);
-            foreach (HtnParamGroup group in BuildHtnParamGroups(name, adv))
+            foreach (HtnParamGroup group in BuildHtnParamGroups(name))
                 foreach (string key in group.weightKeys) keys.Add(key);
         }
         return keys;
     }
 
-    private List<AdvisorWeightDefinition> GetOtherWeights(string advisorGroup)
+    private List<UtilityWeightDefinition> GetOtherWeights(string advisorGroup)
     {
         HashSet<string> connected = AllHtnConnectedWeightKeys();
-        return AIAdvisorConfig.KnownWeights
+        return UtilityAI.KnownWeights
             .Where(d => string.Equals(AdvisorGroupForWeightKey(d.key), advisorGroup, StringComparison.OrdinalIgnoreCase)
                 && !connected.Contains(d.key))
             .ToList();
@@ -2025,7 +2086,7 @@ public class AIWidgetWindow : EditorWindow
             EditorGUILayout.LabelField("Params involved", conditionKeyStyle);
             foreach (string key in group.weightKeys)
             {
-                AdvisorWeightDefinition definition = AIAdvisorConfig.KnownWeights
+                UtilityWeightDefinition definition = UtilityAI.KnownWeights
                     .FirstOrDefault(d => string.Equals(d.key, key, StringComparison.OrdinalIgnoreCase));
                 if (definition != null) DrawWeightRow(definition);
             }
@@ -2035,13 +2096,13 @@ public class AIWidgetWindow : EditorWindow
     }
 
     // Skill-affinity (a flat bonus per card based on the playing character's own skill,
-    // unrelated to world-state) used to live here — removed from AIContext.ScoreAction
+    // unrelated to world-state) used to live here — removed from UtilityAIContext.ScoreAction
     // entirely, since it structurally can't connect to any HTN predicate (HTN reads
     // situations, not a character's innate stats) and that's now a hard requirement: every
     // scoring weight either gates an HTN condition or shows up here as a rare, clearly-labeled
     // exception (currently just Shared's difficulty-penalty shape, which has no per-advisor
     // equivalent to speak of).
-    private void DrawOtherWeightsFoldout(string advisorGroup, List<AdvisorWeightDefinition> weights)
+    private void DrawOtherWeightsFoldout(string advisorGroup, List<UtilityWeightDefinition> weights)
     {
         EnsureAdvisorStyles();
         string foldoutKey = advisorGroup + ":__other";
@@ -2058,7 +2119,7 @@ public class AIWidgetWindow : EditorWindow
                 + "penalty shape) with no natural world-state connection to make HTN-legible.",
                 weightDescStyle);
             EditorGUILayout.Space(4f);
-            foreach (AdvisorWeightDefinition definition in weights) DrawWeightRow(definition);
+            foreach (UtilityWeightDefinition definition in weights) DrawWeightRow(definition);
         }
         EditorGUILayout.EndVertical();
         EditorGUILayout.Space(6f);
@@ -2070,7 +2131,7 @@ public class AIWidgetWindow : EditorWindow
     {
         EnsureAdvisorStyles();
         EditorGUILayout.BeginHorizontal();
-        DrawStatusBadge($"{label} = {(value ? "TRUE" : "FALSE")}", value, GUILayout.MinWidth(220f), GUILayout.ExpandWidth(true));
+        DrawStatusBadge($"{label} = {(value ? "TRUE" : "FALSE")}", value, GUILayout.MinWidth(260f), GUILayout.ExpandWidth(true));
         EditorGUILayout.EndHorizontal();
     }
 
@@ -2085,17 +2146,17 @@ public class AIWidgetWindow : EditorWindow
         EditorGUILayout.Space(4f);
         bool overall = parts.All(p => p.value);
         EditorGUILayout.BeginHorizontal();
-        DrawStatusBadge($"{label} = {(overall ? "TRUE" : "FALSE")}", overall, GUILayout.MinWidth(220f), GUILayout.ExpandWidth(true));
+        DrawStatusBadge($"{label} = {(overall ? "TRUE" : "FALSE")}", overall, GUILayout.MinWidth(260f), GUILayout.ExpandWidth(true));
         EditorGUILayout.EndHorizontal();
     }
 
-    private void DrawViableSimulation(string advisorGroup, AdvisorType advisor)
+    private void DrawViableSimulation(string advisorGroup)
     {
         EnsureAdvisorStyles();
-        string thresholdKey = ViabilityThresholdKeyFor(advisor);
-        float viability = SimulateViability(advisor);
+        string thresholdKey = ViabilityThresholdKeyFor(advisorGroup);
+        float viability = SimulateViability(advisorGroup);
         float threshold = thresholdKey != null
-            ? (advisorWeights.TryGetValue(thresholdKey, out float t) ? t : AIAdvisorConfig.GetDefaultWeight(thresholdKey))
+            ? (advisorWeights.TryGetValue(thresholdKey, out float t) ? t : UtilityAI.GetDefaultWeight(thresholdKey))
             : 0f;
         bool viable = viability > threshold;
 
@@ -2122,28 +2183,31 @@ public class AIWidgetWindow : EditorWindow
         EditorGUILayout.EndHorizontal();
     }
 
+    // Simulates the HTN's active leaf preferring some parameter from this group — the same
+    // match UtilityAIContext.ScoreAction checks a card's own utilityParameters against
+    // PreferredParameters. There is no "advisor" to pick anymore, just which group's
+    // parameters would overlap.
     private void DrawHtnBiasSimulation()
     {
         EnsureAdvisorStyles();
         actionCatalog ??= BuildActionCatalog();
         cardsByActionRef ??= BuildCardUsageMap();
-        string[] biasOptions = Enum.GetNames(typeof(AdvisorType));
 
-        EditorGUILayout.LabelField(new GUIContent("HTN bias preview", "Simulate the HTN tab's currently-active task biasing scoring toward this advisor."));
-        simBiasedAdvisorIndex = EditorGUILayout.Popup(Mathf.Clamp(simBiasedAdvisorIndex, 0, biasOptions.Length - 1), biasOptions, GUILayout.Width(160f));
+        EditorGUILayout.LabelField(new GUIContent("HTN bias preview", "Simulate the HTN tab's currently-active leaf preferring a parameter from this group."));
+        simBiasedGroupIndex = EditorGUILayout.Popup(Mathf.Clamp(simBiasedGroupIndex, 0, ParameterGroups.Length - 1), ParameterGroups, GUILayout.Width(160f));
 
-        string biasedName = biasOptions[Mathf.Clamp(simBiasedAdvisorIndex, 0, biasOptions.Length - 1)];
-        bool active = !string.Equals(biasedName, nameof(AdvisorType.None), StringComparison.OrdinalIgnoreCase);
-        float bonus = advisorWeights.TryGetValue(AIAdvisorConfig.Keys.HTNBiasBonus, out float b)
-            ? b : AIAdvisorConfig.GetDefaultWeight(AIAdvisorConfig.Keys.HTNBiasBonus);
-        int affectedCount = active && Enum.TryParse(biasedName, out AdvisorType parsedBias)
-            ? AllCardBoardCards().Count(e => ResolvedAdvisorFor(AIAdvisorConfig.BuildCardProfileKey(e.card.deckId, e.card.cardId), e.defaultAdvisor) == parsedBias)
+        string biasedGroup = ParameterGroups[Mathf.Clamp(simBiasedGroupIndex, 0, ParameterGroups.Length - 1)];
+        bool active = !string.Equals(biasedGroup, UnassignedGroup, StringComparison.OrdinalIgnoreCase);
+        float bonus = advisorWeights.TryGetValue(UtilityAI.Keys.HTNBiasBonus, out float b)
+            ? b : UtilityAI.GetDefaultWeight(UtilityAI.Keys.HTNBiasBonus);
+        int affectedCount = active
+            ? AllCardBoardCards().Count(e => ResolvedGroupsFor(UtilityAI.BuildCardProfileKey(e.card.deckId, e.card.cardId)).Contains(biasedGroup, StringComparer.OrdinalIgnoreCase))
             : 0;
 
         EditorGUILayout.Space(4f);
         EditorGUILayout.BeginHorizontal();
         DrawStatusBadge(
-            active ? $"+{bonus:0.#} to {affectedCount} {biasedName} card(s)" : "No bias set — affects nothing right now",
+            active ? $"+{bonus:0.#} to {affectedCount} {biasedGroup} card(s)" : "No group selected — affects nothing right now",
             active, GUILayout.MinWidth(240f), GUILayout.ExpandWidth(true));
         EditorGUILayout.EndHorizontal();
     }
@@ -2152,7 +2216,7 @@ public class AIWidgetWindow : EditorWindow
     // and the plain-English description on its own full-width wrapped line underneath —
     // replaces the old single-line layout that squeezed label + field + default + description
     // into one row and clipped the description on anything but a very wide window.
-    private void DrawWeightRow(AdvisorWeightDefinition definition)
+    private void DrawWeightRow(UtilityWeightDefinition definition)
     {
         EnsureAdvisorStyles();
         float current = advisorWeights.TryGetValue(definition.key, out float v) ? v : definition.defaultValue;
@@ -2216,8 +2280,10 @@ public class AIWidgetWindow : EditorWindow
         simMage = DrawStatField("Mage", simMage);
         simArtifactsCarried = DrawStatField("Artifacts carried", simArtifactsCarried, width: 110f);
         simHiddenArtifacts = DrawStatField("Hidden artifacts", simHiddenArtifacts, width: 110f);
-        simSpellsAvailable = DrawStatField("Spells available", simSpellsAvailable, "How many Spell actions are currently playable by this character.", width: 110f);
         simWoundedAllies = DrawStatField("Wounded allies here", simWoundedAllies, "How many allies in this character's hex are below Logistics.HealingNeedHealthBelow.", width: 130f);
+        simDuelAdvantage = DrawStatFieldF("Duel advantage", simDuelAdvantage, "This character's estimated Duel.EstimateDuelScore minus the best eligible opponent's — negative means this character would likely lose.", width: 130f);
+        simSongDuelAdvantage = DrawStatFieldF("Song duel advantage", simSongDuelAdvantage, "Same as Duel advantage, for Battle of Songs.", width: 150f);
+        simUnrecruitedNplCount = DrawStatField("Unrecruited NPLs", simUnrecruitedNplCount, "Board-wide count of same-alignment, not-yet-joined NonPlayableLeaders.", width: 130f);
         GUILayout.FlexibleSpace();
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.EndVertical();
@@ -2260,7 +2326,7 @@ public class AIWidgetWindow : EditorWindow
         EditorGUILayout.Space(6f);
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.LabelField(new GUIContent("Artifacts % owned", "Share of the world's artifacts the nation already owns (0..1)."), GUILayout.Width(130f));
-        simArtifactShare = EditorGUILayout.Slider(simArtifactShare, 0f, 1f, GUILayout.Width(220f));
+        simArtifactShare = EditorGUILayout.Slider(simArtifactShare, 0f, 1f, GUILayout.Width(260f));
         GUILayout.FlexibleSpace();
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.EndVertical();
@@ -2276,32 +2342,42 @@ public class AIWidgetWindow : EditorWindow
         simLeatherAmount = DrawStatField("Leather", simLeatherAmount, width: 90f);
         GUILayout.FlexibleSpace();
         EditorGUILayout.EndHorizontal();
+        EditorGUILayout.Space(4f);
+        EditorGUILayout.LabelField(new GUIContent("Deck target share (0..1)", "What share of this leader's deck's total material cost each material makes up — NationBlackboard in the real game. Insufficient/Surplus below are driven by the gap between this and the stockpile shares above, not by the raw amounts alone."), weightDescStyle);
+        EditorGUILayout.BeginHorizontal();
+        simMithrilShare = DrawShareField("Mithril", simMithrilShare);
+        simSteelShare = DrawShareField("Steel", simSteelShare);
+        simIronShare = DrawShareField("Iron", simIronShare);
+        simMountsShare = DrawShareField("Mounts", simMountsShare);
+        simTimberShare = DrawShareField("Timber", simTimberShare);
+        simLeatherShare = DrawShareField("Leather", simLeatherShare);
+        GUILayout.FlexibleSpace();
+        EditorGUILayout.EndHorizontal();
         EditorGUILayout.EndVertical();
 
         EditorGUILayout.BeginVertical(weightRowBoxStyle);
         EditorGUILayout.LabelField("Distances (hexes) — 0 = adjacent/right here, high = far or none at all", conditionKeyStyle);
         EditorGUILayout.BeginHorizontal();
         simEnemyDistance = DrawStatFieldF("Enemy PC / army", simEnemyDistance, "Hexes to the nearest enemy PC or army. 0 = adjacent. Use 99 for none.",
-            hint: d => ProximityHint(d, AIAdvisorConfig.Keys.EnemyProximityMax));
+            hint: d => ProximityHint(d, UtilityAI.Keys.EnemyProximityMax));
         simEnemyCharacterDistance = DrawStatFieldF("Enemy character", simEnemyCharacterDistance, "Hexes to the nearest enemy character. 0 = adjacent. Use 99 for none.",
-            hint: d => ProximityHint(d, AIAdvisorConfig.Keys.EnemyCharacterProximityMax));
+            hint: d => ProximityHint(d, UtilityAI.Keys.EnemyCharacterProximityMax));
         simNpcDistance = DrawStatFieldF("Unrevealed NPC", simNpcDistance, "Hexes to the nearest unrevealed NPC. 0 = adjacent. Use 99 for none.",
-            hint: d => ProximityHint(d, AIAdvisorConfig.Keys.NpcProximityMax));
+            hint: d => ProximityHint(d, UtilityAI.Keys.NpcProximityMax));
         simDestinationDistance = DrawStatFieldF("Move destination", simDestinationDistance, "Hexes to the preferred Logistics destination. 0 = arrived.",
-            hint: d => ProximityHint(d, AIAdvisorConfig.Keys.LogisticsProximityMax, AIAdvisorConfig.Keys.LogisticsDistancePenaltyPerHex));
+            hint: d => ProximityHint(d, UtilityAI.Keys.LogisticsProximityMax, UtilityAI.Keys.LogisticsDistancePenaltyPerHex));
         simOwnPcFortificationDistance = DrawStatFieldF("Own PC needing fort", simOwnPcFortificationDistance, "Hexes to the nearest own PC below Militaristic.OwnPcDefenseBelow. Use 99 for none.",
-            hint: d => ProximityHint(d, AIAdvisorConfig.Keys.MilitaristicOwnPcFortificationProximityMax));
+            hint: d => ProximityHint(d, UtilityAI.Keys.MilitaristicOwnPcFortificationProximityMax));
         simNplRecruitmentDistance = DrawStatFieldF("NPL recruitment-ready", simNplRecruitmentDistance, "Hexes to the nearest NPL capital eligible for StateAllegiance recruitment. Use 99 for none.",
-            hint: d => ProximityHint(d, AIAdvisorConfig.Keys.DiplomaticNplRecruitmentProximityMax));
+            hint: d => ProximityHint(d, UtilityAI.Keys.DiplomaticNplRecruitmentProximityMax));
         GUILayout.FlexibleSpace();
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.EndVertical();
 
         EditorGUILayout.BeginVertical(weightRowBoxStyle);
         EditorGUILayout.LabelField("HTN bias preview", conditionKeyStyle);
-        EditorGUILayout.LabelField("Simulate the HTN tab's currently-active task biasing scoring toward this advisor.", weightDescStyle);
-        string[] biasOptions = Enum.GetNames(typeof(AdvisorType));
-        simBiasedAdvisorIndex = EditorGUILayout.Popup(Mathf.Clamp(simBiasedAdvisorIndex, 0, biasOptions.Length - 1), biasOptions, GUILayout.Width(160f));
+        EditorGUILayout.LabelField("Simulate the HTN tab's currently-active leaf preferring a parameter from this group.", weightDescStyle);
+        simBiasedGroupIndex = EditorGUILayout.Popup(Mathf.Clamp(simBiasedGroupIndex, 0, ParameterGroups.Length - 1), ParameterGroups, GUILayout.Width(160f));
         EditorGUILayout.EndVertical();
     }
 
@@ -2330,14 +2406,32 @@ public class AIWidgetWindow : EditorWindow
         return result;
     }
 
+    private float DrawShareField(string caption, float value, float width = 90f)
+    {
+        EditorGUILayout.BeginVertical(GUILayout.Width(width));
+        GUILayout.Label(caption, EditorStyles.miniLabel);
+        float result = Mathf.Clamp01(EditorGUILayout.FloatField(value, GUILayout.Width(width), GUILayout.Height(20f)));
+        EditorGUILayout.EndVertical();
+        GUILayout.Space(10f);
+        return result;
+    }
+
+    // Mirrors UtilityAIContext.GetOwnResourceShare: what share of the leader's stockpile (across the
+    // six tradeable materials) this one amount makes up right now.
+    private float SimulatedResourceShare(int amount)
+    {
+        float total = simMithrilAmount + simSteelAmount + simIronAmount + simMountsAmount + simTimberAmount + simLeatherAmount;
+        return total > 0f ? amount / total : 0f;
+    }
+
     // Live-computed so the field's polarity (0 = adjacent/closest possible, high = far or
     // none) is unmissable without hunting for a tooltip — this is exactly the confusion a
     // "0 enemies nearby" reading of a 0-hex-distance field caused.
     private string ProximityHint(float distance, string proximityMaxKey, string penaltyPerHexKey = null)
     {
-        float max = advisorWeights.TryGetValue(proximityMaxKey, out float v) ? v : AIAdvisorConfig.GetDefaultWeight(proximityMaxKey);
+        float max = advisorWeights.TryGetValue(proximityMaxKey, out float v) ? v : UtilityAI.GetDefaultWeight(proximityMaxKey);
         float penalty = penaltyPerHexKey != null
-            ? (advisorWeights.TryGetValue(penaltyPerHexKey, out float p) ? p : AIAdvisorConfig.GetDefaultWeight(penaltyPerHexKey))
+            ? (advisorWeights.TryGetValue(penaltyPerHexKey, out float p) ? p : UtilityAI.GetDefaultWeight(penaltyPerHexKey))
             : 1f;
         if (distance <= 0f) return "= right here (closest possible)";
         float fadesAt = penalty > 0f ? max / penalty : max;
@@ -2348,23 +2442,23 @@ public class AIWidgetWindow : EditorWindow
 
     // Derived, mirroring GetMilitaryEdgeScore: only an army commander whose
     // army is weaker than the enemy's counts as outmatched.
-    // Mirrors AIContextDataBuilder.CacheEnemyTargets exactly: 0 strength while leading no
+    // Mirrors UtilityAIContextDataBuilder.CacheEnemyTargets exactly: 0 strength while leading no
     // army (so "no army" always counts as outmatched against any enemy), compared against
     // enemy strength via the single OutmatchedStrengthRatio weight — not a second, looser
     // threshold invented just for the widget.
     private bool SimulatedOutmatched()
     {
-        float ratio = advisorWeights.TryGetValue(AIAdvisorConfig.Keys.OutmatchedStrengthRatio, out float r)
-            ? r : AIAdvisorConfig.GetDefaultWeight(AIAdvisorConfig.Keys.OutmatchedStrengthRatio);
+        float ratio = advisorWeights.TryGetValue(UtilityAI.Keys.OutmatchedStrengthRatio, out float r)
+            ? r : UtilityAI.GetDefaultWeight(UtilityAI.Keys.OutmatchedStrengthRatio);
         float myStrength = simLeadingArmy ? simMyArmyStrength : 0f;
         return simEnemyStrength > myStrength * ratio;
     }
 
-    // Mirrors AIContext.IsEnemyNear (GetDistanceScore(false) > 0).
+    // Mirrors UtilityAIContext.IsEnemyNear (GetDistanceScore(false) > 0).
     private bool SimulatedEnemyNear()
     {
-        float proximityMax = advisorWeights.TryGetValue(AIAdvisorConfig.Keys.EnemyProximityMax, out float p)
-            ? p : AIAdvisorConfig.GetDefaultWeight(AIAdvisorConfig.Keys.EnemyProximityMax);
+        float proximityMax = advisorWeights.TryGetValue(UtilityAI.Keys.EnemyProximityMax, out float p)
+            ? p : UtilityAI.GetDefaultWeight(UtilityAI.Keys.EnemyProximityMax);
         return proximityMax - simEnemyDistance > 0f;
     }
 
@@ -2372,62 +2466,62 @@ public class AIWidgetWindow : EditorWindow
     private bool SimulatedDanger() => SimulatedEnemyNear() && SimulatedOutmatched();
 
     // Economy status derived from liquid wealth (Gold + Resources), using the CURRENT
-    // (possibly unsaved) threshold weights — mirrors AIAdvisorConfig.EvaluateEconomyStatus.
+    // (possibly unsaved) threshold weights — mirrors UtilityAI.EvaluateEconomyStatus.
     private EconomyStatus SimulatedEconomyStatus()
     {
-        float W(string key) => advisorWeights.TryGetValue(key, out float v) ? v : AIAdvisorConfig.GetDefaultWeight(key);
+        float W(string key) => advisorWeights.TryGetValue(key, out float v) ? v : UtilityAI.GetDefaultWeight(key);
         float liquidWealth = simGoldBuffer + simResourceNetWorth;
 
-        if (liquidWealth < W(AIAdvisorConfig.Keys.EconomyCriticalBelow)) return EconomyStatus.Critical;
-        if (liquidWealth < W(AIAdvisorConfig.Keys.EconomyWeakBelow)) return EconomyStatus.Weak;
-        if (liquidWealth < W(AIAdvisorConfig.Keys.EconomyStableBelow)) return EconomyStatus.Stable;
+        if (liquidWealth < W(UtilityAI.Keys.EconomyCriticalBelow)) return EconomyStatus.Critical;
+        if (liquidWealth < W(UtilityAI.Keys.EconomyWeakBelow)) return EconomyStatus.Weak;
+        if (liquidWealth < W(UtilityAI.Keys.EconomyStableBelow)) return EconomyStatus.Stable;
         return EconomyStatus.Surplus;
     }
 
     private string EconomyThresholdsTooltip()
     {
-        float W(string key) => advisorWeights.TryGetValue(key, out float v) ? v : AIAdvisorConfig.GetDefaultWeight(key);
+        float W(string key) => advisorWeights.TryGetValue(key, out float v) ? v : UtilityAI.GetDefaultWeight(key);
         float liquidWealth = simGoldBuffer + simResourceNetWorth;
 
         return $"Derived from Gold + Resources = {liquidWealth:0.#} liquid wealth — this game has no per-turn income of any kind.\n"
-            + $"Critical: below {W(AIAdvisorConfig.Keys.EconomyCriticalBelow):0.#}\n"
-            + $"Weak: below {W(AIAdvisorConfig.Keys.EconomyWeakBelow):0.#}\n"
-            + $"Stable: below {W(AIAdvisorConfig.Keys.EconomyStableBelow):0.#}\n"
+            + $"Critical: below {W(UtilityAI.Keys.EconomyCriticalBelow):0.#}\n"
+            + $"Weak: below {W(UtilityAI.Keys.EconomyWeakBelow):0.#}\n"
+            + $"Stable: below {W(UtilityAI.Keys.EconomyStableBelow):0.#}\n"
             + "Surplus: anything above.\n"
             + "Edit these thresholds in the 'Economic' tab's HTN Parameter.";
     }
 
-    // Exact mirror of AIContext.GetAdvisorViability under the scenario assumptions above —
+    // Exact mirror of UtilityAIContext.GetAdvisorViability under the scenario assumptions above —
     // literally the same terms SimulateScore adds as an advisor's situational bonus, minus
     // the handful tied to one specific action. This is the number HTNRegistry's Viable
     // predicates compare against a threshold at runtime; showing it here, live, next to the
     // weights that compose it, is what makes "Advisors drive HTN" a visible fact instead of
     // a claim in a comment.
-    private float SimulateViability(AdvisorType advisor)
+    private float SimulateViability(string group)
     {
-        float W(string key) => advisorWeights.TryGetValue(key, out float v) ? v : AIAdvisorConfig.GetDefaultWeight(key);
-        float enemyProximity = Mathf.Max(0f, W(AIAdvisorConfig.Keys.EnemyProximityMax) - simEnemyDistance);
+        float W(string key) => advisorWeights.TryGetValue(key, out float v) ? v : UtilityAI.GetDefaultWeight(key);
+        float enemyProximity = Mathf.Max(0f, W(UtilityAI.Keys.EnemyProximityMax) - simEnemyDistance);
 
-        return advisor switch
+        return group switch
         {
             // Economic has no formula: its old situational term was the now-removed
             // tier-reactive Bonus weights, which decided nothing — matches
-            // AIContext.GetAdvisorViability's Economic-less switch exactly.
-            AdvisorType.Militaristic => enemyProximity + (!simLeadingArmy
-                ? W(AIAdvisorConfig.Keys.NoArmyPenalty)
+            // UtilityAIContext's Economic-less set of named viability methods exactly.
+            "Militaristic" => enemyProximity + (!simLeadingArmy
+                ? W(UtilityAI.Keys.NoArmyPenalty)
                 : simEnemyStrength > 0
                     ? MilitaristicEdge(W)
                     : 0f),
-            AdvisorType.Intelligence => Mathf.Max(0f, W(AIAdvisorConfig.Keys.EnemyCharacterProximityMax) - simEnemyCharacterDistance)
+            "Intelligence" => Mathf.Max(0f, W(UtilityAI.Keys.EnemyCharacterProximityMax) - simEnemyCharacterDistance)
                 + enemyProximity
-                + (SimulatedOutmatched() ? W(AIAdvisorConfig.Keys.IntelligenceOutmatchedBonus) : 0f),
-            AdvisorType.Magic => (1f - Mathf.Clamp01(simArtifactShare)) * W(AIAdvisorConfig.Keys.ArtifactScarcityWeight) + enemyProximity,
-            AdvisorType.Diplomatic => Mathf.Max(0f, W(AIAdvisorConfig.Keys.NpcProximityMax) - simNpcDistance)
+                + (SimulatedOutmatched() ? W(UtilityAI.Keys.IntelligenceOutmatchedBonus) : 0f),
+            "Artifacts" => (1f - Mathf.Clamp01(simArtifactShare)) * W(UtilityAI.Keys.ArtifactScarcityWeight) + enemyProximity,
+            "Diplomatic" => Mathf.Max(0f, W(UtilityAI.Keys.NpcProximityMax) - simNpcDistance)
                 + enemyProximity
-                + (SimulatedOutmatched() ? W(AIAdvisorConfig.Keys.DiplomaticOutmatchedBonus) : 0f),
-            AdvisorType.Logistics => Mathf.Max(0f, W(AIAdvisorConfig.Keys.LogisticsProximityMax)
-                - simDestinationDistance * W(AIAdvisorConfig.Keys.LogisticsDistancePenaltyPerHex)),
-            AdvisorType.Disruption => enemyProximity,
+                + (SimulatedOutmatched() ? W(UtilityAI.Keys.DiplomaticOutmatchedBonus) : 0f),
+            "Logistics" => Mathf.Max(0f, W(UtilityAI.Keys.LogisticsProximityMax)
+                - simDestinationDistance * W(UtilityAI.Keys.LogisticsDistancePenaltyPerHex)),
+            "Disruption" => enemyProximity,
             _ => 0f
         };
     }
@@ -2435,21 +2529,21 @@ public class AIWidgetWindow : EditorWindow
     private float MilitaristicEdge(Func<string, float> W)
     {
         float strengthDiff = simMyArmyStrength - simEnemyStrength;
-        float farPenalty = simEnemyDistance > 1f ? W(AIAdvisorConfig.Keys.FarTargetPenalty) : 0f;
+        float farPenalty = simEnemyDistance > 1f ? W(UtilityAI.Keys.FarTargetPenalty) : 0f;
         return strengthDiff < 0
             ? Mathf.Max(-10f, strengthDiff / 10f - farPenalty)
             : Mathf.Clamp(strengthDiff / 20f, -5f, 8f) - farPenalty;
     }
 
-    // Named threshold weight per advisor, matching HTNRegistry's Viable predicates.
-    private static string ViabilityThresholdKeyFor(AdvisorType advisor) => advisor switch
+    // Named threshold weight per group, matching HTNRegistry's Viable predicates.
+    private static string ViabilityThresholdKeyFor(string group) => group switch
     {
-        AdvisorType.Militaristic => AIAdvisorConfig.Keys.MilitaristicViabilityThreshold,
-        AdvisorType.Diplomatic => AIAdvisorConfig.Keys.DiplomaticViabilityThreshold,
-        AdvisorType.Intelligence => AIAdvisorConfig.Keys.IntelligenceViabilityThreshold,
-        AdvisorType.Magic => AIAdvisorConfig.Keys.MagicViabilityThreshold,
-        AdvisorType.Logistics => AIAdvisorConfig.Keys.LogisticsViabilityThreshold,
-        AdvisorType.Disruption => AIAdvisorConfig.Keys.DisruptionViabilityThreshold,
+        "Militaristic" => UtilityAI.Keys.MilitaristicViabilityThreshold,
+        "Diplomatic" => UtilityAI.Keys.DiplomaticViabilityThreshold,
+        "Intelligence" => UtilityAI.Keys.IntelligenceViabilityThreshold,
+        "Artifacts" => UtilityAI.Keys.ArtifactsViabilityThreshold,
+        "Logistics" => UtilityAI.Keys.LogisticsViabilityThreshold,
+        "Disruption" => UtilityAI.Keys.DisruptionViabilityThreshold,
         _ => null
     };
 
@@ -2529,7 +2623,7 @@ public class AIWidgetWindow : EditorWindow
                     byAction[actionRef] = set;
                 }
 
-                // Canonical identity, matching AIAdvisorConfig.BuildCardProfileKey(CardData)
+                // Canonical identity, matching UtilityAI.BuildCardProfileKey(CardData)
                 // exactly: reference/injected clones (DeckExplorer's "copy to another subdeck"
                 // stamps referenceDeckId/referenceCardId onto a FULL clone — name/action and
                 // all — not just an empty stub, contrary to what the runtime-only
@@ -2541,7 +2635,7 @@ public class AIWidgetWindow : EditorWindow
                 bool isReference = !string.IsNullOrWhiteSpace(card.referenceDeckId) && card.referenceCardId > 0;
                 string canonicalDeckId = isReference ? card.referenceDeckId : deck.deckId;
                 int canonicalCardId = isReference ? card.referenceCardId : card.cardId;
-                string cardKey = AIAdvisorConfig.BuildCardProfileKey(canonicalDeckId, canonicalCardId);
+                string cardKey = UtilityAI.BuildCardProfileKey(canonicalDeckId, canonicalCardId);
                 if (!string.IsNullOrEmpty(cardKey) && !set.ContainsKey(cardKey))
                 {
                     string effect = card.GetActionEffectText();
@@ -2565,39 +2659,23 @@ public class AIWidgetWindow : EditorWindow
             StringComparer.OrdinalIgnoreCase);
     }
 
-    // All concrete CharacterAction classes with the advisor coded on them.
-    // Instances are created only to read DefaultAdvisorType (plain C# classes).
-    private static List<(string, AdvisorType)> BuildActionCatalog()
+    // All concrete CharacterAction class names — there is no coded default to read anymore
+    // (a card's group membership comes entirely from its own configured utilityParameters,
+    // see ResolvedGroupsFor), so this no longer needs to instantiate anything.
+    private static List<string> BuildActionCatalog()
     {
-        List<(string, AdvisorType)> catalog = new();
-        foreach (Type type in TypeCache.GetTypesDerivedFrom<CharacterAction>())
-        {
-            if (type == null || type.IsAbstract) continue;
-
-            AdvisorType defaultAdvisor = AdvisorType.None;
-            try
-            {
-                if (Activator.CreateInstance(type) is CharacterAction instance)
-                {
-                    defaultAdvisor = instance.GetAdvisorType();
-                }
-            }
-            catch
-            {
-                // No parameterless constructor or a throwing initializer — list it with None.
-            }
-
-            catalog.Add((type.Name, defaultAdvisor));
-        }
-
-        return catalog.OrderBy(entry => entry.Item2).ThenBy(entry => entry.Item1, StringComparer.OrdinalIgnoreCase).ToList();
+        return TypeCache.GetTypesDerivedFrom<CharacterAction>()
+            .Where(type => type != null && !type.IsAbstract)
+            .Select(type => type.Name)
+            .OrderBy(name => name, StringComparer.OrdinalIgnoreCase)
+            .ToList();
     }
 
     private void LoadAdvisorConfig()
     {
         advisorWeights.Clear();
         cardProfiles.Clear();
-        foreach (AdvisorWeightDefinition definition in AIAdvisorConfig.KnownWeights)
+        foreach (UtilityWeightDefinition definition in UtilityAI.KnownWeights)
         {
             advisorWeights[definition.key] = definition.defaultValue;
         }
@@ -2606,10 +2684,10 @@ public class AIWidgetWindow : EditorWindow
         {
             try
             {
-                AdvisorConfigData data = JsonUtility.FromJson<AdvisorConfigData>(File.ReadAllText(AdvisorAssetPath));
+                UtilityConfigData data = JsonUtility.FromJson<UtilityConfigData>(File.ReadAllText(AdvisorAssetPath));
                 if (data?.weights != null)
                 {
-                    foreach (AdvisorWeightEntry entry in data.weights)
+                    foreach (UtilityWeightEntry entry in data.weights)
                     {
                         if (entry != null && !string.IsNullOrWhiteSpace(entry.key) && advisorWeights.ContainsKey(entry.key))
                         {
@@ -2619,24 +2697,23 @@ public class AIWidgetWindow : EditorWindow
                 }
                 if (data?.cardProfiles != null)
                 {
-                    foreach (CardAdvisorProfile entry in data.cardProfiles)
+                    foreach (CardParameterProfile entry in data.cardProfiles)
                     {
                         if (entry == null) continue;
-                        string key = AIAdvisorConfig.BuildCardProfileKey(entry.deckId, entry.cardId);
+                        string key = UtilityAI.BuildCardProfileKey(entry.deckId, entry.cardId);
                         if (string.IsNullOrEmpty(key)) continue;
 
                         List<ActionUtilityParameterModifier> valid = entry.utilityParameters
-                            ?.Where(p => p != null && AIUtilityParameters.IsKnown(p.parameter))
+                            ?.Where(p => p != null && UtilityAIParameters.IsKnown(p.parameter))
                             .Select(p => new ActionUtilityParameterModifier { parameter = p.parameter, multiplier = p.multiplier, bonus = p.bonus })
                             .ToList() ?? new List<ActionUtilityParameterModifier>();
 
-                        CardAdvisorProfile profile = new()
+                        CardParameterProfile profile = new()
                         {
                             deckId = entry.deckId,
                             cardId = entry.cardId,
                             cardName = entry.cardName,
                             actionClass = entry.actionClass,
-                            advisor = entry.advisor,
                             scoreBonus = entry.scoreBonus,
                             ignoreSituation = entry.ignoreSituation,
                             utilityParameters = valid
@@ -2656,10 +2733,10 @@ public class AIWidgetWindow : EditorWindow
 
     private void SaveAdvisorConfig()
     {
-        AdvisorConfigData data = new()
+        UtilityConfigData data = new()
         {
-            weights = AIAdvisorConfig.KnownWeights
-                .Select(d => new AdvisorWeightEntry
+            weights = UtilityAI.KnownWeights
+                .Select(d => new UtilityWeightEntry
                 {
                     key = d.key,
                     value = advisorWeights.TryGetValue(d.key, out float v) ? v : d.defaultValue
@@ -2668,13 +2745,12 @@ public class AIWidgetWindow : EditorWindow
             cardProfiles = cardProfiles.Values
                 .OrderBy(p => p.deckId, StringComparer.OrdinalIgnoreCase)
                 .ThenBy(p => p.cardId)
-                .Select(p => new CardAdvisorProfile
+                .Select(p => new CardParameterProfile
                 {
                     deckId = p.deckId,
                     cardId = p.cardId,
                     cardName = p.cardName,
                     actionClass = p.actionClass,
-                    advisor = p.advisor,
                     scoreBonus = p.scoreBonus,
                     ignoreSituation = p.ignoreSituation,
                     utilityParameters = p.utilityParameters?
@@ -2685,7 +2761,7 @@ public class AIWidgetWindow : EditorWindow
         };
 
         WriteJsonAsset(AdvisorAssetPath, JsonUtility.ToJson(data, true));
-        AIAdvisorConfig.Reload();
+        UtilityAI.Reload();
         advisorsDirty = false;
         Debug.Log($"AIWidget: saved advisor config to {AdvisorAssetPath}");
     }

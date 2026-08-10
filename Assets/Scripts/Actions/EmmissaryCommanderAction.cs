@@ -2,7 +2,6 @@ using System;
 
 public class EmmissaryCommanderAction : CharacterAction
 {
-    protected override AdvisorType DefaultAdvisorType => AdvisorType.Diplomatic;
 
     public override bool IsRoleEligible(Character character)
     {

@@ -355,6 +355,7 @@ public class Board : MonoBehaviour
         }
         
         StartCoroutine(SpawnArtifacts());
+        StartCoroutine(SpawnEncounters());
         HideGenerationProgressUi();
     }
 
@@ -422,6 +423,33 @@ public class Board : MonoBehaviour
 
             // Yield to distribute over frames if needed
             if (i % 10 == 0) yield return null;
+        }
+    }
+
+    // Encounters are world content, scattered across the map the same way hidden artifacts are
+    // (SpawnArtifacts above) rather than drawn from any leader's personal deck — see
+    // ShouldIncludeCardInDeck/GetAllEncounterCardClones. Unlike artifacts, a resolved encounter
+    // respawns elsewhere instead of being permanently consumed (see TriggerHexEncountersAsync).
+    IEnumerator SpawnEncounters()
+    {
+        List<Hex> hexes = GetHexes();
+
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        List<CardData> encounterPool = deckManager != null ? deckManager.GetAllEncounterCardClones() : new List<CardData>();
+
+        List<Hex> shuffledHexes = hexes.OrderBy(hex => UnityEngine.Random.value).ToList();
+
+        int placed = 0;
+        for (int i = 0; i < shuffledHexes.Count && placed < encounterPool.Count; i++)
+        {
+            Hex targetHex = shuffledHexes[i];
+            if (!targetHex.AddPendingEncounter(encounterPool[placed])) continue; // already has one — skip this hex, don't consume a card for it
+
+            encounterPool[placed].encounterTargetHex = targetHex;
+            encounterPool[placed].hasShownHandAnimation = true;
+            placed++;
+
+            if (placed % 10 == 0) yield return null;
         }
     }
 
@@ -1580,8 +1608,32 @@ public class Board : MonoBehaviour
 
             CardData card = hex.TakeFirstPendingEncounter();
             if (card == null) break;
+            Hex resolvedHex = hex;
             await EncounterResolver.ResolveAsync(card, character);
+
+            // Unlike artifacts (permanently consumed once claimed), a resolved encounter
+            // respawns at a different random hex — keeps a roughly steady population of
+            // active encounters in the world instead of the pool shrinking over time.
+            RespawnEncounterElsewhere(card, resolvedHex);
         }
+    }
+
+    private static void RespawnEncounterElsewhere(CardData card, Hex excludeHex)
+    {
+        if (card == null) return;
+        Board board = FindFirstObjectByType<Board>();
+        if (board == null) return;
+
+        List<Hex> candidates = board.GetHexes()
+            .Where(h => h != null && h != excludeHex && !h.HasPendingEncounters)
+            .OrderBy(h => UnityEngine.Random.value)
+            .ToList();
+        if (candidates.Count == 0) return;
+
+        Hex targetHex = candidates[0];
+        if (!targetHex.AddPendingEncounter(card)) return;
+        card.encounterTargetHex = targetHex;
+        card.hasShownHandAnimation = true;
     }
 
     [Header("Situation Cards")]
@@ -1617,8 +1669,8 @@ public class Board : MonoBehaviour
         var activeSituations = SituationEvaluator.GetActiveSituations(character, hex);
         Debug.Log($"[SituationCards] {character.characterName} @ {hex.name} — active situations: [{string.Join(", ", activeSituations)}]");
 
-        List<CardData> situationCards = deckManager.GetSituationCards(g.player, character, hex);
-        Debug.Log($"[SituationCards] matched cards: {situationCards.Count} — [{string.Join(", ", situationCards.Select(c => c.name))}]");
+        List<SituationCardOffer> situationCards = deckManager.GetSituationCardOffers(g.player, character, hex);
+        Debug.Log($"[SituationCards] offers: {situationCards.Count} — [{string.Join(", ", situationCards.Select(o => $"{o.Card?.name} ({o.Source}{(o.IsPlayable ? "" : ", disabled")})"))}]");
 
         if (situationCards == null || situationCards.Count == 0) return;
 
@@ -1634,7 +1686,7 @@ public class Board : MonoBehaviour
     // settle the camera on the hex, hold it for a beat, then pop the cards. Opportunity cards
     // are an exclusive center-screen display, same as the turn banner and the PC/region grant
     // preview — CenterDisplayLock ensures only one of those is ever up at a time.
-    private IEnumerator ShowSituationCardsSequence(List<CardData> situationCards, Character character, Hex hex)
+    private IEnumerator ShowSituationCardsSequence(List<SituationCardOffer> situationCards, Character character, Hex hex)
     {
         hex.LookAt();
         yield return new WaitForSeconds(situationCardsFocusDelay);
@@ -1671,6 +1723,94 @@ public class Board : MonoBehaviour
         situationCardsSequence = null;
     }
 
+    private sealed class TurnStartResourceGrant
+    {
+        public Character character;
+        public Hex hex;
+        public CardData card;
+        public bool isPcGrant;
+    }
+
+    // Turn-start gathering is deliberately presented as one collection rather than a trip
+    // around the map. The cards are all shown together at screen center, then their token
+    // flights leave together for their respective hexes. Effects are subsequently dispatched
+    // through the normal grant methods so their shared CharacterAction instances remain safe.
+    public async void TriggerTurnStartResourceGrants(IEnumerable<Character> characters)
+    {
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        if (deckManager == null || characters == null) return;
+
+        List<TurnStartResourceGrant> grants = new();
+        HashSet<string> grantedPcNames = new(StringComparer.OrdinalIgnoreCase);
+        HashSet<string> grantedRegions = new(StringComparer.OrdinalIgnoreCase);
+
+        foreach (Character character in characters)
+        {
+            if (character == null || character.killed || character.hex == null) continue;
+            Hex hex = character.hex;
+            PC pc = hex.GetPCData();
+            if (pc != null && pc.owner == character.GetOwner()
+                && grantedPcNames.Add(PcDescriptionBuilder.NormalizeLookupKey(pc.pcName)))
+            {
+                CardData pcCard = deckManager.FindPcCardByPcName(pc.pcName);
+                if (pcCard != null)
+                {
+                    grants.Add(new TurnStartResourceGrant { character = character, hex = hex, card = pcCard, isPcGrant = true });
+                }
+            }
+
+            string region = hex.GetLandRegion();
+            if (!string.IsNullOrWhiteSpace(region)
+                && grantedRegions.Add(PcDescriptionBuilder.NormalizeLookupKey(region)))
+            {
+                CardData landCard = deckManager.FindLandCardByRegion(region);
+                if (landCard != null)
+                {
+                    grants.Add(new TurnStartResourceGrant { character = character, hex = hex, card = landCard, isPcGrant = false });
+                }
+            }
+        }
+
+        if (grants.Count == 0) return;
+
+        Game game = FindFirstObjectByType<Game>();
+        bool showToPlayer = game != null && game.player == grants[0].character.GetOwner();
+        if (showToPlayer)
+        {
+            while (TurnBanner.IsShowing) await Task.Yield();
+            await CenterDisplayLock.WaitAsync();
+            try
+            {
+                CardCenterPreview.Instance?.ShowPreview(grants.Select(grant => grant.card).ToList(), speedMultiplier: 2f);
+                await Task.Delay(TimeSpan.FromSeconds(0.9));
+                CardCenterPreview.Instance?.HidePreview();
+
+                List<Task> flights = new();
+                foreach (TurnStartResourceGrant grant in grants)
+                {
+                    var arrived = new TaskCompletionSource<bool>();
+                    flights.Add(arrived.Task);
+                    CardPlayFlight.LaunchFromData(grant.card, grant.hex, () => arrived.TrySetResult(true), durationScale: 0.5f);
+                }
+                await Task.WhenAll(flights);
+            }
+            finally
+            {
+                CenterDisplayLock.Release();
+            }
+        }
+
+        // These calls retain the existing validation and serialized action execution, but the
+        // shared collection presentation and flights above have already completed.
+        foreach (TurnStartResourceGrant grant in grants)
+        {
+            if (grant.isPcGrant)
+                TriggerOwnPcGrantIfStandingOnOne(grant.character, grant.hex, suppressPresentation: true);
+            else
+                TriggerRegionLandGrant(grant.character, grant.hex, suppressPresentation: true);
+        }
+    }
+
     // Re-triggers a PC's resource-granting effect (PCAction.asyncEffect's already-founded
     // branch) whenever a character is standing on one of its own leader's founded PCs —
     // once when they arrive (called alongside CheckAndShowSituationCards) and again at the
@@ -1688,7 +1828,7 @@ public class Board : MonoBehaviour
     // (another owned PC/region at turn start, or another leader's turn-start grant sharing the
     // same action type) would re-Initialize the shared instance out from under the first,
     // corrupting its character/card fields mid-flight.
-    public async void TriggerOwnPcGrantIfStandingOnOne(Character character, Hex hex, bool quickTurnStartSequence = false)
+    public async void TriggerOwnPcGrantIfStandingOnOne(Character character, Hex hex, bool quickTurnStartSequence = false, bool suppressPresentation = false)
     {
         if (character == null || character.killed || hex == null)
         {
@@ -1741,14 +1881,11 @@ public class Board : MonoBehaviour
         Debug.Log($"[CenterLock] PC grant '{pcCard.name}' acquired lock.");
         try
         {
-            if (showToPlayer)
+            if (showToPlayer && !suppressPresentation)
             {
-                if (quickTurnStartSequence)
-                {
-                    hex.LookAt(0.5f);
-                    await Task.Delay(TimeSpan.FromSeconds(0.5));
-                }
-
+                // Turn-start gathering is a single center-screen card sequence. Do not pan to
+                // every source hex: the flight still marks each destination on the board, but
+                // retaining the current camera makes a large resource collection immediate.
                 CardCenterPreview.Instance?.ShowPreview(pcCard, quickTurnStartSequence ? 2f : 1f);
                 await Task.Delay(TimeSpan.FromSeconds(quickTurnStartSequence ? 0.75 : 1.5));
                 CardCenterPreview.Instance?.HidePreview();
@@ -1779,7 +1916,7 @@ public class Board : MonoBehaviour
     // card resources (materials only — Land cards have no other effect) for a character
     // standing anywhere in that region. Land cards have no founding concept, so unlike the
     // PC grant there's no already-founded check — just resolve and re-apply.
-    public async void TriggerRegionLandGrant(Character character, Hex hex, bool quickTurnStartSequence = false)
+    public async void TriggerRegionLandGrant(Character character, Hex hex, bool quickTurnStartSequence = false, bool suppressPresentation = false)
     {
         if (character == null || character.killed || hex == null)
         {
@@ -1824,14 +1961,10 @@ public class Board : MonoBehaviour
         Debug.Log($"[CenterLock] Region grant '{landCard.name}' acquired lock.");
         try
         {
-            if (showToPlayer)
+            if (showToPlayer && !suppressPresentation)
             {
-                if (quickTurnStartSequence)
-                {
-                    hex.LookAt(0.5f);
-                    await Task.Delay(TimeSpan.FromSeconds(0.5));
-                }
-
+                // See the PC grant above: keep turn-start gathering centered while its
+                // card-flight animation continues to point at the granting region's hex.
                 CardCenterPreview.Instance?.ShowPreview(landCard, quickTurnStartSequence ? 2f : 1f);
                 await Task.Delay(TimeSpan.FromSeconds(quickTurnStartSequence ? 0.75 : 1.5));
                 CardCenterPreview.Instance?.HidePreview();

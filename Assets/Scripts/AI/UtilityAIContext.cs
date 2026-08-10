@@ -4,18 +4,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class AIContext
+public class UtilityAIContext
 {
     private readonly Board board;
     private readonly List<AIScoredAction> scoredActions = new();
     private readonly List<ArtifactTransferCandidate> artifactTransferCandidates = new();
     private readonly HashSet<string> scoredActionKeys = new();
     private readonly Dictionary<CharacterAction, CardData> actionCardsByAction = new();
-    private readonly AIContextPrecomputedData? _precomputed;
+    private readonly PrecomputedData? _precomputed;
     private ResourceSnapshot preSnapshot;
     private Dictionary<PlayableLeader, int> preVictoryPoints;
 
-    public PlayableLeader Leader { get; }
+    public Leader Leader { get; }
     public Character Character { get; }
     public List<CharacterAction> AvailableActions { get; }
     public EconomyStatus EconomyStatus { get; }
@@ -42,21 +42,23 @@ public class AIContext
     private float liquidWealth = 0f;
     private float nationPercentageArtifacts = 0;
     private int hiddenArtifactsRemaining;
+    private float duelAdvantage = 0f;
+    private float songDuelAdvantage = 0f;
+    private int unrecruitedSameAlignmentNplCount = 0;
     public CharacterAction LastChosenAction { get; private set; }
-    public AdvisorType LastAdvisor { get; private set; }
 
     // Set by AITurnController after construction, from the HTN's currently-active
     // PrimitiveTask.TaskId, purely for AIActionLogger traceability (see BuildLogEntry).
     public string ActiveHtnTaskId { get; set; }
 
-    // Set by AITurnController from AIBlackboard.TargetHex — the specific hex behind whichever
-    // situational parameter the active primitive task prefers (see GetTargetHexForParameter).
-    // GetPreferredMovementTarget() reads this first, so a character actually travels toward
-    // and acts on the location that triggered its current strategy rather than only ever
-    // acting on wherever it happens to already be standing.
+    // Set by AITurnController from CharacterBlackboard.TargetHex — the specific hex behind
+    // whichever situational parameter the active primitive task prefers (see
+    // GetTargetHexForParameter). GetPreferredMovementTarget() reads this first, so a character
+    // actually travels toward and acts on the location that triggered its current strategy
+    // rather than only ever acting on wherever it happens to already be standing.
     public Hex ActiveHtnTargetHex { get; set; }
 
-    public AIContext(PlayableLeader leader, Character character, List<CharacterAction> availableActions, Dictionary<CharacterAction, CardData> actionCards = null, AIContextPrecomputedData? precomputed = null)
+    public UtilityAIContext(Leader leader, Character character, List<CharacterAction> availableActions, Dictionary<CharacterAction, CardData> actionCards = null, PrecomputedData? precomputed = null)
     {
         Leader = leader;
         Character = character;
@@ -70,52 +72,43 @@ public class AIContext
         board = UnityEngine.Object.FindFirstObjectByType<Board>();
 
         _precomputed = precomputed;
-        ApplyPrecomputedData(precomputed ?? AIContextDataBuilder.Build(leader, character));
+        ApplyPrecomputedData(precomputed ?? UtilityAIContextDataBuilder.Build(leader, character));
         EconomyStatus = EvaluateEconomy();
         preSnapshot = CaptureSnapshot();
         preVictoryPoints = CaptureVictoryPointsSnapshot();
-    }
-
-    public async Task<bool> TryExecuteAdvisorActionAsync(AdvisorType advisor)
-    {
-        ResetScoringData();
-        CharacterAction action = PickBestActionForAdvisor(advisor);
-        if (action == null) return false;
-
-        return await TryExecuteChosenActionAsync(action, advisor);
     }
 
     public async Task<bool> TryExecuteBestAvailableActionAsync()
     {
         ResetScoringData();
         CharacterAction action = AvailableActions
-            .OrderByDescending(a => ScoreAction(a, AIAdvisorConfig.ResolveAdvisor(a)))
+            .OrderByDescending(a => ScoreAction(a))
             .FirstOrDefault();
 
         if (action == null) return false;
 
-        return await TryExecuteChosenActionAsync(action, AIAdvisorConfig.ResolveAdvisor(action));
+        return await TryExecuteChosenActionAsync(action);
     }
 
-    // Shared tail of TryExecuteAdvisorActionAsync/TryExecuteBestAvailableActionAsync, also used
-    // by AITurnController's full-deck difficulty loop once an action has already been chosen.
-    public async Task<bool> TryExecuteChosenActionAsync(CharacterAction action, AdvisorType advisor)
+    // Shared tail of TryExecuteBestAvailableActionAsync, also used by AITurnController's
+    // full-deck difficulty loop once an action has already been chosen.
+    public async Task<bool> TryExecuteChosenActionAsync(CharacterAction action)
     {
         if (action == null) return false;
         if (!PrepareActionForExecution(action)) return false;
-        RecordAction(action, advisor);
+        RecordAction(action);
         await action.Execute();
         return true;
     }
 
     public async Task<bool> PassAsync()
     {
-        RecordAction(null, AdvisorType.None);
+        RecordAction(null);
         await Character.Pass();
         return true;
     }
 
-    private void ApplyPrecomputedData(AIContextPrecomputedData data)
+    private void ApplyPrecomputedData(PrecomputedData data)
     {
         liquidWealth = data.LiquidWealth;
         nationPercentageArtifacts = data.NationPercentageArtifacts;
@@ -139,6 +132,9 @@ public class AIContext
         nearestNplRecruitmentHex = data.NearestNplRecruitmentHex;
         needsIndirectApproach = data.NeedsIndirectApproach;
         hiddenArtifactsRemaining = data.HiddenArtifactsRemaining;
+        duelAdvantage = data.DuelAdvantage;
+        songDuelAdvantage = data.SongDuelAdvantage;
+        unrecruitedSameAlignmentNplCount = data.UnrecruitedSameAlignmentNplCount;
 
         if (data.ArtifactTransferCandidates != null && data.ArtifactTransferCandidates.Count > 0)
         {
@@ -147,49 +143,37 @@ public class AIContext
         }
     }
 
-    private CharacterAction PickBestActionForAdvisor(AdvisorType advisor)
+    // preferredParameters: the active HTN leaf's PreferredParameters, if any — a card gets
+    // HTNBiasBonus once per parameter it shares with that list. This is the only mechanism
+    // tying a card to "what the active strategy is about"; there is no separate flat bonus.
+    public float ScoreAction(CharacterAction action, IReadOnlyList<string> preferredParameters = null)
     {
-        List<CharacterAction> matches = AvailableActions.Where(a => AIAdvisorConfig.ResolveAdvisor(a) == advisor).ToList();
-        if (!matches.Any()) return null;
-
-        return matches.OrderByDescending(a => ScoreAction(a, advisor)).First();
-    }
-
-    public float ScoreAction(CharacterAction action, AdvisorType advisor, float advisorBiasBonus = 0f, IReadOnlyList<string> preferredParameters = null)
-    {
-        float score = advisorBiasBonus;
-        ActionScoreFlags scoreFlags = AIAdvisorConfig.GetActionScoreFlags(action);
-
-        // Advisor world-state values are never applied merely because a card
-        // belongs to an advisor. A card receives them only through its explicit
-        // Card Board utility profile below. Therefore an empty profile means
-        // exactly zero Advisor-utility contribution.
+        float score = 0f;
+        ActionScoreFlags scoreFlags = UtilityAI.GetActionScoreFlags(action);
 
         // User-authored flat priority adjustment for this specific action.
-        score += AIAdvisorConfig.GetActionScoreBonus(action);
+        score += UtilityAI.GetActionScoreBonus(action);
 
-        // A card can opt into any named Advisor parameter explicitly. This is
+        // A card can opt into any named UtilityAI parameter explicitly. This is
         // deliberately data-driven: there are no action-name special cases or
         // hidden per-card calculations here.
         if (!scoreFlags.ignoreSituation)
         {
-            foreach (ActionUtilityParameterModifier modifier in AIAdvisorConfig.GetActionUtilityParameters(action))
+            foreach (ActionUtilityParameterModifier modifier in UtilityAI.GetActionUtilityParameters(action))
             {
                 score += GetUtilityParameter(modifier.parameter) * modifier.multiplier + modifier.bonus;
 
-                // Extra nudge when this card's own authored parameter matches what the active
-                // HTN leaf's situation is actually about (HTNPrimitiveTask.PreferredParameters)
-                // — stronger evidence than the flat advisorBiasBonus above, which only checked
-                // "same advisor" and can't distinguish e.g. root.offense.pick.attack from
-                // root.offense.pick.fortify (both Militaristic).
+                // Bonus when this card's own authored parameter matches what the active HTN
+                // leaf's situation is actually about (HTNPrimitiveTask.PreferredParameters) —
+                // this is the sole mechanism biasing scoring toward the active branch.
                 if (preferredParameters != null && preferredParameters.Contains(modifier.parameter, StringComparer.OrdinalIgnoreCase))
                 {
-                    score += AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.HTNSituationBonus);
+                    score += UtilityAI.GetWeight(UtilityAI.Keys.HTNBiasBonus);
                 }
             }
         }
 
-        RecordScoredAction(action, advisor, score);
+        RecordScoredAction(action, score);
         return score;
     }
 
@@ -201,8 +185,8 @@ public class AIContext
 
         if (target.Hex == null) return 0f;
 
-        float effectiveDistance = target.Distance + (target.IsNeutral ? AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.NeutralTargetExtraDistance) : 0f);
-        return Mathf.Max(0f, AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.EnemyProximityMax) - effectiveDistance);
+        float effectiveDistance = target.Distance + (target.IsNeutral ? UtilityAI.GetWeight(UtilityAI.Keys.NeutralTargetExtraDistance) : 0f);
+        return Mathf.Max(0f, UtilityAI.GetWeight(UtilityAI.Keys.EnemyProximityMax) - effectiveDistance);
     }
 
     private int ResolveCardDifficulty(CharacterAction action)
@@ -238,27 +222,28 @@ public class AIContext
         action.card = consumedCard;
         action.difficulty = Mathf.Max(0, consumedCard.difficulty);
         deckManager.ApplyMapRevealForPlayedCard(Leader, consumedCard);
-        Leader.RecordPlayedCard(consumedCard);
+        // RecordPlayedCard (played-land/PC-card history) is PlayableLeader-only bookkeeping.
+        if (Leader is PlayableLeader playableLeader) playableLeader.RecordPlayedCard(consumedCard);
         return true;
     }
 
     private float GetMilitaryEdgeScore()
     {
         if (!Character.IsArmyCommander() || Character.GetArmy() == null)
-            return AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.NoArmyPenalty);
+            return UtilityAI.GetWeight(UtilityAI.Keys.NoArmyPenalty);
 
         float myStrength = Character.GetArmy().GetOffence();
         EnemyTarget target = closestEnemy.Hex != null ? closestEnemy : closestNonNeutralEnemy;
         if (target.Hex == null || target.Strength <= 0) return 0f;
 
         float strengthDiff = myStrength - target.Strength;
-        float distancePenalty = target.Distance > 1f ? AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.FarTargetPenalty) : 0f;
+        float distancePenalty = target.Distance > 1f ? UtilityAI.GetWeight(UtilityAI.Keys.FarTargetPenalty) : 0f;
 
         if (strengthDiff < 0)
         {
             // needsIndirectApproach is decided once, authoritatively, in
-            // AIContextDataBuilder (against OutmatchedStrengthRatio) — not re-derived here
-            // against a different, undocumented threshold (this used to set it on any
+            // UtilityAIContextDataBuilder (against OutmatchedStrengthRatio) — not re-derived
+            // here against a different, undocumented threshold (this used to set it on any
             // deficit at all, vs. the builder's ratio-buffered definition).
             return Mathf.Max(-10f, strengthDiff / 10f - distancePenalty);
         }
@@ -266,124 +251,147 @@ public class AIContext
         return Mathf.Clamp(strengthDiff / 20f, -5f, 8f) - distancePenalty;
     }
 
+    // Reusable win-probability proxy for Militaristic.OffenseWinRatioReady's hard gate — a
+    // straightforward ratio (not the clamped/penalized delta GetMilitaryEdgeScore uses for
+    // continuous scoring), so "1.0 = evenly matched" reads naturally against
+    // Militaristic.MinWinRatioToAttack. 0 means "don't attack" (no army, or no target found)
+    // rather than an undefined/negative signal.
+    public float GetArmyWinRatio()
+    {
+        if (!Character.IsArmyCommander() || Character.GetArmy() == null) return 0f;
+        EnemyTarget target = closestNonNeutralEnemy.Hex != null ? closestNonNeutralEnemy : closestEnemy;
+        if (target.Hex == null) return 0f;
+        float myStrength = Character.GetArmy().GetOffence();
+        return myStrength / Mathf.Max(1f, target.Strength);
+    }
+
     private float GetDiplomaticScore()
     {
         if (nearestUnrevealedNpcDistance == float.MaxValue) return 0f;
 
-        return Mathf.Max(0f, AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.NpcProximityMax) - nearestUnrevealedNpcDistance);
+        return Mathf.Max(0f, UtilityAI.GetWeight(UtilityAI.Keys.NpcProximityMax) - nearestUnrevealedNpcDistance);
     }
 
     private float GetNearbyEnemyCharacterScore()
     {
         if (nearestEnemyCharacterDistance == float.MaxValue) return 0f;
         // Closer enemy characters make intelligence more valuable
-        return Mathf.Max(0f, AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.EnemyCharacterProximityMax) - nearestEnemyCharacterDistance);
+        return Mathf.Max(0f, UtilityAI.GetWeight(UtilityAI.Keys.EnemyCharacterProximityMax) - nearestEnemyCharacterDistance);
     }
 
     // Target-quality signals: "is there a specific good target nearby right now", computed once
-    // in AIContextDataBuilder against an authored qualifying threshold (loyalty/defense/skill),
-    // then faded by proximity here exactly like every other *ProximityMax term in this file.
+    // in UtilityAIContextDataBuilder against an authored qualifying threshold (loyalty/defense/
+    // skill), then faded by proximity here exactly like every other *ProximityMax term in this file.
     private float GetEnemyPcOpportunityScore()
     {
         if (nearestEnemyPcOpportunityDistance == float.MaxValue) return 0f;
-        return Mathf.Max(0f, AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.DiplomaticEnemyPcOpportunityProximityMax) - nearestEnemyPcOpportunityDistance);
+        return Mathf.Max(0f, UtilityAI.GetWeight(UtilityAI.Keys.DiplomaticEnemyPcOpportunityProximityMax) - nearestEnemyPcOpportunityDistance);
     }
 
     private float GetOwnPcLoyaltyRiskScore()
     {
         if (nearestOwnPcLoyaltyRiskDistance == float.MaxValue) return 0f;
-        return Mathf.Max(0f, AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.DiplomaticOwnPcLoyaltyRiskProximityMax) - nearestOwnPcLoyaltyRiskDistance);
+        return Mathf.Max(0f, UtilityAI.GetWeight(UtilityAI.Keys.DiplomaticOwnPcLoyaltyRiskProximityMax) - nearestOwnPcLoyaltyRiskDistance);
     }
 
     private float GetEnemyPcVulnerabilityScore()
     {
         if (nearestEnemyPcVulnerabilityDistance == float.MaxValue) return 0f;
-        return Mathf.Max(0f, AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.IntelligenceEnemyPcVulnerabilityProximityMax) - nearestEnemyPcVulnerabilityDistance);
+        return Mathf.Max(0f, UtilityAI.GetWeight(UtilityAI.Keys.IntelligenceEnemyPcVulnerabilityProximityMax) - nearestEnemyPcVulnerabilityDistance);
     }
 
     private float GetHighValueEnemyCharacterScore()
     {
         if (nearestHighValueEnemyCharacterDistance == float.MaxValue) return 0f;
-        return Mathf.Max(0f, AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.IntelligenceHighValueEnemyCharacterProximityMax) - nearestHighValueEnemyCharacterDistance);
+        return Mathf.Max(0f, UtilityAI.GetWeight(UtilityAI.Keys.IntelligenceHighValueEnemyCharacterProximityMax) - nearestHighValueEnemyCharacterDistance);
     }
 
     private float GetOwnPcFortificationNeedScore()
     {
         if (nearestOwnPcFortificationNeedDistance == float.MaxValue) return 0f;
-        return Mathf.Max(0f, AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MilitaristicOwnPcFortificationProximityMax) - nearestOwnPcFortificationNeedDistance);
+        return Mathf.Max(0f, UtilityAI.GetWeight(UtilityAI.Keys.MilitaristicOwnPcFortificationProximityMax) - nearestOwnPcFortificationNeedDistance);
     }
 
     private float GetNplRecruitmentScore()
     {
         if (nearestNplRecruitmentDistance == float.MaxValue) return 0f;
-        return Mathf.Max(0f, AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.DiplomaticNplRecruitmentProximityMax) - nearestNplRecruitmentDistance);
+        return Mathf.Max(0f, UtilityAI.GetWeight(UtilityAI.Keys.DiplomaticNplRecruitmentProximityMax) - nearestNplRecruitmentDistance);
     }
-
-    // Literal count of Spell-derived actions this character can currently play — the same
-    // "is there a legal opportunity of this shape at all" gate GetArtifactTransferScore uses
-    // for TransferArtifact (AvailableActions.Any(a => a is TransferArtifact)) below, just a
-    // count instead of a bool so card profiles can scale by how many options exist.
-    private float GetSpellOpportunityScore() => AvailableActions.Count(a => a is Spell);
 
     // The nearest non-neutral enemy PC/army is within Militaristic's proximity window
     // (Targeting.EnemyProximityMax) — proximity alone, independent of who would win a fight.
     // Read by HTNRegistry's Militaristic.EnemyNear/Danger predicates.
     public bool IsEnemyNear => GetDistanceScore(false) > 0f;
 
-    // The nearest enemy target outguns this leader's army by AIContextDataBuilder's
+    // The nearest enemy target outguns this leader's army by UtilityAIContextDataBuilder's
     // OutmatchedStrengthRatio (0 strength while leading no army, so "no army" is always
     // outmatched if any enemy exists) — computed once, authoritatively, at context build time.
     // Read by HTNRegistry's Militaristic.Danger predicate and already feeds the Intelligence/
     // Diplomatic "indirect approach" bonuses below.
     public bool IsOutmatched => needsIndirectApproach;
 
-    // World-state-only appeal of pursuing this advisor right now, independent of any specific
-    // card — the same situational terms ScoreAction adds per-card above, minus the handful
-    // tied to a concrete action (Intelligence's Scout Area bonus, Magic's artifact-transfer
-    // search — both added separately in ScoreAction). This is what HTNRegistry's Viable
-    // predicates read: the HTN's strategy choice is driven by literally the same weights and
-    // formula the Utility scorer uses to pick cards, not a separate hand-coded sensing layer.
-    // All terms degrade to 0 (or a fixed penalty, e.g. NoArmyPenalty) with no valid target, so
-    // no separate "HasTarget" boolean is needed — a low/negative viability already means "no."
-    public float GetAdvisorViability(AdvisorType advisor)
+    // Tightest-radius, highest-priority danger tier: outmatched AND the enemy is right on top
+    // of this character (a raw distance check, not the faded proximity score IsEnemyNear
+    // reads) — read by HTNRegistry's Global.ImmediateDanger predicate.
+    public bool IsImmediateDanger
     {
-        switch (advisor)
+        get
         {
-            // Economic has no case here: its situational term used to be the now-removed
-            // tier-reactive Economy Critical/Weak/Stable Bonus, which decided nothing —
-            // falls through to default (0f). Economic cards are steered by HTNBiasBonus
-            // (via root.recover) and the manual per-action bonus only.
-            case AdvisorType.Militaristic:
-                return GetDistanceScore(false) + GetMilitaryEdgeScore();
-            case AdvisorType.Intelligence:
-            {
-                float viability = GetNearbyEnemyCharacterScore() + GetDistanceScore(true);
-                if (needsIndirectApproach) viability += AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.IntelligenceOutmatchedBonus);
-                viability += GetDistanceScore(true) * AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.IntelligenceEnemyPressureWeight);
-                viability += GetLeaderRoleStrength(c => c.GetAgent()) * AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.IntelligenceAgentStrengthWeight);
-                return viability;
-            }
-            case AdvisorType.Magic:
-                return (1f - nationPercentageArtifacts) * AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.ArtifactScarcityWeight)
-                    + GetDistanceScore(true)
-                    + hiddenArtifactsRemaining * AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MagicHiddenArtifactsWeight)
-                    + GetLeaderRoleStrength(c => c.GetMage()) * AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.MagicMageStrengthWeight);
-            case AdvisorType.Diplomatic:
-            {
-                float viability = GetDiplomaticScore() + GetDistanceScore(true);
-                if (needsIndirectApproach) viability += AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.DiplomaticOutmatchedBonus);
-                viability += GetDistanceScore(true) * AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.DiplomaticEnemyPressureWeight);
-                viability += GetLeaderRoleStrength(c => c.GetEmmissary()) * AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.DiplomaticEmissaryStrengthWeight);
-                return viability;
-            }
-            case AdvisorType.Logistics:
-                return GetLogisticsProximityScore();
-            case AdvisorType.Disruption:
-                return GetDistanceScore(true);
-            default:
-                return 0f;
+            EnemyTarget target = closestNonNeutralEnemy.Hex != null ? closestNonNeutralEnemy : closestEnemy;
+            return IsOutmatched && target.Hex != null
+                && target.Distance <= UtilityAI.GetWeight(UtilityAI.Keys.ImmediateDangerDistance);
         }
     }
+
+    // Raw distances behind the Diplomacy near/mid banding predicates (HTNRegistry's
+    // Diplomatic.NplsNear/MidReady, EnemyPcOpportunityNear/MidReady) — the underlying fields
+    // are already populated by UtilityAIContextDataBuilder.CacheNpcTargets/CacheEnemyTargets
+    // for the existing continuous proximity scores; these just expose the raw number.
+    public float NearestNplRecruitmentDistance => nearestNplRecruitmentDistance;
+    public float NearestEnemyPcOpportunityDistance => nearestEnemyPcOpportunityDistance;
+
+    // World-state-only appeal of pursuing each named category of response right now,
+    // independent of any specific card — the same situational terms ScoreAction adds per-card
+    // above, minus the handful tied to a concrete action (Intelligence's Scout Area bonus,
+    // Artifacts's artifact-transfer search — both added separately in ScoreAction). This is what
+    // HTNRegistry's Viable predicates read: the HTN's strategy choice is driven by literally
+    // the same weights and formula the Utility scorer uses to pick cards, not a separate
+    // hand-coded sensing layer. All terms degrade to 0 (or a fixed penalty, e.g. NoArmyPenalty)
+    // with no valid target, so no separate "HasTarget" boolean is needed — a low/negative
+    // viability already means "no." There is deliberately no Economic case here (and never
+    // was) — Economic's situational term is EconomyStatus (a liquid-wealth tier), not a
+    // viability aggregate; see EvaluateEconomy.
+    public float GetMilitaristicViability() => GetDistanceScore(false) + GetMilitaryEdgeScore();
+
+    public float GetIntelligenceViability()
+    {
+        float viability = GetNearbyEnemyCharacterScore() + GetDistanceScore(true);
+        if (needsIndirectApproach) viability += UtilityAI.GetWeight(UtilityAI.Keys.IntelligenceOutmatchedBonus);
+        viability += GetDistanceScore(true) * UtilityAI.GetWeight(UtilityAI.Keys.IntelligenceEnemyPressureWeight);
+        viability += GetLeaderRoleStrength(c => c.GetAgent()) * UtilityAI.GetWeight(UtilityAI.Keys.IntelligenceAgentStrengthWeight);
+        return viability;
+    }
+
+    public float GetArtifactsViability()
+    {
+        return (1f - nationPercentageArtifacts) * UtilityAI.GetWeight(UtilityAI.Keys.ArtifactScarcityWeight)
+            + GetDistanceScore(true)
+            + hiddenArtifactsRemaining * UtilityAI.GetWeight(UtilityAI.Keys.ArtifactsHiddenArtifactsWeight)
+            + GetLeaderRoleStrength(c => c.GetMage()) * UtilityAI.GetWeight(UtilityAI.Keys.ArtifactsMageStrengthWeight);
+    }
+
+    public float GetDiplomaticViability()
+    {
+        float viability = GetDiplomaticScore() + GetDistanceScore(true);
+        if (needsIndirectApproach) viability += UtilityAI.GetWeight(UtilityAI.Keys.DiplomaticOutmatchedBonus);
+        viability += GetDistanceScore(true) * UtilityAI.GetWeight(UtilityAI.Keys.DiplomaticEnemyPressureWeight);
+        viability += GetLeaderRoleStrength(c => c.GetEmmissary()) * UtilityAI.GetWeight(UtilityAI.Keys.DiplomaticEmissaryStrengthWeight);
+        return viability;
+    }
+
+    public float GetLogisticsViability() => GetLogisticsProximityScore();
+
+    public float GetDisruptionViability() => GetDistanceScore(true);
 
     // Direct, named utility observations. HTN predicates and card profiles both
     // call this same public API, so the inspector can always show exactly what
@@ -392,96 +400,108 @@ public class AIContext
     {
         return parameter switch
         {
-            AIUtilityParameters.MilitaristicEnemyPressure => GetDistanceScore(false),
-            AIUtilityParameters.MilitaristicMilitaryEdge => GetMilitaryEdgeScore(),
-            AIUtilityParameters.EconomicLiquidWealth => liquidWealth,
-            AIUtilityParameters.DiplomaticIndirectSafety => needsIndirectApproach ? AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.DiplomaticOutmatchedBonus) : 0f,
-            AIUtilityParameters.IntelligenceEnemyCharacter => GetNearbyEnemyCharacterScore(),
-            AIUtilityParameters.IntelligenceIndirectSafety => needsIndirectApproach ? AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.IntelligenceOutmatchedBonus) : 0f,
-            AIUtilityParameters.MagicArtifactScarcity => (1f - nationPercentageArtifacts) * AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.ArtifactScarcityWeight),
-            AIUtilityParameters.MagicArtifactTransfer => GetArtifactTransferScore(),
-            AIUtilityParameters.MagicEnemyPressure => GetDistanceScore(true),
-            AIUtilityParameters.MagicHiddenArtifacts => hiddenArtifactsRemaining,
-            AIUtilityParameters.MagicMageStrength => GetLeaderRoleStrength(c => c.GetMage()),
-            AIUtilityParameters.DiplomaticEnemyPressure => GetDistanceScore(true),
-            AIUtilityParameters.DiplomaticEmissaryStrength => GetLeaderRoleStrength(c => c.GetEmmissary()),
-            AIUtilityParameters.IntelligenceEnemyPressure => GetDistanceScore(true),
-            AIUtilityParameters.IntelligenceAgentStrength => GetLeaderRoleStrength(c => c.GetAgent()),
-            AIUtilityParameters.LogisticsReachNpc => GetLogisticsProximityScore(nearestUnrevealedNpcHex),
-            AIUtilityParameters.LogisticsInterceptEnemy => GetLogisticsProximityScore(closestNonNeutralEnemy.Hex ?? closestEnemy.Hex),
-            AIUtilityParameters.LogisticsReachEnemyCharacter => GetLogisticsProximityScore(nearestEnemyCharacterHex),
-            AIUtilityParameters.LogisticsHealingNeed => GetHealingNeedScore(),
-            AIUtilityParameters.DisruptionEnemyPressure => GetDistanceScore(true),
-            AIUtilityParameters.DiplomaticEnemyPcOpportunity => GetEnemyPcOpportunityScore(),
-            AIUtilityParameters.DiplomaticOwnPcLoyaltyRisk => GetOwnPcLoyaltyRiskScore(),
-            AIUtilityParameters.IntelligenceEnemyPcVulnerability => GetEnemyPcVulnerabilityScore(),
-            AIUtilityParameters.IntelligenceHighValueEnemyCharacter => GetHighValueEnemyCharacterScore(),
-            AIUtilityParameters.MagicSpellOpportunity => GetSpellOpportunityScore(),
-            AIUtilityParameters.MilitaristicOwnPcFortificationNeed => GetOwnPcFortificationNeedScore(),
-            AIUtilityParameters.DiplomaticNplRecruitment => GetNplRecruitmentScore(),
+            UtilityAIParameters.MilitaristicEnemyPressure => GetDistanceScore(false),
+            UtilityAIParameters.MilitaristicMilitaryEdge => GetMilitaryEdgeScore(),
+            UtilityAIParameters.EconomicLiquidWealth => liquidWealth,
+            UtilityAIParameters.DiplomaticIndirectSafety => needsIndirectApproach ? UtilityAI.GetWeight(UtilityAI.Keys.DiplomaticOutmatchedBonus) : 0f,
+            UtilityAIParameters.IntelligenceEnemyCharacter => GetNearbyEnemyCharacterScore(),
+            UtilityAIParameters.IntelligenceIndirectSafety => needsIndirectApproach ? UtilityAI.GetWeight(UtilityAI.Keys.IntelligenceOutmatchedBonus) : 0f,
+            UtilityAIParameters.ArtifactsArtifactScarcity => (1f - nationPercentageArtifacts) * UtilityAI.GetWeight(UtilityAI.Keys.ArtifactScarcityWeight),
+            UtilityAIParameters.ArtifactsArtifactTransfer => GetArtifactTransferScore(),
+            UtilityAIParameters.ArtifactsEnemyPressure => GetDistanceScore(true),
+            UtilityAIParameters.ArtifactsHiddenArtifacts => hiddenArtifactsRemaining,
+            UtilityAIParameters.ArtifactsMageStrength => GetLeaderRoleStrength(c => c.GetMage()),
+            UtilityAIParameters.DiplomaticEnemyPressure => GetDistanceScore(true),
+            UtilityAIParameters.DiplomaticEmissaryStrength => GetLeaderRoleStrength(c => c.GetEmmissary()),
+            UtilityAIParameters.IntelligenceEnemyPressure => GetDistanceScore(true),
+            UtilityAIParameters.IntelligenceAgentStrength => GetLeaderRoleStrength(c => c.GetAgent()),
+            UtilityAIParameters.LogisticsReachNpc => GetLogisticsProximityScore(nearestUnrevealedNpcHex),
+            UtilityAIParameters.LogisticsInterceptEnemy => GetLogisticsProximityScore(closestNonNeutralEnemy.Hex ?? closestEnemy.Hex),
+            UtilityAIParameters.LogisticsReachEnemyCharacter => GetLogisticsProximityScore(nearestEnemyCharacterHex),
+            UtilityAIParameters.LogisticsHealingNeed => GetHealingNeedScore(),
+            UtilityAIParameters.DisruptionEnemyPressure => GetDistanceScore(true),
+            UtilityAIParameters.DiplomaticEnemyPcOpportunity => GetEnemyPcOpportunityScore(),
+            UtilityAIParameters.DiplomaticOwnPcLoyaltyRisk => GetOwnPcLoyaltyRiskScore(),
+            UtilityAIParameters.IntelligenceEnemyPcVulnerability => GetEnemyPcVulnerabilityScore(),
+            UtilityAIParameters.IntelligenceHighValueEnemyCharacter => GetHighValueEnemyCharacterScore(),
+            UtilityAIParameters.MilitaristicOwnPcFortificationNeed => GetOwnPcFortificationNeedScore(),
+            UtilityAIParameters.DiplomaticNplRecruitment => GetNplRecruitmentScore(),
             // Deliberately the same formula as MilitaristicOwnPcFortificationNeed above — see
-            // the constant's doc comment in AdvisorConfig.cs.
-            AIUtilityParameters.MilitaristicOwnPcDefenderNeed => GetOwnPcFortificationNeedScore(),
-            AIUtilityParameters.EconomicMithrilInsufficient => GetResourceInsufficientScore(ProducesEnum.mithril, AIAdvisorConfig.Keys.EconomicMithrilInsufficientBelow),
-            AIUtilityParameters.EconomicMithrilSurplus => GetResourceSurplusScore(ProducesEnum.mithril, AIAdvisorConfig.Keys.EconomicMithrilSurplusAbove),
-            AIUtilityParameters.EconomicSteelInsufficient => GetResourceInsufficientScore(ProducesEnum.steel, AIAdvisorConfig.Keys.EconomicSteelInsufficientBelow),
-            AIUtilityParameters.EconomicSteelSurplus => GetResourceSurplusScore(ProducesEnum.steel, AIAdvisorConfig.Keys.EconomicSteelSurplusAbove),
-            AIUtilityParameters.EconomicIronInsufficient => GetResourceInsufficientScore(ProducesEnum.iron, AIAdvisorConfig.Keys.EconomicIronInsufficientBelow),
-            AIUtilityParameters.EconomicIronSurplus => GetResourceSurplusScore(ProducesEnum.iron, AIAdvisorConfig.Keys.EconomicIronSurplusAbove),
-            AIUtilityParameters.EconomicMountsInsufficient => GetResourceInsufficientScore(ProducesEnum.mounts, AIAdvisorConfig.Keys.EconomicMountsInsufficientBelow),
-            AIUtilityParameters.EconomicMountsSurplus => GetResourceSurplusScore(ProducesEnum.mounts, AIAdvisorConfig.Keys.EconomicMountsSurplusAbove),
-            AIUtilityParameters.EconomicTimberInsufficient => GetResourceInsufficientScore(ProducesEnum.timber, AIAdvisorConfig.Keys.EconomicTimberInsufficientBelow),
-            AIUtilityParameters.EconomicTimberSurplus => GetResourceSurplusScore(ProducesEnum.timber, AIAdvisorConfig.Keys.EconomicTimberSurplusAbove),
-            AIUtilityParameters.EconomicLeatherInsufficient => GetResourceInsufficientScore(ProducesEnum.leather, AIAdvisorConfig.Keys.EconomicLeatherInsufficientBelow),
-            AIUtilityParameters.EconomicLeatherSurplus => GetResourceSurplusScore(ProducesEnum.leather, AIAdvisorConfig.Keys.EconomicLeatherSurplusAbove),
-            AIUtilityParameters.EconomicGoldInsufficient => GetResourceInsufficientScore(ProducesEnum.gold, AIAdvisorConfig.Keys.EconomyCriticalBelow),
-            AIUtilityParameters.EconomicGoldSurplus => GetResourceSurplusScore(ProducesEnum.gold, AIAdvisorConfig.Keys.EconomyStableBelow),
+            // the constant's doc comment in UtilityAI.cs.
+            UtilityAIParameters.MilitaristicOwnPcDefenderNeed => GetOwnPcFortificationNeedScore(),
+            // Signed win-probability margins (self score minus best eligible opponent's, see
+            // UtilityAIContextDataBuilder.CacheDuelSignal/CacheSongDuelSignal) — negative when
+            // this character would likely lose, so a bad matchup suppresses the card's own
+            // score instead of merely failing to help it.
+            UtilityAIParameters.MilitaristicDuelAdvantage => duelAdvantage,
+            UtilityAIParameters.MilitaristicSongDuelAdvantage => songDuelAdvantage,
+            // Board-wide, not proximity-based — see DiplomaticNplRecruitment above for "is there
+            // one specific eligible target nearby right now".
+            UtilityAIParameters.DiplomaticNplScarcity => Mathf.Max(0f, UtilityAI.GetWeight(UtilityAI.Keys.DiplomaticLowNplsCountAtMost) - unrecruitedSameAlignmentNplCount),
+            UtilityAIParameters.EconomicMithrilInsufficient => GetResourceInsufficientScore(ProducesEnum.mithril, UtilityAI.Keys.EconomicMithrilInsufficientBelow),
+            UtilityAIParameters.EconomicMithrilSurplus => GetResourceSurplusScore(ProducesEnum.mithril, UtilityAI.Keys.EconomicMithrilSurplusAbove),
+            UtilityAIParameters.EconomicSteelInsufficient => GetResourceInsufficientScore(ProducesEnum.steel, UtilityAI.Keys.EconomicSteelInsufficientBelow),
+            UtilityAIParameters.EconomicSteelSurplus => GetResourceSurplusScore(ProducesEnum.steel, UtilityAI.Keys.EconomicSteelSurplusAbove),
+            UtilityAIParameters.EconomicIronInsufficient => GetResourceInsufficientScore(ProducesEnum.iron, UtilityAI.Keys.EconomicIronInsufficientBelow),
+            UtilityAIParameters.EconomicIronSurplus => GetResourceSurplusScore(ProducesEnum.iron, UtilityAI.Keys.EconomicIronSurplusAbove),
+            UtilityAIParameters.EconomicMountsInsufficient => GetResourceInsufficientScore(ProducesEnum.mounts, UtilityAI.Keys.EconomicMountsInsufficientBelow),
+            UtilityAIParameters.EconomicMountsSurplus => GetResourceSurplusScore(ProducesEnum.mounts, UtilityAI.Keys.EconomicMountsSurplusAbove),
+            UtilityAIParameters.EconomicTimberInsufficient => GetResourceInsufficientScore(ProducesEnum.timber, UtilityAI.Keys.EconomicTimberInsufficientBelow),
+            UtilityAIParameters.EconomicTimberSurplus => GetResourceSurplusScore(ProducesEnum.timber, UtilityAI.Keys.EconomicTimberSurplusAbove),
+            UtilityAIParameters.EconomicLeatherInsufficient => GetResourceInsufficientScore(ProducesEnum.leather, UtilityAI.Keys.EconomicLeatherInsufficientBelow),
+            UtilityAIParameters.EconomicLeatherSurplus => GetResourceSurplusScore(ProducesEnum.leather, UtilityAI.Keys.EconomicLeatherSurplusAbove),
+            // Gold is the trade currency, not a card-cost material — it stays on the old flat
+            // liquid-wealth threshold rather than the deck-share deviation the six tradeable
+            // materials use above.
+            UtilityAIParameters.EconomicGoldInsufficient => Mathf.Max(0f, UtilityAI.GetWeight(UtilityAI.Keys.EconomyCriticalBelow) - (Leader?.GetResourceAmount(ProducesEnum.gold) ?? 0)),
+            UtilityAIParameters.EconomicGoldSurplus => Mathf.Max(0f, (Leader?.GetResourceAmount(ProducesEnum.gold) ?? 0) - UtilityAI.GetWeight(UtilityAI.Keys.EconomyStableBelow)),
             _ => 0f
         };
     }
 
     // The specific hex behind a given situational parameter's score, where one exists — lets
     // AITurnController.AdvanceHtnStrategy turn "this parameter is what's driving the active
-    // task" into an actual travel destination (stored on AIBlackboard.TargetHex), instead of
-    // the parameter's score being a number with no location attached. Parameters with no
-    // "go there" concept (nation-wide Economic stockpile signals; Magic/Logistics signals that
-    // resolve wherever the character already is) correctly return null — GetPreferredMovementTarget
-    // falls back to its own generic chase-logic in that case.
+    // task" into an actual travel destination (stored on CharacterBlackboard.TargetHex),
+    // instead of the parameter's score being a number with no location attached. Parameters
+    // with no "go there" concept (nation-wide Economic stockpile signals; Artifacts/Logistics
+    // signals that resolve wherever the character already is) correctly return null —
+    // GetPreferredMovementTarget falls back to its own generic chase-logic in that case.
     public Hex GetTargetHexForParameter(string parameter)
     {
         return parameter switch
         {
-            AIUtilityParameters.MilitaristicEnemyPressure => closestNonNeutralEnemy.Hex ?? closestEnemy.Hex,
-            AIUtilityParameters.MilitaristicMilitaryEdge => closestNonNeutralEnemy.Hex ?? closestEnemy.Hex,
-            AIUtilityParameters.MilitaristicOwnPcFortificationNeed => nearestOwnPcFortificationNeedHex,
-            AIUtilityParameters.MilitaristicOwnPcDefenderNeed => nearestOwnPcFortificationNeedHex,
-            AIUtilityParameters.DiplomaticEnemyPressure => closestNonNeutralEnemy.Hex ?? closestEnemy.Hex,
-            AIUtilityParameters.DiplomaticEnemyPcOpportunity => nearestEnemyPcOpportunityHex,
-            AIUtilityParameters.DiplomaticOwnPcLoyaltyRisk => nearestOwnPcLoyaltyRiskHex,
-            AIUtilityParameters.DiplomaticNplRecruitment => nearestNplRecruitmentHex,
-            AIUtilityParameters.IntelligenceEnemyCharacter => nearestEnemyCharacterHex,
-            AIUtilityParameters.IntelligenceEnemyPressure => closestNonNeutralEnemy.Hex ?? closestEnemy.Hex,
-            AIUtilityParameters.IntelligenceEnemyPcVulnerability => nearestEnemyPcVulnerabilityHex,
-            AIUtilityParameters.IntelligenceHighValueEnemyCharacter => nearestHighValueEnemyCharacterHex,
-            AIUtilityParameters.MagicEnemyPressure => closestNonNeutralEnemy.Hex ?? closestEnemy.Hex,
-            AIUtilityParameters.LogisticsReachNpc => nearestUnrevealedNpcHex,
-            AIUtilityParameters.LogisticsInterceptEnemy => closestNonNeutralEnemy.Hex ?? closestEnemy.Hex,
-            AIUtilityParameters.LogisticsReachEnemyCharacter => nearestEnemyCharacterHex,
-            AIUtilityParameters.DisruptionEnemyPressure => closestEnemy.Hex ?? closestNonNeutralEnemy.Hex,
+            UtilityAIParameters.MilitaristicEnemyPressure => closestNonNeutralEnemy.Hex ?? closestEnemy.Hex,
+            UtilityAIParameters.MilitaristicMilitaryEdge => closestNonNeutralEnemy.Hex ?? closestEnemy.Hex,
+            UtilityAIParameters.MilitaristicOwnPcFortificationNeed => nearestOwnPcFortificationNeedHex,
+            UtilityAIParameters.MilitaristicOwnPcDefenderNeed => nearestOwnPcFortificationNeedHex,
+            UtilityAIParameters.DiplomaticEnemyPressure => closestNonNeutralEnemy.Hex ?? closestEnemy.Hex,
+            UtilityAIParameters.DiplomaticEnemyPcOpportunity => nearestEnemyPcOpportunityHex,
+            UtilityAIParameters.DiplomaticOwnPcLoyaltyRisk => nearestOwnPcLoyaltyRiskHex,
+            UtilityAIParameters.DiplomaticNplRecruitment => nearestNplRecruitmentHex,
+            UtilityAIParameters.IntelligenceEnemyCharacter => nearestEnemyCharacterHex,
+            UtilityAIParameters.IntelligenceEnemyPressure => closestNonNeutralEnemy.Hex ?? closestEnemy.Hex,
+            UtilityAIParameters.IntelligenceEnemyPcVulnerability => nearestEnemyPcVulnerabilityHex,
+            UtilityAIParameters.IntelligenceHighValueEnemyCharacter => nearestHighValueEnemyCharacterHex,
+            UtilityAIParameters.ArtifactsEnemyPressure => closestNonNeutralEnemy.Hex ?? closestEnemy.Hex,
+            UtilityAIParameters.LogisticsReachNpc => nearestUnrevealedNpcHex,
+            UtilityAIParameters.LogisticsInterceptEnemy => closestNonNeutralEnemy.Hex ?? closestEnemy.Hex,
+            UtilityAIParameters.LogisticsReachEnemyCharacter => nearestEnemyCharacterHex,
+            UtilityAIParameters.DisruptionEnemyPressure => closestEnemy.Hex ?? closestNonNeutralEnemy.Hex,
             _ => null
         };
     }
 
     // Does this character have at least one card, anywhere in the leader's full deck, whose
-    // action both resolves to the given advisor and is role-eligible for this character right
-    // now (CharacterAction.IsRoleEligible — Commander/Agent/Emmissary/Mage skill gates, a
-    // stable trait, not momentary affordability)? Read by HTNPlanner.Decompose to skip a
-    // branch that would only ever waste its bias on a character who can never act on it —
-    // deliberately role-only, not full CardData.EvaluatePlayability, since a temporarily-poor
-    // but otherwise-capable character should still be considered eligible here.
-    public bool HasEligibleCard(AdvisorType advisor)
+    // own utilityParameters profile shares at least one parameter with the given list, and
+    // whose action is role-eligible for this character right now (CharacterAction.IsRoleEligible
+    // — Commander/Agent/Emmissary/Mage skill gates, a stable trait, not momentary
+    // affordability)? Read by HTNPlanner.Decompose to skip a branch that would only ever waste
+    // its bias on a character who can never act on it — deliberately role-only, not full
+    // CardData.EvaluatePlayability, since a temporarily-poor but otherwise-capable character
+    // should still be considered eligible here.
+    public bool HasEligibleCard(IReadOnlyList<string> preferredParameters)
     {
-        if (Leader == null || Character == null) return false;
+        if (Leader == null || Character == null || preferredParameters == null || preferredParameters.Count == 0) return false;
 
         DeckManager deckManager = DeckManager.Instance != null
             ? DeckManager.Instance
@@ -492,6 +512,8 @@ public class AIContext
         foreach (CardData card in deckManager.GetFullDeck(Leader))
         {
             if (card == null || card.IsEncounterCard()) continue;
+            if (!UtilityAI.TryGetProfile(card, out CardParameterProfile profile) || profile.utilityParameters == null) continue;
+            if (!profile.utilityParameters.Any(p => preferredParameters.Contains(p.parameter, StringComparer.OrdinalIgnoreCase))) continue;
 
             string actionRef = AITurnController.NormalizeActionRef(card.GetActionRef());
             if (string.IsNullOrWhiteSpace(actionRef)) continue;
@@ -500,26 +522,63 @@ public class AIContext
             if (action == null) continue;
 
             action.Initialize(Character, card);
-            if (AIAdvisorConfig.ResolveAdvisor(action) != advisor) continue;
             if (action.IsRoleEligible(Character)) return true;
         }
 
         return false;
     }
 
-    // Leader's own stockpile of a material falling below/rising above an authored threshold —
-    // independent of StoresManager's market-wide supply factor (which prices Buy/Sell, not
-    // whether the AI personally wants more or less of a given material).
-    private float GetResourceInsufficientScore(ProducesEnum resource, string insufficientBelowKey)
+    private static readonly ProducesEnum[] TradeableMaterials =
+    {
+        ProducesEnum.leather, ProducesEnum.mounts, ProducesEnum.timber,
+        ProducesEnum.iron, ProducesEnum.steel, ProducesEnum.mithril
+    };
+
+    // How much of this leader's own stockpile (across the six tradeable materials) this one
+    // resource makes up right now — the "actual" half of the insufficient/surplus comparison.
+    // Zero stockpile reports every material's share as 0, which correctly reads as "insufficient
+    // in everything the deck needs" rather than an undefined 0/0.
+    private float GetOwnResourceShare(ProducesEnum resource)
     {
         if (Leader == null) return 0f;
-        return Mathf.Max(0f, AIAdvisorConfig.GetWeight(insufficientBelowKey) - Leader.GetResourceAmount(resource));
+        float total = 0f;
+        foreach (ProducesEnum material in TradeableMaterials) total += Leader.GetResourceAmount(material);
+        return total > 0f ? Leader.GetResourceAmount(resource) / total : 0f;
     }
 
-    private float GetResourceSurplusScore(ProducesEnum resource, string surplusAboveKey)
+    // What share of this resource the leader's own deck actually needs, based on how much of
+    // it the leader's cards collectively cost to play — see NationBlackboard
+    // (DeckManager.BuildDeckStateForLeader snapshots it once per leader at deck-build time).
+    // Read from this character's own blackboard copy first (the normal path — see
+    // CharacterBlackboardStore.GetOrCreate); falls back to the nation-level store directly for
+    // the rare case this is queried before any blackboard exists for this character yet.
+    private float GetDeckTargetShare(ProducesEnum resource)
+    {
+        IReadOnlyDictionary<ProducesEnum, float> share = (Leader != null && Character != null
+            && CharacterBlackboardStore.TryGet(Leader, Character, out CharacterBlackboard blackboard) && blackboard.DeckResourceShare != null)
+            ? blackboard.DeckResourceShare
+            : NationBlackboard.GetDeckResourceShare(Leader);
+        return share.TryGetValue(resource, out float value) ? value : 1f / TradeableMaterials.Length;
+    }
+
+    // "Insufficient"/"surplus" are now relative to what the leader's own deck actually needs,
+    // not a flat unit threshold identical for every leader — a mithril-heavy deck reads as
+    // insufficient at a much higher stockpile than a mithril-light one would. The per-material
+    // weight key (still authored per-material in UtilityAI.json/the widget) now scales how
+    // strongly a percentage-point deviation from the deck's target share drives Buy/Sell bias,
+    // rather than marking an absolute unit floor/ceiling.
+    private float GetResourceInsufficientScore(ProducesEnum resource, string scaleKey)
     {
         if (Leader == null) return 0f;
-        return Mathf.Max(0f, Leader.GetResourceAmount(resource) - AIAdvisorConfig.GetWeight(surplusAboveKey));
+        float deviation = GetDeckTargetShare(resource) - GetOwnResourceShare(resource);
+        return Mathf.Max(0f, deviation) * 100f * UtilityAI.GetWeight(scaleKey);
+    }
+
+    private float GetResourceSurplusScore(ProducesEnum resource, string scaleKey)
+    {
+        if (Leader == null) return 0f;
+        float deviation = GetOwnResourceShare(resource) - GetDeckTargetShare(resource);
+        return Mathf.Max(0f, deviation) * 100f * UtilityAI.GetWeight(scaleKey);
     }
 
     private float GetLeaderRoleStrength(Func<Character, int> level)
@@ -529,10 +588,9 @@ public class AIContext
             .Sum(c => Mathf.Max(0, level(c))) ?? 0f;
     }
 
-    private void RecordAction(CharacterAction action, AdvisorType advisor)
+    private void RecordAction(CharacterAction action)
     {
         LastChosenAction = action;
-        LastAdvisor = advisor;
     }
 
     public Hex GetPreferredMovementTarget()
@@ -567,18 +625,18 @@ public class AIContext
 
         float distance = Vector2.Distance(Character.hex.v2, target.v2);
         // Reward being close to the intended destination; closer hexes give larger boosts
-        return Mathf.Max(0f, AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.LogisticsProximityMax)
-            - distance * AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.LogisticsDistancePenaltyPerHex));
+        return Mathf.Max(0f, UtilityAI.GetWeight(UtilityAI.Keys.LogisticsProximityMax)
+            - distance * UtilityAI.GetWeight(UtilityAI.Keys.LogisticsDistancePenaltyPerHex));
     }
 
     // Live count of wounded allies (including self) sharing this character's hex — the same
     // "no board scan needed, just look at what's already known" shape as GetSpellOpportunityScore
-    // above. A raw count, like Magic.HiddenArtifacts, so card profiles choose their own scale.
+    // above. A raw count, like Artifacts.HiddenArtifacts, so card profiles choose their own scale.
     private float GetHealingNeedScore()
     {
         if (Character == null || Character.hex == null || Character.hex.characters == null) return 0f;
 
-        float healthBelow = AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.LogisticsHealingNeedHealthBelow);
+        float healthBelow = UtilityAI.GetWeight(UtilityAI.Keys.LogisticsHealingNeedHealthBelow);
         Leader owner = Character.GetOwner();
         AlignmentEnum alignment = Character.GetAlignment();
         return Character.hex.characters.Count(c => c != null && !c.killed && c.health < healthBelow
@@ -663,10 +721,10 @@ public class AIContext
         return Mathf.Max(0f, bestScore / 3f);
     }
 
-    private void RecordScoredAction(CharacterAction action, AdvisorType advisor, float score)
+    private void RecordScoredAction(CharacterAction action, float score)
     {
         if (action == null) return;
-        string key = $"{action.actionName}|{advisor}";
+        string key = action.actionName;
         if (scoredActionKeys.Contains(key)) return;
         scoredActionKeys.Add(key);
         float targetDistance = -1f;
@@ -675,7 +733,7 @@ public class AIContext
         {
             targetDistance = Vector2.Distance(Character.hex.v2, preferred.v2);
         }
-        scoredActions.Add(new AIScoredAction(action.actionName, advisor.ToString(), score, targetDistance));
+        scoredActions.Add(new AIScoredAction(action.actionName, score, targetDistance));
     }
 
     private void ResetScoringData()
@@ -694,9 +752,11 @@ public class AIContext
         Leader owner = Character != null ? Character.GetOwner() : null;
         Army army = Character != null ? Character.GetArmy() : null;
         TargetInfo targetInfo = GetTargetInfo(preferred);
+        // Victory points are a PlayableLeader-only competitive-win concept — NPLs don't have
+        // an entry in the snapshot, so VP-delta reporting is skipped (zeroed) for their turns.
         Dictionary<PlayableLeader, int> postVictoryPoints = CaptureVictoryPointsSnapshot();
-        int preVpSelf = GetVictoryPoints(preVictoryPoints, Leader);
-        int postVpSelf = GetVictoryPoints(postVictoryPoints, Leader);
+        int preVpSelf = Leader is PlayableLeader vpSelfPre ? GetVictoryPoints(preVictoryPoints, vpSelfPre) : 0;
+        int postVpSelf = Leader is PlayableLeader vpSelfPost ? GetVictoryPoints(postVictoryPoints, vpSelfPost) : 0;
         return new AIActionLogEntry
         {
             timestamp = DateTime.UtcNow.ToString("o"),
@@ -781,23 +841,24 @@ public class AIContext
             preferredTarget = preferred != null ? preferred.v2 : Vector2Int.one * -1,
             preferredTargetDistance = preferred != null && Character != null && Character.hex != null ? Vector2.Distance(Character.hex.v2, preferred.v2) : -1f,
             actionName = LastChosenAction != null ? LastChosenAction.actionName : Pass.ActionRef,
-            advisorType = LastAdvisor.ToString(),
             activeHtnTaskId = ActiveHtnTaskId,
             actionDifficulty = LastChosenAction != null ? ResolveCardDifficulty(LastChosenAction) : 0,
             actionGoldCost = LastChosenAction != null ? LastChosenAction.GetGoldCost() : 0,
-            scoredActions = scoredActions.Select(sa => $"{sa.actionName}|{sa.advisor}|{sa.score:0.00}|{sa.targetDistance:0.00}").ToList(),
+            scoredActions = scoredActions.Select(sa => $"{sa.actionName}|{sa.score:0.00}|{sa.targetDistance:0.00}").ToList(),
             artifactTransferCandidates = artifactTransferCandidates.Select(c => $"{c.artifactName}->{c.targetName}|{c.score:0.00}|{c.distance:0.00}").ToList(),
             victoryPointsSelfBefore = preVpSelf,
             victoryPointsSelfAfter = postVpSelf,
             victoryPointsSelfDelta = postVpSelf - preVpSelf,
-            victoryPointsOpponentDeltas = BuildOpponentVpDeltas(postVictoryPoints, preVictoryPoints, Leader)
+            victoryPointsOpponentDeltas = Leader is PlayableLeader vpSelf
+                ? BuildOpponentVpDeltas(postVictoryPoints, preVictoryPoints, vpSelf)
+                : new List<string>()
         };
     }
 
     private EconomyStatus EvaluateEconomy()
     {
         if (Leader == null) return EconomyStatus.Stable;
-        return AIAdvisorConfig.EvaluateEconomyStatus(liquidWealth);
+        return UtilityAI.EvaluateEconomyStatus(liquidWealth);
     }
 
     // Real liquid wealth: stored gold + every held resource valued at its current market
@@ -860,7 +921,7 @@ public class AIContext
         }
 
         EnemyTarget best = closestNonNeutralEnemy.Hex != null ? closestNonNeutralEnemy : closestEnemy;
-        float outmatchedRatio = AIAdvisorConfig.GetWeight(AIAdvisorConfig.Keys.OutmatchedStrengthRatio);
+        float outmatchedRatio = UtilityAI.GetWeight(UtilityAI.Keys.OutmatchedStrengthRatio);
         if (best.Hex != null && best.Strength > myStrength * outmatchedRatio) needsIndirectApproach = true;
     }
 
@@ -949,7 +1010,7 @@ public class AIContext
         return source != null && source.IndexOf(needle, StringComparison.OrdinalIgnoreCase) >= 0;
     }
 
-    public struct AIContextPrecomputedData
+    public struct PrecomputedData
     {
         public EnemyTarget ClosestEnemy;
         public EnemyTarget ClosestNonNeutralEnemy;
@@ -975,6 +1036,9 @@ public class AIContext
         public int HiddenArtifactsRemaining;
         public List<ArtifactTransferCandidate> ArtifactTransferCandidates;
         public float BestArtifactTransferScore;
+        public float DuelAdvantage;
+        public float SongDuelAdvantage;
+        public int UnrecruitedSameAlignmentNplCount;
     }
 
     public readonly struct EnemyTarget
@@ -997,14 +1061,12 @@ public class AIContext
     private readonly struct AIScoredAction
     {
         public readonly string actionName;
-        public readonly string advisor;
         public readonly float score;
         public readonly float targetDistance;
 
-        public AIScoredAction(string actionName, string advisor, float score, float targetDistance)
+        public AIScoredAction(string actionName, float score, float targetDistance)
         {
             this.actionName = actionName;
-            this.advisor = advisor;
             this.score = score;
             this.targetDistance = targetDistance;
         }

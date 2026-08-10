@@ -1,0 +1,1486 @@
+{
+    "texture": "Elrohir_Forward.png",
+    "textureWidth": 8192,
+    "textureHeight": 6144,
+    "cellWidth": 512,
+    "cellHeight": 512,
+    "framesPerState": 16,
+    "states": [
+        {
+            "name": "Crouch Idle",
+            "spriteNamePrefix": "Elrohir_Forward_Crouch_Idle",
+            "row": 0,
+            "frameCount": 16,
+            "loop": true,
+            "clipLength": 1.3666667938232422,
+            "fps": 11.707316398620606,
+            "frames": [
+                {
+                    "index": 0,
+                    "x": 0,
+                    "y": 0,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 1,
+                    "x": 512,
+                    "y": 0,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 2,
+                    "x": 1024,
+                    "y": 0,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 3,
+                    "x": 1536,
+                    "y": 0,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 4,
+                    "x": 2048,
+                    "y": 0,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 5,
+                    "x": 2560,
+                    "y": 0,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 6,
+                    "x": 3072,
+                    "y": 0,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 7,
+                    "x": 3584,
+                    "y": 0,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 8,
+                    "x": 4096,
+                    "y": 0,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 9,
+                    "x": 4608,
+                    "y": 0,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 10,
+                    "x": 5120,
+                    "y": 0,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 11,
+                    "x": 5632,
+                    "y": 0,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 12,
+                    "x": 6144,
+                    "y": 0,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 13,
+                    "x": 6656,
+                    "y": 0,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 14,
+                    "x": 7168,
+                    "y": 0,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 15,
+                    "x": 7680,
+                    "y": 0,
+                    "width": 512,
+                    "height": 512
+                }
+            ]
+        },
+        {
+            "name": "Action",
+            "spriteNamePrefix": "Elrohir_Forward_Action",
+            "row": 1,
+            "frameCount": 16,
+            "loop": false,
+            "clipLength": 2.3000001907348635,
+            "fps": 6.956521034240723,
+            "frames": [
+                {
+                    "index": 0,
+                    "x": 0,
+                    "y": 512,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 1,
+                    "x": 512,
+                    "y": 512,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 2,
+                    "x": 1024,
+                    "y": 512,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 3,
+                    "x": 1536,
+                    "y": 512,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 4,
+                    "x": 2048,
+                    "y": 512,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 5,
+                    "x": 2560,
+                    "y": 512,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 6,
+                    "x": 3072,
+                    "y": 512,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 7,
+                    "x": 3584,
+                    "y": 512,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 8,
+                    "x": 4096,
+                    "y": 512,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 9,
+                    "x": 4608,
+                    "y": 512,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 10,
+                    "x": 5120,
+                    "y": 512,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 11,
+                    "x": 5632,
+                    "y": 512,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 12,
+                    "x": 6144,
+                    "y": 512,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 13,
+                    "x": 6656,
+                    "y": 512,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 14,
+                    "x": 7168,
+                    "y": 512,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 15,
+                    "x": 7680,
+                    "y": 512,
+                    "width": 512,
+                    "height": 512
+                }
+            ]
+        },
+        {
+            "name": "Magic",
+            "spriteNamePrefix": "Elrohir_Forward_Magic",
+            "row": 2,
+            "frameCount": 16,
+            "loop": false,
+            "clipLength": 1.7666667699813843,
+            "fps": 9.05660343170166,
+            "frames": [
+                {
+                    "index": 0,
+                    "x": 0,
+                    "y": 1024,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 1,
+                    "x": 512,
+                    "y": 1024,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 2,
+                    "x": 1024,
+                    "y": 1024,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 3,
+                    "x": 1536,
+                    "y": 1024,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 4,
+                    "x": 2048,
+                    "y": 1024,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 5,
+                    "x": 2560,
+                    "y": 1024,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 6,
+                    "x": 3072,
+                    "y": 1024,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 7,
+                    "x": 3584,
+                    "y": 1024,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 8,
+                    "x": 4096,
+                    "y": 1024,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 9,
+                    "x": 4608,
+                    "y": 1024,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 10,
+                    "x": 5120,
+                    "y": 1024,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 11,
+                    "x": 5632,
+                    "y": 1024,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 12,
+                    "x": 6144,
+                    "y": 1024,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 13,
+                    "x": 6656,
+                    "y": 1024,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 14,
+                    "x": 7168,
+                    "y": 1024,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 15,
+                    "x": 7680,
+                    "y": 1024,
+                    "width": 512,
+                    "height": 512
+                }
+            ]
+        },
+        {
+            "name": "standing idle",
+            "spriteNamePrefix": "Elrohir_Forward_standing_idle",
+            "row": 3,
+            "frameCount": 16,
+            "loop": true,
+            "clipLength": 1.8333333730697632,
+            "fps": 8.727272987365723,
+            "frames": [
+                {
+                    "index": 0,
+                    "x": 0,
+                    "y": 1536,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 1,
+                    "x": 512,
+                    "y": 1536,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 2,
+                    "x": 1024,
+                    "y": 1536,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 3,
+                    "x": 1536,
+                    "y": 1536,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 4,
+                    "x": 2048,
+                    "y": 1536,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 5,
+                    "x": 2560,
+                    "y": 1536,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 6,
+                    "x": 3072,
+                    "y": 1536,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 7,
+                    "x": 3584,
+                    "y": 1536,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 8,
+                    "x": 4096,
+                    "y": 1536,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 9,
+                    "x": 4608,
+                    "y": 1536,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 10,
+                    "x": 5120,
+                    "y": 1536,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 11,
+                    "x": 5632,
+                    "y": 1536,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 12,
+                    "x": 6144,
+                    "y": 1536,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 13,
+                    "x": 6656,
+                    "y": 1536,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 14,
+                    "x": 7168,
+                    "y": 1536,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 15,
+                    "x": 7680,
+                    "y": 1536,
+                    "width": 512,
+                    "height": 512
+                }
+            ]
+        },
+        {
+            "name": "idle look",
+            "spriteNamePrefix": "Elrohir_Forward_idle_look",
+            "row": 4,
+            "frameCount": 16,
+            "loop": true,
+            "clipLength": 5.1666669845581059,
+            "fps": 3.096774101257324,
+            "frames": [
+                {
+                    "index": 0,
+                    "x": 0,
+                    "y": 2048,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 1,
+                    "x": 512,
+                    "y": 2048,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 2,
+                    "x": 1024,
+                    "y": 2048,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 3,
+                    "x": 1536,
+                    "y": 2048,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 4,
+                    "x": 2048,
+                    "y": 2048,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 5,
+                    "x": 2560,
+                    "y": 2048,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 6,
+                    "x": 3072,
+                    "y": 2048,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 7,
+                    "x": 3584,
+                    "y": 2048,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 8,
+                    "x": 4096,
+                    "y": 2048,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 9,
+                    "x": 4608,
+                    "y": 2048,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 10,
+                    "x": 5120,
+                    "y": 2048,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 11,
+                    "x": 5632,
+                    "y": 2048,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 12,
+                    "x": 6144,
+                    "y": 2048,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 13,
+                    "x": 6656,
+                    "y": 2048,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 14,
+                    "x": 7168,
+                    "y": 2048,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 15,
+                    "x": 7680,
+                    "y": 2048,
+                    "width": 512,
+                    "height": 512
+                }
+            ]
+        },
+        {
+            "name": "Death",
+            "spriteNamePrefix": "Elrohir_Forward_Death",
+            "row": 5,
+            "frameCount": 16,
+            "loop": false,
+            "clipLength": 3.6666667461395265,
+            "fps": 4.363636493682861,
+            "frames": [
+                {
+                    "index": 0,
+                    "x": 0,
+                    "y": 2560,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 1,
+                    "x": 512,
+                    "y": 2560,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 2,
+                    "x": 1024,
+                    "y": 2560,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 3,
+                    "x": 1536,
+                    "y": 2560,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 4,
+                    "x": 2048,
+                    "y": 2560,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 5,
+                    "x": 2560,
+                    "y": 2560,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 6,
+                    "x": 3072,
+                    "y": 2560,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 7,
+                    "x": 3584,
+                    "y": 2560,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 8,
+                    "x": 4096,
+                    "y": 2560,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 9,
+                    "x": 4608,
+                    "y": 2560,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 10,
+                    "x": 5120,
+                    "y": 2560,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 11,
+                    "x": 5632,
+                    "y": 2560,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 12,
+                    "x": 6144,
+                    "y": 2560,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 13,
+                    "x": 6656,
+                    "y": 2560,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 14,
+                    "x": 7168,
+                    "y": 2560,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 15,
+                    "x": 7680,
+                    "y": 2560,
+                    "width": 512,
+                    "height": 512
+                }
+            ]
+        },
+        {
+            "name": "Hit",
+            "spriteNamePrefix": "Elrohir_Forward_Hit",
+            "row": 6,
+            "frameCount": 16,
+            "loop": false,
+            "clipLength": 1.6000001430511475,
+            "fps": 9.999999046325684,
+            "frames": [
+                {
+                    "index": 0,
+                    "x": 0,
+                    "y": 3072,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 1,
+                    "x": 512,
+                    "y": 3072,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 2,
+                    "x": 1024,
+                    "y": 3072,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 3,
+                    "x": 1536,
+                    "y": 3072,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 4,
+                    "x": 2048,
+                    "y": 3072,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 5,
+                    "x": 2560,
+                    "y": 3072,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 6,
+                    "x": 3072,
+                    "y": 3072,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 7,
+                    "x": 3584,
+                    "y": 3072,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 8,
+                    "x": 4096,
+                    "y": 3072,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 9,
+                    "x": 4608,
+                    "y": 3072,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 10,
+                    "x": 5120,
+                    "y": 3072,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 11,
+                    "x": 5632,
+                    "y": 3072,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 12,
+                    "x": 6144,
+                    "y": 3072,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 13,
+                    "x": 6656,
+                    "y": 3072,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 14,
+                    "x": 7168,
+                    "y": 3072,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 15,
+                    "x": 7680,
+                    "y": 3072,
+                    "width": 512,
+                    "height": 512
+                }
+            ]
+        },
+        {
+            "name": "Standing Walk Forward",
+            "spriteNamePrefix": "Elrohir_Forward_Standing_Walk_Forward",
+            "row": 7,
+            "frameCount": 16,
+            "loop": true,
+            "clipLength": 1.133333444595337,
+            "fps": 14.117645263671875,
+            "frames": [
+                {
+                    "index": 0,
+                    "x": 0,
+                    "y": 3584,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 1,
+                    "x": 512,
+                    "y": 3584,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 2,
+                    "x": 1024,
+                    "y": 3584,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 3,
+                    "x": 1536,
+                    "y": 3584,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 4,
+                    "x": 2048,
+                    "y": 3584,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 5,
+                    "x": 2560,
+                    "y": 3584,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 6,
+                    "x": 3072,
+                    "y": 3584,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 7,
+                    "x": 3584,
+                    "y": 3584,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 8,
+                    "x": 4096,
+                    "y": 3584,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 9,
+                    "x": 4608,
+                    "y": 3584,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 10,
+                    "x": 5120,
+                    "y": 3584,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 11,
+                    "x": 5632,
+                    "y": 3584,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 12,
+                    "x": 6144,
+                    "y": 3584,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 13,
+                    "x": 6656,
+                    "y": 3584,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 14,
+                    "x": 7168,
+                    "y": 3584,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 15,
+                    "x": 7680,
+                    "y": 3584,
+                    "width": 512,
+                    "height": 512
+                }
+            ]
+        },
+        {
+            "name": "Turn Right",
+            "spriteNamePrefix": "Elrohir_Forward_Turn_Right",
+            "row": 8,
+            "frameCount": 16,
+            "loop": false,
+            "clipLength": 1.8000000715255738,
+            "fps": 8.888888359069825,
+            "frames": [
+                {
+                    "index": 0,
+                    "x": 0,
+                    "y": 4096,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 1,
+                    "x": 512,
+                    "y": 4096,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 2,
+                    "x": 1024,
+                    "y": 4096,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 3,
+                    "x": 1536,
+                    "y": 4096,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 4,
+                    "x": 2048,
+                    "y": 4096,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 5,
+                    "x": 2560,
+                    "y": 4096,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 6,
+                    "x": 3072,
+                    "y": 4096,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 7,
+                    "x": 3584,
+                    "y": 4096,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 8,
+                    "x": 4096,
+                    "y": 4096,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 9,
+                    "x": 4608,
+                    "y": 4096,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 10,
+                    "x": 5120,
+                    "y": 4096,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 11,
+                    "x": 5632,
+                    "y": 4096,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 12,
+                    "x": 6144,
+                    "y": 4096,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 13,
+                    "x": 6656,
+                    "y": 4096,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 14,
+                    "x": 7168,
+                    "y": 4096,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 15,
+                    "x": 7680,
+                    "y": 4096,
+                    "width": 512,
+                    "height": 512
+                }
+            ]
+        },
+        {
+            "name": "Turn Left",
+            "spriteNamePrefix": "Elrohir_Forward_Turn_Left",
+            "row": 9,
+            "frameCount": 16,
+            "loop": false,
+            "clipLength": 1.5666667222976685,
+            "fps": 10.21276569366455,
+            "frames": [
+                {
+                    "index": 0,
+                    "x": 0,
+                    "y": 4608,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 1,
+                    "x": 512,
+                    "y": 4608,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 2,
+                    "x": 1024,
+                    "y": 4608,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 3,
+                    "x": 1536,
+                    "y": 4608,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 4,
+                    "x": 2048,
+                    "y": 4608,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 5,
+                    "x": 2560,
+                    "y": 4608,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 6,
+                    "x": 3072,
+                    "y": 4608,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 7,
+                    "x": 3584,
+                    "y": 4608,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 8,
+                    "x": 4096,
+                    "y": 4608,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 9,
+                    "x": 4608,
+                    "y": 4608,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 10,
+                    "x": 5120,
+                    "y": 4608,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 11,
+                    "x": 5632,
+                    "y": 4608,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 12,
+                    "x": 6144,
+                    "y": 4608,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 13,
+                    "x": 6656,
+                    "y": 4608,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 14,
+                    "x": 7168,
+                    "y": 4608,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 15,
+                    "x": 7680,
+                    "y": 4608,
+                    "width": 512,
+                    "height": 512
+                }
+            ]
+        },
+        {
+            "name": "Block",
+            "spriteNamePrefix": "Elrohir_Forward_Block",
+            "row": 10,
+            "frameCount": 16,
+            "loop": false,
+            "clipLength": 1.4000000953674317,
+            "fps": 11.428570747375489,
+            "frames": [
+                {
+                    "index": 0,
+                    "x": 0,
+                    "y": 5120,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 1,
+                    "x": 512,
+                    "y": 5120,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 2,
+                    "x": 1024,
+                    "y": 5120,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 3,
+                    "x": 1536,
+                    "y": 5120,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 4,
+                    "x": 2048,
+                    "y": 5120,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 5,
+                    "x": 2560,
+                    "y": 5120,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 6,
+                    "x": 3072,
+                    "y": 5120,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 7,
+                    "x": 3584,
+                    "y": 5120,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 8,
+                    "x": 4096,
+                    "y": 5120,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 9,
+                    "x": 4608,
+                    "y": 5120,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 10,
+                    "x": 5120,
+                    "y": 5120,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 11,
+                    "x": 5632,
+                    "y": 5120,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 12,
+                    "x": 6144,
+                    "y": 5120,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 13,
+                    "x": 6656,
+                    "y": 5120,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 14,
+                    "x": 7168,
+                    "y": 5120,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 15,
+                    "x": 7680,
+                    "y": 5120,
+                    "width": 512,
+                    "height": 512
+                }
+            ]
+        },
+        {
+            "name": "Attack",
+            "spriteNamePrefix": "Elrohir_Forward_Attack",
+            "row": 11,
+            "frameCount": 16,
+            "loop": false,
+            "clipLength": 2.266666889190674,
+            "fps": 7.0588226318359379,
+            "frames": [
+                {
+                    "index": 0,
+                    "x": 0,
+                    "y": 5632,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 1,
+                    "x": 512,
+                    "y": 5632,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 2,
+                    "x": 1024,
+                    "y": 5632,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 3,
+                    "x": 1536,
+                    "y": 5632,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 4,
+                    "x": 2048,
+                    "y": 5632,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 5,
+                    "x": 2560,
+                    "y": 5632,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 6,
+                    "x": 3072,
+                    "y": 5632,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 7,
+                    "x": 3584,
+                    "y": 5632,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 8,
+                    "x": 4096,
+                    "y": 5632,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 9,
+                    "x": 4608,
+                    "y": 5632,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 10,
+                    "x": 5120,
+                    "y": 5632,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 11,
+                    "x": 5632,
+                    "y": 5632,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 12,
+                    "x": 6144,
+                    "y": 5632,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 13,
+                    "x": 6656,
+                    "y": 5632,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 14,
+                    "x": 7168,
+                    "y": 5632,
+                    "width": 512,
+                    "height": 512
+                },
+                {
+                    "index": 15,
+                    "x": 7680,
+                    "y": 5632,
+                    "width": 512,
+                    "height": 512
+                }
+            ]
+        }
+    ]
+}

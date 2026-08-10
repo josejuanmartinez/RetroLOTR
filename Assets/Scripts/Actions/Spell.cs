@@ -2,7 +2,6 @@ using System;
 
 public class Spell : CharacterAction
 {
-    protected override AdvisorType DefaultAdvisorType => AdvisorType.Magic;
 
     // Artifact spell-boosting was removed, but spell implementations still call
     // through this helper. Keep it as a pass-through so those actions compile

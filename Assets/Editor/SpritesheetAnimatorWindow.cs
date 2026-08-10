@@ -63,7 +63,7 @@ public class SpritesheetAnimatorWindow : EditorWindow
     private string       _videoSheetName = "NewSpritesheet";
 
     // ─────────────────────────────────────────────────────────────────
-    [MenuItem("Tools/Spritesheet Animator")]
+    [MenuItem("Tools/RetroLOTR/Animation/Spritesheet Animator")]
     public static void Open()
     {
         var w = GetWindow<SpritesheetAnimatorWindow>("Spritesheet Animator");

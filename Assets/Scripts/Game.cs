@@ -77,7 +77,7 @@ public class Game : MonoBehaviour
     {
         if (!board) board = FindAnyObjectByType<Board>();
         if (!storesManager) storesManager = FindAnyObjectByType<StoresManager>();
-        if (AIContextCacheManager.Instance == null) gameObject.AddComponent<AIContextCacheManager>();
+        if (UtilityAIContextCacheManager.Instance == null) gameObject.AddComponent<UtilityAIContextCacheManager>();
         if (FindFirstObjectByType<NonPlayableLeaderEventManager>() == null)
         {
             gameObject.AddComponent<NonPlayableLeaderEventManager>();
@@ -224,7 +224,7 @@ public class Game : MonoBehaviour
         AssignAIandHumans();
         VictoryPoints.RecalculateAndAssign(this);
         RefreshPlayableLeaderIconVictoryPoints();
-        AIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
+        UtilityAIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
         BuildPlayerCharacterIcons();
         SelectFirstPlayerCharacter();
         // SelectFirstPlayerCharacter() just re-enabled it as part of revealing the human's
@@ -565,7 +565,7 @@ public class Game : MonoBehaviour
 
         if (currentlyPlaying == player)
         {
-            StartCoroutine(BeginPlayerTurnSequence());
+            StartCoroutine(ProcessNonPlayableLeaderTurns());
         }
         else
         {
@@ -575,6 +575,25 @@ public class Game : MonoBehaviour
             board.RefreshRelevantHexes();
             currentlyPlaying.NewTurn();
         }
+    }
+
+    // NonPlayableLeaders act once per full round, all at once, right before the human player's
+    // turn begins — not interleaved into the PlayableLeader rotation (game.NextPlayer() only
+    // ever iterates game.competitors). RefreshForNewTurn() is the WaitUntilEndOfTurn()-free half
+    // of Leader.NewTurn(), so this never touches currentlyPlaying/game.NextPlayer() and cannot
+    // corrupt the real turn order.
+    private IEnumerator ProcessNonPlayableLeaderTurns()
+    {
+        if (npcs != null)
+        {
+            foreach (NonPlayableLeader npl in npcs.Where(n => n != null && !n.killed))
+            {
+                npl.RefreshForNewTurn();
+                if (npl.killed) continue;
+                yield return AITurnController.ExecuteLeaderTurn(npl);
+            }
+        }
+        StartCoroutine(BeginPlayerTurnSequence());
     }
 
     private void NewTurn()
@@ -595,7 +614,7 @@ public class Game : MonoBehaviour
         TurnBanner.Show(turn, ResolveBannerSprite(player));
         TurnBanner.ShowGatheringResources();
         NewTurnStarted?.Invoke(turn);
-        AIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
+        UtilityAIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
         storesManager.AdvanceTurn();
     }
 

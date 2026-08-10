@@ -2,7 +2,6 @@ using System;
 
 public class ConscriptArmy : CommanderPCAction
 {
-    protected override AdvisorType DefaultAdvisorType => AdvisorType.Militaristic;
 
     override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
