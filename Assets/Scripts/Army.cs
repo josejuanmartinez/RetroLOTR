@@ -246,6 +246,10 @@ public class Army
 
     public int GetStrengthAgainst(Army enemyArmy)
     {
+        // An army can briefly outlive its commander/placement while scenario state or combat
+        // teardown is being reconciled. It has no usable strength during that interval.
+        if (commander == null || commander.hex == null) return 0;
+
         int strength = 0;
         if (commander.hex.IsWaterTerrain())
         {
@@ -261,12 +265,16 @@ public class Army
             strength += lc * ArmyData.troopsStrength[TroopsTypeEnum.lc];
             strength += hc * ArmyData.troopsStrength[TroopsTypeEnum.hc];
             // Catapults hit harder when attacking an enemy PC
-            bool attackingEnemyPc = commander.hex.GetPC() != null && commander.hex.GetPC().owner.GetAlignment() != GetAlignment();
+            PC pc = commander.hex.GetPC();
+            bool attackingEnemyPc = pc?.owner != null && pc.owner.GetAlignment() != GetAlignment();
             strength += attackingEnemyPc
                 ? ca * ArmyData.troopsStrength[TroopsTypeEnum.ca] * ArmyData.catapultStrengthMultiplierInPC
                 : ca * ArmyData.troopsStrength[TroopsTypeEnum.ca];
         }
-        if (commander.GetOwner().GetBiome().noScenarioStart.terrain == commander.hex.terrainType) strength *= ArmyData.biomeTerrainMultiplier;
+        Leader owner = commander.GetOwner();
+        LeaderBiomeConfig biome = owner?.GetBiome();
+        if (biome?.noScenarioStart != null && biome.noScenarioStart.terrain == commander.hex.terrainType)
+            strength *= ArmyData.biomeTerrainMultiplier;
 
         strength = ApplyCommanderBonus(strength);
         strength = ApplyTrainingBonus(strength);
@@ -289,6 +297,8 @@ public class Army
 
     public int GetDefenceAgainst(Army enemyArmy)
     {
+        if (commander == null || commander.hex == null) return 0;
+
         int defence = 0;
         if (commander.hex.IsWaterTerrain())
         {
@@ -306,7 +316,10 @@ public class Army
             // CA usual defence even if it's PC
             defence += ca * ArmyData.troopsDefence[TroopsTypeEnum.ca];
         }
-        if (commander.GetOwner().GetBiome().noScenarioStart.terrain == commander.hex.terrainType) defence *= ArmyData.biomeTerrainMultiplier;
+        Leader owner = commander.GetOwner();
+        LeaderBiomeConfig biome = owner?.GetBiome();
+        if (biome?.noScenarioStart != null && biome.noScenarioStart.terrain == commander.hex.terrainType)
+            defence *= ArmyData.biomeTerrainMultiplier;
 
         defence = ApplyCommanderBonus(defence);
         defence = ApplyTrainingBonus(defence);

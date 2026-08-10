@@ -179,7 +179,7 @@ public class Leader : Character
             if (candidates.Count == 0) continue;
 
             pcFoundingOfferPending = true;
-            if (game != null && game.player == playable)
+            if (game != null && game.player == playable && !game.IsPlayerAutoplayEnabledFor(playable))
             {
                 SituationCardsUI.Instance?.Show(candidates, c);
             }
@@ -661,12 +661,11 @@ public class Leader : Character
 
         if (realmCollapsed)
         {
-            // Autokilled (like bankrupt)
+            // Autokilled (like bankrupt): collapsed holdings disappear from the map. PCs are
+            // never left in an ownerless runtime state.
             foreach (PC pc in GetOwner().controlledPcs)
             {
-                pc.owner = null;
-                hex.SetPC(null);
-                hex.RedrawPC();
+                pc?.hex?.ClearPC();
             }
         }
         else        

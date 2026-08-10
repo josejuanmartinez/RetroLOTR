@@ -1662,6 +1662,7 @@ public class Board : MonoBehaviour
         if (g == null) { Debug.Log("[SituationCards] no Game found"); return; }
         if (!g.IsPlayerCurrentlyPlaying()) { Debug.Log("[SituationCards] not player's turn"); return; }
         if (g.player != character.GetOwner()) { Debug.Log($"[SituationCards] character {character.characterName} not owned by player"); return; }
+        if (g.IsPlayerAutoplayEnabledFor(character.GetOwner())) return;
 
         DeckManager deckManager = FindFirstObjectByType<DeckManager>();
         if (deckManager == null) { Debug.Log("[SituationCards] no DeckManager found"); return; }

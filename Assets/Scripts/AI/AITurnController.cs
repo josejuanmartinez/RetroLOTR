@@ -8,9 +8,12 @@ using UnityEngine;
 
 public static class AITurnController
 {
-    public static IEnumerator ExecuteLeaderTurn(Leader leader)
+    public static IEnumerator ExecuteLeaderTurn(Leader leader, bool presentChosenCards = false, bool skipAlreadyActionedCharacters = false)
     {
         if (leader == null) yield break;
+
+        Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
+        game?.RefreshPlayerControlState();
 
         ActionsManager actionsManager = UnityEngine.Object.FindFirstObjectByType<ActionsManager>();
         if (actionsManager == null)
@@ -19,7 +22,7 @@ public static class AITurnController
             yield break;
         }
 
-        Task economyCardsTask = ConsumeAiResourceCardsAsync(leader, actionsManager);
+        Task economyCardsTask = ConsumeAiResourceCardsAsync(leader, actionsManager, presentChosenCards);
         while (!economyCardsTask.IsCompleted) yield return null;
         if (economyCardsTask.IsFaulted && economyCardsTask.Exception != null)
         {
@@ -28,6 +31,8 @@ public static class AITurnController
 
         foreach (Character character in leader.controlledCharacters.Where(c => c != null && !c.killed))
         {
+            if (skipAlreadyActionedCharacters && character.hasActionedThisTurn) continue;
+            game?.RefreshPlayerControlState();
             // HTN strategy is decided per character, from that character's own local situation
             // (its own UtilityAIContext) — not once for the whole nation from an arbitrary
             // "first" character. A leader-wide gate (e.g. Economic.Critical) still ends up
@@ -37,7 +42,7 @@ public static class AITurnController
             CharacterBlackboard blackboard = CharacterBlackboardStore.GetOrCreate(leader, character);
             (string activeHtnTaskId, IReadOnlyList<string> preferredParameters, Hex activeHtnTargetHex) = AdvanceHtnStrategy(leader, character, blackboard);
 
-            Task task = ExecuteCharacterAsync(leader, character, actionsManager, activeHtnTaskId, preferredParameters, activeHtnTargetHex);
+            Task task = ExecuteCharacterAsync(leader, character, actionsManager, activeHtnTaskId, preferredParameters, activeHtnTargetHex, presentChosenCards);
             while (!task.IsCompleted) yield return null;
 
             if (task.IsFaulted && task.Exception != null)
@@ -101,7 +106,7 @@ public static class AITurnController
         return true;
     }
 
-    private static async Task ConsumeAiResourceCardsAsync(Leader leader, ActionsManager actionsManager)
+    private static async Task ConsumeAiResourceCardsAsync(Leader leader, ActionsManager actionsManager, bool presentChosenCards)
     {
         if (leader == null || actionsManager == null) return;
 
@@ -122,6 +127,7 @@ public static class AITurnController
             if (card == null) continue;
             if (!card.EvaluatePlayability(actor)) continue;
             if (!deckManager.TryConsumeCard(leader, card.name, drawReplacement: false, out CardData consumedCard)) continue;
+            if (presentChosenCards) await PresentChosenCardAsync(leader, actor, consumedCard ?? card);
             bool succeeded = await ExecuteCardEffectForAiAsync(consumedCard, actor, actionsManager);
             if (succeeded)
             {
@@ -233,7 +239,7 @@ public static class AITurnController
     // Re-scores from scratch each pick since executing a card changes affordability/available
     // cards for the next one. Stops early on an empty candidate pool or a failed execution;
     // falls back to a single Pass if literally nothing was played.
-    private static async Task ExecuteCharacterAsync(Leader leader, Character character, ActionsManager actionsManager, string activeHtnTaskId, IReadOnlyList<string> preferredParameters, Hex activeHtnTargetHex)
+    private static async Task ExecuteCharacterAsync(Leader leader, Character character, ActionsManager actionsManager, string activeHtnTaskId, IReadOnlyList<string> preferredParameters, Hex activeHtnTargetHex, bool presentChosenCards)
     {
         // This flag drives only the human one-action-per-character flow. AI characters are
         // governed exclusively by picksRemaining below (the configured difficulty limit).
@@ -273,7 +279,9 @@ public static class AITurnController
                 .FirstOrDefault();
             if (chosenCard == null) break;
 
+            if (presentChosenCards) await PresentChosenCardAsync(leader, character, chosenCard);
             UtilityAIContext context = await ExecuteChosenCardAsync(leader, character, actionsManager, precomputed, chosenCard, activeHtnTaskId, activeHtnTargetHex);
+            UnityEngine.Object.FindFirstObjectByType<Game>()?.RefreshPlayerControlState();
             character.hasActionedThisTurn = false;
             lastContext = context;
 
@@ -302,6 +310,36 @@ public static class AITurnController
             await MoveTowardsTargetAsync(lastContext);
         }
         actionsManager.Hide();
+    }
+
+    private static async Task PresentChosenCardAsync(Leader leader, Character character, CardData card)
+    {
+        if (leader == null || character == null || card == null) return;
+
+        Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
+        if (game == null || game.player != leader || !game.PlayerAutoplayEnabled) return;
+
+        Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+        if (board != null && character.hex != null && !character.hex.IsHidden())
+        {
+            board.SelectCharacter(character, true, 0.45f, 0f);
+        }
+
+        CardCenterPreview preview = CardCenterPreview.Instance != null
+            ? CardCenterPreview.Instance
+            : UnityEngine.Object.FindFirstObjectByType<CardCenterPreview>();
+        await CenterDisplayLock.WaitAsync();
+        try
+        {
+            if (!game.PlayerAutoplayEnabled) return;
+            preview?.ShowPreview(card, speedMultiplier: 1.35f, hoverDriven: false);
+            await Task.Delay(1200);
+        }
+        finally
+        {
+            preview?.HidePreview();
+            CenterDisplayLock.Release();
+        }
     }
 
     // Re-resolves and re-Initializes the action fresh right before executing — the action

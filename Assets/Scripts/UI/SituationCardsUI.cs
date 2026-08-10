@@ -224,6 +224,22 @@ public class SituationCardsUI : MonoBehaviour
         showCoroutine = StartCoroutine(FadeOut());
     }
 
+    public void DismissForAutoplay()
+    {
+        if (activeBloomWheel != null)
+        {
+            DismissBloom();
+            return;
+        }
+
+        if (showCoroutine != null) StopCoroutine(showCoroutine);
+        showCoroutine = null;
+        Transform overlayTransform = cardContainer?.transform.parent;
+        if (overlayTransform != null) overlayTransform.gameObject.SetActive(false);
+        ClearCards();
+        IsShowing = false;
+    }
+
     private IEnumerator ShowCoroutine(List<SituationCardOffer> offers, Character character)
     {
         ClearCards();

@@ -30,9 +30,15 @@ public class KeyManager : MonoBehaviour
         bool ctrlHeld = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
         bool shiftHeld = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 
+        if (ctrlHeld && shiftHeld && Input.GetKeyDown(KeyCode.Tab))
+        {
+            game?.TogglePlayerAutoplay();
+            return;
+        }
+
         if (ctrlHeld && shiftHeld)
         {
-            Debug.Log("CTRL+Shift shortcuts: CTRL+Shift+R reveal map, CTRL+Shift+M reset movement, CTRL+Shift+S +100 stores, CTRL+Shift+A list artifacts");
+            Debug.Log("CTRL+Shift shortcuts: CTRL+Shift+Tab toggle autoplay, CTRL+Shift+R reveal map, CTRL+Shift+M reset movement, CTRL+Shift+S +100 stores, CTRL+Shift+A list artifacts");
         }
 
         if (ctrlHeld && shiftHeld && Input.GetKeyDown(KeyCode.R))
