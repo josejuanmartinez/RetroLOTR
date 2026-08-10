@@ -1,7 +1,248 @@
-﻿{
-    "handSize":  5,
-    "deckId":  "nonplayableleader_darkservants",
-    "nation":  "Dark Servants",
-    "alignment":  1,
-    "cards":  []
+{
+    "handSize": 5,
+    "deckId": "nonplayableleader_darkservants",
+    "nation": "Dark Servants",
+    "alignment": 1,
+    "cards": [
+        {
+            "cardId": 1,
+            "referenceDeckId": "gandalf_base",
+            "referenceCardId": 1008
+        },
+        {
+            "cardId": 3,
+            "referenceDeckId": "sauron_base",
+            "referenceCardId": 794
+        },
+        {
+            "cardId": 5,
+            "referenceDeckId": "sauron_base",
+            "referenceCardId": 793
+        },
+        {
+            "cardId": 8,
+            "referenceDeckId": "sauron_base",
+            "referenceCardId": 800
+        },
+        {
+            "cardId": 9,
+            "referenceDeckId": "sauron_base",
+            "referenceCardId": 9103
+        },
+        {
+            "cardId": 10,
+            "referenceDeckId": "the_dark_eye",
+            "referenceCardId": 763
+        },
+        {
+            "cardId": 11,
+            "referenceDeckId": "the_necromancer",
+            "referenceCardId": 575
+        },
+        {
+            "cardId": 12,
+            "referenceDeckId": "the_necromancer",
+            "referenceCardId": 693
+        },
+        {
+            "cardId": 13,
+            "referenceDeckId": "shadow_of_the_east",
+            "referenceCardId": 34
+        },
+        {
+            "cardId": 14,
+            "referenceDeckId": "the_necromancer",
+            "referenceCardId": 684
+        },
+        {
+            "cardId": 15,
+            "referenceDeckId": "the_necromancer",
+            "referenceCardId": 664
+        },
+        {
+            "cardId": 16,
+            "referenceDeckId": "sauron_base",
+            "referenceCardId": 268
+        },
+        {
+            "cardId": 17,
+            "referenceDeckId": "gandalf_base",
+            "referenceCardId": 143
+        },
+        {
+            "cardId": 18,
+            "referenceDeckId": "gandalf_base",
+            "referenceCardId": 275
+        },
+        {
+            "cardId": 19,
+            "referenceDeckId": "gandalf_base",
+            "referenceCardId": 407
+        },
+        {
+            "cardId": 20,
+            "referenceDeckId": "gandalf_base",
+            "referenceCardId": 420
+        },
+        {
+            "cardId": 21,
+            "referenceDeckId": "gandalf_base",
+            "referenceCardId": 439
+        },
+        {
+            "cardId": 22,
+            "referenceDeckId": "sauron_base",
+            "referenceCardId": 452
+        },
+        {
+            "cardId": 23,
+            "referenceDeckId": "the_white_hand",
+            "referenceCardId": 924
+        },
+        {
+            "cardId": 24,
+            "referenceDeckId": "the_white_hand",
+            "referenceCardId": 925
+        },
+        {
+            "cardId": 25,
+            "referenceDeckId": "gandalf_base",
+            "referenceCardId": 461
+        },
+        {
+            "cardId": 26,
+            "referenceDeckId": "gandalf_base",
+            "referenceCardId": 467
+        },
+        {
+            "cardId": 27,
+            "referenceDeckId": "gandalf_base",
+            "referenceCardId": 479
+        },
+        {
+            "cardId": 28,
+            "referenceDeckId": "gandalf_base",
+            "referenceCardId": 435
+        },
+        {
+            "cardId": 29,
+            "referenceDeckId": "sauron_base",
+            "referenceCardId": 486
+        },
+        {
+            "cardId": 30,
+            "referenceDeckId": "gandalf_base",
+            "referenceCardId": 496
+        },
+        {
+            "cardId": 31,
+            "referenceDeckId": "gandalf_base",
+            "referenceCardId": 504
+        },
+        {
+            "cardId": 32,
+            "referenceDeckId": "sauron_base",
+            "referenceCardId": 508
+        },
+        {
+            "cardId": 33,
+            "referenceDeckId": "sauron_base",
+            "referenceCardId": 787
+        },
+        {
+            "cardId": 34,
+            "referenceDeckId": "of_many_colours",
+            "referenceCardId": 1009
+        },
+        {
+            "cardId": 35,
+            "referenceDeckId": "of_many_colours",
+            "referenceCardId": 1010
+        },
+        {
+            "cardId": 36,
+            "referenceDeckId": "the_white_hand",
+            "referenceCardId": 1014
+        },
+        {
+            "cardId": 37,
+            "referenceDeckId": "gandalf_base",
+            "referenceCardId": 1009
+        },
+        {
+            "cardId": 38,
+            "referenceDeckId": "gandalf_base",
+            "referenceCardId": 1010
+        },
+        {
+            "cardId": 39,
+            "referenceDeckId": "gandalf_base",
+            "referenceCardId": 1011
+        },
+        {
+            "cardId": 40,
+            "referenceDeckId": "gandalf_base",
+            "referenceCardId": 1012
+        },
+        {
+            "cardId": 41,
+            "referenceDeckId": "gandalf_base",
+            "referenceCardId": 1013
+        },
+        {
+            "cardId": 42,
+            "referenceDeckId": "of_many_colours",
+            "referenceCardId": 880
+        },
+        {
+            "cardId": 43,
+            "referenceDeckId": "gandalf_the_white",
+            "referenceCardId": 879
+        },
+        {
+            "cardId": 44,
+            "referenceDeckId": "sauron_base",
+            "referenceCardId": 1020
+        },
+        {
+            "cardId": 45,
+            "referenceDeckId": "sauron_base",
+            "referenceCardId": 9093
+        },
+        {
+            "cardId": 46,
+            "referenceDeckId": "sauron_base",
+            "referenceCardId": 9094
+        },
+        {
+            "cardId": 47,
+            "referenceDeckId": "sauron_base",
+            "referenceCardId": 9095
+        },
+        {
+            "cardId": 48,
+            "referenceDeckId": "sauron_base",
+            "referenceCardId": 9096
+        },
+        {
+            "cardId": 49,
+            "referenceDeckId": "sauron_base",
+            "referenceCardId": 9097
+        },
+        {
+            "cardId": 50,
+            "referenceDeckId": "sauron_base",
+            "referenceCardId": 9098
+        },
+        {
+            "cardId": 51,
+            "referenceDeckId": "sauron_base",
+            "referenceCardId": 9099
+        },
+        {
+            "cardId": 52,
+            "referenceDeckId": "gandalf_base",
+            "referenceCardId": 9100
+        }
+    ]
 }
