@@ -8,6 +8,7 @@ using UnityEngine.ResourceManagement.ResourceLocations;
 public class Illustrations : SearcherByName
 {
     private const string IllustrationsLabel = "default";
+    private const string CardArtAddressRoot = "Assets/Art/Cards/";
     private const string DeckArtAddressRoot = "Assets/Art/Decks/";
     private const string CharacterArtAddressRoot = "Assets/Art/Cards/Characters/";
     private static readonly string[] IllustrationsAddressRoots =
@@ -21,6 +22,7 @@ public class Illustrations : SearcherByName
     };
 
     private Dictionary<string, Sprite> illustrationsByName = new();
+    private Dictionary<string, Sprite> cardArtByName = new();
     private Dictionary<string, Sprite> characterArtByName = new();
     // Deck-back art (Assets/Art/Decks) is keyed separately from the general illustrations
     // dictionary: nation/variant names like "Gandalf" or "Sharkey" are already claimed by
@@ -64,6 +66,7 @@ public class Illustrations : SearcherByName
         if (handle.Status != AsyncOperationStatus.Succeeded || handle.Result == null)
         {
             illustrationsByName = new Dictionary<string, Sprite>();
+            cardArtByName = new Dictionary<string, Sprite>();
             characterArtByName = new Dictionary<string, Sprite>();
             deckArtByName = new Dictionary<string, Sprite>();
             isLoaded = false;
@@ -72,6 +75,7 @@ public class Illustrations : SearcherByName
         }
 
         illustrationsByName = new Dictionary<string, Sprite>();
+        cardArtByName = new Dictionary<string, Sprite>();
         characterArtByName = new Dictionary<string, Sprite>();
         deckArtByName = new Dictionary<string, Sprite>();
         pendingLocationLoads = 0;
@@ -82,23 +86,28 @@ public class Illustrations : SearcherByName
             if (!IsIllustrationAddress(location.PrimaryKey)) continue;
 
             bool isDeckArt = location.PrimaryKey.StartsWith(DeckArtAddressRoot);
+            bool isCardArt = location.PrimaryKey.StartsWith(CardArtAddressRoot);
             bool isCharacterArt = location.PrimaryKey.StartsWith(CharacterArtAddressRoot);
             queuedCount++;
             pendingLocationLoads++;
             AsyncOperationHandle<Sprite> spriteHandle = Addressables.LoadAssetAsync<Sprite>(location);
             spriteHandles.Add(spriteHandle);
-            spriteHandle.Completed += completedHandle => OnIllustrationSpriteLoaded(completedHandle, isDeckArt, isCharacterArt);
+            spriteHandle.Completed += completedHandle => OnIllustrationSpriteLoaded(completedHandle, isDeckArt, isCardArt, isCharacterArt);
         }
 
         isLoaded = pendingLocationLoads == 0;
         Debug.Log($"Illustrations: queued {queuedCount} sprites from Addressables label '{IllustrationsLabel}'.");
     }
 
-    private void OnIllustrationSpriteLoaded(AsyncOperationHandle<Sprite> handle, bool isDeckArt, bool isCharacterArt)
+    private void OnIllustrationSpriteLoaded(AsyncOperationHandle<Sprite> handle, bool isDeckArt, bool isCardArt, bool isCharacterArt)
     {
         if (handle.Status == AsyncOperationStatus.Succeeded && handle.Result != null)
         {
             RegisterSpriteLookupKeys(handle.Result, isDeckArt ? deckArtByName : illustrationsByName);
+            if (isCardArt)
+            {
+                RegisterSpriteLookupKeys(handle.Result, cardArtByName);
+            }
             if (isCharacterArt)
             {
                 RegisterSpriteLookupKeys(handle.Result, characterArtByName);
@@ -202,6 +211,18 @@ public class Illustrations : SearcherByName
             }
         }
 
+        return false;
+    }
+
+    public bool TryGetCardArtByName(string name, out Sprite sprite)
+    {
+        sprite = null;
+        if (string.IsNullOrWhiteSpace(name) || !isLoaded) return false;
+
+        foreach (string key in EnumerateLookupKeys(name))
+        {
+            if (cardArtByName.TryGetValue(key, out sprite)) return true;
+        }
         return false;
     }
 

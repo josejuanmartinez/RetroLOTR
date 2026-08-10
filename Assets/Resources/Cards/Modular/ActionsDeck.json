@@ -1,4 +1,4 @@
-﻿{
+{
     "deckId":  "actions_deck",
     "nation":  "Shared",
     "alignment":  2,
@@ -575,7 +575,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "AgentAtEnemyPC"
                   },
                   {
                       "cardId":  475,
@@ -821,7 +821,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  "EmmissaryAtOwnPC"
+                      "situation":  "EmmissaryAtEnemyPC"
                   },
                   {
                       "cardId":  54,
@@ -1805,7 +1805,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  "EnemyCharacterAtHex"
+                      "situation":  "MageAtHexWithEnemyCharacter"
                   },
                   {
                       "cardId":  66,
@@ -1887,7 +1887,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  "EnemyCharacterAtHex"
+                      "situation":  "EmmissaryAtHexWithEnemyCharacter"
                   },
                   {
                       "cardId":  67,
@@ -3035,7 +3035,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "ArmyAtEnemyPC"
                   },
                   {
                       "cardId":  116,
@@ -4101,7 +4101,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  "FriendlyCharacterAtHex"
+                      "situation":  "AgentAtHexWithFriendlyCharacter"
                   },
                   {
                       "cardId":  9201,

@@ -1,4 +1,4 @@
-﻿{
+{
     "deckId":  "gandalf_base",
     "nation":  "Gandalf",
     "alignment":  0,
@@ -4183,7 +4183,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "MageAtOwnPC"
                   },
                   {
                       "cardId":  1007,
@@ -4265,7 +4265,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "MageAtHexWithEnemyCharacter"
                   },
                   {
                       "cardId":  1008,

@@ -32,8 +32,20 @@ public class AIWidgetWindow : EditorWindow
     private List<CardSituationEnum> situationOrder = new();
     private ReorderableList situationList;
     private bool orderDirty;
-    private Dictionary<CardSituationEnum, List<string>> situationCardNames;
-    private readonly HashSet<CardSituationEnum> situationPreviewActive = new();
+    private Vector2 situationCardsScroll;
+    private List<SituationCardRecord> situationCards;
+
+    private sealed class SituationCardRecord
+    {
+        public string path;
+        public int cardId;
+        public string cardName;
+        public string deckId;
+        public string cardType;
+        public string effect;
+        public CardSituationEnum situation;
+        public CardSituationEnum situation2;
+    }
 
     // Strategies tab
     private HTNStrategyLibraryData strategyLibrary = new();
@@ -255,6 +267,7 @@ public class AIWidgetWindow : EditorWindow
     private void OnEnable()
     {
         wantsMouseMove = true;
+        situationCards = null;
         LoadSituationOrder();
         LoadStrategyLibrary();
         LoadAdvisorConfig();
@@ -299,8 +312,8 @@ public class AIWidgetWindow : EditorWindow
             "A Situation is a concrete circumstance your character can be in right now — e.g. CommanderAtOwnPC "
             + "(your commander standing on your own city) or ArmyAtEnemyPC (your army parked on an enemy's). Several "
             + "can be true on the same hex at once (SituationEvaluator.GetActiveSituations checks all of them, not "
-            + "just one). Every drawable card can carry ONE situation tag; when a card's tag is among the situations "
-            + "active right now, DeckManager.ScoreOpportunityCard adds max(0, 10 − rank) to its score, where rank is "
+            + "just one). Action and Spell cards can carry two situation tags; when either tag is among the situations "
+            + "active right now, DeckManager.ScoreOpportunityCard uses the better match and adds max(0, 10 − rank), where rank is "
             + "that situation's position counted only among the OTHER situations ALSO active right now — not its "
             + "absolute position in this list. So dragging a situation above another only changes anything on the "
             + "turns both happen to be active on the same hex at once; the preview below simulates exactly that.\n"
@@ -330,112 +343,197 @@ public class AIWidgetWindow : EditorWindow
         situationsScroll = EditorGUILayout.BeginScrollView(situationsScroll);
         situationList?.DoLayoutList();
         EditorGUILayout.Space(20f);
-        DrawSituationPreview();
+        DrawSituationCardAssignments();
         EditorGUILayout.EndScrollView();
     }
 
-    // "What happens when I put one above another" — tick the situations you want to
-    // simulate as simultaneously active on one hex; each row's bonus recomputes live from
-    // the REAL formula (rank among only the ticked ones, per SituationEvaluator.
-    // GetActiveSituations + DeckManager.ScoreOpportunityCard), not a naive "position in the
-    // full list" guess — those two are only the same number when nothing else ticked outranks it.
-    private void DrawSituationPreview()
+    private void DrawSituationCardAssignments()
     {
-        situationCardNames ??= BuildSituationUsageMap();
+        situationCards ??= LoadSituationCards();
 
-        EditorGUILayout.LabelField("Preview — what if several were active on one hex at once?", sectionHeaderStyle);
+        EditorGUILayout.LabelField("Action / Spell assignments", sectionHeaderStyle);
         EditorGUILayout.LabelField(
-            "Tick every situation you want to simulate as true at the same time, then drag rows above to see the "
-            + "bonuses (and the winner) change live.",
+            "One row is shown per card name. Each card can match either of two situations; changes are written to every deck copy with that name immediately.",
             weightDescStyle);
-        EditorGUILayout.Space(6f);
+        EditorGUILayout.Space(4f);
 
-        List<CardSituationEnum> activeInOrder = situationOrder.Where(situationPreviewActive.Contains).ToList();
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Label("Card", EditorStyles.boldLabel, GUILayout.MinWidth(280f));
+        GUILayout.Label("Situation 1", EditorStyles.boldLabel, GUILayout.Width(250f));
+        GUILayout.Label("Situation 2", EditorStyles.boldLabel, GUILayout.Width(250f));
+        EditorGUILayout.EndHorizontal();
 
-        foreach (CardSituationEnum situation in situationOrder)
+        situationCardsScroll = EditorGUILayout.BeginScrollView(situationCardsScroll, EditorStyles.helpBox, GUILayout.Height(520f));
+        foreach (List<SituationCardRecord> copies in situationCards
+            .GroupBy(card => card.cardName, StringComparer.OrdinalIgnoreCase)
+            .Select(group => group.ToList()))
         {
-            bool wasActive = situationPreviewActive.Contains(situation);
+            SituationCardRecord card = copies[0];
+            bool primaryMixed = copies.Any(copy => copy.situation != card.situation);
+            bool secondaryMixed = copies.Any(copy => copy.situation2 != card.situation2);
 
-            EditorGUILayout.BeginHorizontal(weightRowBoxStyle);
-            bool nowActive = GUILayout.Toggle(wasActive, GUIContent.none, GUILayout.Width(18f));
-            if (nowActive != wasActive)
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label($"{card.cardName}  [{card.cardType}]", GUILayout.MinWidth(280f));
+
+            EditorGUI.showMixedValue = primaryMixed;
+            EditorGUI.BeginChangeCheck();
+            CardSituationEnum primary = (CardSituationEnum)EditorGUILayout.EnumPopup(card.situation, GUILayout.Width(250f));
+            bool primaryChanged = EditorGUI.EndChangeCheck();
+            EditorGUI.showMixedValue = false;
+            if (primaryChanged)
             {
-                if (nowActive) situationPreviewActive.Add(situation);
-                else situationPreviewActive.Remove(situation);
-                activeInOrder = situationOrder.Where(situationPreviewActive.Contains).ToList();
+                foreach (SituationCardRecord copy in copies) SetCardSituation(copy, "situation", primary);
             }
 
-            GUILayout.Label(ObjectNames.NicifyVariableName(situation.ToString()), weightLabelStyle, GUILayout.Width(240f));
-            situationCardNames.TryGetValue(situation, out List<string> cardNames);
-            GUILayout.Label(cardNames is { Count: > 0 } ? string.Join(", ", cardNames) : "(no card currently tagged with this)", weightDescStyle);
-            GUILayout.FlexibleSpace();
+            EditorGUI.showMixedValue = secondaryMixed;
+            EditorGUI.BeginChangeCheck();
+            CardSituationEnum secondary = (CardSituationEnum)EditorGUILayout.EnumPopup(card.situation2, GUILayout.Width(250f));
+            bool secondaryChanged = EditorGUI.EndChangeCheck();
+            EditorGUI.showMixedValue = false;
+            if (secondaryChanged)
+            {
+                foreach (SituationCardRecord copy in copies) SetCardSituation(copy, "situation2", secondary);
+            }
 
-            if (nowActive)
-            {
-                int effectiveRank = activeInOrder.IndexOf(situation);
-                int bonus = Mathf.Max(0, 10 - effectiveRank);
-                DrawConditionBadge($"active, rank {effectiveRank + 1} of {activeInOrder.Count} → +{bonus}", bonus > 0);
-            }
-            else
-            {
-                GUILayout.Label("not ticked", EditorStyles.miniLabel, GUILayout.Width(160f));
-            }
             EditorGUILayout.EndHorizontal();
+            if (!string.IsNullOrWhiteSpace(card.effect))
+            {
+                EditorGUILayout.LabelField(card.effect, EditorStyles.wordWrappedMiniLabel);
+            }
+            EditorGUILayout.EndVertical();
         }
-
-        EditorGUILayout.Space(8f);
-        if (activeInOrder.Count == 0)
-        {
-            EditorGUILayout.LabelField("Tick at least one situation above to see how it scores.", weightDescStyle);
-        }
-        else
-        {
-            CardSituationEnum winner = activeInOrder[0];
-            EditorGUILayout.HelpBox(
-                $"With all {activeInOrder.Count} ticked situation(s) active on the same hex, a card tagged "
-                + $"\"{ObjectNames.NicifyVariableName(winner.ToString())}\" gets the biggest situation bonus (+10) and "
-                + "is the most likely Opportunity Card to be offered — remaining ties are broken by skill affinity "
-                + "and base score, not by situation rank.",
-                MessageType.Info);
-        }
+        EditorGUILayout.EndScrollView();
     }
 
-    // Real card names carrying each situation tag (CardData.situation), scanned the same way
-    // BuildCardUsageMap reads action refs — so "no card currently tagged with this" in the
-    // preview above is a verified fact, not a guess.
-    private static Dictionary<CardSituationEnum, List<string>> BuildSituationUsageMap()
+    private static List<SituationCardRecord> LoadSituationCards()
     {
-        Dictionary<CardSituationEnum, List<string>> map = new();
-
+        List<SituationCardRecord> result = new();
         IEnumerable<string> deckFiles = Directory
             .GetFiles("Assets/Resources/Cards/Modular", "*.json")
-            .Concat(new[] { "Assets/Resources/Cards/EncounterDeck.json" })
-            .Where(File.Exists)
             .Where(path => !path.EndsWith("manifest.json", StringComparison.OrdinalIgnoreCase));
 
         foreach (string path in deckFiles)
         {
             DeckData deck = null;
             try { deck = JsonUtility.FromJson<DeckData>(File.ReadAllText(path)); }
-            catch { /* not a deck file — skip */ }
+            catch { /* Not a deck file. */ }
             if (deck?.cards == null) continue;
 
             foreach (CardData card in deck.cards)
             {
                 if (card == null || string.IsNullOrWhiteSpace(card.name)) continue;
-                CardSituationEnum situation = card.GetSituation();
-                if (situation == CardSituationEnum.None) continue;
+                CardTypeEnum type = card.GetCardType();
+                if (type != CardTypeEnum.Action && type != CardTypeEnum.Spell) continue;
 
-                if (!map.TryGetValue(situation, out List<string> names))
+                result.Add(new SituationCardRecord
                 {
-                    names = new List<string>();
-                    map[situation] = names;
-                }
-                if (!names.Contains(card.name)) names.Add(card.name);
+                    path = path.Replace('\\', '/'),
+                    cardId = card.cardId,
+                    cardName = card.name,
+                    deckId = card.deckId ?? deck.deckId ?? string.Empty,
+                    cardType = type.ToString(),
+                    effect = card.actionEffect ?? string.Empty,
+                    situation = card.GetSituation(),
+                    situation2 = card.GetSecondarySituation()
+                });
             }
         }
 
-        return map;
+        return result
+            .OrderBy(card => card.cardName, StringComparer.OrdinalIgnoreCase)
+            .ThenBy(card => card.deckId, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+    }
+
+    private void SetCardSituation(SituationCardRecord card, string fieldName, CardSituationEnum situation)
+    {
+        if (card == null || !File.Exists(card.path)) return;
+        string json = File.ReadAllText(card.path);
+        Match idMatch = Regex.Match(json, $"\\\"cardId\\\"\\s*:\\s*{card.cardId}(?!\\d)");
+        if (!idMatch.Success || !TryFindContainingJsonObject(json, idMatch.Index, out int start, out int length))
+        {
+            Debug.LogError($"AIWidget: could not locate card {card.deckId}::{card.cardId} in {card.path}.");
+            return;
+        }
+
+        string cardJson = json.Substring(start, length);
+        string serializedValue = situation == CardSituationEnum.None ? string.Empty : situation.ToString();
+        Regex situationField = new($"(\\\"{Regex.Escape(fieldName)}\\\"\\s*:\\s*\\\")[^\\\"]*(\\\")");
+        string updatedCardJson;
+
+        if (situationField.IsMatch(cardJson))
+        {
+            updatedCardJson = situationField.Replace(
+                cardJson,
+                match => match.Groups[1].Value + serializedValue + match.Groups[2].Value,
+                1);
+        }
+        else if (fieldName == "situation2")
+        {
+            Match primaryLine = Regex.Match(cardJson, "(?m)^(?<indent>[ \\t]*)\\\"situation\\\"\\s*:\\s*\\\"[^\\\"]*\\\"[ \\t]*(?<comma>,?)");
+            if (!primaryLine.Success)
+            {
+                Debug.LogError($"AIWidget: card {card.deckId}::{card.cardId} has no situation field in {card.path}.");
+                return;
+            }
+
+            string newline = json.Contains("\r\n") ? "\r\n" : "\n";
+            bool primaryHadComma = primaryLine.Groups["comma"].Value == ",";
+            string primaryText = primaryLine.Value.TrimEnd();
+            if (!primaryHadComma) primaryText += ",";
+            string insertion = primaryText + newline + primaryLine.Groups["indent"].Value
+                + $"\"situation2\":  \"{serializedValue}\"{(primaryHadComma ? "," : string.Empty)}";
+            updatedCardJson = cardJson.Substring(0, primaryLine.Index)
+                + insertion
+                + cardJson.Substring(primaryLine.Index + primaryLine.Length);
+        }
+        else
+        {
+            Debug.LogError($"AIWidget: card {card.deckId}::{card.cardId} has no {fieldName} field in {card.path}.");
+            return;
+        }
+
+        string updatedJson = json.Substring(0, start) + updatedCardJson + json.Substring(start + length);
+        File.WriteAllText(card.path, updatedJson);
+        AssetDatabase.ImportAsset(card.path, ImportAssetOptions.ForceUpdate);
+
+        if (fieldName == "situation") card.situation = situation;
+        else card.situation2 = situation;
+        Repaint();
+        Debug.Log($"AIWidget: set '{card.cardName}' {fieldName} to {situation} in {card.path}.");
+    }
+
+    private static bool TryFindContainingJsonObject(string json, int position, out int start, out int length)
+    {
+        start = json.LastIndexOf('{', position);
+        length = 0;
+        if (start < 0) return false;
+
+        int depth = 0;
+        bool inString = false;
+        bool escaped = false;
+        for (int i = start; i < json.Length; i++)
+        {
+            char c = json[i];
+            if (inString)
+            {
+                if (escaped) escaped = false;
+                else if (c == '\\') escaped = true;
+                else if (c == '"') inString = false;
+                continue;
+            }
+
+            if (c == '"') inString = true;
+            else if (c == '{') depth++;
+            else if (c == '}' && --depth == 0)
+            {
+                length = i - start + 1;
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void LoadSituationOrder()

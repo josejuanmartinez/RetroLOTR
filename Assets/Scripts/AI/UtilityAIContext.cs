@@ -58,7 +58,7 @@ public class UtilityAIContext
     // rather than only ever acting on wherever it happens to already be standing.
     public Hex ActiveHtnTargetHex { get; set; }
 
-    public UtilityAIContext(Leader leader, Character character, List<CharacterAction> availableActions, Dictionary<CharacterAction, CardData> actionCards = null, PrecomputedData? precomputed = null)
+    public UtilityAIContext(Leader leader, Character character, List<CharacterAction> availableActions, Dictionary<CharacterAction, CardData> actionCards = null, PrecomputedData? precomputed = null, bool captureExecutionSnapshot = true)
     {
         Leader = leader;
         Character = character;
@@ -74,8 +74,11 @@ public class UtilityAIContext
         _precomputed = precomputed;
         ApplyPrecomputedData(precomputed ?? UtilityAIContextDataBuilder.Build(leader, character));
         EconomyStatus = EvaluateEconomy();
-        preSnapshot = CaptureSnapshot();
-        preVictoryPoints = CaptureVictoryPointsSnapshot();
+        if (captureExecutionSnapshot)
+        {
+            preSnapshot = CaptureSnapshot();
+            preVictoryPoints = CaptureVictoryPointsSnapshot();
+        }
     }
 
     public async Task<bool> TryExecuteBestAvailableActionAsync()

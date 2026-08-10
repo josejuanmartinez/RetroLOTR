@@ -224,7 +224,6 @@ public class Game : MonoBehaviour
         AssignAIandHumans();
         VictoryPoints.RecalculateAndAssign(this);
         RefreshPlayableLeaderIconVictoryPoints();
-        UtilityAIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
         BuildPlayerCharacterIcons();
         SelectFirstPlayerCharacter();
         // SelectFirstPlayerCharacter() just re-enabled it as part of revealing the human's
@@ -247,7 +246,6 @@ public class Game : MonoBehaviour
         instructions.OpenNext();
         while (instructions.IsShowing) yield return null;
 
-        if (nextTurnButton != null) nextTurnButton.enabled = true;
         NewTurnStarted?.Invoke(turn);
         FinalizeCampaignStart();
         // Reserves CenterDisplayLock immediately (synchronously, before anything below can
@@ -256,8 +254,15 @@ public class Game : MonoBehaviour
         // would win the race and the turn banner would wait behind it instead of the other
         // way around, unlike every subsequent turn where the banner already goes first.
         StartCoroutine(ShowTurnZeroBanner());
+        HideHumanPlayerWidgetsWidgets();
         currentlyPlaying.NewTurn();
-        StartCoroutine(RefreshDeckUiAfterStartup());
+        yield return RefreshDeckUiAfterStartup();
+        UtilityAIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
+        while (UtilityAIContextCacheManager.Instance != null
+            && !UtilityAIContextCacheManager.Instance.PlayerRecommendationsReady)
+            yield return null;
+        ShowHumanPlayerWidgetsWidgets();
+        if (nextTurnButton != null) nextTurnButton.enabled = true;
         MessageDisplay.ClearPersistent();
     }
 
@@ -346,7 +351,6 @@ public class Game : MonoBehaviour
         deckManager.InitializeHandsForCurrentGame();
         deckManager.RefreshHumanPlayerHandUI();
         FindFirstObjectByType<ActionsManager>()?.RefreshInteractableState();
-        ShowHumanPlayerWidgetsWidgets();
     }
 
     private void InitializePlayableLeaderIcons()
@@ -614,7 +618,6 @@ public class Game : MonoBehaviour
         TurnBanner.Show(turn, ResolveBannerSprite(player));
         TurnBanner.ShowGatheringResources();
         NewTurnStarted?.Invoke(turn);
-        UtilityAIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
         storesManager.AdvanceTurn();
     }
 
@@ -642,6 +645,11 @@ public class Game : MonoBehaviour
         yield return TryOfferAlliedTradeToPlayer();
 
         currentlyPlaying.NewTurn();
+
+        UtilityAIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
+        while (UtilityAIContextCacheManager.Instance != null
+            && !UtilityAIContextCacheManager.Instance.PlayerRecommendationsReady)
+            yield return null;
 
         yield return WaitForCameraAndMessages();
 

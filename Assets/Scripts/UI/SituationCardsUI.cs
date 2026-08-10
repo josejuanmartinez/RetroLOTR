@@ -368,6 +368,7 @@ public class SituationCardsUI : MonoBehaviour
             var cardComp = go.GetComponent<Card>();
             if (cardComp != null)
             {
+                cardComp.UseCardArtFolderOnly = true;
                 cardComp.Initialize(card);
                 cardComp.SuppressHoverEffects = true;
                 if (!offer.IsPlayable) cardComp.SetTokenTint(0.35f, 1f);

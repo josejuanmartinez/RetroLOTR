@@ -70,6 +70,7 @@ public class CardPlayabilityResult
     public bool failsLevelRequirements;
     public bool failsResourceRequirements;
     public bool failsActionConditions;
+    public bool failsAlreadyActioned;
     public bool failsCardHistoryRequirements;
     public bool failsStartingCityRequirement;
     public string cardHistoryReason;
@@ -81,6 +82,7 @@ public class CardPlayabilityResult
         failsLevelRequirements = false;
         failsResourceRequirements = false;
         failsActionConditions = false;
+        failsAlreadyActioned = false;
         failsCardHistoryRequirements = false;
         failsStartingCityRequirement = false;
         cardHistoryReason = null;
@@ -190,6 +192,7 @@ public class CardData
     public int amount = 1;
     public string deckSpriteName;
     public string situation = string.Empty;
+    public string situation2 = string.Empty;
     // PC cards only: the founded PC marks its hex as an entrance to the Underground.
     public bool isUnderground;
 
@@ -388,6 +391,18 @@ public class CardData
 
     public CardSituationEnum GetSituation()
         => Enum.TryParse(situation, true, out CardSituationEnum s) ? s : CardSituationEnum.None;
+
+    public CardSituationEnum GetSecondarySituation()
+        => Enum.TryParse(situation2, true, out CardSituationEnum s) ? s : CardSituationEnum.None;
+
+    public bool MatchesAnySituation(ICollection<CardSituationEnum> activeSituations)
+    {
+        if (activeSituations == null || activeSituations.Count == 0) return false;
+        CardSituationEnum primary = GetSituation();
+        CardSituationEnum secondary = GetSecondarySituation();
+        return (primary != CardSituationEnum.None && activeSituations.Contains(primary))
+            || (secondary != CardSituationEnum.None && activeSituations.Contains(secondary));
+    }
 
     [NonSerialized] public bool isPlayable;
     [NonSerialized] public CardPlayabilityResult playability = new CardPlayabilityResult();
@@ -643,6 +658,22 @@ public class CardData
         // carried) — never drawn, drafted, or played as an action.
         if (GetCardType() == CardTypeEnum.Object)
         {
+            isPlayable = false;
+            playability.isPlayable = false;
+            return false;
+        }
+
+        // Human characters get one card action per turn. Keep this at the shared CardData
+        // playability boundary so every presentation path (hand, bloom, and situation cards)
+        // disables the complete card set consistently after the selected character acts.
+        // AI characters deliberately bypass this gate; AITurnController limits their orders
+        // according to difficulty instead.
+        if (selectedCharacter != null
+            && selectedCharacter.isPlayerControlled
+            && selectedCharacter.hasActionedThisTurn)
+        {
+            playability.failsActionConditions = true;
+            playability.failsAlreadyActioned = true;
             isPlayable = false;
             playability.isPlayable = false;
             return false;
@@ -1144,11 +1175,10 @@ public class DeckManager : MonoBehaviour
     }
 
     // Score for ranking player-facing Opportunity Cards. Deliberately not a reuse of
-    // UtilityAIContext.ScoreAction — that class is AI-only (board-wide enemy scans, economy
-    // status, HTN branch bias) and the human isn't following an HTN strategy. Base score is the same
-    // conceptual starting point as AI scoring; the situational bonus reuses the Situations
-    // tab's authored ranking (SituationEvaluator.GetActiveSituations) as a score gradient
-    // instead of the old hard gate/first-match-wins order.
+    // This is the authored-situation source's own ranking, separate from the HTN/Utility AI
+    // ranking mixed in by GetSituationCardOffers below. Its situational bonus reuses the
+    // Situations tab's authored order as a score gradient instead of the old
+    // hard gate/first-match-wins order.
     private static float ScoreOpportunityCard(CardData card, Character character, List<CardSituationEnum> activeSituations)
     {
         float score = character.GetCommander() * (card.commanderSkillRequired > 0 ? 0.5f : 0f)
@@ -1156,11 +1186,14 @@ public class DeckManager : MonoBehaviour
                + character.GetEmmissary() * (card.emissarySkillRequired > 0 ? 0.5f : 0f)
                + character.GetMage() * (card.mageSkillRequired > 0 ? 0.5f : 0f);
 
-        CardSituationEnum situation = card.GetSituation();
-        if (situation != CardSituationEnum.None)
+        int primaryRank = activeSituations.IndexOf(card.GetSituation());
+        int secondaryRank = activeSituations.IndexOf(card.GetSecondarySituation());
+        int rank = primaryRank < 0 ? secondaryRank
+            : secondaryRank < 0 ? primaryRank
+            : Mathf.Min(primaryRank, secondaryRank);
+        if (rank >= 0)
         {
-            int rank = activeSituations.IndexOf(situation);
-            if (rank >= 0) score += Mathf.Max(0f, 10f - rank);
+            score += Mathf.Max(0f, 10f - rank);
         }
 
         return score;
@@ -1188,7 +1221,7 @@ public class DeckManager : MonoBehaviour
 
         List<CardData> candidates = state.situationPool.Where(c => c != null && (
             (currentPc != null && c.GetCardType() == CardTypeEnum.Character && !string.IsNullOrWhiteSpace(c.startingPC) && CardNameUtility.Equals(c.startingPC, currentPc.pcName))
-            || (c.GetSituation() != CardSituationEnum.None && activeSituations.Contains(c.GetSituation()))
+            || c.MatchesAnySituation(activeSituations)
             || c.GetCardType() == CardTypeEnum.Spell
             || c.GetCardType() == CardTypeEnum.Event
         )).ToList();
@@ -1233,7 +1266,7 @@ public class DeckManager : MonoBehaviour
                 (currentPc != null && c.GetCardType() == CardTypeEnum.Character
                     && !string.IsNullOrWhiteSpace(c.startingPC)
                     && CardNameUtility.Equals(c.startingPC, currentPc.pcName))
-                || (c.GetSituation() != CardSituationEnum.None && activeSituations.Contains(c.GetSituation()))
+                || c.MatchesAnySituation(activeSituations)
                 || c.GetCardType() == CardTypeEnum.Spell
                 || c.GetCardType() == CardTypeEnum.Event))
             .OrderByDescending(c => ScoreOpportunityCard(c, character, activeSituations))
@@ -1244,19 +1277,19 @@ public class DeckManager : MonoBehaviour
             .ToList();
 
         List<CardData> aiCards = new();
-        if (actionsManager != null)
+        UtilityAIContextCacheManager cacheManager = UtilityAIContextCacheManager.Instance;
+        if (actionsManager != null
+            && cacheManager != null
+            && cacheManager.TryGetCachedCardSuggestions(leader, character, out IReadOnlyList<(CardData card, float score)> cachedSuggestions))
         {
-            CharacterBlackboard blackboard = CharacterBlackboardStore.GetOrCreate(leader, character);
-            (_, IReadOnlyList<string> preferredParameters, _) = AITurnController.AdvanceHtnStrategy(leader, character, blackboard);
-            UtilityAIContext.PrecomputedData? precomputed = UtilityAIContextCacheManager.Instance != null
-                ? UtilityAIContextCacheManager.Instance.GetCached(leader, character)
-                : UtilityAIContextDataBuilder.Build(leader, character);
-
-            aiCards = AITurnController.ScoreFullDeck(
-                    leader, character, actionsManager, this, precomputed, null, preferredParameters)
-                .OrderByDescending(scored => scored.score)
-                .Select(scored => scored.card)
-                .ToList();
+            foreach ((CardData card, float _) in cachedSuggestions)
+            {
+                if (!IsFullyPlayableOpportunityCard(card, character, actionsManager)) continue;
+                aiCards.Add(card);
+                // A few extras allow de-duplication against the authored Situation source
+                // without evaluating the remainder of the deck at presentation time.
+                if (aiCards.Count >= maxCards + 3) break;
+            }
         }
 
         HashSet<string> selected = new(StringComparer.OrdinalIgnoreCase);
@@ -1351,7 +1384,7 @@ public class DeckManager : MonoBehaviour
         List<CardSituationEnum> activeSituations = SituationEvaluator.GetActiveSituations(character, hex);
         if (activeSituations.Count == 0) return false;
 
-        return state.situationPool.Any(c => c != null && activeSituations.Contains(c.GetSituation()));
+        return state.situationPool.Any(c => c != null && c.MatchesAnySituation(activeSituations));
     }
 
     public bool TryPayOpportunityCardCosts(PlayableLeader leader, CardData card)
@@ -2039,6 +2072,7 @@ public class DeckManager : MonoBehaviour
             amount = card.amount,
             deckSpriteName = card.deckSpriteName,
             situation = card.situation,
+            situation2 = card.situation2,
             isUnderground = card.isUnderground,
             hidden = card.hidden,
             copies = card.copies,

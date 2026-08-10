@@ -132,7 +132,12 @@ public class CharacterAction
 
             this.condition = (character) => { return
                 character != null && !character.killed
-                && (!character.hasActionedThisTurn || (!string.IsNullOrWhiteSpace(defaultActionName) && this.actionName == defaultActionName))
+                // The per-character action flag belongs to the human turn flow. AI turns are
+                // limited by AIDifficultySettings in AITurnController instead, so an AI card
+                // must never become unavailable merely because an earlier order was executed.
+                && (!character.isPlayerControlled
+                    || !character.hasActionedThisTurn
+                    || (!string.IsNullOrWhiteSpace(defaultActionName) && this.actionName == defaultActionName))
                 && (originalCondition == null || originalCondition(character));
             };
             this.effect = effect;
@@ -285,8 +290,9 @@ public class CharacterAction
                 Sounds.Instance?.PlayActionExecute();
             }
             Hex actionHex = character.hex;
-            // Most actions consume the character's action for the turn.
-            if (ConsumesAction)
+            // Only human-controlled characters use the one-action-per-turn flag. AI order
+            // count is enforced by AITurnController according to the selected difficulty.
+            if (!isAI && ConsumesAction)
             {
                 character.hasActionedThisTurn = true;
             }
@@ -338,7 +344,7 @@ public class CharacterAction
 
             RollForSkillLevelUp();
 
-            if (ConsumesAction && character.HasStatusEffect(StatusEffectEnum.Hope) && UnityEngine.Random.Range(0, 100) < 25)
+            if (!isAI && ConsumesAction && character.HasStatusEffect(StatusEffectEnum.Hope) && UnityEngine.Random.Range(0, 100) < 25)
             {
                 character.hasActionedThisTurn = false;
                 MessageDisplayNoUI.ShowMessage(character.hex, character, "Hope preserves the action.", Color.green);
@@ -395,7 +401,7 @@ public class CharacterAction
             if (!isAI) Card.RequestInteractionRefreshAll();
 
             // Debug.LogError($"{character.characterName} was unable to Execute action {actionName} {actionId} {actionInitials} {e}");
-            character.hasActionedThisTurn = true;
+            if (!isAI) character.hasActionedThisTurn = true;
             return;
         }
     }
@@ -1340,7 +1346,9 @@ public class CharacterAction
 
         if (character.killed) parts.Add("Character is dead.");
         string defaultActionName = GetDefaultActionName();
-        if (character.hasActionedThisTurn && (string.IsNullOrWhiteSpace(defaultActionName) || actionName != defaultActionName))
+        if (character.isPlayerControlled
+            && character.hasActionedThisTurn
+            && (string.IsNullOrWhiteSpace(defaultActionName) || actionName != defaultActionName))
         {
             parts.Add("Already actioned this turn.");
         }

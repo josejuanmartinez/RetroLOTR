@@ -1,4 +1,4 @@
-﻿{
+{
     "deckId":  "sharkey",
     "nation":  "Saruman",
     "alignment":  1,
@@ -4878,7 +4878,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "EnemyCharacterAtHex"
                   },
                   {
                       "cardId":  9074,
@@ -5789,7 +5789,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "MageAtHexWithEnemyCharacter"
                   },
                   {
                       "cardId":  9086,

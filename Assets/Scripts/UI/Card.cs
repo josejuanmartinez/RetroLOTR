@@ -67,6 +67,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private RectTransform rectTransform;
     private Graphic rootHitGraphic;
     public bool SuppressHoverEffects { get; set; }
+    public bool UseCardArtFolderOnly { get; set; }
     private bool lockedToRealCard;
     private string baseDescription = string.Empty;
     private Image encounterArtOverlay;
@@ -380,7 +381,10 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         foreach (string candidate in candidates)
         {
             if (string.IsNullOrWhiteSpace(candidate)) continue;
-            if (illustrations.TryGetIllustrationByName(candidate, out Sprite sprite))
+            bool found = UseCardArtFolderOnly
+                ? illustrations.TryGetCardArtByName(candidate, out Sprite sprite)
+                : illustrations.TryGetIllustrationByName(candidate, out sprite);
+            if (found)
             {
                 return sprite;
             }
@@ -1529,7 +1533,11 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         if (cardData.playability.failsActionConditions)
         {
-            if (cardData.IsEncounterCard() && cardData.encounterTargetHex != null)
+            if (cardData.playability.failsAlreadyActioned)
+            {
+                messages.Add("<sprite name=\"error\">Character has already acted this turn.");
+            }
+            else if (cardData.IsEncounterCard() && cardData.encounterTargetHex != null)
             {
                 string hexCoords = $"{cardData.encounterTargetHex.v2.x}, {cardData.encounterTargetHex.v2.y}";
                 messages.Add($"<sprite name=\"error\">Move your character to hex {hexCoords} to investigate.");

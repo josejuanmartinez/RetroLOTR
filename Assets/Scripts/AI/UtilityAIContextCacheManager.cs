@@ -9,7 +9,10 @@ public class UtilityAIContextCacheManager : MonoBehaviour
     public static UtilityAIContextCacheManager Instance { get; private set; }
 
     private readonly Dictionary<int, UtilityAIContext.PrecomputedData> cache = new();
+    private readonly Dictionary<int, List<(CardData card, float score)>> recommendationCache = new();
     private readonly Queue<(Leader leader, Character character)> workQueue = new();
+    private readonly Queue<RecommendationWorkItem> recommendationQueue = new();
+    private bool recommendationQueueBuilt;
     private Coroutine precomputeRoutine;
     private Game game;
     private bool rebuildRequested = false;
@@ -18,6 +21,24 @@ public class UtilityAIContextCacheManager : MonoBehaviour
     private bool queueCompletionLogged = true;
     private Stopwatch queueStopwatch = new();
     private string lastQueueDetail = string.Empty;
+
+    private readonly struct RecommendationWorkItem
+    {
+        public readonly Leader leader;
+        public readonly Character character;
+        public readonly CardData card;
+        public readonly UtilityAIContext.PrecomputedData precomputed;
+        public readonly IReadOnlyList<string> preferredParameters;
+
+        public RecommendationWorkItem(Leader leader, Character character, CardData card, UtilityAIContext.PrecomputedData precomputed, IReadOnlyList<string> preferredParameters)
+        {
+            this.leader = leader;
+            this.character = character;
+            this.card = card;
+            this.precomputed = precomputed;
+            this.preferredParameters = preferredParameters;
+        }
+    }
 
     [SerializeField] private float playerFrameBudgetMs = 3f;
     [SerializeField] private float aiFrameBudgetMs = 6f;
@@ -39,6 +60,9 @@ public class UtilityAIContextCacheManager : MonoBehaviour
     {
         game = contextGame != null ? contextGame : FindFirstObjectByType<Game>();
         cache.Clear();
+        recommendationCache.Clear();
+        recommendationQueue.Clear();
+        recommendationQueueBuilt = false;
         rebuildRequested = true;
         EnsureRoutine();
     }
@@ -51,9 +75,25 @@ public class UtilityAIContextCacheManager : MonoBehaviour
         return null;
     }
 
+    public bool PlayerRecommendationsReady => recommendationQueueBuilt
+        && workQueue.Count == 0
+        && recommendationQueue.Count == 0;
+
+    public bool TryGetCachedCardSuggestions(Leader leader, Character character, out IReadOnlyList<(CardData card, float score)> suggestions)
+    {
+        suggestions = null;
+        if (leader == null || character == null) return false;
+        if (!recommendationCache.TryGetValue(BuildKey(leader, character), out List<(CardData card, float score)> cached)) return false;
+        suggestions = cached;
+        return PlayerRecommendationsReady;
+    }
+
     public void ClearCache()
     {
         cache.Clear();
+        recommendationCache.Clear();
+        recommendationQueue.Clear();
+        recommendationQueueBuilt = false;
     }
 
     private void EnsureRoutine()
@@ -103,14 +143,75 @@ public class UtilityAIContextCacheManager : MonoBehaviour
                 currentQueueProcessed++;
             }
 
-            if (workQueue.Count == 0 && !queueCompletionLogged && currentQueueTotal > 0)
+            if (workQueue.Count == 0 && !recommendationQueueBuilt)
             {
+                BuildPlayerRecommendationQueue();
+                recommendationQueueBuilt = true;
+            }
+
+            ActionsManager recommendationActionsManager = recommendationQueue.Count > 0
+                ? FindFirstObjectByType<ActionsManager>()
+                : null;
+            while (recommendationQueue.Count > 0)
+            {
+                if (processedThisFrame >= minimumPerFrame && stopwatch.Elapsed.TotalMilliseconds >= budgetMs) break;
+
+                RecommendationWorkItem item = recommendationQueue.Dequeue();
+                if (item.leader == null || item.character == null || item.card == null) continue;
+                (CardData card, float score)? score = AITurnController.ScoreCard(
+                    item.leader,
+                    item.character,
+                    item.card,
+                    recommendationActionsManager,
+                    item.precomputed,
+                    item.preferredParameters,
+                    requirePlayable: false);
+                if (score.HasValue)
+                {
+                    int key = BuildKey(item.leader, item.character);
+                    if (!recommendationCache.TryGetValue(key, out List<(CardData card, float score)> scores))
+                    {
+                        scores = new List<(CardData card, float score)>();
+                        recommendationCache[key] = scores;
+                    }
+                    scores.Add(score.Value);
+                }
+                processedThisFrame++;
+            }
+
+            if (workQueue.Count == 0 && recommendationQueue.Count == 0 && !queueCompletionLogged && currentQueueTotal > 0)
+            {
+                foreach (List<(CardData card, float score)> scores in recommendationCache.Values)
+                    scores.Sort((a, b) => b.score.CompareTo(a.score));
                 queueCompletionLogged = true;
                 queueStopwatch.Stop();
                 UnityEngine.Debug.Log($"[AIContextCache] Completed caching {currentQueueProcessed}/{currentQueueTotal} items in {queueStopwatch.Elapsed.TotalMilliseconds:F1} ms (turn {game?.turn}, active={game?.currentlyPlaying?.characterName ?? "?"}); items: {lastQueueDetail}");
             }
 
             yield return null;
+        }
+    }
+
+    private void BuildPlayerRecommendationQueue()
+    {
+        if (game?.player == null) return;
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        if (deckManager == null || !deckManager.HasDeckFor(game.player)) return;
+
+        foreach (Character character in game.player.controlledCharacters.Where(c => c != null && !c.killed))
+        {
+            int key = BuildKey(game.player, character);
+            if (!cache.TryGetValue(key, out UtilityAIContext.PrecomputedData precomputed)) continue;
+
+            CharacterBlackboard blackboard = CharacterBlackboardStore.GetOrCreate(game.player, character);
+            (_, IReadOnlyList<string> preferredParameters, _) = AITurnController.AdvanceHtnStrategy(game.player, character, blackboard);
+            recommendationCache[key] = new List<(CardData card, float score)>();
+            foreach (CardData card in deckManager.GetFullDeck(game.player))
+            {
+                if (card == null || card.IsEncounterCard()) continue;
+                recommendationQueue.Enqueue(new RecommendationWorkItem(
+                    game.player, character, card, precomputed, preferredParameters));
+            }
         }
     }
 

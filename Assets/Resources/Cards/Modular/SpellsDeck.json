@@ -1,4 +1,4 @@
-﻿{
+{
     "deckId":  "spells_deck",
     "nation":  "Shared",
     "alignment":  2,
@@ -83,7 +83,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "EnemyCharacterAtHexNoArmyCommander"
                   },
                   {
                       "cardId":  73,
@@ -165,7 +165,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "EnemyCharacterAtHexNoArmyCommander"
                   },
                   {
                       "cardId":  206,
@@ -247,7 +247,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "MageAtOwnPC"
                   },
                   {
                       "cardId":  96,
@@ -329,7 +329,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "FriendlyCharacterAtHex"
                   },
                   {
                       "cardId":  279,
@@ -411,7 +411,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "MageAtHexWithEnemyCharacter"
                   },
                   {
                       "cardId":  83,
@@ -493,7 +493,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "MageAtOwnPC"
                   },
                   {
                       "cardId":  97,
@@ -575,7 +575,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "MageAtHexWithEnemyCharacter"
                   },
                   {
                       "cardId":  93,
@@ -657,7 +657,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "MageAtHexWithFriendlyCharacter"
                   },
                   {
                       "cardId":  82,
@@ -739,7 +739,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "MageAtHexWithFriendlyCharacter"
                   },
                   {
                       "cardId":  164,
@@ -821,7 +821,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "MageAtHexWithEnemyCharacter"
                   },
                   {
                       "cardId":  280,
@@ -903,7 +903,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "MageAtHexWithEnemyCharacter"
                   },
                   {
                       "cardId":  104,
@@ -985,7 +985,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "MageAtOwnPC"
                   },
                   {
                       "cardId":  285,
@@ -1067,7 +1067,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "MageAtHexWithEnemyCharacter"
                   },
                   {
                       "cardId":  77,
@@ -1149,7 +1149,8 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "MageAtEnemyPC",
+                      "situation2":  "MageAtHexWithEnemyCharacter"
                   },
                   {
                       "cardId":  78,
@@ -1231,7 +1232,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "MageAtEnemyPC"
                   },
                   {
                       "cardId":  281,
@@ -1313,7 +1314,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "MageAtHexWithEnemyCharacter"
                   },
                   {
                       "cardId":  79,
@@ -1395,7 +1396,8 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "MageAtOwnPC",
+                      "situation2":  "MageAtArtifactHex"
                   },
                   {
                       "cardId":  85,
@@ -1477,7 +1479,8 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "MageAtArtifactHex",
+                      "situation2":  "MageAtOwnPC"
                   },
                   {
                       "cardId":  287,
@@ -1559,7 +1562,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "MageAtHexWithFriendlyCharacter"
                   },
                   {
                       "cardId":  80,
@@ -1641,7 +1644,8 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "MageAtOwnPC",
+                      "situation2":  "MageAtEnemyPC"
                   },
                   {
                       "cardId":  288,
@@ -1723,7 +1727,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "MageAtHexWithEnemyCharacter"
                   },
                   {
                       "cardId":  99,
@@ -1805,7 +1809,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "MageAtHexWithEnemyCharacter"
                   },
                   {
                       "cardId":  81,
@@ -1887,7 +1891,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "MageAtEnemyPC"
                   },
                   {
                       "cardId":  166,
@@ -1969,7 +1973,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "MageAtHexWithEnemyCharacter"
                   },
                   {
                       "cardId":  101,
@@ -2051,7 +2055,7 @@
                                             },
                       "amount":  1,
                       "deckSpriteName":  "",
-                      "situation":  ""
+                      "situation":  "MageAtHexWithEnemyCharacter"
                   }
               ]
 }

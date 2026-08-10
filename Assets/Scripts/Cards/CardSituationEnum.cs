@@ -22,5 +22,9 @@ public enum CardSituationEnum
     EnemyCharacterAtHexNoArmyCommander = 19,
     EnemyMageAtHex = 20,
     FriendlyCharacterAtHex = 21,
-    CharacterAtUndergroundHex = 22
+    CharacterAtUndergroundHex = 22,
+    MageAtOwnPC = 23,
+    MageAtHexWithFriendlyCharacter = 24,
+    AgentAtHexWithFriendlyCharacter = 25,
+    MageAtEnemyPC = 26
 }

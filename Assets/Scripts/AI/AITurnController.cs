@@ -235,6 +235,10 @@ public static class AITurnController
     // falls back to a single Pass if literally nothing was played.
     private static async Task ExecuteCharacterAsync(Leader leader, Character character, ActionsManager actionsManager, string activeHtnTaskId, IReadOnlyList<string> preferredParameters, Hex activeHtnTargetHex)
     {
+        // This flag drives only the human one-action-per-character flow. AI characters are
+        // governed exclusively by picksRemaining below (the configured difficulty limit).
+        character.hasActionedThisTurn = false;
+
         DeckManager deckManager = DeckManager.Instance != null
             ? DeckManager.Instance
             : UnityEngine.Object.FindFirstObjectByType<DeckManager>();
@@ -270,6 +274,7 @@ public static class AITurnController
             if (chosenCard == null) break;
 
             UtilityAIContext context = await ExecuteChosenCardAsync(leader, character, actionsManager, precomputed, chosenCard, activeHtnTaskId, activeHtnTargetHex);
+            character.hasActionedThisTurn = false;
             lastContext = context;
 
             bool shouldLog = context.LastChosenAction == null || context.LastChosenAction.LastExecutionSucceeded;
@@ -340,30 +345,55 @@ public static class AITurnController
         List<(CardData card, float score)> scored = new();
         if (leader == null || character == null || actionsManager == null || deckManager == null) return scored;
 
+        // A cache entry may not be ready yet during the human player's movement. Without this
+        // fallback, every temporary per-card UtilityAIContext rebuilds the entire world-state
+        // snapshot synchronously, making the game appear frozen before suggestions open.
+        precomputed ??= UtilityAIContextDataBuilder.Build(leader, character);
+
         foreach (CardData card in deckManager.GetFullDeck(leader))
         {
             if (card == null || card.IsEncounterCard()) continue;
             if (excluded != null && excluded.Contains(card)) continue;
-
-            string actionRef = NormalizeActionRef(card.GetActionRef());
-            if (string.IsNullOrWhiteSpace(actionRef)) continue;
-
-            CharacterAction action = ResolveActionByRef(actionRef, actionsManager);
-            if (action == null) continue;
-
-            action.Initialize(character, card);
-
-            bool playable = card.EvaluatePlayability(character, null, _ => action.FulfillsConditions());
-            if (!playable) continue;
-
-            Dictionary<CharacterAction, CardData> actionCards = new() { [action] = card };
-            UtilityAIContext scoringContext = new(leader, character, new List<CharacterAction> { action }, actionCards, precomputed);
-            float score = scoringContext.ScoreAction(action, preferredParameters);
-
-            scored.Add((card, score));
+            (CardData card, float score)? cardScore = ScoreCard(
+                leader, character, card, actionsManager, precomputed, preferredParameters, requirePlayable: true);
+            if (cardScore.HasValue) scored.Add(cardScore.Value);
         }
 
         return scored;
+    }
+
+    // Scores one card without executing it. The turn-start recommendation cache calls this
+    // with requirePlayable=false so location-sensitive cards are still ranked before movement;
+    // DeckManager applies the exact current playability check immediately before presentation.
+    public static (CardData card, float score)? ScoreCard(
+        Leader leader,
+        Character character,
+        CardData card,
+        ActionsManager actionsManager,
+        UtilityAIContext.PrecomputedData? precomputed,
+        IReadOnlyList<string> preferredParameters,
+        bool requirePlayable)
+    {
+        if (leader == null || character == null || card == null || actionsManager == null || card.IsEncounterCard()) return null;
+
+        string actionRef = NormalizeActionRef(card.GetActionRef());
+        if (string.IsNullOrWhiteSpace(actionRef)) return null;
+
+        CharacterAction action = ResolveActionByRef(actionRef, actionsManager);
+        if (action == null) return null;
+        action.Initialize(character, card);
+
+        if (requirePlayable && !card.EvaluatePlayability(character, null, _ => action.FulfillsConditions())) return null;
+
+        Dictionary<CharacterAction, CardData> actionCards = new() { [action] = card };
+        UtilityAIContext scoringContext = new(
+            leader,
+            character,
+            new List<CharacterAction> { action },
+            actionCards,
+            precomputed,
+            captureExecutionSnapshot: false);
+        return (card, scoringContext.ScoreAction(action, preferredParameters));
     }
 
     private static async Task MoveTowardsTargetAsync(UtilityAIContext context)
