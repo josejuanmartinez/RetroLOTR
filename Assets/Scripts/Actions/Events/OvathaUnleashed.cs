@@ -20,7 +20,7 @@ public class OvathaUnleashed : EventAction
             env.SunburntEntryChanceBonus = 0.15f;   // desert-entry sunburn 5% -> 20%
         }
 
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         int strengthened = 0, held = 0;
@@ -59,7 +59,7 @@ public class OvathaUnleashed : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             List<Character> easterlings = board.GetHexes()
@@ -85,7 +85,7 @@ public class OvathaUnleashed : EventAction
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
             return board.GetHexes().Any(h => h != null && h.characters != null
                 && h.characters.Any(ch => ch != null && !ch.killed && IsEasterling(ch)));

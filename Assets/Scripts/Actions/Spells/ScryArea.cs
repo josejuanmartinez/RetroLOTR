@@ -12,7 +12,7 @@ public class ScryArea : Spell
         effect = (c) => {
             if (originalEffect != null && !originalEffect(c)) return false;
             // Get all hexes that meet your criteria
-            var eligibleHexes = FindFirstObjectByType<Board>().GetHexes().Where(x => !c.GetOwner().visibleHexes.Contains(x)).ToList();
+            var eligibleHexes = Board.Instance.GetHexes().Where(x => !c.GetOwner().visibleHexes.Contains(x)).ToList();
 
             // Check if there are any eligible hexes
             if (eligibleHexes.Count > 0)
@@ -38,7 +38,7 @@ public class ScryArea : Spell
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
             // Only available to the human player; spell availability handled by base Spell
-            return c.GetOwner() == FindFirstObjectByType<Game>().player;
+            return c.GetOwner() == Game.Instance.player;
         };
         asyncEffect = async (c) => {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;

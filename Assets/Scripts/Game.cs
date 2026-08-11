@@ -76,8 +76,14 @@ public class Game : MonoBehaviour
     private readonly List<NpcFocusEntry> npcFocusEntries = new();
     private bool blockLookAtUntilStartupPopupCloses;
     private bool startupPopupShown;
+    // Same rationale as Board.Instance: dozens of card actions' condition/effect closures were
+    // each independently resolving Game via FindFirstObjectByType<Game>() — a scene-wide search
+    // repeated for every card scored, every pick, every character, every AI turn. Cached here.
+    public static Game Instance { get; private set; }
+
     void Awake()
     {
+        Instance = this;
         if (!board) board = FindAnyObjectByType<Board>();
         if (!storesManager) storesManager = FindAnyObjectByType<StoresManager>();
         if (UtilityAIContextCacheManager.Instance == null) gameObject.AddComponent<UtilityAIContextCacheManager>();
@@ -577,6 +583,13 @@ public class Game : MonoBehaviour
 
         if (currentlyPlaying == player)
         {
+            // Kick the precompute cache off now, concurrently with the NPC turns about to run
+            // below, instead of only after they finish (see BeginPlayerTurnSequence, which used
+            // to be the sole trigger) — previously every NonPlayableLeader character-turn hit a
+            // cache miss and paid for an unbudgeted, synchronous, full-board-scan rebuild
+            // (UtilityAIContextDataBuilder.Build with no time budget) since NPCs are the first
+            // thing to act each round, before this cache had ever been (re)built for it.
+            UtilityAIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
             StartCoroutine(ProcessNonPlayableLeaderTurns());
         }
         else
@@ -659,7 +672,8 @@ public class Game : MonoBehaviour
 
         currentlyPlaying.NewTurn();
 
-        UtilityAIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
+        // Precompute was already kicked off in NextPlayer(), concurrently with the NPC turns
+        // that just ran above — just wait for it here rather than clearing and restarting it.
         while (UtilityAIContextCacheManager.Instance != null
             && !UtilityAIContextCacheManager.Instance.PlayerRecommendationsReady)
             yield return null;

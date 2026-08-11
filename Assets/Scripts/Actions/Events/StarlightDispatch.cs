@@ -9,7 +9,7 @@ public class StarlightDispatch : EventAction
 {
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         AlignmentEnum caster = GetCasterAlignment();
@@ -66,7 +66,7 @@ public class StarlightDispatch : EventAction
         {
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.IsArmyCommander()) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
             var capitalHex = board.GetHexes().Find(h => h?.GetPC() != null && h.GetPC().owner == character.GetOwner() && h.GetPC().isCapital);
             if (capitalHex == null || capitalHex == character.hex) return false;
@@ -78,7 +78,7 @@ public class StarlightDispatch : EventAction
         {
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null || character.IsArmyCommander()) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             return board != null && board.GetHexes().Any(h => h?.GetPC() != null && h.GetPC().owner == character.GetOwner() && h.GetPC().isCapital && h != character.hex);
         };
         asyncEffect = async (character) => { if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false; return true; };

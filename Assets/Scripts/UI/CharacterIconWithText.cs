@@ -38,7 +38,7 @@ public class CharacterIconWithText: CharacterIcon, IPointerEnterHandler, IPointe
     {
         if (character == null || character.killed) return;
 
-        if (board == null) board = FindFirstObjectByType<Board>();
+        if (board == null) board = Board.Instance;
         if (board != null)
         {
             Sounds.Instance?.PlayUiClick();
@@ -52,7 +52,7 @@ public class CharacterIconWithText: CharacterIcon, IPointerEnterHandler, IPointe
         if (character == null || character.killed) return;
         ApplyHoverTint(true);
         CursorManager.Instance?.SetClickableCursor();
-        board ??= FindFirstObjectByType<Board>();
+        board ??= Board.Instance;
         if (board != null && board.selectedCharacter == character) return;
         Sounds.Instance?.PlayUiHover();
 
@@ -79,7 +79,7 @@ public class CharacterIconWithText: CharacterIcon, IPointerEnterHandler, IPointe
         }
         if (selectedCharacterIcon == null) return;
 
-        board ??= FindFirstObjectByType<Board>();
+        board ??= Board.Instance;
         if (board != null && board.selectedCharacter != null)
         {
             selectedCharacterIcon.Refresh(board.selectedCharacter);

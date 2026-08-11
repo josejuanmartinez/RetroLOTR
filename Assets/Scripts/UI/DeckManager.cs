@@ -691,13 +691,18 @@ public class CardData
 
         // Environmental cards are global effects. They do not require an acting character;
         // only their owning leader's resource check (when supplied by Card) can block them.
+        // At most one may be played per leader per turn — the board only has a single active
+        // environment slot (EnvironmentalCardManager.ActiveCard) and a second play would just
+        // silently discard the first card's effect.
         if (GetCardType() == CardTypeEnum.Environmental)
         {
             bool environmentalResourcesOk = resourceCheck == null || resourceCheck(selectedCharacter);
             bool environmentalConditionsOk = conditionCheck == null || conditionCheck(selectedCharacter);
+            Leader environmentalOwner = selectedCharacter?.GetOwner();
+            bool environmentalTurnLimitOk = environmentalOwner == null || !environmentalOwner.HasPlayedEnvironmentalCardThisTurn();
             playability.failsResourceRequirements = !environmentalResourcesOk;
-            playability.failsActionConditions = !environmentalConditionsOk;
-            isPlayable = environmentalResourcesOk && environmentalConditionsOk;
+            playability.failsActionConditions = !environmentalConditionsOk || !environmentalTurnLimitOk;
+            isPlayable = environmentalResourcesOk && environmentalConditionsOk && environmentalTurnLimitOk;
             playability.isPlayable = isPlayable;
             return isPlayable;
         }
@@ -799,7 +804,7 @@ public class CardData
         if (string.IsNullOrWhiteSpace(region) || owner == null) return true;
 
         Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
-        Board board = game?.board != null ? game.board : UnityEngine.Object.FindFirstObjectByType<Board>();
+        Board board = game?.board != null ? game.board : Board.Instance;
         if (board == null) return false;
 
         DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
@@ -1645,7 +1650,7 @@ public class DeckManager : MonoBehaviour
         Game game = FindFirstObjectByType<Game>();
         if (game == null || game.player != leader || !game.IsPlayerCurrentlyPlaying()) return;
 
-        Board board = game.board != null ? game.board : FindFirstObjectByType<Board>();
+        Board board = game.board != null ? game.board : Board.Instance;
         if (board == null || board.hexes == null || board.hexes.Count == 0) return;
         board.nationSpawner?.EnsureLandRegionsAssigned();
 

@@ -22,7 +22,7 @@ public class Pass : CharacterAction
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;
             if (c != null && c.isPlayerControlled)
             {
-                Game game = FindFirstObjectByType<Game>();
+                Game game = Game.Instance;
                 if (game != null) game.SelectNextCharacterOrFinishTurnPrompt();
             }
             return true;

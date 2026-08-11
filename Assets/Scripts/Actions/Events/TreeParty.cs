@@ -17,7 +17,7 @@ public class TreeParty : EventAction
             if (c == null || c.hex == null) return false;
             if (c.race != RacesEnum.Hobbit) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
             int radius = 5;
             List<Hex> area = c.hex.GetHexesInRadius(radius);

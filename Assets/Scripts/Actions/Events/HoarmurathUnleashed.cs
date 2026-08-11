@@ -18,7 +18,7 @@ public class HoarmurathUnleashed : EventAction
             env.FrozenCombatDefenseExtraFactor = 0.78f;
         }
 
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         int extended = 0;

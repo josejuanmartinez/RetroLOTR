@@ -23,7 +23,7 @@ public class NewOrder : CharacterAction
             Leader owner = character.GetOwner();
             if (owner == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             Hex capitalHex = board.GetHexes().Find(x => x.GetPC() != null && x.GetPC().owner == owner && x.GetPC().isCapital);
@@ -63,7 +63,7 @@ public class NewOrder : CharacterAction
             Leader owner = character.GetOwner();
             if (owner == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             Hex capitalHex = board.GetHexes().Find(x => x.GetPC() != null && x.GetPC().owner == owner && x.GetPC().isCapital);

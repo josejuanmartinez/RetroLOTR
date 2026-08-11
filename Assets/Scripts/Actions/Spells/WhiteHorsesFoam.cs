@@ -16,7 +16,7 @@ public class WhiteHorsesFoam : FreeSpell
             if (originalEffect != null && !originalEffect(c)) return false;
             if (c == null || c.hex == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             int radius = Mathf.Clamp(c.GetMage(), 1, 5);
@@ -68,7 +68,7 @@ public class WhiteHorsesFoam : FreeSpell
             if (originalCondition != null && !originalCondition(c)) return false;
             if (c == null || c.hex == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             int radius = Mathf.Clamp(c.GetMage(), 1, 5);

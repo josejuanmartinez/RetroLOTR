@@ -45,7 +45,7 @@ public class DateEventManager : MonoBehaviour
 
     private void Start()
     {
-        deckManager = FindFirstObjectByType<DeckManager>();
+        deckManager = DeckManager.Instance;
         LoadCalendar();
         SubscribeToGame();
     }
@@ -58,7 +58,7 @@ public class DateEventManager : MonoBehaviour
 
     private void SubscribeToGame()
     {
-        game = FindFirstObjectByType<Game>();
+        game = Game.Instance;
         if (game == null) return;
         game.NewTurnStarted -= OnNewTurn;
         game.NewTurnStarted += OnNewTurn;
@@ -158,7 +158,7 @@ public class DateEventManager : MonoBehaviour
     private CardData FindCardByName(string cardName)
     {
         if (string.IsNullOrWhiteSpace(cardName)) return null;
-        if (deckManager == null) deckManager = FindFirstObjectByType<DeckManager>();
+        if (deckManager == null) deckManager = DeckManager.Instance;
         if (deckManager == null) return null;
         deckManager.InitializeFromResources();
         return deckManager.cards.FirstOrDefault(c =>

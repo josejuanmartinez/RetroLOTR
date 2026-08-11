@@ -17,7 +17,7 @@ public class RevealHexes : Spell
             if (c == null) return false;
 
             Leader owner = c.GetOwner();
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (owner == null || board == null) return false;
 
             List<Hex> eligibleHexes = board.GetHexes()
@@ -52,10 +52,10 @@ public class RevealHexes : Spell
         {
             if (originalCondition != null && !originalCondition(c)) return false;
             if (c == null) return false;
-            if (c.GetOwner() != FindFirstObjectByType<Game>().player) return false;
+            if (c.GetOwner() != Game.Instance.player) return false;
 
             Leader owner = c.GetOwner();
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (owner == null || board == null) return false;
             return board.GetHexes().Any(hex => hex != null && !hex.IsScoutedBy(owner));
         };

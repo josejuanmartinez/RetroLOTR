@@ -550,7 +550,7 @@ public class NationSpawner : MonoBehaviour
     // sibling from competitors before destroying it, so only real survivors ever appear here.
     private bool SpawnConditionMet(string requiredLeaderName, string requiredVariantId)
     {
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         if (game == null) return false;
 
         IEnumerable<PlayableLeader> candidates = game.competitors != null
@@ -998,7 +998,7 @@ public class NationSpawner : MonoBehaviour
     {
         if (board == null || board.hexes == null || board.hexes.Count == 0) return;
 
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : DeckManager.Instance;
         List<string> allLandRegions;
         Dictionary<string, string> pcRegionsByName = new(StringComparer.OrdinalIgnoreCase);
 

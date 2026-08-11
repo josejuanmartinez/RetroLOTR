@@ -9,7 +9,7 @@ public class ALightInDarkPlaces : EventAction
 {
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         EnvironmentalCardManager env = EnvironmentalCardManager.Instance;
@@ -50,7 +50,7 @@ public class ALightInDarkPlaces : EventAction
         {
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
             var allies = character.hex.GetHexesInRadius(2).Where(h => h != null && h.characters != null).SelectMany(h => h.characters)
                 .Where(ch => ch != null && !ch.killed && ch.GetAlignment() == AlignmentEnum.freePeople).Distinct().ToList();

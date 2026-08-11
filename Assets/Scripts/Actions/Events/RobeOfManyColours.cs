@@ -61,7 +61,7 @@ public class RobeOfManyColours : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null) return false;
 
-            Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             Character target = FindNearestEnemy(character, board);
             if (target?.hex?.characters == null) return false;
 
@@ -89,7 +89,7 @@ public class RobeOfManyColours : EventAction
         {
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null) return false;
-            Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             return FindNearestEnemy(character, board) != null;
         };
 

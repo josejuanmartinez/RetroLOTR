@@ -20,7 +20,7 @@ public class PlayableLeaderIcons : MonoBehaviour
 
     void Start()
     {
-        if(game == null) game = FindFirstObjectByType<Game>();
+        if(game == null) game = Game.Instance;
         EnsurePlayableLeaderIcons();
         if (game != null && game.currentlyPlaying != null)
         {

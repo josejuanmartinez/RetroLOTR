@@ -65,7 +65,7 @@ public class PlayableLeader : Leader
     public void RefreshStatsFromCard(string name = null)
     {
         string lookup = string.IsNullOrWhiteSpace(name) ? characterName : name;
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : DeckManager.Instance;
         CardData card = deckManager?.cards?.Find(c =>
             string.Equals(c.name, lookup, StringComparison.OrdinalIgnoreCase) &&
             string.Equals(c.type, "Character", StringComparison.OrdinalIgnoreCase));
@@ -166,13 +166,13 @@ public class PlayableLeader : Leader
         health = 0;
         killed = true;
 
-        if (FindFirstObjectByType<Game>().player == this)
+        if (Game.Instance.player == this)
         {
-            FindFirstObjectByType<Game>().EndGame(false);
+            Game.Instance.EndGame(false);
             return;
         }
 
-        FindFirstObjectByType<Game>().competitors.Remove(this);
+        Game.Instance.competitors.Remove(this);
 
         base.Killed(killedBy);
     }

@@ -69,8 +69,8 @@ public class CounselToElrond : CharacterAction
             string drawText = string.Empty;
             if (missingHealth > 50)
             {
-                Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
-                DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+                Game game = Game.Instance;
+                DeckManager deckManager = DeckManager.Instance;
                 if (game != null && deckManager != null && character.GetOwner() == game.player && deckManager.HasDeckFor(game.player))
                 {
                     if (deckManager.GetHand(game.player).Count < deckManager.GetHandSize())

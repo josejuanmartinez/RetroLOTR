@@ -13,7 +13,7 @@ public class LongShadows : EventAction
 
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         AlignmentEnum caster = GetCasterAlignment();
@@ -75,7 +75,7 @@ public class LongShadows : EventAction
         {
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
             var beasts = board.GetHexes().Where(h => h != null && h.characters != null).SelectMany(h => h.characters)
                 .Where(ch => ch != null && !ch.killed && IsBeast(ch.race) && ch.GetAlignment() == character.GetAlignment()).Distinct().ToList();
@@ -87,7 +87,7 @@ public class LongShadows : EventAction
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             return board != null && board.GetHexes().Any(h => h != null && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed && IsBeast(ch.race) && ch.GetAlignment() == character.GetAlignment()));
         };
         asyncEffect = async (character) => { if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false; return true; };

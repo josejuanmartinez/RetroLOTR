@@ -197,8 +197,8 @@ public class AIBlackboardDebugPanel : MonoBehaviour
             sb.AppendLine();
 
             sb.AppendLine("<b>Cards that would be suitable now</b>");
-            ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
-            DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+            ActionsManager actionsManager = ActionsManager.Instance;
+            DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : DeckManager.Instance;
             if (actionsManager == null || deckManager == null || !deckManager.HasDeckFor(leader))
             {
                 sb.AppendLine("(deck/actions manager unavailable)");
@@ -254,7 +254,7 @@ public class AIBlackboardDebugPanel : MonoBehaviour
         };
         if (leader?.controlledCharacters == null) return totals;
 
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : DeckManager.Instance;
         if (deckManager == null) return totals;
 
         void AddCardGrant(CardData grantCard)

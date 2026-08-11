@@ -7,7 +7,7 @@ public class AshesOfGorgoroth : EventAction
 {
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         int darkFeared = 0, despaired = 0;
@@ -46,7 +46,7 @@ public class AshesOfGorgoroth : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             List<Character> enemies = character.hex.GetHexesInRadius(3)

@@ -9,7 +9,7 @@ public class NewMoon : EventAction
 {
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         AlignmentEnum caster = GetCasterAlignment();

@@ -58,7 +58,7 @@ public class UtilityAIContextCacheManager : MonoBehaviour
 
     public void BeginPlayerTurnPrecompute(Game contextGame)
     {
-        game = contextGame != null ? contextGame : FindFirstObjectByType<Game>();
+        game = contextGame != null ? contextGame : Game.Instance;
         cache.Clear();
         recommendationCache.Clear();
         recommendationQueue.Clear();
@@ -110,7 +110,7 @@ public class UtilityAIContextCacheManager : MonoBehaviour
 
         while (true)
         {
-            if (game == null) game = FindFirstObjectByType<Game>();
+            if (game == null) game = Game.Instance;
             if (game == null || !game.started)
             {
                 yield return null;
@@ -150,7 +150,7 @@ public class UtilityAIContextCacheManager : MonoBehaviour
             }
 
             ActionsManager recommendationActionsManager = recommendationQueue.Count > 0
-                ? FindFirstObjectByType<ActionsManager>()
+                ? ActionsManager.Instance
                 : null;
             while (recommendationQueue.Count > 0)
             {
@@ -195,7 +195,7 @@ public class UtilityAIContextCacheManager : MonoBehaviour
     private void BuildPlayerRecommendationQueue()
     {
         if (game?.player == null) return;
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : DeckManager.Instance;
         if (deckManager == null || !deckManager.HasDeckFor(game.player)) return;
 
         foreach (Character character in game.player.controlledCharacters.Where(c => c != null && !c.killed))
@@ -218,24 +218,16 @@ public class UtilityAIContextCacheManager : MonoBehaviour
     private void BuildWorkQueue()
     {
         workQueue.Clear();
-        if (game == null) game = FindFirstObjectByType<Game>();
+        if (game == null) game = Game.Instance;
         if (game == null) return;
 
         if (game.competitors == null) return;
 
         List<string> detailItems = new();
 
-        foreach (PlayableLeader leader in game.competitors.Where(c => c != null && !c.killed))
-        {
-            foreach (Character character in leader.controlledCharacters.Where(c => c != null && !c.killed))
-            {
-                workQueue.Enqueue((leader, character));
-                string leaderName = !string.IsNullOrEmpty(leader.characterName) ? leader.characterName : leader.name;
-                string charName = !string.IsNullOrEmpty(character.characterName) ? character.characterName : character.name;
-                detailItems.Add($"{leaderName}/{charName}");
-            }
-        }
-
+        // NPCs first: they're the first to actually act each round (Game.ProcessNonPlayableLeaderTurns
+        // runs concurrently with this queue, right after it's kicked off — see Game.NextPlayer), so
+        // queuing them last meant they were the group most likely to still hit a cache miss.
         if (game.npcs != null)
         {
             foreach (NonPlayableLeader leader in game.npcs.Where(c => c != null && !c.killed))
@@ -247,6 +239,17 @@ public class UtilityAIContextCacheManager : MonoBehaviour
                     string charName = !string.IsNullOrEmpty(character.characterName) ? character.characterName : character.name;
                     detailItems.Add($"{leaderName}/{charName}");
                 }
+            }
+        }
+
+        foreach (PlayableLeader leader in game.competitors.Where(c => c != null && !c.killed))
+        {
+            foreach (Character character in leader.controlledCharacters.Where(c => c != null && !c.killed))
+            {
+                workQueue.Enqueue((leader, character));
+                string leaderName = !string.IsNullOrEmpty(leader.characterName) ? leader.characterName : leader.name;
+                string charName = !string.IsNullOrEmpty(character.characterName) ? character.characterName : character.name;
+                detailItems.Add($"{leaderName}/{charName}");
             }
         }
 

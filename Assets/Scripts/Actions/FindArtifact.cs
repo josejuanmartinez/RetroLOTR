@@ -52,7 +52,7 @@ public class FindArtifact : MageAction
 
     private static List<CardData> GetCardPool()
     {
-        DeckManager deckManager = DeckManager.Instance ?? UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+        DeckManager deckManager = DeckManager.Instance ?? DeckManager.Instance;
         if (deckManager == null) return new();
         if (deckManager.cards == null || deckManager.cards.Count == 0) deckManager.InitializeFromResources();
 

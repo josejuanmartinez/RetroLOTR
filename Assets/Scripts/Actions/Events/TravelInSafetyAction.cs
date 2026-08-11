@@ -16,7 +16,7 @@ public class TravelInSafetyAction : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             Leader owner = character.GetOwner();
             if (board == null || owner == null) return false;
 
@@ -55,7 +55,7 @@ public class TravelInSafetyAction : EventAction
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             Leader owner = character.GetOwner();
             if (board == null || owner == null) return false;
 

@@ -11,7 +11,7 @@ public class FullMoon : EventAction
 
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         EnvironmentalCardManager env = EnvironmentalCardManager.Instance;
@@ -65,7 +65,7 @@ public class FullMoon : EventAction
         character.RefreshKidnappedCharactersPosition();
         Character.RefreshArtifactPcVisibilityForHex(targetHex);
         targetHex.RedrawCharacters(); targetHex.RedrawArmies();
-        if (character.GetOwner() == UnityEngine.Object.FindFirstObjectByType<Game>()?.player) targetHex.RevealArea(1, true);
+        if (character.GetOwner() == Game.Instance?.player) targetHex.RevealArea(1, true);
     }
 
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
@@ -77,7 +77,7 @@ public class FullMoon : EventAction
         {
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
             var nazguls = board.GetHexes().Where(h => h != null && h.characters != null).SelectMany(h => h.characters)
                 .Where(ch => ch != null && !ch.killed && ch.race == RacesEnum.Nazgul && ch.hex != null).Distinct().ToList();
@@ -96,7 +96,7 @@ public class FullMoon : EventAction
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             return board != null && board.GetHexes().Any(h => h != null && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed && ch.race == RacesEnum.Nazgul));
         };
         asyncEffect = async (character) => { if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false; return true; };

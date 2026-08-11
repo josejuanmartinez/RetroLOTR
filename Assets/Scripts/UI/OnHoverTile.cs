@@ -21,7 +21,7 @@ public class OnHoverTile : MonoBehaviour
         // board.hexes (4550 entries) per hex to find "our own" coordinates by gameObject
         // identity — an O(n) search x n hexes, all triggered in the same instant when the
         // board enables every hex's OnHoverTile at once. hex.v2 is the exact same value.
-        if (sharedBoard == null) sharedBoard = FindFirstObjectByType<Board>();
+        if (sharedBoard == null) sharedBoard = Board.Instance;
         board = sharedBoard;
         if (board == null)
         {
@@ -104,7 +104,7 @@ public class OnHoverTile : MonoBehaviour
     // Static method called from Update in PathManager
     public static void UpdateMouseState(bool rightMouseDown)
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
 
         if (PopupManager.IsShowing || IsPausedForBannerOrInstructions())
         {

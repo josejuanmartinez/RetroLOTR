@@ -54,7 +54,12 @@ public class SkinManager : MonoBehaviour
 
     public VideoClip GetIntroVideo()
     {
-        return videos.GetVideoByName($"intro{GetSkinSuffix(currentSkin)}");
+        switch(currentSkin) {
+            case Skins.Bakshi:
+                return videos.introBakshi;
+            default:
+                return videos.intro;
+        }
     }
 
     private static string GetSkinSuffix(Skins skin)

@@ -67,11 +67,21 @@ public class CardCenterPreview : MonoBehaviour
 
     public RectTransform CurrentPreviewRect => centerPreviewRects.Count > 0 ? centerPreviewRects[0] : null;
 
+    // Above the base gameplay canvas CardBloomWheel's tokens/connecting lines render on
+    // (sibling order there otherwise decides it, which is what let the wheel draw over the
+    // preview) and below SituationCardsUI's own 200/LevelChangeEffectUI's 210 overlays.
+    private const int PreviewSortingOrder = 50;
+
     private void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
         parentCanvas = GetComponentInParent<Canvas>();
+
+        Canvas previewCanvas = GetComponent<Canvas>();
+        if (previewCanvas == null) previewCanvas = gameObject.AddComponent<Canvas>();
+        previewCanvas.overrideSorting = true;
+        previewCanvas.sortingOrder = PreviewSortingOrder;
     }
 
     private void OnDestroy()
@@ -103,7 +113,7 @@ public class CardCenterPreview : MonoBehaviour
     public void ShowPreviewForCharacter(Character character, bool includeArmyCards = true)
     {
         if (character == null) return;
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : DeckManager.Instance;
         if (deckManager == null) return;
 
         List<CardData> previewCards = new();
@@ -146,7 +156,7 @@ public class CardCenterPreview : MonoBehaviour
             ? (Transform)centerPreviewAnchor
             : (parentCanvas != null ? parentCanvas.rootCanvas.transform : transform);
 
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : DeckManager.Instance;
         GameObject template = deckManager != null ? deckManager.GetCardPrefabTemplate() : null;
         if (template == null) return;
 
@@ -185,6 +195,10 @@ public class CardCenterPreview : MonoBehaviour
             Card previewCard = instance.GetComponent<Card>();
             if (previewCard != null)
             {
+                // The center preview must always show official card art, never a same-named
+                // sprite from the UI/Animation/Characters/Decks folders ResolveCardArtwork also
+                // searches by default (see Illustrations.IllustrationsAddressRoots).
+                previewCard.UseCardArtFolderOnly = true;
                 previewCard.InitializePreview(validCards[i]);
                 previewCard.SuppressHoverEffects = true;
                 previewCard.ShowRealCard();

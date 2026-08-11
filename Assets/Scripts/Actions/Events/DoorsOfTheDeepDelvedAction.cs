@@ -34,7 +34,7 @@ public class DoorsOfTheDeepDelvedAction : EventAction
         targetHex.RedrawCharacters();
         targetHex.RedrawArmies();
 
-        if (character.GetOwner() == UnityEngine.Object.FindFirstObjectByType<Game>()?.player)
+        if (character.GetOwner() == Game.Instance?.player)
         {
             targetHex.RevealArea(1, true);
         }
@@ -42,7 +42,7 @@ public class DoorsOfTheDeepDelvedAction : EventAction
 
     private static Hex FindNearestUndergroundHex(Character character)
     {
-        Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null || character == null || character.hex == null) return null;
 
         Hex from = character.hex;
@@ -71,7 +71,7 @@ public class DoorsOfTheDeepDelvedAction : EventAction
             MessageDisplayNoUI.ShowMessage(origin, character, $"{character.characterName} finds a door delved deep into the dark...", Color.yellow);
             MessageDisplayNoUI.ShowMessage(target, character, $"{character.characterName} emerges from the Underground!", Color.yellow);
 
-            if (character.GetOwner() == UnityEngine.Object.FindFirstObjectByType<Game>()?.player)
+            if (character.GetOwner() == Game.Instance?.player)
             {
                 target.LookAt();
             }

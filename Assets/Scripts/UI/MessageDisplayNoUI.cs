@@ -92,7 +92,7 @@ public class MessageDisplayNoUI : MonoBehaviour
     {
         if (hex == null || hex.gameObject == null) return;
 
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         if (game == null) return;
 
         if(!game || !game.currentlyPlaying || !game.started)

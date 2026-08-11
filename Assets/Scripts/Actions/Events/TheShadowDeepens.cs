@@ -11,7 +11,7 @@ public class TheShadowDeepens : EventAction
 
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         EnvironmentalCardManager env = EnvironmentalCardManager.Instance;
@@ -49,7 +49,7 @@ public class TheShadowDeepens : EventAction
         {
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
             var shadows = character.hex.GetHexesInRadius(3).Where(h => h != null && h.terrainType == TerrainEnum.forest && h.characters != null)
                 .SelectMany(h => h.characters).Where(ch => ch != null && !ch.killed && IsShadowCreature(ch.race) && ch.GetAlignment() == AlignmentEnum.darkServants).Distinct().ToList();
@@ -63,7 +63,7 @@ public class TheShadowDeepens : EventAction
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             return board != null && board.GetHexes().Any(h => h != null && h.terrainType == TerrainEnum.forest && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed && (IsShadowCreature(ch.race) || ch.GetAlignment() == AlignmentEnum.freePeople)));
         };
         asyncEffect = async (character) => { if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false; return true; };

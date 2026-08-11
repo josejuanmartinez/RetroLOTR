@@ -36,7 +36,7 @@ public class AssassinateCharacter : AgentCharacterAction
 
             if (enemy == null) return false;
 
-            Hex capitalHex = FindFirstObjectByType<Board>().GetHexes().Find(x => x.GetPC() != null && x.GetPC().owner == c.GetOwner() && x.GetPC().isCapital);
+            Hex capitalHex = Board.Instance.GetHexes().Find(x => x.GetPC() != null && x.GetPC().owner == c.GetOwner() && x.GetPC().isCapital);
             if (capitalHex == null) return false;
             int random = UnityEngine.Random.Range(0, 5);
             string message = $"Agent returned to capital";
@@ -47,7 +47,7 @@ public class AssassinateCharacter : AgentCharacterAction
                 c.Wounded(c.hex.GetPC().owner, random * 10);
                 color = Color.red;
             }
-            FindFirstObjectByType<Board>().MoveCharacterOneHex(c, c.hex, capitalHex, true);
+            Board.Instance.MoveCharacterOneHex(c, c.hex, capitalHex, true);
             MessageDisplay.ShowMessage(message, color);
 
             Hex victimHex = enemy.hex;
@@ -75,7 +75,7 @@ public class AssassinateCharacter : AgentCharacterAction
     private bool PlayerCanSeeHex(Hex hex)
     {
         if (hex == null) return false;
-        Game g = FindFirstObjectByType<Game>();
+        Game g = Game.Instance;
         if (g == null || g.player == null) return false;
         return g.player.visibleHexes.Contains(hex) && hex.IsHexSeen();
     }

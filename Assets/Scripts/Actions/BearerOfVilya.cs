@@ -25,7 +25,7 @@ public class BearerOfVilya : CharacterAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             List<Character> nearbyAllies = character.hex.GetHexesInRadius(1)
@@ -90,7 +90,7 @@ public class BearerOfVilya : CharacterAction
                     && h.characters.Any(ch => ch != null && !ch.killed && IsAllied(character, ch) && (ch.health < 100 || ch.HasStatusEffect(StatusEffectEnum.Poisoned))));
             if (hasWoundedAllies) return true;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             int foamRadius = Mathf.Clamp(character.GetMage(), 2, 4);

@@ -2249,14 +2249,14 @@ public class Army
 
     private static bool IsPlayerLeader(Leader leader)
     {
-        Game g = UnityEngine.Object.FindFirstObjectByType<Game>();
+        Game g = Game.Instance;
         return g != null && leader != null && g.player == leader;
     }
 
     private static bool PlayerCanSeeHex(Hex hex)
     {
         if (hex == null) return false;
-        Game g = UnityEngine.Object.FindFirstObjectByType<Game>();
+        Game g = Game.Instance;
         if (g == null || g.player == null) return false;
         return g.player.visibleHexes.Contains(hex) && hex.IsHexSeen();
     }

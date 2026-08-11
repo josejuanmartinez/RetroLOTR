@@ -39,7 +39,7 @@ public class RumoursManager : MonoBehaviour
         }
 
         Instance = this;
-        game = FindFirstObjectByType<Game>();
+        game = Game.Instance;
     }
 
     public void Show()
@@ -282,7 +282,7 @@ public class RumoursManager : MonoBehaviour
         {
             if (Instance.game == null)
             {
-                Instance.game = FindFirstObjectByType<Game>();
+                Instance.game = Game.Instance;
             }
             return true;
         }

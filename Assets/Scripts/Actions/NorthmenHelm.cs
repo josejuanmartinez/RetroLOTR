@@ -71,7 +71,7 @@ public class NorthmenHelm : CharacterAction
             target.RefuseDuels(1);
 
             // Find nearest allied PC and give loyalty bonus
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board != null)
             {
                 Leader owner = character.GetOwner();

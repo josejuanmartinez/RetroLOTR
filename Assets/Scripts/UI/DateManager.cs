@@ -38,7 +38,7 @@ public class DateManager : MonoBehaviour
         EnsureDateInteractions();
         DateEventManager.GetOrCreate(); // drives scripted environment cards + date events
 
-        game = FindFirstObjectByType<Game>();
+        game = Game.Instance;
         if (game != null)
         {
             game.NewTurnStarted += Show;

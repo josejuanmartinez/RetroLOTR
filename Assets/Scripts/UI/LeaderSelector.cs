@@ -285,7 +285,7 @@ public class LeaderSelector : SearcherByName
         yield return null;
         yield return new WaitForEndOfFrame();
 
-        FindFirstObjectByType<Board>()?.HideGenerationProgressUi();
+        Board.Instance?.HideGenerationProgressUi();
 
         if (introVideo != null)
         {
@@ -313,7 +313,7 @@ public class LeaderSelector : SearcherByName
         selectionScreenShown = true;
         selectionScreenQueued = false;
         SelectLeader(leaderCarousel != null ? leaderCarousel.GetCurrentIndex() : 0);
-        FindFirstObjectByType<Board>()?.HideGenerationProgressUi();
+        Board.Instance?.HideGenerationProgressUi();
         ForceLeaderSelectionRefresh();
         RequestLeaderSelectionRefresh();
         StartCoroutine(ForceLeaderSelectionVisibleAcrossFrames());
@@ -323,7 +323,7 @@ public class LeaderSelector : SearcherByName
     {
         for (int i = 0; i < 12; i++)
         {
-            FindFirstObjectByType<Board>()?.HideGenerationProgressUi();
+            Board.Instance?.HideGenerationProgressUi();
             yield return null;
             ForceLeaderSelectionRefresh();
             yield return new WaitForEndOfFrame();
@@ -567,7 +567,7 @@ public class LeaderSelector : SearcherByName
             }
 
             UpdateBannerImage(player);
-            FindFirstObjectByType<Game>().SelectPlayer(player);
+            Game.Instance.SelectPlayer(player);
         }
     }
 

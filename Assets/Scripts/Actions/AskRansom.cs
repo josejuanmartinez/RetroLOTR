@@ -88,7 +88,7 @@ public class AskRansom : AgentAction
                 return true;
             }
 
-            targetOwner.RemoveGold(ransomCost, targetOwner == FindFirstObjectByType<Game>()?.player);
+            targetOwner.RemoveGold(ransomCost, targetOwner == Game.Instance?.player);
             actor.GetOwner()?.AddGold(ransomCost);
             actor.ReleaseCaptive(target);
             MessageDisplayNoUI.ShowMessage(actor.hex, actor, $"{targetOwner.characterName} paid {ransomCost} gold for {target.characterName}.", Color.green);

@@ -198,8 +198,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private static void EnsureManagersLoaded()
     {
         if (illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
-        if (deckManager == null) deckManager = FindFirstObjectByType<DeckManager>();
-        if (actionsManager == null) actionsManager = FindFirstObjectByType<ActionsManager>();
+        if (deckManager == null) deckManager = DeckManager.Instance;
+        if (actionsManager == null) actionsManager = ActionsManager.Instance;
         if (colors == null) colors = FindFirstObjectByType<Colors>();
         if (cursorManager == null) cursorManager = FindFirstObjectByType<CursorManager>();
         if (pathRenderer == null) pathRenderer = FindFirstObjectByType<HexPathRenderer>();
@@ -397,7 +397,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         if (data.encounterTargetHex != null) return;
 
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         Leader leader = game?.player;
         if (leader == null) return;
 
@@ -443,7 +443,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     private static Character ResolveSelectedCharacter()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board != null && board.selectedCharacter != null) return board.selectedCharacter;
         SelectedCharacterIcon icon = FindFirstObjectByType<SelectedCharacterIcon>();
         return icon != null ? icon.CurrentCharacter : null;
@@ -651,7 +651,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         if (data == null || string.IsNullOrWhiteSpace(data.name)) return false;
 
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         List<Hex> hexes = board != null ? board.GetHexes() : null;
         if (hexes == null) return false;
 
@@ -864,7 +864,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         bool isTypewriting = descriptionTypewriterCoroutine != null;
 
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         Character selected = board != null ? board.selectedCharacter : null;
         Leader resourceOwner = GetHumanPlayerLeader();
 
@@ -943,7 +943,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         {
             if (SuppressHoverEffects)
             {
-                Board board = FindFirstObjectByType<Board>();
+                Board board = Board.Instance;
                 PlayFromBloom(board != null ? board.selectedCharacter : null);
                 return;
             }
@@ -997,9 +997,15 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (IsPlayInProgress || cardData == null) return;
         EnsureManagersLoaded();
 
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         PlayableLeader playerLeader = game != null ? game.player : null;
         if (playerLeader == null || deckManager == null) return;
+        if (playerLeader.HasPlayedEnvironmentalCardThisTurn())
+        {
+            if (selected?.hex != null)
+                MessageDisplayNoUI.ShowMessage(selected.hex, selected, "Already played an environmental card this turn.", Color.red);
+            return;
+        }
         if (!cardData.MeetsResourceRequirements(playerLeader))
         {
             if (selected?.hex != null)
@@ -1026,6 +1032,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         CardData activeCard = consumedCard ?? playedCard;
         EnvironmentalCardManager.GetOrCreate().SetActiveCard(activeCard);
         playerLeader.RecordPlayedCard(activeCard);
+        playerLeader.RecordEnvironmentalCardPlayed(game.turn);
         selected?.RecordPlayedCard(activeCard, playedSprite);
 
         if (selected?.hex != null)
@@ -1044,7 +1051,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             return;
         }
 
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         SelectedCharacterIcon icon = FindFirstObjectByType<SelectedCharacterIcon>();
         Character selected = selectedOverride != null
             ? selectedOverride
@@ -1199,7 +1206,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     private Leader GetHumanPlayerLeader()
     {
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         return game != null ? game.player : null;
     }
 
@@ -1226,7 +1233,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         Leader humanLeader = GetHumanPlayerLeader();
         if (humanLeader is not PlayableLeader playable) return false;
 
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         if (game == null || !game.IsPlayerCurrentlyPlaying()) return false;
 
         bool confirm = await ConfirmationDialog.AskImmediate($"Discard {cardData.name} for a random resource?", "Yes", "No");
@@ -1641,7 +1648,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             return (false, false);
         }
 
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         PlayableLeader playerLeader = game != null ? game.player : null;
         if (playerLeader == null) return (false, false);
 
@@ -1675,16 +1682,24 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     private Task<bool> HandleEnvironmentalCardPlayed(Character selected)
     {
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         if (game == null) return Task.FromResult(false);
         PlayableLeader playerLeader = game.player;
         if (playerLeader == null) return Task.FromResult(false);
+
+        if (playerLeader.HasPlayedEnvironmentalCardThisTurn())
+        {
+            if (selected?.hex != null)
+                MessageDisplayNoUI.ShowMessage(selected.hex, selected, "Already played an environmental card this turn.", Color.red);
+            return Task.FromResult(false);
+        }
 
         if (!deckManager.TryConsumeCard(playerLeader, cardData.name, false, out _))
             return Task.FromResult(false);
 
         EnvironmentalCardManager.GetOrCreate().SetActiveCard(cardData);
         playerLeader.RecordPlayedCard(cardData);
+        playerLeader.RecordEnvironmentalCardPlayed(game.turn);
 
         // Environmental cards don't roll/resolve immediately like Action cards — they become
         // the ongoing effect and apply at the start of next turn. Without an explicit message
@@ -1711,7 +1726,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             UpdateInteractableState();
         }
 
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         PlayableLeader playerLeader = game != null ? game.player : null;
         if (playerLeader == null) return false;
 
@@ -1813,7 +1828,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     private Task<bool> HandleCharacterCardPlayed(Character selected)
     {
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         PlayableLeader playerLeader = game != null ? game.player : null;
         if (playerLeader == null || selected == null)
         {

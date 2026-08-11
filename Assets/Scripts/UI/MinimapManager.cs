@@ -83,7 +83,7 @@ public class MinimapManager : MonoBehaviour
     private void FitCameraToBoard()
     {
         if (minimapCamera == null) return;
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null || board.hexes == null || board.hexes.Count == 0) return;
         if (board == fittedBoard && board.hexes.Count == fittedHexCount) return;
 
@@ -218,7 +218,7 @@ public class MinimapManager : MonoBehaviour
         if (legendContainer != null)
             Destroy(legendContainer);
 
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null || board.hexes == null) return;
 
         HashSet<string> discoveredRegions = new();

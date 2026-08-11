@@ -90,7 +90,7 @@ public class CharacterAction
 
     private Game GetGame()
     {
-        if (game == null) game = FindFirstObjectByType<Game>();
+        if (game == null) game = Game.Instance;
         return game;
     }
 
@@ -114,7 +114,7 @@ public class CharacterAction
         }
 
         defaultActionNameFrame = Time.frameCount;
-        ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
+        ActionsManager actionsManager = ActionsManager.Instance;
         cachedDefaultActionName = actionsManager != null && actionsManager.DEFAULT != null
             ? actionsManager.DEFAULT.actionName
             : null;

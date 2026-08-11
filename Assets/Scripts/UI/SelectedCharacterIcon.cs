@@ -27,8 +27,6 @@ public class SelectedCharacterIcon : MonoBehaviour
 
     [Header("Leader")]
     public Image icon;
-    public RawImage rawImage;
-    public VideoPlayer video;
     public TextMeshProUGUI nameWidget;
     public TextMeshProUGUI descriptionWidget;
 
@@ -137,7 +135,7 @@ public class SelectedCharacterIcon : MonoBehaviour
         HideCardHoverPreview();
         if (string.IsNullOrWhiteSpace(cardName)) return;
 
-        DeckManager deckManager = FindFirstObjectByType<DeckManager>();
+        DeckManager deckManager = DeckManager.Instance;
         CardData card = string.Equals(cardName, CurrentCharacter.characterName, System.StringComparison.OrdinalIgnoreCase)
             ? deckManager?.FindAnyCardByName(cardName)
             : deckManager?.FindArmyCardByName(cardName);
@@ -438,7 +436,7 @@ SetVisible(true);
         string troopName = army.GetTroopGroups().FirstOrDefault()?.troopName;
         if (!string.IsNullOrWhiteSpace(troopName))
         {
-            DeckManager deckManager = FindFirstObjectByType<DeckManager>();
+            DeckManager deckManager = DeckManager.Instance;
             if (deckManager != null)
             {
                 CardData card = deckManager.cards.FirstOrDefault(c =>
@@ -460,16 +458,8 @@ SetVisible(true);
     // Update is called once per frame
     public void Hide()
     {
-SetVisible(false);
+        SetVisible(false);
         border.SetActive(false);
-        // Video path disabled for now; static illustrations only.
-        // if (video != null)
-        // {
-        //     video.Stop();
-        //     video.enabled = false;
-        // }
-        if (video != null) video.enabled = false;
-        if (rawImage != null) rawImage.enabled = false;
         Image targetImage = GetImageTarget();
         if (targetImage != null) targetImage.enabled = false;
         nameWidget.text = "";
@@ -600,28 +590,6 @@ SetVisible(false);
 
     private void SetCharacterVisuals(Sprite fallbackSprite)
     {
-        // Video path disabled for now; static illustrations only.
-        // bool hasClip = clip != null && video != null;
-        //
-        // if (video != null)
-        // {
-        //     if (hasClip)
-        //     {
-        //         video.enabled = true;
-        //         video.clip = clip;
-        //         video.Play();
-        //     }
-        //     else
-        //     {
-        //         video.Stop();
-        //         video.enabled = false;
-        //     }
-        // }
-        //
-        // if (rawImage != null) rawImage.enabled = hasClip;
-        if (video != null) video.enabled = false;
-        if (rawImage != null) rawImage.enabled = false;
-
         Image targetImage = GetImageTarget();
         if (targetImage != null)
         {
@@ -735,7 +703,7 @@ SetVisible(false);
         PlayableLeader owner = c != null ? c.GetOwner() as PlayableLeader : null;
         if (owner == null)
         {
-            Game game = FindFirstObjectByType<Game>();
+            Game game = Game.Instance;
             owner = game != null ? game.player : null;
         }
         if (owner == null) { icons.Clear(); return; }
@@ -774,6 +742,18 @@ SetVisible(false);
                     items.Add((spriteName, effect.ToString()));
             }
 
+        // Board-wide active environmental card (see EnvironmentalCardManager) — shown here only
+        // when this character isn't exempt from it, using the same immunity check the card
+        // scripts themselves use to skip protected characters (e.g. artifact-granted immunity).
+        CardData activeEnvironmentalCard = EnvironmentalCardManager.Instance?.ActiveCard;
+        if (activeEnvironmentalCard != null && c != null && !c.IsImmuneToNegativeEnvironmentalCards())
+        {
+            string hover = string.IsNullOrWhiteSpace(activeEnvironmentalCard.description)
+                ? activeEnvironmentalCard.name
+                : $"{activeEnvironmentalCard.name}: {activeEnvironmentalCard.description}";
+            items.Add((activeEnvironmentalCard.GetSpriteString(), hover));
+        }
+
         for (int i = artifactStatusRenderers.Count; i < items.Count; i++)
         {
             GameObject go = Instantiate(artifactStatusPrefab, artifactStatusGridLayoutTransform);
@@ -796,7 +776,7 @@ SetVisible(false);
     {
         if (c == null || (!returnName && !returnArmy && !returnQuote)) return string.Empty;
 
-        DeckManager deckManager = FindFirstObjectByType<DeckManager>();
+        DeckManager deckManager = DeckManager.Instance;
         if (returnQuote)
         {
             CardData characterCard = deckManager?.FindAnyCardByName(c.characterName);

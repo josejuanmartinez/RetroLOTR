@@ -166,7 +166,7 @@ public class PCAction : MaterialRetrieval
         Leader owner = character.GetOwner();
         if (owner == null) return false;
 
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return false;
 
         string normalizedTarget = PcDescriptionBuilder.NormalizeLookupKey(pcRegion);
@@ -198,7 +198,7 @@ public class PCAction : MaterialRetrieval
     {
         if (pc == null) return null;
 
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : DeckManager.Instance;
         if (deckManager != null)
         {
             return deckManager.ResolveRegionForPc(pc);
@@ -212,7 +212,7 @@ public class PCAction : MaterialRetrieval
         string targetKey = PcDescriptionBuilder.NormalizeLookupKey(ResolveAssociatedPcName());
         if (string.IsNullOrWhiteSpace(targetKey)) return null;
 
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         List<Hex> hexes = board?.GetHexes();
         if (hexes == null) return null;
 

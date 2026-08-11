@@ -19,7 +19,7 @@ public class FarShoreFadedStar : EventAction
 
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         AlignmentEnum caster = GetCasterAlignment();
@@ -79,7 +79,7 @@ public class FarShoreFadedStar : EventAction
         {
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board?.hexes == null) return false;
             var targets = board.hexes.Values.Where(h => h != null && h.characters != null && IsNearBorder(h, board))
                 .SelectMany(h => h.characters).Where(ch => ch != null && !ch.killed && ch.GetAlignment() == AlignmentEnum.freePeople).Distinct().ToList();
@@ -91,7 +91,7 @@ public class FarShoreFadedStar : EventAction
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             return board?.hexes != null && board.hexes.Values.Any(h => h != null && h.characters != null && IsNearBorder(h, board) && h.characters.Any(ch => ch != null && !ch.killed && ch.GetAlignment() == AlignmentEnum.freePeople));
         };
         asyncEffect = async (character) => { if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false; return true; };

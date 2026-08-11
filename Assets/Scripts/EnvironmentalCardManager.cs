@@ -35,7 +35,7 @@ public class EnvironmentalCardManager : MonoBehaviour
 
     private void SubscribeToGame()
     {
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         if (game == null || game == subscribedGame) return;
         if (subscribedGame != null) subscribedGame.NewTurnStarted -= OnNewTurn;
         subscribedGame = game;
@@ -47,6 +47,7 @@ public class EnvironmentalCardManager : MonoBehaviour
         if (subscribedGame == null) SubscribeToGame();
         ActiveCard = card;
         Layout layout = FindFirstObjectByType<Layout>();
+        Debug.Log($"[EnvCardToken] SetActiveCard('{card?.name}') — layout found={layout != null}, instanceId={(layout != null ? layout.GetInstanceID().ToString() : "n/a")}");
         layout?.SetEnvironmentalCard(card);
     }
 

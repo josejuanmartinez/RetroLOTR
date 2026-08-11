@@ -43,7 +43,7 @@ public class Horses : CharacterAction
         targetHex.RedrawCharacters();
         targetHex.RedrawArmies();
 
-        if (character.GetOwner() == UnityEngine.Object.FindFirstObjectByType<Game>()?.player)
+        if (character.GetOwner() == Game.Instance?.player)
             targetHex.RevealArea(1, true);
     }
 

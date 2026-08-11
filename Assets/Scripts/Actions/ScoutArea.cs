@@ -19,7 +19,7 @@ public class ScoutArea : AgentAction
             var radiusHexes = c.hex.GetHexesInRadius(1);
             Leader owner = c.GetOwner();
             List<Hex> detectedHexes = new();
-            Game game = FindFirstObjectByType<Game>();
+            Game game = Game.Instance;
             showPlayerResults = owner != null && game != null && owner == game.player;
             if (owner != null)
             {

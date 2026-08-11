@@ -6,6 +6,18 @@ using UnityEngine;
 
 public class UtilityAIContext
 {
+    // Board is instantiated once at game start and lives for the whole session. Resolving it
+    // via FindFirstObjectByType inside this constructor used to happen once per scored card —
+    // thousands of scene-wide lookups per AI turn (same anti-pattern as the earlier hex-load
+    // freeze, see Hex.cs's sharedBoard). Cache it statically instead; Unity's overloaded
+    // null-check re-resolves it if the scene reloads and the old reference is destroyed.
+    private static Board sharedBoard;
+    public static Board GetSharedBoard()
+    {
+        if (sharedBoard == null) sharedBoard = Board.Instance;
+        return sharedBoard;
+    }
+
     private readonly Board board;
     private readonly List<AIScoredAction> scoredActions = new();
     private readonly List<ArtifactTransferCandidate> artifactTransferCandidates = new();
@@ -45,6 +57,9 @@ public class UtilityAIContext
     private float duelAdvantage = 0f;
     private float songDuelAdvantage = 0f;
     private int unrecruitedSameAlignmentNplCount = 0;
+    private float agentRoleStrength = 0f;
+    private float mageRoleStrength = 0f;
+    private float emissaryRoleStrength = 0f;
     public CharacterAction LastChosenAction { get; private set; }
 
     // Set by AITurnController after construction, from the HTN's currently-active
@@ -69,7 +84,7 @@ public class UtilityAIContext
                 .Where(pair => pair.Key != null && pair.Value != null)
                 .ToDictionary(pair => pair.Key, pair => pair.Value);
         }
-        board = UnityEngine.Object.FindFirstObjectByType<Board>();
+        board = GetSharedBoard();
 
         _precomputed = precomputed;
         ApplyPrecomputedData(precomputed ?? UtilityAIContextDataBuilder.Build(leader, character));
@@ -84,9 +99,13 @@ public class UtilityAIContext
     public async Task<bool> TryExecuteBestAvailableActionAsync()
     {
         ResetScoringData();
-        CharacterAction action = AvailableActions
-            .OrderByDescending(a => ScoreAction(a))
-            .FirstOrDefault();
+        // Score every action first (ScoreAction also records it for logging), then pick
+        // randomly among whichever tied for the top score instead of always favoring
+        // whichever happened to come first in AvailableActions.
+        List<(CharacterAction action, float score)> scored = AvailableActions
+            .Select(a => (action: a, score: ScoreAction(a)))
+            .ToList();
+        CharacterAction action = UtilityAI.PickRandomAmongTopScored(scored, s => s.score).action;
 
         if (action == null) return false;
 
@@ -138,6 +157,9 @@ public class UtilityAIContext
         duelAdvantage = data.DuelAdvantage;
         songDuelAdvantage = data.SongDuelAdvantage;
         unrecruitedSameAlignmentNplCount = data.UnrecruitedSameAlignmentNplCount;
+        agentRoleStrength = data.AgentRoleStrength;
+        mageRoleStrength = data.MageRoleStrength;
+        emissaryRoleStrength = data.EmissaryRoleStrength;
 
         if (data.ArtifactTransferCandidates != null && data.ArtifactTransferCandidates.Count > 0)
         {
@@ -156,6 +178,16 @@ public class UtilityAIContext
 
         // User-authored flat priority adjustment for this specific action.
         score += UtilityAI.GetActionScoreBonus(action);
+
+        // Environmental cards get an automatic, non-authored penalty (unlike every other
+        // consideration below, which only applies when a card opts into it via
+        // utilityParameters) — every environmental card should be discouraged from frequent
+        // play regardless of how its individual CardParameterProfile happens to be authored.
+        if (actionCardsByAction.TryGetValue(action, out CardData scoredCard) && scoredCard != null
+            && scoredCard.GetCardType() == CardTypeEnum.Environmental)
+        {
+            score += GetEnvironmentalPenaltyScore();
+        }
 
         // A card can opt into any named UtilityAI parameter explicitly. This is
         // deliberately data-driven: there are no action-name special cases or
@@ -211,9 +243,19 @@ public class UtilityAIContext
             return false;
         }
 
+        // Defensive re-check: EvaluatePlayability's Environmental branch (the shared playability
+        // boundary ScoreCard filters candidates through) already excludes a second environmental
+        // card once one's been played this turn, but AvailableActions in the legacy
+        // TryExecuteBestAvailableActionAsync path isn't guaranteed pre-filtered the same way.
+        bool isEnvironmental = card.GetCardType() == CardTypeEnum.Environmental;
+        if (isEnvironmental && Leader.HasPlayedEnvironmentalCardThisTurn())
+        {
+            return false;
+        }
+
         DeckManager deckManager = DeckManager.Instance != null
             ? DeckManager.Instance
-            : UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+            : DeckManager.Instance;
         if (deckManager == null) return false;
 
         if (!deckManager.TryConsumeActionCardFromFullDeck(Leader, action.GetType().Name, card, out CardData consumedCard))
@@ -227,6 +269,18 @@ public class UtilityAIContext
         deckManager.ApplyMapRevealForPlayedCard(Leader, consumedCard);
         // RecordPlayedCard (played-land/PC-card history) is PlayableLeader-only bookkeeping.
         if (Leader is PlayableLeader playableLeader) playableLeader.RecordPlayedCard(consumedCard);
+
+        // AI card execution otherwise never routes through EnvironmentalCardManager at all —
+        // the resolved action's own Execute() only runs its immediate effect, not the board's
+        // ongoing-effect/token machinery (see Card.HandleEnvironmentalCardPlayed for the human
+        // equivalent of these two calls).
+        if (isEnvironmental)
+        {
+            EnvironmentalCardManager.GetOrCreate().SetActiveCard(consumedCard);
+            int currentTurn = Game.Instance?.turn ?? 0;
+            Leader.RecordEnvironmentalCardPlayed(currentTurn);
+        }
+
         return true;
     }
 
@@ -371,7 +425,7 @@ public class UtilityAIContext
         float viability = GetNearbyEnemyCharacterScore() + GetDistanceScore(true);
         if (needsIndirectApproach) viability += UtilityAI.GetWeight(UtilityAI.Keys.IntelligenceOutmatchedBonus);
         viability += GetDistanceScore(true) * UtilityAI.GetWeight(UtilityAI.Keys.IntelligenceEnemyPressureWeight);
-        viability += GetLeaderRoleStrength(c => c.GetAgent()) * UtilityAI.GetWeight(UtilityAI.Keys.IntelligenceAgentStrengthWeight);
+        viability += agentRoleStrength * UtilityAI.GetWeight(UtilityAI.Keys.IntelligenceAgentStrengthWeight);
         return viability;
     }
 
@@ -380,7 +434,7 @@ public class UtilityAIContext
         return (1f - nationPercentageArtifacts) * UtilityAI.GetWeight(UtilityAI.Keys.ArtifactScarcityWeight)
             + GetDistanceScore(true)
             + hiddenArtifactsRemaining * UtilityAI.GetWeight(UtilityAI.Keys.ArtifactsHiddenArtifactsWeight)
-            + GetLeaderRoleStrength(c => c.GetMage()) * UtilityAI.GetWeight(UtilityAI.Keys.ArtifactsMageStrengthWeight);
+            + mageRoleStrength * UtilityAI.GetWeight(UtilityAI.Keys.ArtifactsMageStrengthWeight);
     }
 
     public float GetDiplomaticViability()
@@ -388,7 +442,7 @@ public class UtilityAIContext
         float viability = GetDiplomaticScore() + GetDistanceScore(true);
         if (needsIndirectApproach) viability += UtilityAI.GetWeight(UtilityAI.Keys.DiplomaticOutmatchedBonus);
         viability += GetDistanceScore(true) * UtilityAI.GetWeight(UtilityAI.Keys.DiplomaticEnemyPressureWeight);
-        viability += GetLeaderRoleStrength(c => c.GetEmmissary()) * UtilityAI.GetWeight(UtilityAI.Keys.DiplomaticEmissaryStrengthWeight);
+        viability += emissaryRoleStrength * UtilityAI.GetWeight(UtilityAI.Keys.DiplomaticEmissaryStrengthWeight);
         return viability;
     }
 
@@ -413,11 +467,11 @@ public class UtilityAIContext
             UtilityAIParameters.ArtifactsArtifactTransfer => GetArtifactTransferScore(),
             UtilityAIParameters.ArtifactsEnemyPressure => GetDistanceScore(true),
             UtilityAIParameters.ArtifactsHiddenArtifacts => hiddenArtifactsRemaining,
-            UtilityAIParameters.ArtifactsMageStrength => GetLeaderRoleStrength(c => c.GetMage()),
+            UtilityAIParameters.ArtifactsMageStrength => mageRoleStrength,
             UtilityAIParameters.DiplomaticEnemyPressure => GetDistanceScore(true),
-            UtilityAIParameters.DiplomaticEmissaryStrength => GetLeaderRoleStrength(c => c.GetEmmissary()),
+            UtilityAIParameters.DiplomaticEmissaryStrength => emissaryRoleStrength,
             UtilityAIParameters.IntelligenceEnemyPressure => GetDistanceScore(true),
-            UtilityAIParameters.IntelligenceAgentStrength => GetLeaderRoleStrength(c => c.GetAgent()),
+            UtilityAIParameters.IntelligenceAgentStrength => agentRoleStrength,
             UtilityAIParameters.LogisticsReachNpc => GetLogisticsProximityScore(nearestUnrevealedNpcHex),
             UtilityAIParameters.LogisticsInterceptEnemy => GetLogisticsProximityScore(closestNonNeutralEnemy.Hex ?? closestEnemy.Hex),
             UtilityAIParameters.LogisticsReachEnemyCharacter => GetLogisticsProximityScore(nearestEnemyCharacterHex),
@@ -490,8 +544,52 @@ public class UtilityAIContext
             UtilityAIParameters.LogisticsInterceptEnemy => closestNonNeutralEnemy.Hex ?? closestEnemy.Hex,
             UtilityAIParameters.LogisticsReachEnemyCharacter => nearestEnemyCharacterHex,
             UtilityAIParameters.DisruptionEnemyPressure => closestEnemy.Hex ?? closestNonNeutralEnemy.Hex,
+            // Board-wide "few NPLs left to recruit" has no location of its own — the nearest
+            // eligible capital (already cached for DiplomaticNplRecruitment) is the natural
+            // place to actually go act on it.
+            UtilityAIParameters.DiplomaticNplScarcity => nearestNplRecruitmentHex,
+            // These previously had no case at all, so a character whose active HTN leaf was
+            // duelLeaf/songDuelLeaf (see HTNStrategyBuilder) had no travel destination and could
+            // only ever duel if already standing on the right hex by coincidence — resolve the
+            // same target Duel.PickBestTarget/BattleOfSongs would themselves pick.
+            UtilityAIParameters.MilitaristicDuelAdvantage => GetDuelTargetHex(),
+            UtilityAIParameters.MilitaristicSongDuelAdvantage => GetSongDuelTargetHex(),
             _ => null
         };
+    }
+
+    // Same target resolution as UtilityAIContextDataBuilder.CacheDuelSignal (kept in sync
+    // deliberately — see that method's comment), just returning the target's hex instead of
+    // the advantage score.
+    private Hex GetDuelTargetHex()
+    {
+        if (Character == null || Character.IsRefusingDuels()) return null;
+
+        ActionsManager actionsManager = ActionsManager.Instance;
+        if (AITurnController.ResolveActionByRef("Duel", actionsManager) is not Duel duelAction) return null;
+
+        duelAction.Initialize(Character);
+        List<Character> candidates = duelAction.GetEligibleTargets(Character);
+        if (candidates.Count == 0) return null;
+
+        Character target = candidates.OrderByDescending(x => Duel.EstimateDuelScore(x, null)).First();
+        return target?.hex;
+    }
+
+    // Same target resolution as UtilityAIContextDataBuilder.CacheSongDuelSignal — see GetDuelTargetHex.
+    private Hex GetSongDuelTargetHex()
+    {
+        if (Character == null || Character.GetMage() < 1) return null;
+
+        ActionsManager actionsManager = ActionsManager.Instance;
+        if (AITurnController.ResolveActionByRef("BattleOfSongs", actionsManager) is not BattleOfSongs songAction) return null;
+
+        songAction.Initialize(Character);
+        List<Character> candidates = songAction.GetEligibleMageTargets(Character);
+        if (candidates.Count == 0) return null;
+
+        Character target = candidates.OrderByDescending(x => BattleOfSongs.EstimateSongScore(x)).First();
+        return target?.hex;
     }
 
     // Does this character have at least one card, anywhere in the leader's full deck, whose
@@ -508,8 +606,8 @@ public class UtilityAIContext
 
         DeckManager deckManager = DeckManager.Instance != null
             ? DeckManager.Instance
-            : UnityEngine.Object.FindFirstObjectByType<DeckManager>();
-        ActionsManager actionsManager = UnityEngine.Object.FindFirstObjectByType<ActionsManager>();
+            : DeckManager.Instance;
+        ActionsManager actionsManager = ActionsManager.Instance;
         if (deckManager == null || actionsManager == null) return false;
 
         foreach (CardData card in deckManager.GetFullDeck(Leader))
@@ -584,13 +682,6 @@ public class UtilityAIContext
         return Mathf.Max(0f, deviation) * 100f * UtilityAI.GetWeight(scaleKey);
     }
 
-    private float GetLeaderRoleStrength(Func<Character, int> level)
-    {
-        return Leader?.controlledCharacters
-            ?.Where(c => c != null && !c.killed)
-            .Sum(c => Mathf.Max(0, level(c))) ?? 0f;
-    }
-
     private void RecordAction(CharacterAction action)
     {
         LastChosenAction = action;
@@ -607,13 +698,24 @@ public class UtilityAIContext
         if (ActiveHtnTargetHex != null) return ActiveHtnTargetHex;
 
         // Fallback for tasks with no specific location (Economic recovery, the generic
-        // fallback branch) — opportunistic chase, same as before this existed.
-        // Priority: own PC needing defense -> unrevealed NPC PCs -> strongest non-neutral enemy -> any enemy -> nearest enemy character.
+        // fallback branch) — opportunistic chase, same as before this existed. Every hex here
+        // is already computed board-wide by UtilityAIContextDataBuilder for scoring purposes;
+        // originally only 5 of these ~10 cached candidates were ever consulted, so a character
+        // whose HTN leaf had no specific target and whose top 5 candidates were all empty just
+        // sat still with real, known opportunities elsewhere on the board. Priority: own PC
+        // needing defense -> unrevealed NPC PCs -> strongest non-neutral enemy -> any enemy ->
+        // nearest enemy character -> enemy PC ripe for influence -> own PC at loyalty risk ->
+        // vulnerable enemy PC -> high-value enemy character -> NPL capital worth recruiting.
         if (nearestOwnPcFortificationNeedHex != null) return nearestOwnPcFortificationNeedHex;
         if (nearestUnrevealedNpcHex != null) return nearestUnrevealedNpcHex;
         if (closestNonNeutralEnemy.Hex != null) return closestNonNeutralEnemy.Hex;
         if (closestEnemy.Hex != null) return closestEnemy.Hex;
         if (nearestEnemyCharacterHex != null) return nearestEnemyCharacterHex;
+        if (nearestEnemyPcOpportunityHex != null) return nearestEnemyPcOpportunityHex;
+        if (nearestOwnPcLoyaltyRiskHex != null) return nearestOwnPcLoyaltyRiskHex;
+        if (nearestEnemyPcVulnerabilityHex != null) return nearestEnemyPcVulnerabilityHex;
+        if (nearestHighValueEnemyCharacterHex != null) return nearestHighValueEnemyCharacterHex;
+        if (nearestNplRecruitmentHex != null) return nearestNplRecruitmentHex;
         return null;
     }
 
@@ -630,6 +732,25 @@ public class UtilityAIContext
         // Reward being close to the intended destination; closer hexes give larger boosts
         return Mathf.Max(0f, UtilityAI.GetWeight(UtilityAI.Keys.LogisticsProximityMax)
             - distance * UtilityAI.GetWeight(UtilityAI.Keys.LogisticsDistancePenaltyPerHex));
+    }
+
+    // Applied automatically (see ScoreAction) to every Environmental-type card, not opted into
+    // via a card's utilityParameters like every other consideration. Full-strength penalty the
+    // turn immediately after this leader last played one; decays linearly to 0 once
+    // EnvironmentalPenaltyDecayTurns turns have passed. Before ever playing one,
+    // Leader.lastEnvironmentalCardPlayedTurn defaults far enough in the past that turnsSince
+    // already exceeds the decay window, so no penalty applies.
+    private float GetEnvironmentalPenaltyScore()
+    {
+        if (Leader == null) return 0f;
+
+        int currentTurn = Game.Instance?.turn ?? 0;
+        int turnsSince = currentTurn - Leader.lastEnvironmentalCardPlayedTurn;
+        float decayTurns = Mathf.Max(1f, UtilityAI.GetWeight(UtilityAI.Keys.EnvironmentalPenaltyDecayTurns));
+        if (turnsSince >= decayTurns) return 0f;
+
+        float remainingStrength = 1f - turnsSince / decayTurns;
+        return UtilityAI.GetWeight(UtilityAI.Keys.EnvironmentalPenalty) * Mathf.Clamp01(remainingStrength);
     }
 
     // Live count of wounded allies (including self) sharing this character's hex — the same
@@ -763,7 +884,7 @@ public class UtilityAIContext
         return new AIActionLogEntry
         {
             timestamp = DateTime.UtcNow.ToString("o"),
-            turn = UnityEngine.Object.FindFirstObjectByType<Game>()?.turn ?? -1,
+            turn = Game.Instance?.turn ?? -1,
             leaderName = Leader?.characterName,
             leaderAlignment = Leader?.GetAlignment().ToString(),
             characterName = Character?.characterName,
@@ -937,7 +1058,7 @@ public class UtilityAIContext
             PC pc = hex.GetPC();
             if (pc == null) continue;
             if (pc.owner is not NonPlayableLeader npc) continue;
-            if (npc.IsRevealedToLeader(GameObject.FindFirstObjectByType<Game>().currentlyPlaying)) continue;
+            if (npc.IsRevealedToLeader(Game.Instance.currentlyPlaying)) continue;
 
             float distance = Vector2.Distance(Character.hex.v2, hex.v2);
             if (distance < nearestUnrevealedNpcDistance)
@@ -989,7 +1110,7 @@ public class UtilityAIContext
     private float CalculateNationArtifacts()
     {
         if (Leader == null) return 0;
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : DeckManager.Instance;
         int catalogCount = deckManager?.GetObjectCardCount() ?? 0;
         return Leader.controlledCharacters.Sum(ch => ch != null ? ch.objects.Count * 1f : 0f) / Math.Max(1f, catalogCount * 1f);
     }
@@ -1042,6 +1163,13 @@ public class UtilityAIContext
         public float DuelAdvantage;
         public float SongDuelAdvantage;
         public int UnrecruitedSameAlignmentNplCount;
+
+        // Sum of the leader's controlled characters' Agent/Mage/Emissary skill, computed once
+        // per character-turn (see UtilityAIContextDataBuilder.Build) rather than re-summed via
+        // LINQ by every one of the ~100+ per-card UtilityAIContext instances scored per pick.
+        public float AgentRoleStrength;
+        public float MageRoleStrength;
+        public float EmissaryRoleStrength;
     }
 
     public readonly struct EnemyTarget
@@ -1179,7 +1307,7 @@ public class UtilityAIContext
 
     private Dictionary<PlayableLeader, int> CaptureVictoryPointsSnapshot()
     {
-        Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         if (game == null) return new();
         return VictoryPoints.CalculateForAll(game)
             .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.RelativeScore);

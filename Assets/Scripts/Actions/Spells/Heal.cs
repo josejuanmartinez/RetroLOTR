@@ -46,7 +46,7 @@ public class Heal: FreeNeutralSpell
 
             int health = UnityEngine.Random.Range(0, 10) * c.GetMage();
             health = Math.Max(0, ApplySpellEffectMultiplier(c, health));
-            Character selectedCharacter = FindFirstObjectByType<Board>().selectedCharacter;
+            Character selectedCharacter = Board.Instance.selectedCharacter;
             target.Heal(health);
             if (selectedCharacter == target) FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(target);
 

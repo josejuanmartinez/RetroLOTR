@@ -11,7 +11,7 @@ public class Rain : EventAction
 {
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         EnvironmentalCardManager env = EnvironmentalCardManager.Instance;
@@ -78,7 +78,7 @@ public class Rain : EventAction
         {
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
             int cleared = 0;
             foreach (var ch in board.GetHexes().Where(h => h != null && h.characters != null).SelectMany(h => h.characters).Where(ch => ch != null && !ch.killed).ToList())

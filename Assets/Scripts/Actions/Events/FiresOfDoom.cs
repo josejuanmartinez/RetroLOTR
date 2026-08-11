@@ -7,7 +7,7 @@ public class FiresOfDoom : EventAction
 {
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         List<(Character ch, AlignmentEnum al)> wastelandChars = board.GetHexes()
@@ -48,7 +48,7 @@ public class FiresOfDoom : EventAction
             if (originalEffect != null && !originalEffect(c)) return false;
             if (c == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             List<Character> targets = board.GetHexes()
@@ -72,7 +72,7 @@ public class FiresOfDoom : EventAction
         condition = (c) =>
         {
             if (originalCondition != null && !originalCondition(c)) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
             return board.GetHexes().Any(h => h != null
                 && h.terrainType == TerrainEnum.wastelands

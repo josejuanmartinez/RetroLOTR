@@ -43,6 +43,18 @@ public class SituationCardsUI : MonoBehaviour
     // Bloom-mode presentation state (see ShowBloomCoroutine / DismissBloom).
     private CardBloomWheel activeBloomWheel;
     private GameObject bloomDismissCatcher;
+    private List<SituationCardOffer> activeBloomOffers;
+    private Character activeBloomCharacter;
+    private Hex activeBloomHex;
+
+    private sealed class SavedBloom
+    {
+        public List<SituationCardOffer> offers;
+        public Hex hex;
+        public int moved;
+    }
+
+    private readonly Dictionary<Character, SavedBloom> savedBlooms = new();
 
     private void Awake()
     {
@@ -228,7 +240,7 @@ public class SituationCardsUI : MonoBehaviour
     {
         if (activeBloomWheel != null)
         {
-            DismissBloom();
+            DismissBloom(saveForCharacter: false);
             return;
         }
 
@@ -400,10 +412,14 @@ public class SituationCardsUI : MonoBehaviour
         }
 
         activeBloomWheel = wheel;
+        activeBloomOffers = offers;
+        activeBloomCharacter = character;
+        activeBloomHex = character.hex;
         wheel.SetCards(cardInstances, index => OnBloomCardClicked(index, offers, character, leader));
         wheel.SetWorldAnchor(character.hex.transform.position, Camera.main);
         wheel.SetVisible(true);
         wheel.SetForcedOpen(true);
+        Sounds.Instance?.PlayUiClick();
 
         BuildBloomDismissCatcher();
         showCoroutine = null;
@@ -445,7 +461,8 @@ public class SituationCardsUI : MonoBehaviour
         if (offers == null || index < 0 || index >= offers.Count) return;
         SituationCardOffer offer = offers[index];
         if (offer == null || !offer.IsPlayable) return;
-        DismissBloom();
+        savedBlooms.Remove(character);
+        DismissBloom(saveForCharacter: false);
         ResolveCardAction(offer, character, leader);
     }
 
@@ -455,19 +472,69 @@ public class SituationCardsUI : MonoBehaviour
     // catcher may fire on the same click).
     private void DismissBloom()
     {
+        DismissBloom(saveForCharacter: true);
+    }
+
+    private void DismissBloom(bool saveForCharacter)
+    {
         if (activeBloomWheel == null) return;
+
+        Sounds.Instance?.PlayUiExit();
+
+        if (saveForCharacter && activeBloomCharacter != null && activeBloomHex != null && activeBloomOffers != null)
+        {
+            savedBlooms[activeBloomCharacter] = new SavedBloom
+            {
+                offers = new List<SituationCardOffer>(activeBloomOffers),
+                hex = activeBloomHex,
+                moved = activeBloomCharacter.moved
+            };
+        }
 
         activeBloomWheel.ClearWorldAnchor();
         activeBloomWheel.SetForcedOpen(false);
         activeBloomWheel.SetCards(null);
         activeBloomWheel.SetVisible(false);
         activeBloomWheel = null;
+        activeBloomOffers = null;
+        activeBloomCharacter = null;
+        activeBloomHex = null;
 
         DestroyBloomDismissCatcher();
         ClearCards();
 
         if (showCoroutine != null) { StopCoroutine(showCoroutine); showCoroutine = null; }
         IsShowing = false;
+    }
+
+    public bool TryRestoreBloom(Character character)
+    {
+        if (!bloom || IsShowing || character == null) return false;
+        if (!savedBlooms.TryGetValue(character, out SavedBloom saved)) return false;
+
+        if (character.killed || character.hasActionedThisTurn || character.hex == null
+            || character.hex != saved.hex || character.moved != saved.moved)
+        {
+            savedBlooms.Remove(character);
+            return false;
+        }
+
+        List<SituationCardOffer> revalidated = saved.offers
+            .Where(offer => offer?.Card != null)
+            .Select(offer => new SituationCardOffer(
+                offer.Card,
+                offer.Source,
+                IsCardPlayable(offer.Card, character)))
+            .ToList();
+
+        if (revalidated.Count == 0)
+        {
+            savedBlooms.Remove(character);
+            return false;
+        }
+
+        Show(revalidated, character);
+        return true;
     }
 
     // Scale-up with an elastic overshoot (easeOutBack), after an optional delay.
@@ -574,6 +641,36 @@ public class SituationCardsUI : MonoBehaviour
             return;
         }
 
+        // Environmental cards don't execute an immediate action — they become the board's
+        // active environment (see EnvironmentalCardManager) rather than routing through the
+        // generic actionRef->action.Execute() path below, same as Card.HandleEnvironmentalCardPlayed.
+        if (cardData.GetCardType() == CardTypeEnum.Environmental)
+        {
+            if (leader.HasPlayedEnvironmentalCardThisTurn())
+            {
+                Debug.Log($"[SituationCards] click aborted — {leader.characterName} already played an environmental card this turn");
+                return;
+            }
+
+            string envActionRef = cardData.GetActionRef();
+            bool consumedEnv = offer.Source == SituationCardOfferSource.AI
+                ? DeckManager.Instance.TryConsumeActionCardFromFullDeck(leader, envActionRef, cardData, out _)
+                : DeckManager.Instance.TryAddCardToHand(leader, cardData)
+                    && DeckManager.Instance.TryConsumeCard(leader, cardData.name, false, out _);
+            if (!consumedEnv)
+            {
+                Debug.Log($"[SituationCards] click aborted — could not consume environmental card '{cardData.name}' from {offer.Source} source");
+                return;
+            }
+
+            Game envGame = Game.Instance;
+            EnvironmentalCardManager.GetOrCreate().SetActiveCard(cardData);
+            leader.RecordEnvironmentalCardPlayed(envGame != null ? envGame.turn : 0);
+            leader.RecordPlayedCard(cardData);
+            Debug.Log($"[SituationCards] '{cardData.name}' environmental card activated");
+            return;
+        }
+
         string actionRef = cardData.GetActionRef();
         if (string.IsNullOrWhiteSpace(actionRef))
         {
@@ -581,7 +678,7 @@ public class SituationCardsUI : MonoBehaviour
             return;
         }
 
-        ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
+        ActionsManager actionsManager = ActionsManager.Instance;
         CharacterAction action = actionsManager != null ? actionsManager.ResolveActionByRef(actionRef, cardData) : null;
         if (action == null)
         {
@@ -628,7 +725,7 @@ public class SituationCardsUI : MonoBehaviour
         string actionRef = cardData.GetActionRef();
         if (string.IsNullOrWhiteSpace(actionRef)) return cardData.EvaluatePlayability(character);
 
-        ActionsManager manager = FindFirstObjectByType<ActionsManager>();
+        ActionsManager manager = ActionsManager.Instance;
         CharacterAction action = manager != null ? manager.ResolveActionByRef(actionRef, cardData) : null;
         if (action == null) return false;
         action.Initialize(character, cardData);

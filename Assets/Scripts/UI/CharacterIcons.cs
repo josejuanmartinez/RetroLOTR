@@ -44,7 +44,7 @@ public class CharacterIcons : MonoBehaviour
 
     public static void RefreshForHumanPlayerOf(Leader leader)
     {
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         if (game == null || game.player == null || leader == null) return;
 
         PlayableLeader humanPlayer = game.player;
@@ -58,7 +58,7 @@ public class CharacterIcons : MonoBehaviour
     public static void RefreshForHumanPlayerCharacter(Character character)
     {
         if (character == null) return;
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         if (game == null || game.player == null) return;
         Leader owner = character.GetOwner();
         if (owner != game.player) return;

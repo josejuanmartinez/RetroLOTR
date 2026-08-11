@@ -71,7 +71,7 @@ public class PC
 
     public bool IsRevealed(PlayableLeader overrideLeader = null)
     {
-        var l = overrideLeader ? overrideLeader : GameObject.FindFirstObjectByType<Game>().player;
+        var l = overrideLeader ? overrideLeader : Game.Instance.player;
         if (l == null) return false;
 
         if (IsArtifactOccupancyHidden(l)) return false;

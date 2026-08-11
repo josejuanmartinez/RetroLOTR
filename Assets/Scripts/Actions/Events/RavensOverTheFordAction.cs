@@ -21,7 +21,7 @@ public class RavensOverTheFordAction : EventAction
 
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         List<Character> allChars = board.GetHexes()

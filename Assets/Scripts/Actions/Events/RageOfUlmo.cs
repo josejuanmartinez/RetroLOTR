@@ -20,7 +20,7 @@ public class RageOfUlmo : EventAction
 
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         AlignmentEnum caster = GetCasterAlignment();
@@ -90,7 +90,7 @@ public class RageOfUlmo : EventAction
         {
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
             var targets = board.GetHexes().Where(h => h != null && IsSeaHex(h) && h.characters != null)
                 .SelectMany(h => h.characters).Where(ch => IsNaval(ch) && !ch.IsImmuneToNegativeEnvironmentalCards()).Distinct().ToList();
@@ -103,7 +103,7 @@ public class RageOfUlmo : EventAction
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             return board != null && board.GetHexes().Any(h => h != null && IsSeaHex(h) && h.characters != null && h.characters.Any(ch => IsNaval(ch) && !ch.IsImmuneToNegativeEnvironmentalCards()));
         };
         asyncEffect = async (character) => { if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false; return true; };

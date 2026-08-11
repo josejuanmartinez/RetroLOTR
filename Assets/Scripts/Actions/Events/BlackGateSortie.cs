@@ -36,7 +36,7 @@ public class BlackGateSortie : EventAction
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             bool nearBlackGate = board.hexes.Values.Any(h => h != null && h.GetPC() != null

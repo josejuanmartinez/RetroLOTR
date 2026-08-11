@@ -8,7 +8,7 @@ public class Moon : EventAction
 {
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         EnvironmentalCardManager env = EnvironmentalCardManager.Instance;

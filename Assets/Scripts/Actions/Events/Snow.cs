@@ -10,7 +10,7 @@ public class Snow : EventAction
 {
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         AlignmentEnum caster = GetCasterAlignment();
@@ -75,7 +75,7 @@ public class Snow : EventAction
         effect = (character) =>
         {
             if (originalEffect != null && !originalEffect(character)) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
             int frozen = 0;
             foreach (var ch in board.GetHexes().Where(h => h != null && h.characters != null).SelectMany(h => h.characters)

@@ -155,7 +155,7 @@ public class BattleOfSongs : CharacterAction
     private bool PlayerCanSeeHex(Hex hex)
     {
         if (hex == null) return false;
-        Game g = FindFirstObjectByType<Game>();
+        Game g = Game.Instance;
         if (g == null || g.player == null) return false;
         return g.player.visibleHexes.Contains(hex) && hex.IsHexSeen();
     }

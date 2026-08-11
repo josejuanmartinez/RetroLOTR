@@ -46,6 +46,18 @@ public class IntroVideoManager : MonoBehaviour
             gameObject.SetActive(false);
             yield break;
         }
+
+        // Intro clips carry their own soundtrack. Route the first embedded audio
+        // track directly and keep game music silent until Game.StartGame().
+        vp.audioOutputMode = VideoAudioOutputMode.Direct;
+        if (vp.clip.audioTrackCount > 0)
+        {
+            vp.controlledAudioTrackCount = 1;
+            vp.EnableAudioTrack(0, true);
+            vp.SetDirectAudioMute(0, false);
+            vp.SetDirectAudioVolume(0, 1f);
+        }
+        Music.Instance?.StopMusicForVideo();
         vp.Play();
     }
 
@@ -57,11 +69,30 @@ public class IntroVideoManager : MonoBehaviour
         {
             vp.Stop();
             boardGenerator.SetVideoPlaying(false);
+            Music.Instance?.RestoreMusicAfterVideo();
             gameObject.SetActive(false);
         }
     }
 
-    void OnVideoStarted(VideoPlayer p) { boardGenerator.SetVideoPlaying(true); }
-    void OnVideoFinished(VideoPlayer p) { boardGenerator.SetVideoPlaying(false); }
-    void OnVideoError(VideoPlayer p, string msg) { boardGenerator.SetVideoPlaying(false); }
+    void OnVideoStarted(VideoPlayer p)
+    {
+        Music.Instance?.StopMusicForVideo();
+        boardGenerator.SetVideoPlaying(true);
+    }
+    void OnVideoFinished(VideoPlayer p)
+    {
+        boardGenerator.SetVideoPlaying(false);
+        Music.Instance?.RestoreMusicAfterVideo();
+    }
+
+    void OnVideoError(VideoPlayer p, string msg)
+    {
+        boardGenerator.SetVideoPlaying(false);
+        Music.Instance?.RestoreMusicAfterVideo();
+    }
+
+    private void OnDisable()
+    {
+        Music.Instance?.RestoreMusicAfterVideo();
+    }
 }

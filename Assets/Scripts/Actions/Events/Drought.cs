@@ -17,7 +17,7 @@ public class Drought : EventAction
 
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         AlignmentEnum caster = GetCasterAlignment();
@@ -70,7 +70,7 @@ public class Drought : EventAction
         effect = (ch) =>
         {
             if (originalEffect != null && !originalEffect(ch)) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
             var targets = board.GetHexes().Where(h => IsParched(h) && h.characters != null)
                 .SelectMany(h => h.characters).Where(x => x != null && !x.killed && !IsDesertRace(x) && !x.IsImmuneToNegativeEnvironmentalCards()).Distinct().ToList();
@@ -82,7 +82,7 @@ public class Drought : EventAction
         condition = (ch) =>
         {
             if (originalCondition != null && !originalCondition(ch)) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             return board != null && board.GetHexes().Any(h => IsParched(h) && h.characters != null && h.characters.Any(x => x != null && !x.killed && !IsDesertRace(x) && !x.IsImmuneToNegativeEnvironmentalCards()));
         };
         asyncEffect = async (ch) => { if (originalAsyncEffect != null && !await originalAsyncEffect(ch)) return false; return true; };

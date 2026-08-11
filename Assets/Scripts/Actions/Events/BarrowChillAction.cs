@@ -10,7 +10,7 @@ public class BarrowChillAction : EventAction
 
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         int frozen = 0, hobbitsBlocked = 0, undeadHasted = 0;

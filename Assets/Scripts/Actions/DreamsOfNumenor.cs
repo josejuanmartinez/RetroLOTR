@@ -30,7 +30,7 @@ public class DreamsOfNumenor : CharacterAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             // Reveal all coastal hexes in radius
@@ -84,7 +84,7 @@ public class DreamsOfNumenor : CharacterAction
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
             return board.GetHexes().Any(h => h != null && IsSeaAdjacent(h) && h.characters != null
                 && h.characters.Any(ch => ch != null && !ch.killed && IsAllied(character, ch)));

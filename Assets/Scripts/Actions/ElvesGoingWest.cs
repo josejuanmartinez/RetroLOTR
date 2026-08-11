@@ -10,7 +10,7 @@ public class ElvesGoingWest : CharacterAction
 
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         List<Character> elves = board.GetHexes()

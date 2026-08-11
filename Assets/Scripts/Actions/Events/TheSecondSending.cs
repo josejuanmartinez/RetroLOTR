@@ -19,7 +19,7 @@ public class TheSecondSending : EventAction
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null || board.hexes == null) return false;
 
             return board.hexes.Values.Any(h => h != null && !h.IsWaterTerrain());
@@ -31,7 +31,7 @@ public class TheSecondSending : EventAction
             if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null || board.hexes == null) return false;
 
             List<Hex> validHexes = board.hexes.Values
@@ -61,7 +61,7 @@ public class TheSecondSending : EventAction
             targetHex.RedrawCharacters();
             targetHex.RedrawArmies();
 
-            if (character.GetOwner() == UnityEngine.Object.FindFirstObjectByType<Game>()?.player)
+            if (character.GetOwner() == Game.Instance?.player)
             {
                 targetHex.LookAt();
                 targetHex.RevealArea(1, true);

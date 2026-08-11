@@ -124,7 +124,7 @@ public class HexSeamlessTerrain : MonoBehaviour
 
     private static Board GetBoard()
     {
-        if (cachedBoard == null) cachedBoard = FindFirstObjectByType<Board>();
+        if (cachedBoard == null) cachedBoard = Board.Instance;
         return cachedBoard;
     }
 

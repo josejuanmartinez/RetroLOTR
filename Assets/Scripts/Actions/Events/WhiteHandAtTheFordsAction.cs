@@ -31,7 +31,7 @@ public class WhiteHandAtTheFordsAction : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             List<Character> alliedAtCrossings = board.GetHexes()
@@ -74,7 +74,7 @@ public class WhiteHandAtTheFordsAction : EventAction
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             return board.GetHexes().Any(h => h != null && IsRiverOrShoreHex(h) && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed));

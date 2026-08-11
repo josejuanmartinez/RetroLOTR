@@ -14,7 +14,7 @@ public class PerceiveDanger : Spell
         effect = (c) => {
             if (originalEffect != null && !originalEffect(c)) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             // Find nearest enemy army hex
@@ -39,7 +39,7 @@ public class PerceiveDanger : Spell
         };
         condition = (c) => {
             if (originalCondition != null && !originalCondition(c)) return false;
-            return c.GetOwner() == FindFirstObjectByType<Game>().player; 
+            return c.GetOwner() == Game.Instance.player; 
         };
         asyncEffect = async (c) => {
             if (originalAsyncEffect != null && !await originalAsyncEffect(c)) return false;

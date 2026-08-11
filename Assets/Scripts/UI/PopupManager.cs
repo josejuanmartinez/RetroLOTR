@@ -78,7 +78,7 @@ public class PopupManager : MonoBehaviour
 
     private void InitializeInternal(string title, Sprite spriteActor1, Sprite spriteActor2, string text, bool typeWrite, int restrictHeight = 0, Action onClose = null, bool immediate = false)
     {
-        FindFirstObjectByType<Game>()?.NotifyStartupPopupShown();
+        Game.Instance?.NotifyStartupPopupShown();
 
         queue.Add(new PopupData
         {
@@ -142,13 +142,13 @@ public class PopupManager : MonoBehaviour
         SetActorVisuals(actor1, null);
         SetActorVisuals(actor2, null);
 
-        ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
+        ActionsManager actionsManager = ActionsManager.Instance;
         if (actionsManager != null)
         {
             actionsManager.RefreshInteractableState();
         }
 
-        FindFirstObjectByType<Game>()?.NotifyStartupPopupClosed();
+        Game.Instance?.NotifyStartupPopupClosed();
         onClose?.Invoke();
     }
 

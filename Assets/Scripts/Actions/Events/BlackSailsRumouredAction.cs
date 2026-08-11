@@ -25,7 +25,7 @@ public class BlackSailsRumouredAction : EventAction
             Leader owner = character.GetOwner();
             if (owner == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             List<Character> enemySeaUnits = board.GetHexes()
@@ -62,7 +62,7 @@ public class BlackSailsRumouredAction : EventAction
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null || character.hex == null || character.GetOwner() == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             return board.GetHexes()

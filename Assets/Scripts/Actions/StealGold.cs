@@ -18,7 +18,7 @@ public class StealGold : AgentPCAction
             if (toSteal < 1) return false;
             Leader actorOwner = c.GetOwner();
             if (actorOwner == null) return false;
-            if (actorOwner == FindFirstObjectByType<Game>().player)
+            if (actorOwner == Game.Instance.player)
             {
                 actorOwner.AddGold(toSteal);
             }
@@ -28,7 +28,7 @@ public class StealGold : AgentPCAction
             }
             pc.owner.RemoveGold(toSteal);
             MessageDisplayNoUI.ShowMessage(pc.hex, c, $"-{toSteal} <sprite name=\"gold\"> stolen!", Color.red);
-            if (actorOwner == FindFirstObjectByType<Game>().player)
+            if (actorOwner == Game.Instance.player)
             {
                 MessageDisplay.ShowMessage($"+{toSteal} <sprite name=\"gold\"> stolen!", Color.green);
                 FindFirstObjectByType<StoresManager>().RefreshStores();

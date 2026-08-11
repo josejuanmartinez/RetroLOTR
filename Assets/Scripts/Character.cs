@@ -180,7 +180,7 @@ public class Character : MonoBehaviour
         List<CardData> resolvedObjects = new();
         if (characterBiome.artifacts != null)
         {
-            DeckManager deckManagerForObjects = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+            DeckManager deckManagerForObjects = DeckManager.Instance != null ? DeckManager.Instance : DeckManager.Instance;
             foreach (string objectName in characterBiome.artifacts)
             {
                 CardData resolved = deckManagerForObjects?.FindObjectCardByName(objectName)?.Clone();
@@ -208,7 +208,7 @@ public class Character : MonoBehaviour
 
         if (useCardArmy && (characterBiome.startingArmySize > 0 || characterBiome.startingWarships > 0))
         {
-            DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+            DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : DeckManager.Instance;
             CardData card = deckManager?.FindArmyCardByName(characterBiome.startingArmyCard);
             if (card != null)
                 CreateArmy(card.troopType, characterBiome.startingArmySize, startingCharacter, characterBiome.startingWarships, card.specialAbilities, showSpawnMessage: showSpawnMessage);
@@ -221,7 +221,7 @@ public class Character : MonoBehaviour
             {
                 if (!string.IsNullOrEmpty(start.startingArmyCard))
                 {
-                    DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+                    DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : DeckManager.Instance;
                     CardData card = deckManager?.FindArmyCardByName(start.startingArmyCard);
                     if (card != null)
                         CreateArmy(card.troopType, start.startingArmySize, startingCharacter, start.startingWarships, card.specialAbilities, showSpawnMessage: showSpawnMessage);
@@ -247,7 +247,7 @@ public class Character : MonoBehaviour
     {
         if (string.IsNullOrWhiteSpace(characterName)) return null;
 
-        DeckManager dm = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        DeckManager dm = DeckManager.Instance != null ? DeckManager.Instance : DeckManager.Instance;
         return dm?.cards?.Find(c =>
             string.Equals(c.name, characterName, StringComparison.OrdinalIgnoreCase) &&
             string.Equals(c.type, "Character", StringComparison.OrdinalIgnoreCase));
@@ -342,7 +342,7 @@ public class Character : MonoBehaviour
 
     public async Task Pass()
     {
-        ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
+        ActionsManager actionsManager = ActionsManager.Instance;
         CharacterAction action = actionsManager?.ResolveActionByRef(global::Pass.ActionRef);
         if (action == null) return;
         action.Initialize(this, condition: null, effect: null, asyncEffect: null);
@@ -523,7 +523,7 @@ public class Character : MonoBehaviour
 
     public void NewTurn()
     {
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         Leader player = game != null ? game.player : null;
 
         ProcessKidnappedCharacters();
@@ -819,9 +819,9 @@ public class Character : MonoBehaviour
         bool isInWater = hex != null && hex.IsWaterTerrain();
         int baseMovement = movementType switch
         {
-            MovementType.ArmyCommander => AdjustMovementByRace(FindFirstObjectByType<Game>().armyMovement, isInWater),
-            MovementType.ArmyCommanderCavalryOnly => AdjustMovementByRace(FindFirstObjectByType<Game>().cavalryMovement, isInWater),
-            _ => AdjustMovementByRace(FindFirstObjectByType<Game>().characterMovement, isInWater)
+            MovementType.ArmyCommander => AdjustMovementByRace(Game.Instance.armyMovement, isInWater),
+            MovementType.ArmyCommanderCavalryOnly => AdjustMovementByRace(Game.Instance.cavalryMovement, isInWater),
+            _ => AdjustMovementByRace(Game.Instance.characterMovement, isInWater)
         };
 
         // Object movement bonuses
@@ -929,7 +929,7 @@ public class Character : MonoBehaviour
                 continue;
             }
 
-            GetOwner()?.AddGold(1, GetOwner() == FindFirstObjectByType<Game>()?.player);
+            GetOwner()?.AddGold(1, GetOwner() == Game.Instance?.player);
 
             int kidnapperAgentLevel = Mathf.Max(0, GetAgent());
             int escapeRoll = UnityEngine.Random.Range(0, 10);
@@ -1096,7 +1096,7 @@ public class Character : MonoBehaviour
 
         if (escaped && originalOwner != null)
         {
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             Hex capitalHex = board?.GetHexes().Find(x => x.GetPC() != null && x.GetPC().owner == originalOwner && x.GetPC().isCapital);
             if (capitalHex != null && capitalHex != hex)
             {
@@ -1813,7 +1813,7 @@ public class Character : MonoBehaviour
         bool retreated = false;
         if (previousHex != null && previousHex != hex && UnityEngine.Random.Range(0, 100) < 50)
         {
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board != null)
             {
                 Hex currentHex = hex;
@@ -1985,7 +1985,7 @@ public class Character : MonoBehaviour
         race = RacesEnum.Nazgul;
         health = 100;
         startingCharacter = false;
-        isPlayerControlled = FindFirstObjectByType<Game>()?.player == sauron;
+        isPlayerControlled = Game.Instance?.player == sauron;
         ClearStatusEffect(StatusEffectEnum.MorgulTouch);
 
         hex?.RedrawCharacters();
@@ -2010,8 +2010,8 @@ public class Character : MonoBehaviour
 
     public void StoreRelevantHexes()
     {
-        Game game = FindFirstObjectByType<Game>();
-        Board board = FindFirstObjectByType<Board>();
+        Game game = Game.Instance;
+        Board board = Board.Instance;
         // Pre-allocate exactly 190 elements for maximum efficiency
         List<Hex> relevantHexes = new(MAX_RELEVANT_HEXES);
 

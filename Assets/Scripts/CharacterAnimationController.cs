@@ -325,7 +325,7 @@ public class CharacterAnimationController : MonoBehaviour
 
         AlignmentEnum alignment = character.GetAlignment();
 
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         AlignmentEnum viewerAlignment = game != null && game.player != null ? game.player.GetAlignment() : AlignmentEnum.neutral;
 
         if (alignment == AlignmentEnum.neutral || viewerAlignment == AlignmentEnum.neutral) return neutralOutlineMaterial;

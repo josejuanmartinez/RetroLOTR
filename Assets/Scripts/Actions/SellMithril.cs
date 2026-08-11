@@ -20,7 +20,7 @@ public class SellMithril : EmmissaryPCAction
             int payout = stores.GetSellPrice(ProducesEnum.mithril, quantity);
             playable.AddGold(payout);
             stores.AdjustStock(ProducesEnum.mithril, quantity);
-            if(playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
+            if(playable == Game.Instance.player) FindFirstObjectByType<StoresManager>().RefreshStores();
             return true; 
         };
         condition = (c) => {

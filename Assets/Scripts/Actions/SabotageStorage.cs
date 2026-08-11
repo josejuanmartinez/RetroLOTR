@@ -45,7 +45,7 @@ public class SabotageStorage : AgentPCAction
                 MessageDisplayNoUI.ShowMessage(pc.hex, c, $"-{loss} <sprite name=\"{slot.sprite}\">{slot.sprite} sabotaged!", Color.red);
             }
 
-            if (target == FindFirstObjectByType<Game>().player)
+            if (target == Game.Instance.player)
             {
                 FindFirstObjectByType<StoresManager>().RefreshStores();
             }

@@ -10,7 +10,7 @@ public class TurnNumberManager : MonoBehaviour
 
     private void OnEnable()
     {
-        game = FindFirstObjectByType<Game>();
+        game = Game.Instance;
         if (game != null)
         {
             game.NewTurnStarted += Show;

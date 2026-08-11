@@ -203,9 +203,9 @@ public class PalantirOfOrthancAction : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null) return false;
 
-            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
-            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
-            Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+            Game game = Game.Instance;
+            DeckManager deckManager = DeckManager.Instance;
+            Board board = Board.Instance;
             if (game == null || deckManager == null || board == null || game.player == null) return false;
             if (character.GetOwner() != game.player || !deckManager.HasDeckFor(game.player) || deckManager.GetHand(game.player).Count >= deckManager.GetHandSize()) return false;
 
@@ -235,8 +235,8 @@ public class PalantirOfOrthancAction : EventAction
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
-            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+            Game game = Game.Instance;
+            DeckManager deckManager = DeckManager.Instance;
             return character != null && game != null && deckManager != null && game.player != null
                 && character.GetOwner() == game.player
                 && deckManager.HasDeckFor(game.player)
@@ -269,7 +269,7 @@ public class ThroughMirkwoodShadowsAction : EventAction
             if (character == null) return false;
 
             Leader owner = character.GetOwner();
-            Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (owner == null || board == null || board.hexes == null) return false;
 
             var forestHexes = board.hexes.Values
@@ -282,7 +282,7 @@ public class ThroughMirkwoodShadowsAction : EventAction
 
             owner.AddTemporarySeenHexes(forestHexes);
 
-            if (owner == UnityEngine.Object.FindFirstObjectByType<Game>()?.player)
+            if (owner == Game.Instance?.player)
             {
                 owner.RefreshVisibleHexesImmediate();
             }
@@ -308,7 +308,7 @@ public class ThroughMirkwoodShadowsAction : EventAction
             if (character == null) return false;
 
             Leader owner = character.GetOwner();
-            Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (owner == null || board == null || board.hexes == null) return false;
 
             return board.hexes.Values.Any(h => h != null && h.terrainType == TerrainEnum.forest && !h.IsScoutedBy(owner));
@@ -530,7 +530,7 @@ public class TrollsHoardGrantArtifactAction : EventAction
 
     private static List<CardData> GetUnusedObjectCards(HashSet<string> unavailableNames)
     {
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : DeckManager.Instance;
         List<CardData> all = deckManager?.GetAllObjectCardClones() ?? new List<CardData>();
         return all.Where(o => o != null && (unavailableNames == null || !unavailableNames.Contains(o.name))).ToList();
     }
@@ -547,7 +547,7 @@ public class TrollsHoardGrantArtifactAction : EventAction
             if (character == null) return false;
             if (character.objects.Count >= Character.MAX_OBJECTS) return false;
 
-            Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
 
             HashSet<string> unavailable = GetOwnedOrHiddenObjectNames(board);
             foreach (CardData owned in character.objects)
@@ -574,7 +574,7 @@ public class TrollsHoardGrantArtifactAction : EventAction
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null || character.objects.Count >= Character.MAX_OBJECTS) return false;
 
-            Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
 
             HashSet<string> unavailable = GetOwnedOrHiddenObjectNames(board);
             foreach (CardData owned in character.objects)
@@ -611,8 +611,8 @@ public class VeinOfTrueSilverAction : EventAction
             if (character == null) return false;
 
             Leader owner = character.GetOwner();
-            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
-            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+            Game game = Game.Instance;
+            DeckManager deckManager = DeckManager.Instance;
             if (owner == null || game == null || deckManager == null) return false;
 
             PlayableLeader player = game.player;
@@ -639,8 +639,8 @@ public class VeinOfTrueSilverAction : EventAction
             if (character == null) return false;
 
             Leader owner = character.GetOwner();
-            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
-            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+            Game game = Game.Instance;
+            DeckManager deckManager = DeckManager.Instance;
             if (owner == null || game == null || deckManager == null || game.player == null) return false;
             if (owner != game.player || !deckManager.HasDeckFor(game.player)) return false;
 
@@ -1022,7 +1022,7 @@ public class PalantirGlimpseAction : EventAction
             if (character == null) return false;
 
             Leader owner = character.GetOwner();
-            Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (owner == null || board == null) return false;
 
             List<Hex> chosen = board.GetHexes()
@@ -1034,7 +1034,7 @@ public class PalantirGlimpseAction : EventAction
             if (chosen.Count == 0) return false;
 
             owner.AddTemporarySeenHexes(chosen, 1);
-            if (owner == UnityEngine.Object.FindFirstObjectByType<Game>()?.player)
+            if (owner == Game.Instance?.player)
             {
                 owner.RefreshVisibleHexesImmediate();
             }
@@ -1052,7 +1052,7 @@ public class PalantirGlimpseAction : EventAction
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             return character != null && character.GetOwner() != null && board != null && board.GetHexes().Any(hex => hex != null && hex.terrainType == TerrainEnum.mountains);
         };
 
@@ -1093,7 +1093,7 @@ public class WordsOfWardingAction : EventAction
                 area[i].RevealMapOnlyArea(0, false, false);
             }
 
-            if (character.GetOwner() == FindFirstObjectByType<Game>()?.player)
+            if (character.GetOwner() == Game.Instance?.player)
             {
                 MinimapManager.RefreshMinimap();
             }
@@ -1132,9 +1132,9 @@ public class TheHiddenScriptAction : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null) return false;
 
-            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
-            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
-            Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+            Game game = Game.Instance;
+            DeckManager deckManager = DeckManager.Instance;
+            Board board = Board.Instance;
             if (game == null || deckManager == null || board == null) return false;
 
             Hex artifactHex = board.GetHexes().FirstOrDefault(h => h != null && h.hiddenObjects != null && h.hiddenObjects.Count > 0);
@@ -1155,7 +1155,7 @@ public class TheHiddenScriptAction : EventAction
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             return character != null && board != null && board.GetHexes().Any(h => h != null && h.hiddenObjects != null && h.hiddenObjects.Count > 0);
         };
 
@@ -1250,8 +1250,8 @@ public class CounselByFirelightAction : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null) return false;
 
-            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
-            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+            Game game = Game.Instance;
+            DeckManager deckManager = DeckManager.Instance;
             if (game == null || deckManager == null || game.player == null) return false;
             if (character.GetOwner() != game.player || !deckManager.HasDeckFor(game.player)) return false;
 
@@ -1277,8 +1277,8 @@ public class CounselByFirelightAction : EventAction
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
-            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+            Game game = Game.Instance;
+            DeckManager deckManager = DeckManager.Instance;
             if (character == null || game == null || deckManager == null || game.player == null) return false;
             if (character.GetOwner() != game.player || !deckManager.HasDeckFor(game.player)) return false;
 
@@ -1407,7 +1407,7 @@ public class RidersSentInHasteAction : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             Hex farthestOwnedPcHex = board.GetHexes()
@@ -1431,7 +1431,7 @@ public class RidersSentInHasteAction : EventAction
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             return character != null && character.hex != null && board != null
                 && board.GetHexes().Any(h => h != null && h.GetPC() != null && h.GetPC().owner == character.GetOwner());
         };
@@ -1461,8 +1461,8 @@ public class CouncilInAShutteredHallAction : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null) return false;
 
-            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
-            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+            Game game = Game.Instance;
+            DeckManager deckManager = DeckManager.Instance;
             if (game == null || deckManager == null || game.player == null) return false;
             if (character.GetOwner() != game.player || !deckManager.HasDeckFor(game.player)) return false;
             if (deckManager.GetHand(game.player).Count >= deckManager.GetHandSize()) return false;
@@ -1486,8 +1486,8 @@ public class CouncilInAShutteredHallAction : EventAction
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
-            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+            Game game = Game.Instance;
+            DeckManager deckManager = DeckManager.Instance;
             return character != null && game != null && deckManager != null && game.player != null && character.GetOwner() == game.player
                 && deckManager.HasDeckFor(game.player)
                 && deckManager.GetHand(game.player).Count < deckManager.GetHandSize()
@@ -2002,7 +2002,7 @@ public class RingsOfLore : EventAction
             if (character == null) return false;
 
             Leader owner = character.GetOwner();
-            Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (owner == null || board == null || board.hexes == null) return false;
 
             List<Character> loreBearers = UnityEngine.Object.FindObjectsByType<Character>(FindObjectsSortMode.None)
@@ -2028,7 +2028,7 @@ public class RingsOfLore : EventAction
 
             owner.AddTemporarySeenHexes(targetHexes);
 
-            if (owner == UnityEngine.Object.FindFirstObjectByType<Game>()?.player)
+            if (owner == Game.Instance?.player)
             {
                 owner.RefreshVisibleHexesImmediate();
             }
@@ -2054,7 +2054,7 @@ public class RingsOfLore : EventAction
             if (character == null) return false;
 
             Leader owner = character.GetOwner();
-            Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (owner == null || board == null || board.hexes == null) return false;
 
             return true;
@@ -2124,8 +2124,8 @@ public class CounselOfTheWise : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null) return false;
 
-            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
-            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+            Game game = Game.Instance;
+            DeckManager deckManager = DeckManager.Instance;
             if (game == null || deckManager == null || game.player == null) return false;
             if (character.GetOwner() != game.player || !deckManager.HasDeckFor(game.player) || deckManager.GetHand(game.player).Count >= deckManager.GetHandSize()) return false;
 
@@ -2143,8 +2143,8 @@ public class CounselOfTheWise : EventAction
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
-            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+            Game game = Game.Instance;
+            DeckManager deckManager = DeckManager.Instance;
             return character != null && game != null && deckManager != null && game.player != null
                 && character.GetOwner() == game.player
                 && deckManager.HasDeckFor(game.player)
@@ -2467,8 +2467,8 @@ public class PipeweedMonopolyAction : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null) return false;
 
-            Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
-            DeckManager deckManager = UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+            Game game = Game.Instance;
+            DeckManager deckManager = DeckManager.Instance;
             Leader owner = character.GetOwner();
             if (owner == null) return false;
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -19,7 +19,7 @@ public class UnexpectedFireworksAction : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             List<Hex> revealedHexes = character.hex.GetHexesInRadius(RevealRadius)

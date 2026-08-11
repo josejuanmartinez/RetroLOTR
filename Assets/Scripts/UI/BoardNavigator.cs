@@ -488,7 +488,7 @@ public class BoardNavigator : MonoBehaviour
 
     private static bool IsStartupPopupLookAtBlocked()
     {
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         return game != null && game.ShouldBlockLookAtUntilStartupPopupCloses();
     }
 

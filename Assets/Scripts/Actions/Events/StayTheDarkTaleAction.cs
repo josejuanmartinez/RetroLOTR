@@ -13,7 +13,7 @@ public class StayTheDarkTaleAction : EventAction
 
     private static List<Hex> FindDiscoveredPendingEncounterHexes(Character character)
     {
-        Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         Leader leader = character?.GetOwner();
         if (board == null || leader == null || character.hex == null) return new List<Hex>();
 

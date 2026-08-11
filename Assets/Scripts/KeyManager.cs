@@ -16,11 +16,11 @@ public class KeyManager : MonoBehaviour
 
     private void Start()
     {
-        if(!board) board = FindFirstObjectByType<Board>();
-        if(!game) game = FindFirstObjectByType<Game>();
+        if(!board) board = Board.Instance;
+        if(!game) game = Game.Instance;
         if(!pathRenderer) pathRenderer = FindFirstObjectByType<HexPathRenderer>();
         if(!boardNavigator) boardNavigator = FindFirstObjectByType<BoardNavigator>();
-        if(!actionsManager) actionsManager = FindFirstObjectByType<ActionsManager>();
+        if(!actionsManager) actionsManager = ActionsManager.Instance;
         BuildActionHotkeys();
     }
     void Update()
@@ -106,8 +106,8 @@ public class KeyManager : MonoBehaviour
 
     private void RevealEntireMap()
     {
-        if (!board) board = FindFirstObjectByType<Board>();
-        if (!game) game = FindFirstObjectByType<Game>();
+        if (!board) board = Board.Instance;
+        if (!game) game = Game.Instance;
 
         if (board == null || board.hexes == null)
         {
@@ -143,7 +143,7 @@ public class KeyManager : MonoBehaviour
 
     private void BoostPlayerStores(int amount = 100)
     {
-        if (!game) game = FindFirstObjectByType<Game>();
+        if (!game) game = Game.Instance;
         var player = game != null ? game.player : null;
         if (player == null)
         {
@@ -223,7 +223,7 @@ public class KeyManager : MonoBehaviour
     private void HandleCharacterMovementHotkeys(bool ctrlHeld, bool shiftHeld)
     {
         if (ctrlHeld || shiftHeld) return;
-        if (!board) board = FindFirstObjectByType<Board>();
+        if (!board) board = Board.Instance;
         if (board == null || board.selectedCharacter == null || board.selectedCharacter.hex == null) return;
         if (board.moving) return;
 

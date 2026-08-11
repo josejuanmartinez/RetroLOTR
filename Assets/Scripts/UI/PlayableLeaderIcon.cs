@@ -1,15 +1,11 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
-using UnityEngine.Playables;
-using UnityEngine.Video;
 using System;
 
 public class PlayableLeaderIcon : MonoBehaviour
 {
     public Image image;
-    public VideoPlayer video;
     public bool videoMode;
     public NonPlayableLeaderIcons nonPlayableLeaderIcons;
     public CanvasGroup deadCanvasGroup;
@@ -25,12 +21,9 @@ public class PlayableLeaderIcon : MonoBehaviour
     [HideInInspector]
     public PlayableLeader playableLeader;
 
-    private VideoClip leaderClip = null;
     private Sprite leaderSprite = null;
     private string text = string.Empty;
     private bool initialized = false;
-    private Videos videos;
-    private VideoClip highlightedClip;
     private Illustrations illustrations;
     private Sprite highlightedSprite;
 
@@ -39,11 +32,9 @@ public class PlayableLeaderIcon : MonoBehaviour
         playableLeader = leader;
         alignment = leader.alignment;
         if (illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
-        if (videos == null) videos = FindFirstObjectByType<Videos>();
-        leaderClip = videos != null ? videos.GetVideoByName(leader.characterName) : null;
         leaderSprite = illustrations != null ? illustrations.GetCharacterArtByName(leader.characterName) : null;
         text = leader.GetHoverText(true, false, false, false, false, false);
-        SetLeaderVisuals(leaderClip, leaderSprite);
+        SetLeaderVisuals(leaderSprite);
         textWidget.text = text;
         // joinedText.text = $"<mark=#ffffff>{leader.GetBiome().joinedText}</mark>";
 
@@ -85,25 +76,20 @@ public class PlayableLeaderIcon : MonoBehaviour
 
     public void HighlighNonPlayableLeader(string leaderName, string leaderText)
     {
-        if (videos == null) videos = FindFirstObjectByType<Videos>();
         if (illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
-        highlightedClip = videos != null ? videos.GetVideoByName(leaderName) : null;
         highlightedSprite = illustrations != null ? illustrations.GetCharacterArtByName(leaderName) : null;
-        SetLeaderVisuals(highlightedClip, highlightedSprite);
+        SetLeaderVisuals(highlightedSprite);
         textWidget.text = leaderText;
     }
 
     public void Restore(string leaderName)
     {
-        if (videos == null) videos = FindFirstObjectByType<Videos>();
         if (illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
-        VideoClip expectedClip = videos != null ? videos.GetVideoByName(leaderName) : null;
         Sprite expectedSprite = illustrations != null ? illustrations.GetCharacterArtByName(leaderName) : null;
-        bool restoreFromVideo = videoMode && expectedClip != null && video != null && video.clip == expectedClip;
-        bool restoreFromImage = (!videoMode || expectedClip == null) && image != null && image.sprite == expectedSprite;
-        if (!restoreFromVideo && !restoreFromImage) return;
+        bool restoreFromImage = image != null && image.sprite == expectedSprite;
+        if (!restoreFromImage) return;
 
-        SetLeaderVisuals(leaderClip, leaderSprite);
+        SetLeaderVisuals(leaderSprite);
         textWidget.text = text;
     }
 
@@ -130,28 +116,11 @@ public class PlayableLeaderIcon : MonoBehaviour
         newRumoursText.text = Math.Max(count, 0).ToString();
     }
 
-    private void SetLeaderVisuals(VideoClip clip, Sprite fallbackSprite)
-    {
-        bool hasClip = clip != null && video != null;
-        if(videoMode)
-        {
-            if (video != null)
-            {
-                video.enabled = hasClip;
-                if (hasClip)
-                {
-                    video.clip = clip;
-                    video.Play();
-                    image.enabled = false;
-                    return;
-                }
-            }
-        } 
-        
+    private void SetLeaderVisuals(Sprite fallbackSprite)
+    {        
         if (image != null)
         {
             image.enabled = true;
-            video.enabled = false;
             image.sprite = fallbackSprite;
         }    
         

@@ -192,7 +192,7 @@ public class StoresManager : MonoBehaviour
     public void RefreshStores()
     {
         EnsureMarketInitialized();
-        PlayableLeader playableLeader = FindFirstObjectByType<Game>().player;
+        PlayableLeader playableLeader = Game.Instance.player;
         if (playableLeader == null) return;
 
         RefreshResourceLabel(leatherAmount, playableLeader.leatherAmount, ref shownLeather);

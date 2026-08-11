@@ -12,10 +12,10 @@ public static class AITurnController
     {
         if (leader == null) yield break;
 
-        Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         game?.RefreshPlayerControlState();
 
-        ActionsManager actionsManager = UnityEngine.Object.FindFirstObjectByType<ActionsManager>();
+        ActionsManager actionsManager = ActionsManager.Instance;
         if (actionsManager == null)
         {
             Debug.LogWarning("AI could not find ActionsManager. Skipping AI turn.");
@@ -112,7 +112,7 @@ public static class AITurnController
 
         DeckManager deckManager = DeckManager.Instance != null
             ? DeckManager.Instance
-            : UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+            : DeckManager.Instance;
         if (deckManager == null || !deckManager.HasDeckFor(leader)) return;
 
         Character actor = leader.controlledCharacters.FirstOrDefault(c => c != null && !c.killed);
@@ -166,7 +166,7 @@ public static class AITurnController
 
         if (actionsManager == null)
         {
-            actionsManager = UnityEngine.Object.FindFirstObjectByType<ActionsManager>();
+            actionsManager = ActionsManager.Instance;
         }
 
         return actionsManager != null ? actionsManager.ResolveActionByRef(normalizedActionRef) : null;
@@ -245,9 +245,15 @@ public static class AITurnController
         // governed exclusively by picksRemaining below (the configured difficulty limit).
         character.hasActionedThisTurn = false;
 
+        // Coarse per-character phase timing — logged once at the end of this method. Not a
+        // profiler, just enough to tell (from the console) which phase a slow AI turn is
+        // actually spending its time in, since that's otherwise invisible from outside Unity.
+        System.Diagnostics.Stopwatch totalStopwatch = System.Diagnostics.Stopwatch.StartNew();
+        double moveMs = 0, scoreMs = 0, executeMs = 0;
+
         DeckManager deckManager = DeckManager.Instance != null
             ? DeckManager.Instance
-            : UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+            : DeckManager.Instance;
 
         // If the active strategy has a specific place for this character and it isn't already
         // there, travel first — scoring/acting from the wrong hex this turn would just be
@@ -257,31 +263,46 @@ public static class AITurnController
         bool movedFirst = false;
         if (activeHtnTargetHex != null && character.hex != activeHtnTargetHex)
         {
+            System.Diagnostics.Stopwatch moveStopwatch = System.Diagnostics.Stopwatch.StartNew();
             await MoveCharacterTowardsHexAsync(character, activeHtnTargetHex);
+            moveMs += moveStopwatch.Elapsed.TotalMilliseconds;
             movedFirst = true;
         }
 
         // Moving invalidates UtilityAIContextCacheManager's cached proximity data (built from
         // this character's pre-move position) — rebuild fresh rather than score off a stale hex.
+        // Also covers a cold cache (GetCached returns null before the manager has warmed up):
+        // guaranteeing a non-null value here, once, means ScoreFullDeck's own fallback build
+        // never has to re-run the O(board-hexes) scan on every one of the picks below.
         UtilityAIContext.PrecomputedData? precomputed = movedFirst
             ? UtilityAIContextDataBuilder.Build(leader, character)
             : (UtilityAIContextCacheManager.Instance != null ? UtilityAIContextCacheManager.Instance.GetCached(leader, character) : null);
+        precomputed ??= UtilityAIContextDataBuilder.Build(leader, character);
 
         int picksRemaining = (int)AIDifficultySettings.CurrentDifficulty;
         HashSet<CardData> playedThisCharacter = new();
         UtilityAIContext lastContext = null;
 
+        // Materialized once per character-turn — the leader's deck composition doesn't change
+        // across picks within this loop (only playedThisCharacter grows), so there's no need
+        // for DeckManager to reallocate its drawPile+hand concat list on every pick.
+        IReadOnlyList<CardData> fullDeck = deckManager?.GetFullDeck(leader);
+
         while (picksRemaining > 0 && deckManager != null && deckManager.HasDeckFor(leader))
         {
-            CardData chosenCard = ScoreFullDeck(leader, character, actionsManager, deckManager, precomputed, playedThisCharacter, preferredParameters)
-                .OrderByDescending(scored => scored.score)
-                .Select(scored => scored.card)
-                .FirstOrDefault();
+            System.Diagnostics.Stopwatch scoreStopwatch = System.Diagnostics.Stopwatch.StartNew();
+            List<(CardData card, float score)> scoredCards = await ScoreFullDeckAsync(leader, character, actionsManager, deckManager, precomputed, playedThisCharacter, preferredParameters, fullDeck);
+            scoreMs += scoreStopwatch.Elapsed.TotalMilliseconds;
+            // Pick randomly among whichever card(s) tied for the top score instead of always
+            // favoring whichever happened to come first in the full-deck scan.
+            CardData chosenCard = UtilityAI.PickRandomAmongTopScored(scoredCards, scored => scored.score).card;
             if (chosenCard == null) break;
 
             if (presentChosenCards) await PresentChosenCardAsync(leader, character, chosenCard);
+            System.Diagnostics.Stopwatch executeStopwatch = System.Diagnostics.Stopwatch.StartNew();
             UtilityAIContext context = await ExecuteChosenCardAsync(leader, character, actionsManager, precomputed, chosenCard, activeHtnTaskId, activeHtnTargetHex);
-            UnityEngine.Object.FindFirstObjectByType<Game>()?.RefreshPlayerControlState();
+            executeMs += executeStopwatch.Elapsed.TotalMilliseconds;
+            Game.Instance?.RefreshPlayerControlState();
             character.hasActionedThisTurn = false;
             lastContext = context;
 
@@ -307,19 +328,27 @@ public static class AITurnController
         // through to the old post-action opportunistic chase.
         if (!movedFirst)
         {
+            System.Diagnostics.Stopwatch chaseStopwatch = System.Diagnostics.Stopwatch.StartNew();
             await MoveTowardsTargetAsync(lastContext);
+            moveMs += chaseStopwatch.Elapsed.TotalMilliseconds;
         }
         actionsManager.Hide();
+
+        double totalMs = totalStopwatch.Elapsed.TotalMilliseconds;
+        if (totalMs >= 500)
+        {
+            Debug.Log($"[AITiming] {leader.characterName}/{character.characterName} total={totalMs:F0}ms score={scoreMs:F0}ms execute={executeMs:F0}ms move={moveMs:F0}ms");
+        }
     }
 
     private static async Task PresentChosenCardAsync(Leader leader, Character character, CardData card)
     {
         if (leader == null || character == null || card == null) return;
 
-        Game game = UnityEngine.Object.FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         if (game == null || game.player != leader || !game.PlayerAutoplayEnabled) return;
 
-        Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+        Board board = UtilityAIContext.GetSharedBoard();
         if (board != null && character.hex != null && !character.hex.IsHidden())
         {
             board.SelectCharacter(character, true, 0.45f, 0f);
@@ -378,7 +407,12 @@ public static class AITurnController
     // ExecuteLeaderTurn). Public: also reused read-only by AIBlackboardDebugPanel for its live
     // "cards that would be suitable" preview — scoring itself never executes/mutates anything,
     // so calling it outside a real AI turn is safe.
-    public static List<(CardData card, float score)> ScoreFullDeck(Leader leader, Character character, ActionsManager actionsManager, DeckManager deckManager, UtilityAIContext.PrecomputedData? precomputed, HashSet<CardData> excluded, IReadOnlyList<string> preferredParameters)
+    // fullDeck: pass the leader's already-materialized full deck to avoid DeckManager
+    // reallocating its drawPile+hand concat list on every pick of the same character-turn
+    // (see ExecuteCharacterAsync, which fetches it once before its picksRemaining loop).
+    // Falls back to a fresh fetch for callers scoring a single one-off snapshot (e.g.
+    // AIBlackboardDebugPanel's live preview).
+    public static List<(CardData card, float score)> ScoreFullDeck(Leader leader, Character character, ActionsManager actionsManager, DeckManager deckManager, UtilityAIContext.PrecomputedData? precomputed, HashSet<CardData> excluded, IReadOnlyList<string> preferredParameters, IReadOnlyList<CardData> fullDeck = null)
     {
         List<(CardData card, float score)> scored = new();
         if (leader == null || character == null || actionsManager == null || deckManager == null) return scored;
@@ -388,13 +422,49 @@ public static class AITurnController
         // snapshot synchronously, making the game appear frozen before suggestions open.
         precomputed ??= UtilityAIContextDataBuilder.Build(leader, character);
 
-        foreach (CardData card in deckManager.GetFullDeck(leader))
+        foreach (CardData card in fullDeck ?? deckManager.GetFullDeck(leader))
         {
             if (card == null || card.IsEncounterCard()) continue;
             if (excluded != null && excluded.Contains(card)) continue;
             (CardData card, float score)? cardScore = ScoreCard(
                 leader, character, card, actionsManager, precomputed, preferredParameters, requirePlayable: true);
             if (cardScore.HasValue) scored.Add(cardScore.Value);
+        }
+
+        return scored;
+    }
+
+    // Per-frame time budget for ScoreFullDeckAsync below — same frame-budget-and-yield
+    // technique UtilityAIContextCacheManager.PrecomputeLoop uses for the player-facing
+    // recommendation cache, applied here to the AI's own live turn scoring.
+    private const float ScoringFrameBudgetMs = 6f;
+
+    // Async twin of ScoreFullDeck used by the live AI turn loop (ExecuteCharacterAsync).
+    // Scoring a full deck (~100-150 cards) synchronously in one call blocks the main thread
+    // for its entire duration — spread across 4 picks per character and every character/leader
+    // in play, that reads as a freeze even once the per-card cost itself is cheap. Yielding
+    // every ScoringFrameBudgetMs lets Unity render a frame in between chunks instead.
+    public static async Task<List<(CardData card, float score)>> ScoreFullDeckAsync(Leader leader, Character character, ActionsManager actionsManager, DeckManager deckManager, UtilityAIContext.PrecomputedData? precomputed, HashSet<CardData> excluded, IReadOnlyList<string> preferredParameters, IReadOnlyList<CardData> fullDeck)
+    {
+        List<(CardData card, float score)> scored = new();
+        if (leader == null || character == null || actionsManager == null || deckManager == null) return scored;
+
+        precomputed ??= UtilityAIContextDataBuilder.Build(leader, character);
+
+        System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        foreach (CardData card in fullDeck ?? deckManager.GetFullDeck(leader))
+        {
+            if (card == null || card.IsEncounterCard()) continue;
+            if (excluded != null && excluded.Contains(card)) continue;
+            (CardData card, float score)? cardScore = ScoreCard(
+                leader, character, card, actionsManager, precomputed, preferredParameters, requirePlayable: true);
+            if (cardScore.HasValue) scored.Add(cardScore.Value);
+
+            if (stopwatch.Elapsed.TotalMilliseconds >= ScoringFrameBudgetMs)
+            {
+                await Task.Yield();
+                stopwatch.Restart();
+            }
         }
 
         return scored;
@@ -450,13 +520,22 @@ public static class AITurnController
         if (character.moved >= character.GetMaxMovement()) return;
         if (target == null || target == character.hex) return;
 
-        Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+        Board board = UtilityAIContext.GetSharedBoard();
         if (board == null) return;
 
-        HexPathRenderer pathRenderer = UnityEngine.Object.FindFirstObjectByType<HexPathRenderer>();
-        if (pathRenderer != null)
+        // DrawPathBetweenHexes runs a full A* pathfind purely to draw the path line + per-hex
+        // movement-cost bubbles — Board.Move (below) pathfinds the exact same route again for
+        // the actual move. That's a genuine double pathfinding cost, and HexPathRenderer's A*
+        // is an unindexed linear-scan implementation (List.Contains/Remove per node, no
+        // priority queue), so it's not cheap to begin with. Only worth paying for when a human
+        // is actually watching this character move — during another leader's turn (the vast
+        // majority of AI movement) nothing here is ever rendered.
+        Game game = Game.Instance;
+        bool showToPlayer = game != null && game.IsPlayerCurrentlyPlaying() && game.player == character.GetOwner();
+        if (showToPlayer)
         {
-            pathRenderer.DrawPathBetweenHexes(character.hex.v2, target.v2, character);
+            HexPathRenderer pathRenderer = UnityEngine.Object.FindFirstObjectByType<HexPathRenderer>();
+            pathRenderer?.DrawPathBetweenHexes(character.hex.v2, target.v2, character);
         }
 
         board.Move(character, target.v2);

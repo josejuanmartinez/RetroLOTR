@@ -7,7 +7,7 @@ public class LightThroughCloudAction : EventAction
 {
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         List<Character> allChars = board.GetHexes()
@@ -51,7 +51,7 @@ public class LightThroughCloudAction : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             List<Character> allies = character.hex.characters

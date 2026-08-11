@@ -15,7 +15,7 @@ public class CastDarkness: DarkNeutralSpell
             int radius = 1;
             List<Hex> radiusHexes = hex.GetHexesInRadius(radius);
             Leader owner = c.GetOwner();
-            Game game = FindFirstObjectByType<Game>();
+            Game game = Game.Instance;
             bool applyGlobalEffects = owner != null && game != null && owner == game.player;
             for (int i = 0; i < radiusHexes.Count; i++)
             {

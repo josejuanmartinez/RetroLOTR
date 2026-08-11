@@ -9,7 +9,7 @@ public class ButterfliesAction : EventAction
 
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         // Reveal all forest and swamp hexes globally
@@ -63,7 +63,7 @@ public class ButterfliesAction : EventAction
             if (terrainHexes.Count == 0) return false;
 
             owner.AddTemporarySeenHexes(terrainHexes);
-            if (owner == FindFirstObjectByType<Game>()?.player)
+            if (owner == Game.Instance?.player)
             {
                 owner.RefreshVisibleHexesImmediate();
             }

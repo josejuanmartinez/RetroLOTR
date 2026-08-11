@@ -18,7 +18,7 @@ public class BreeRumoursAction : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             List<Hex> eligibleHexes = board.GetHexes()
@@ -40,7 +40,7 @@ public class BreeRumoursAction : EventAction
                 hex.RevealMapOnlyArea(0, false, false);
             }
 
-            if (character.hex != null && character.GetOwner() == FindFirstObjectByType<Game>()?.player)
+            if (character.hex != null && character.GetOwner() == Game.Instance?.player)
             {
                 MinimapManager.RefreshMinimap();
                 chosen[0].LookAt();
@@ -60,7 +60,7 @@ public class BreeRumoursAction : EventAction
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             return board.GetHexes().Any(hex => hex != null && !hex.IsHexRevealed());

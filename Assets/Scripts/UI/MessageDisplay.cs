@@ -49,7 +49,7 @@ public class MessageDisplay : MonoBehaviour
     // HexMessage icon.
     public static void ShowMessage(string message, Color? color = null, bool forceImmediate = false, bool suppressIcon = false)
     {
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         if (game == null) return;
         if (!game.started || game.currentlyPlaying != game.player) return;
         string formattedMessage = FormatMessageForDisplay(ResourceSpriteFormatter.ReplaceResourceWordsWithSprites(message));

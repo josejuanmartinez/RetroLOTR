@@ -221,6 +221,13 @@ public static class UtilityAI
         // parameters), so its default folds both of the old bonuses into one.
         public const string HTNBiasBonus = "Global.HTNBiasBonus";
 
+        // Large negative bias applied to any Environmental-type card's score, discouraging the
+        // AI from playing them often — decays linearly to 0 once EnvironmentalPenaltyDecayTurns
+        // turns have passed since this leader last played one (see
+        // UtilityAIContext.GetEnvironmentalPenaltyScore / Leader.lastEnvironmentalCardPlayedTurn).
+        public const string EnvironmentalPenalty = "Global.EnvironmentalPenalty";
+        public const string EnvironmentalPenaltyDecayTurns = "Global.EnvironmentalPenaltyDecayTurns";
+
         // Single axis: Leader.goldAmount + resources held valued at current market sell
         // price (UtilityAIContext.CalculateLiquidWealth) — this game has no passive per-turn
         // income of any kind, so there is no second "income" axis to threshold against.
@@ -352,6 +359,9 @@ public static class UtilityAI
     public static readonly IReadOnlyList<UtilityWeightDefinition> KnownWeights = new List<UtilityWeightDefinition>
     {
         new(Keys.HTNBiasBonus, 5f, "Score bonus for a card whose own utility-parameter profile shares a parameter with the HTN strategy's currently-active leaf's PreferredParameters — the sole mechanism biasing card choice toward the active branch."),
+
+        new(Keys.EnvironmentalPenalty, -25f, "Score penalty applied to any Environmental-type card, at full strength the turn after this leader last played one — decays to 0 over EnvironmentalPenaltyDecayTurns turns."),
+        new(Keys.EnvironmentalPenaltyDecayTurns, 6f, "Number of turns after playing an environmental card before EnvironmentalPenalty fully decays back to 0."),
 
         // Fresh thresholds against a fresh metric (liquid wealth) — these are a starting
         // point, not tuned against real playtested economies. Expect to retune.
@@ -493,6 +503,33 @@ public static class UtilityAI
     {
         defaultsByKey ??= KnownWeights.ToDictionary(d => d.key, d => d.defaultValue, StringComparer.OrdinalIgnoreCase);
         return defaultsByKey.TryGetValue(key, out float value) ? value : 0f;
+    }
+
+    // Gathers every candidate tied for the top score (within a small float-noise epsilon) and
+    // returns one at random, instead of deterministically favoring whichever happened to sort
+    // first — used by every "pick the best-scoring X" site (card selection, duel/song-duel
+    // target selection) so the AI doesn't always break ties the same way turn after turn.
+    private const float TopScoreTieEpsilon = 0.0001f;
+
+    public static T PickRandomAmongTopScored<T>(IEnumerable<T> candidates, Func<T, float> scoreOf)
+    {
+        List<T> list = candidates as List<T> ?? candidates?.ToList();
+        if (list == null || list.Count == 0) return default;
+
+        float bestScore = float.NegativeInfinity;
+        for (int i = 0; i < list.Count; i++)
+        {
+            float score = scoreOf(list[i]);
+            if (score > bestScore) bestScore = score;
+        }
+
+        List<T> tiedForBest = new();
+        for (int i = 0; i < list.Count; i++)
+        {
+            if (Mathf.Abs(scoreOf(list[i]) - bestScore) <= TopScoreTieEpsilon) tiedForBest.Add(list[i]);
+        }
+
+        return tiedForBest[UnityEngine.Random.Range(0, tiedForBest.Count)];
     }
 
     // Flat, user-authored score adjustment for this action (0 when unset).

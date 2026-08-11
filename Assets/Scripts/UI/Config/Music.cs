@@ -12,21 +12,9 @@ public class Music : MonoBehaviour
     public AudioSource ambientAudioSource;
 
     [Header("Music Clips")]
+    public AudioClip startingMusic;
     public List<AudioClip> musicBattleClips = new();
     public List<AudioClip> musicBattleWonClips = new();
-    public List<AudioClip> musicCitySmallClips = new();
-    public List<AudioClip> musicCityBigClips = new();
-    public List<AudioClip> musicForestClips = new();
-    public List<AudioClip> musicGrasslandsClips = new();
-    public List<AudioClip> musicPlainsClips = new();
-    public List<AudioClip> musicHillsClips = new();
-    public List<AudioClip> musicMountainsClips = new();
-    public List<AudioClip> musicDesertClips = new();
-    public List<AudioClip> musicSwampClips = new();
-    public List<AudioClip> musicWastelandsClips = new();
-    public List<AudioClip> musicShoreClips = new();
-    public List<AudioClip> musicShallowWaterClips = new();
-    public List<AudioClip> musicDeepWaterClips = new();
     public List<AudioClip> musicGenericClips = new();
 
     [Header("Ambient Clips")]
@@ -45,7 +33,6 @@ public class Music : MonoBehaviour
     public List<AudioClip> ambientCityBigClips = new();
 
     [Header("Playback")]
-    public bool playOnStart = true;
     public float musicVolume = 0.5f;
     public float ambientVolume = 0.4f;
     public float maxVolume = 0.5f;
@@ -65,6 +52,10 @@ public class Music : MonoBehaviour
     private AudioClip previousMusicClip;
     private float previousMusicTime;
     private bool previousMusicLoop;
+    private AudioClip musicBeforeVideo;
+    private float musicTimeBeforeVideo;
+    private bool musicLoopBeforeVideo;
+    private bool musicSuspendedForVideo;
     private Vector2Int lastContextHex = Vector2Int.one * -1;
     private float lastBattleMusicTime = -999f;
     private string lastBattleMusicKey;
@@ -90,10 +81,7 @@ public class Music : MonoBehaviour
 
     private void Start()
     {
-        if (playOnStart)
-        {
-            SetContext(null, null, force: true, playAmbient: false);
-        }
+        PlayStartingMusic();
         if (ambientAudioSource != null)
         {
             ambientAudioSource.Stop();
@@ -114,43 +102,81 @@ public class Music : MonoBehaviour
 
     public void UpdateForHex(Hex hex)
     {
-        Game g = FindFirstObjectByType<Game>();
+        Game g = Game.Instance;
         if (g == null || !g.started)
         {
-            SetContext(null, null, force: true, playAmbient: false);
             StopAmbient();
             return;
         }
         if (hex == null)
         {
-            SetContext(null, null, force: true, playAmbient: false);
+            SetContext(null, force: true, playAmbient: false);
             StopAmbient();
             return;
         }
         if (eventActive) return;
         if (hex.v2 == lastContextHex) return;
         lastContextHex = hex.v2;
-        var targetMusic = (TerrainEnum?)hex.terrainType;
         var targetAmbient = (TerrainEnum?)hex.terrainType;
         PC pc = hex.GetPC();
         bool battleOverride = IsBattleMusicActive();
-        AudioClip cityMusicClip = PickCityMusicClip(pc);
         AudioClip cityAmbientClip = PickCityAmbientClip(pc);
         string cityAmbientKey = GetCityAmbientKey(pc);
         if (battleOverride && lastBattleClip != null)
         {
-            SetContext(null, targetAmbient, playAmbient: true, musicOverride: lastBattleClip, musicOverrideKey: lastBattleMusicKey, ambientOverride: cityAmbientClip, ambientOverrideKey: cityAmbientKey);
+            SetContext(targetAmbient, playAmbient: true, musicOverride: lastBattleClip, musicOverrideKey: lastBattleMusicKey, ambientOverride: cityAmbientClip, ambientOverrideKey: cityAmbientKey);
             return;
         }
 
-        if (cityMusicClip != null)
+        SetContext(targetAmbient, playAmbient: true, ambientOverride: cityAmbientClip, ambientOverrideKey: cityAmbientKey);
+    }
+
+    public void StopMusicForVideo()
+    {
+        if (!musicSuspendedForVideo && musicAudioSource != null)
         {
-            SetContext(null, targetAmbient, playAmbient: true, musicOverride: cityMusicClip, musicOverrideKey: GetCityMusicKey(pc), ambientOverride: cityAmbientClip, ambientOverrideKey: cityAmbientKey);
+            musicBeforeVideo = musicAudioSource.clip;
+            musicTimeBeforeVideo = musicAudioSource.time;
+            musicLoopBeforeVideo = musicAudioSource.loop;
+            musicSuspendedForVideo = true;
         }
-        else
+        if (musicFadeRoutine != null)
         {
-            SetContext(targetMusic, targetAmbient, playAmbient: true, ambientOverride: cityAmbientClip, ambientOverrideKey: cityAmbientKey);
+            StopCoroutine(musicFadeRoutine);
+            musicFadeRoutine = null;
         }
+        musicAudioSource?.Stop();
+    }
+
+    public void RestoreMusicAfterVideo()
+    {
+        if (!musicSuspendedForVideo) return;
+        musicSuspendedForVideo = false;
+
+        AudioClip clip = musicBeforeVideo != null ? musicBeforeVideo : startingMusic;
+        float startTime = musicBeforeVideo != null ? musicTimeBeforeVideo : 0f;
+        bool loop = musicBeforeVideo != null ? musicLoopBeforeVideo : true;
+        musicBeforeVideo = null;
+        musicTimeBeforeVideo = 0f;
+
+        if (clip != null)
+        {
+            CrossfadeMusic(clip, startTime, loop);
+        }
+    }
+
+    public void PlayStartingMusic()
+    {
+        eventActive = false;
+        previousMusicClip = null;
+        AudioClip clip = startingMusic != null
+            ? startingMusic
+            : PickStableClip(musicGenericClips, "music_starting_fallback");
+        if (clip == null) return;
+
+        currentMusicKey = "music_starting";
+        lastSwitchTime = Time.time;
+        CrossfadeMusic(clip);
     }
 
     public void PlayEventMusic()
@@ -204,14 +230,14 @@ public class Music : MonoBehaviour
         lastBattleMusicTime = Time.time;
     }
 
-    private void SetContext(TerrainEnum? musicTerrain, TerrainEnum? ambientTerrain, bool force = false, bool playAmbient = true, AudioClip musicOverride = null, string musicOverrideKey = null, AudioClip ambientOverride = null, string ambientOverrideKey = null)
+    private void SetContext(TerrainEnum? ambientTerrain, bool force = false, bool playAmbient = true, AudioClip musicOverride = null, string musicOverrideKey = null, AudioClip ambientOverride = null, string ambientOverrideKey = null)
     {
         if (!force && Time.time - lastSwitchTime < minSwitchSeconds) return;
 
-        string desiredMusicKey = musicOverrideKey ?? (musicTerrain.HasValue ? $"music_{musicTerrain.Value}" : "music_generic");
+        string desiredMusicKey = musicOverrideKey ?? "music_generic";
         if (desiredMusicKey != currentMusicKey || force)
         {
-            var clip = musicOverride ?? PickMusicClip(musicTerrain);
+            var clip = musicOverride ?? PickMusicClip();
             if (clip != null) CrossfadeMusic(clip);
             currentMusicKey = desiredMusicKey;
         }
@@ -271,25 +297,10 @@ public class Music : MonoBehaviour
         return chosen;
     }
 
-    private static string GetCityMusicKey(PC pc)
-    {
-        if (pc == null) return null;
-        return (int)pc.citySize <= 2 ? "music_city_small" : "music_city_big";
-    }
-
     private static string GetCityAmbientKey(PC pc)
     {
         if (pc == null) return null;
         return (int)pc.citySize <= 2 ? "ambient_city_small" : "ambient_city_big";
-    }
-
-    private AudioClip PickCityMusicClip(PC pc)
-    {
-        if (pc == null || pc.citySize == PCSizeEnum.NONE) return null;
-        bool smallCity = (int)pc.citySize <= 2;
-        var clips = smallCity ? musicCitySmallClips : musicCityBigClips;
-        string key = smallCity ? "music_city_small" : "music_city_big";
-        return PickStableClip(clips, key);
     }
 
     private AudioClip PickCityAmbientClip(PC pc)
@@ -305,39 +316,9 @@ public class Music : MonoBehaviour
     {
         return Time.time - lastBattleMusicTime <= battleMusicHoldSeconds;
     }
-    private AudioClip PickMusicClip(TerrainEnum? terrain)
+    private AudioClip PickMusicClip()
     {
-        if (terrain == null)
-        {
-            return PickStableClip(musicGenericClips, "music_generic");
-        }
-
-        var terrainClips = GetMusicClips(terrain.Value);
-        if (terrainClips != null && terrainClips.Count > 0)
-        {
-            return PickStableClip(terrainClips, $"music_{terrain.Value}");
-        }
-
-        return PickStableClip(musicGenericClips, $"music_generic_{terrain.Value}");
-    }
-
-    private List<AudioClip> GetMusicClips(TerrainEnum terrain)
-    {
-        return terrain switch
-        {
-            TerrainEnum.forest => musicForestClips,
-            TerrainEnum.grasslands => musicGrasslandsClips,
-            TerrainEnum.plains => musicPlainsClips,
-            TerrainEnum.hills => musicHillsClips,
-            TerrainEnum.mountains => musicMountainsClips,
-            TerrainEnum.desert => musicDesertClips,
-            TerrainEnum.swamp => musicSwampClips,
-            TerrainEnum.wastelands => musicWastelandsClips,
-            TerrainEnum.shore => musicShoreClips,
-            TerrainEnum.shallowWater => musicShallowWaterClips,
-            TerrainEnum.deepWater => musicDeepWaterClips,
-            _ => null
-        };
+        return PickStableClip(musicGenericClips, "music_generic");
     }
 
     private List<AudioClip> GetAmbientClips(TerrainEnum? terrain)

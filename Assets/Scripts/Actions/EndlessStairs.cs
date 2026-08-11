@@ -37,7 +37,7 @@ public class EndlessStairs : CharacterAction
         targetHex.RedrawCharacters();
         targetHex.RedrawArmies();
 
-        if (character.GetOwner() == UnityEngine.Object.FindFirstObjectByType<Game>()?.player)
+        if (character.GetOwner() == Game.Instance?.player)
         {
             targetHex.RevealArea(1, true);
         }
@@ -45,7 +45,7 @@ public class EndlessStairs : CharacterAction
 
     private static List<Hex> FindClosestUndergroundHexes(Character character)
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null || character == null || character.hex == null) return new List<Hex>();
 
         Hex from = character.hex;
@@ -138,7 +138,7 @@ public class EndlessStairs : CharacterAction
             MessageDisplayNoUI.ShowMessage(origin, character, $"{character.characterName} descends the Endless Stairs...", Color.gray);
             MessageDisplayNoUI.ShowMessage(target, character, $"{character.characterName} emerges from the Underground!", Color.gray);
 
-            if (character.GetOwner() == FindFirstObjectByType<Game>()?.player)
+            if (character.GetOwner() == Game.Instance?.player)
             {
                 target.LookAt();
             }

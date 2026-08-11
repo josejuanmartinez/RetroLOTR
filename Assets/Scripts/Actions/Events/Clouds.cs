@@ -15,7 +15,7 @@ public class Clouds : EventAction
         if (caster == AlignmentEnum.neutral)
         {
             if (env != null) env.GlobalArmyAttackFactor = 0.92f;
-            Board nb = FindFirstObjectByType<Board>();
+            Board nb = Board.Instance;
             int extended = 0;
             if (nb != null)
                 foreach (var hex in nb.GetHexes().Where(h => h != null && h.characters != null))
@@ -32,7 +32,7 @@ public class Clouds : EventAction
             else { env.DarkServantsArmyAttackFactor = 1.08f; env.FreePeopleArmyAttackFactor = 0.85f; }
         }
 
-        Board b = FindFirstObjectByType<Board>();
+        Board b = Board.Instance;
         int mageInsight = 0, ownSlowed = 0;
         if (b != null)
         {

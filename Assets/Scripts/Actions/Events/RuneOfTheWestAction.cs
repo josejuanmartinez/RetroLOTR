@@ -9,7 +9,7 @@ public class RuneOfTheWestAction : EventAction
 
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         List<Hex> allHexes = board.GetHexes().Where(h => h != null).ToList();

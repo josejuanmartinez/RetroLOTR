@@ -13,7 +13,7 @@ public class AdunaphelUnleashed : EventAction
 
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         int hidden = 0;
@@ -43,7 +43,7 @@ public class AdunaphelUnleashed : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             List<Character> emissaries = board.GetHexes()
@@ -83,7 +83,7 @@ public class AdunaphelUnleashed : EventAction
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
             return board.GetHexes().Any(h => h != null && h.characters != null
                 && h.characters.Any(ch => ch != null && !ch.killed && (IsDarkServantEmissary(ch) || IsSouthron(ch))));

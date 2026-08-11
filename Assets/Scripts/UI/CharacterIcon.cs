@@ -15,7 +15,7 @@ public class CharacterIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public virtual void Initialize(Character character)
     {
-        board = FindFirstObjectByType<Board>();
+        board = Board.Instance;
         selectedCharacterIcon = FindFirstObjectByType<SelectedCharacterIcon>();
         SetCharacter(character);
     }
@@ -24,7 +24,7 @@ public class CharacterIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     {
         if (character == null || character.killed) return;
 
-        if (board == null) board = FindFirstObjectByType<Board>();
+        if (board == null) board = Board.Instance;
         if (board != null)
         {
             Sounds.Instance?.PlayUiClick();
@@ -41,7 +41,7 @@ public class CharacterIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     {
         if (BoardNavigator.IsNavigationInputLocked()) return;
         if (character == null || character.killed) return;
-        board ??= FindFirstObjectByType<Board>();
+        board ??= Board.Instance;
         if (board != null && board.selectedCharacter == character) return;
         Sounds.Instance?.PlayUiHover();
 
@@ -64,7 +64,7 @@ public class CharacterIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         }
         if (selectedCharacterIcon == null) return;
 
-        board ??= FindFirstObjectByType<Board>();
+        board ??= Board.Instance;
         if (board != null && board.selectedCharacter != null)
         {
             selectedCharacterIcon.Refresh(board.selectedCharacter);

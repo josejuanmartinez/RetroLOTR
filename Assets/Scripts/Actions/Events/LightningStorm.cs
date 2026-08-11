@@ -12,7 +12,7 @@ public class LightningStorm : EventAction
 
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         EnvironmentalCardManager env = EnvironmentalCardManager.Instance;
@@ -56,7 +56,7 @@ public class LightningStorm : EventAction
         effect = (character) =>
         {
             if (originalEffect != null && !originalEffect(character)) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
             var enemies = board.GetHexes().Where(h => h != null && ExposedTerrain.Contains(h.terrainType) && h.characters != null)
                 .SelectMany(h => h.characters).Where(ch => ch != null && !ch.killed && ch.GetAlignment() != character.GetAlignment()).Distinct().ToList();
@@ -68,7 +68,7 @@ public class LightningStorm : EventAction
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             return board != null && board.GetHexes().Any(h => h != null && ExposedTerrain.Contains(h.terrainType) && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed && ch.GetAlignment() != character?.GetAlignment()));
         };
         asyncEffect = async (character) => { if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false; return true; };

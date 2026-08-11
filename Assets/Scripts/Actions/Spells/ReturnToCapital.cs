@@ -11,12 +11,12 @@ public class ReturnToCapital: Spell
         var originalAsyncEffect = asyncEffect;
         effect = (c) => {
             if (originalEffect != null && !originalEffect(c)) return false;
-            Hex capitalHex = FindFirstObjectByType<Board>().GetHexes().Find(x => x.GetPC() != null && x.GetPC().owner == c.GetOwner() && x.GetPC().isCapital);
+            Hex capitalHex = Board.Instance.GetHexes().Find(x => x.GetPC() != null && x.GetPC().owner == c.GetOwner() && x.GetPC().isCapital);
             if (capitalHex == null) return false;
-            FindFirstObjectByType<Board>().MoveCharacterOneHex(c, c.hex, capitalHex, true);
+            Board.Instance.MoveCharacterOneHex(c, c.hex, capitalHex, true);
             Sounds.Instance?.PlaySpeedUp();
             MessageDisplay.ShowMessage($"{c.characterName} returned to capital", Color.green);
-            FindFirstObjectByType<Board>().SelectCharacter(c);
+            Board.Instance.SelectCharacter(c);
             return true;
         };
         condition = (c) => {

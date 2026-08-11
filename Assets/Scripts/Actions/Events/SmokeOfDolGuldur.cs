@@ -11,7 +11,7 @@ public class SmokeOfDolGuldur : EventAction
 
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         EnvironmentalCardManager env = EnvironmentalCardManager.Instance;
@@ -50,7 +50,7 @@ public class SmokeOfDolGuldur : EventAction
         effect = (character) =>
         {
             if (originalEffect != null && !originalEffect(character)) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
             var victims = board.GetHexes().Where(h => h != null && h.terrainType == TerrainEnum.forest && h.characters != null)
                 .SelectMany(h => h.characters).Where(ch => ch != null && !ch.killed && !IsNecromancer(ch) && ch.GetAlignment() != AlignmentEnum.darkServants && !ch.IsImmuneToNegativeEnvironmentalCards()).Distinct().ToList();
@@ -61,7 +61,7 @@ public class SmokeOfDolGuldur : EventAction
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             return board != null && board.GetHexes().Any(h => h != null && h.terrainType == TerrainEnum.forest && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed && !IsNecromancer(ch) && ch.GetAlignment() != AlignmentEnum.darkServants));
         };
         asyncEffect = async (character) => { if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false; return true; };

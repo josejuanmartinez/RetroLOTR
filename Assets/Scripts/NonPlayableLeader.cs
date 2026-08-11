@@ -19,7 +19,7 @@ public class NonPlayableLeader : Leader
     {
         this.nonPlayableLeaderBiome = nonPlayableLeaderBiome;
         base.Initialize(hex, nonPlayableLeaderBiome, showSpawnMessage, applyNoScenarioStart);
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         if (game != null && game.started)
         {
             InitializeIcons();
@@ -278,7 +278,7 @@ public class NonPlayableLeader : Leader
 
     private void ShowJoinPopup(Leader joinedTo)
     {
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         if (game == null || game.player == null) return;
 
         Illustrations illustrations = FindFirstObjectByType<Illustrations>();
@@ -296,7 +296,7 @@ public class NonPlayableLeader : Leader
     {
         yield return null;
         if (!joined) yield break;
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         if (game != null && game.npcs.Contains(this)) game.npcs.Remove(this);
     }
 
@@ -313,7 +313,7 @@ public class NonPlayableLeader : Leader
                 if (x.playableLeader == leader) x.RevealToPlayerIfNot(this);
             });
 
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         if (showPopup && game != null && game.IsPlayerCurrentlyPlaying() && leader == game.player && !playerRevealPopupShown)
         {
             RevealToPlayerIcons(game);
@@ -323,7 +323,7 @@ public class NonPlayableLeader : Leader
 
     public void RevealToPlayer()
     {
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         if (game == null || game.player == null) return;
         if (!revealedTo.Contains(game.player)) revealedTo.Add(game.player);
         RevealToPlayerIcons(game);
@@ -337,12 +337,12 @@ public class NonPlayableLeader : Leader
 
     public bool IsRevealedToPlayer()
     {
-        return revealedTo.Contains(FindFirstObjectByType<Game>().currentlyPlaying);
+        return revealedTo.Contains(Game.Instance.currentlyPlaying);
     }
 
     public bool ShouldShowPlayerRevealPopup()
     {
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         return game != null && game.IsPlayerCurrentlyPlaying() && !playerRevealPopupShown;
     }
 

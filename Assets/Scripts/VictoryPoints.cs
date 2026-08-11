@@ -150,7 +150,7 @@ public class VictoryPoints
 
     private static void CalculateMapControlPoints(PlayableLeader leader, VictoryPointsBreakdown breakdown)
     {
-        Board board = Object.FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null || board.hexes == null) return;
 
         HashSet<Hex> revealed = new(leader.visibleHexes.Where(h => h != null));

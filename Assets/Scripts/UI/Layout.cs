@@ -12,6 +12,8 @@ public class Layout : MonoBehaviour
     private Card environmentalCard;
     [SerializeField]
     private TextMeshProUGUI nationName;
+    [SerializeField]
+    private Image nationColorImage;
 
     private void Awake()
     {
@@ -20,12 +22,17 @@ public class Layout : MonoBehaviour
 
     public void SetEnvironmentalCard(CardData card)
     {
-        if (environmentalCard == null) return;
+        if (environmentalCard == null)
+        {
+            Debug.LogWarning("[EnvCardToken] Layout.SetEnvironmentalCard — environmentalCard field is unassigned on this Layout instance.");
+            return;
+        }
         if (card == null) { environmentalCard.SetEnvironmentalPulse(false); environmentalCard.gameObject.SetActive(false); return; }
         environmentalCard.gameObject.SetActive(true);
         environmentalCard.Initialize(card);
         environmentalCard.ShowEnvironmentalSprite();
         environmentalCard.SetEnvironmentalPulse(true);
+        Debug.Log($"[EnvCardToken] Layout.SetEnvironmentalCard('{card.name}') applied — normalizedSpriteName='{CardNameUtility.Normalize(card.name)}', tokenActive={environmentalCard.gameObject.activeInHierarchy}");
     }
 
     public SelectedCharacterIcon GetSelectedCharacterIcon()
@@ -41,7 +48,7 @@ public class Layout : MonoBehaviour
 
     public void SetNationColor(Color color)
     {
-        if (nationName != null) nationName.color = color;
+        if (nationColorImage != null) nationColorImage.color = color;
     }
 
     public void SetNationName(string name)

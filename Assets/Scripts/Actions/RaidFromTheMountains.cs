@@ -38,7 +38,7 @@ public class RaidFromTheMountains : CharacterAction
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             return board.GetHexes().Any(h => h != null && IsMountainOrHill(h) && h.characters != null
@@ -51,7 +51,7 @@ public class RaidFromTheMountains : CharacterAction
             if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
             if (character == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             List<Character> targets = board.GetHexes()

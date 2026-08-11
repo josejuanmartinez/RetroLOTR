@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
 using UnityEngine;
@@ -13,7 +13,7 @@ public static class UtilityAIContextDataBuilder
             stopwatch = Stopwatch.StartNew();
         }
 
-        Board board = Object.FindFirstObjectByType<Board>();
+        Board board = UtilityAIContext.GetSharedBoard();
         StoresManager stores = Object.FindFirstObjectByType<StoresManager>();
         var data = new UtilityAIContext.PrecomputedData
         {
@@ -38,6 +38,7 @@ public static class UtilityAIContextDataBuilder
             ArtifactTransferCandidates = new List<UtilityAIContext.ArtifactTransferCandidate>(),
             BestArtifactTransferScore = 0f
         };
+        CacheLeaderRoleStrengths(leader, ref data);
 
         if (board == null || character == null || character.hex == null) return data;
         if (ShouldStop(stopwatch, maxMilliseconds)) return data;
@@ -68,7 +69,7 @@ public static class UtilityAIContextDataBuilder
         data.DuelAdvantage = 0f;
         if (character == null || character.IsRefusingDuels()) return;
 
-        ActionsManager actionsManager = Object.FindFirstObjectByType<ActionsManager>();
+        ActionsManager actionsManager = ActionsManager.Instance;
         if (AITurnController.ResolveActionByRef("Duel", actionsManager) is not Duel duelAction) return;
 
         duelAction.Initialize(character);
@@ -86,7 +87,7 @@ public static class UtilityAIContextDataBuilder
         data.SongDuelAdvantage = 0f;
         if (character == null || character.GetMage() < 1) return;
 
-        ActionsManager actionsManager = Object.FindFirstObjectByType<ActionsManager>();
+        ActionsManager actionsManager = ActionsManager.Instance;
         if (AITurnController.ResolveActionByRef("BattleOfSongs", actionsManager) is not BattleOfSongs songAction) return;
 
         songAction.Initialize(character);
@@ -106,9 +107,30 @@ public static class UtilityAIContextDataBuilder
     private static int CountUnrecruitedSameAlignmentNpls(Leader leader)
     {
         if (leader == null) return 0;
-        Game game = Object.FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         if (game?.npcs == null) return 0;
         return game.npcs.Count(npc => npc != null && !npc.killed && !npc.joined && npc.GetAlignment() == leader.GetAlignment());
+    }
+
+    // Leader-wide (not character-position-dependent) Agent/Mage/Emissary skill totals across
+    // controlled characters, computed once per character-turn here instead of by every one of
+    // the ~100+ per-card UtilityAIContext instances scored per pick (see
+    // UtilityAIContext.PrecomputedData.AgentRoleStrength etc.).
+    private static void CacheLeaderRoleStrengths(Leader leader, ref UtilityAIContext.PrecomputedData data)
+    {
+        if (leader?.controlledCharacters == null) return;
+
+        float agent = 0f, mage = 0f, emissary = 0f;
+        foreach (Character c in leader.controlledCharacters)
+        {
+            if (c == null || c.killed) continue;
+            agent += Mathf.Max(0, c.GetAgent());
+            mage += Mathf.Max(0, c.GetMage());
+            emissary += Mathf.Max(0, c.GetEmmissary());
+        }
+        data.AgentRoleStrength = agent;
+        data.MageRoleStrength = mage;
+        data.EmissaryRoleStrength = emissary;
     }
 
     private static void CacheEnemyTargets(Board board, Character character, Leader leader, ref UtilityAIContext.PrecomputedData data, Stopwatch stopwatch, float maxMilliseconds)
@@ -218,7 +240,7 @@ public static class UtilityAIContextDataBuilder
 
     private static void CacheNpcTargets(Board board, Character character, Leader leader, ref UtilityAIContext.PrecomputedData data, Stopwatch stopwatch, float maxMilliseconds)
     {
-        Game game = GameObject.FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         if (board == null || character == null || character.hex == null || game == null) return;
 
         foreach (Hex hex in board.hexes.Values)
@@ -364,7 +386,7 @@ public static class UtilityAIContextDataBuilder
     private static float CalculateNationArtifacts(Leader leader)
     {
         if (leader == null) return 0f;
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : UnityEngine.Object.FindFirstObjectByType<DeckManager>();
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : DeckManager.Instance;
         float totalArtifacts = (deckManager?.GetObjectCardCount() ?? 0) * 1f;
         return leader.controlledCharacters.Sum(ch => ch != null ? ch.objects.Count * 1f : 0f) / Mathf.Max(1f, totalArtifacts);
     }

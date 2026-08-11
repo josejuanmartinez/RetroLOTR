@@ -15,7 +15,7 @@ public class Sun : EventAction
 
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         AlignmentEnum caster = GetCasterAlignment();
@@ -76,7 +76,7 @@ public class Sun : EventAction
         {
             if (originalEffect != null && !originalEffect(ch)) return false;
             if (ch == null) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
             var humans = board.GetHexes().Where(h => h != null && h.characters != null).SelectMany(h => h.characters)
                 .Where(x => x != null && !x.killed && (x.race == RacesEnum.Common || x.race == RacesEnum.Dunedain || x.race == RacesEnum.Hobbit)).Distinct().ToList();
@@ -90,7 +90,7 @@ public class Sun : EventAction
         condition = (ch) =>
         {
             if (originalCondition != null && !originalCondition(ch)) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             return board != null && board.GetHexes().Any(h => h != null && h.characters != null && h.characters.Any(x => x != null && !x.killed && (x.race == RacesEnum.Common || x.race == RacesEnum.Dunedain || x.race == RacesEnum.Hobbit || x.race == RacesEnum.Troll)));
         };
         asyncEffect = async (ch) => { if (originalAsyncEffect != null && !await originalAsyncEffect(ch)) return false; return true; };

@@ -31,11 +31,6 @@ public class Sounds : SearcherByName
     public List<AudioClip> messageClips = new();
     public List<AudioClip> artifactFoundClips = new();
 
-    [Header("Speech Intro")]
-    public List<AudioClip> speechIntroFreePeopleClips = new();
-    public List<AudioClip> speechIntroDarkServantsClips = new();
-    public List<AudioClip> speechIntroNeutralClips = new();
-
     [Header("Voice - Race")]
     public List<AudioClip> voiceOrcClips = new();
     public List<AudioClip> voiceTrollClips = new();
@@ -112,8 +107,6 @@ public class Sounds : SearcherByName
     private readonly Dictionary<string, AudioClip> stablePickByKey = new();
     private float lastPlayTime = -999f;
     private Coroutine queueRoutine;
-    private bool speechActive;
-    private float speechEndTime;
     private float lastFootstepTime = -999f;
     private readonly Dictionary<int, VoiceSet> voiceSetByCharacterId = new();
     private Game cachedGame;
@@ -144,7 +137,7 @@ public class Sounds : SearcherByName
             soundAudioSource.spatialBlend = 0f;
         }
 
-        cachedGame = FindFirstObjectByType<Game>();
+        cachedGame = Game.Instance;
         PrewarmVoiceSets();
     }
 
@@ -169,8 +162,6 @@ public class Sounds : SearcherByName
     {
         if (soundAudioSource != null) soundAudioSource.Stop();
         queue.Clear();
-        speechActive = false;
-        speechEndTime = 0f;
     }
 
     public void PlayUiHover()
@@ -196,33 +187,6 @@ public class Sounds : SearcherByName
     public void PlayNegative()
     {
         EnqueueFromList(uiNegativeClips, "ui_negative", 0.25f, 0.9f);
-    }
-
-    public void PlaySpeechIntro(AlignmentEnum alignment)
-    {
-        if (speechActive && Time.time < speechEndTime) return;
-        if (soundAudioSource == null) return;
-
-        List<AudioClip> clips = alignment switch
-        {
-            AlignmentEnum.freePeople => speechIntroFreePeopleClips,
-            AlignmentEnum.darkServants => speechIntroDarkServantsClips,
-            _ => speechIntroNeutralClips
-        };
-        var clip = PickStableClip(clips, $"speech_intro_{alignment}");
-        if (!clip) return;
-
-        queue.Clear();
-        if (queueRoutine != null) StopCoroutine(queueRoutine);
-        soundAudioSource.Stop();
-
-        speechActive = true;
-        speechEndTime = Time.time + Mathf.Max(0f, clip.length);
-
-        soundAudioSource.PlayOneShot(clip, 1.0f);
-        string key = Normalize(clip.name);
-        lastPlayByKey[key] = Time.time;
-        lastPlayTime = Time.time;
     }
 
     public void PlayVoiceForRace(RacesEnum race)
@@ -253,7 +217,6 @@ public class Sounds : SearcherByName
     public void PlayVoiceExpression(Character character)
     {
         if (character == null) return;
-        if (speechActive && Time.time < speechEndTime) return;
         if (soundAudioSource == null) return;
         if (!PlayerCanSeeHex(character.hex)) return;
         if (!IsHumanoidRace(character.race))
@@ -276,7 +239,6 @@ public class Sounds : SearcherByName
     public void PlayVoiceAttack(Character character)
     {
         if (character == null) return;
-        if (speechActive && Time.time < speechEndTime) return;
         if (soundAudioSource == null) return;
         if (!PlayerCanSeeHex(character.hex)) return;
         if (!IsHumanoidRace(character.race))
@@ -293,7 +255,6 @@ public class Sounds : SearcherByName
     public void PlayVoiceEffort(Character character)
     {
         if (character == null) return;
-        if (speechActive && Time.time < speechEndTime) return;
         if (soundAudioSource == null) return;
         if (!PlayerCanSeeHex(character.hex)) return;
         if (!IsHumanoidRace(character.race))
@@ -310,7 +271,6 @@ public class Sounds : SearcherByName
     public void PlayVoicePain(Character character)
     {
         if (character == null) return;
-        if (speechActive && Time.time < speechEndTime) return;
         if (soundAudioSource == null) return;
         if (!PlayerCanSeeHex(character.hex)) return;
         if (!IsHumanoidRace(character.race))
@@ -459,7 +419,6 @@ public class Sounds : SearcherByName
 
     public void PlayMovement(Hex from, Hex to)
     {
-        if (speechActive && Time.time < speechEndTime) return;
         if (soundAudioSource == null) return;
 
         List<AudioClip> clips = footstepDefaultClips;
@@ -527,8 +486,6 @@ public class Sounds : SearcherByName
     private void Enqueue(AudioClip clip, float volume, float minInterval)
     {
         if (clip == null || soundAudioSource == null) return;
-        if (speechActive && Time.time < speechEndTime) return;
-
         float now = Time.time;
         if (now - lastPlayTime < globalMinInterval) return;
 
@@ -559,14 +516,6 @@ public class Sounds : SearcherByName
             yield return new WaitForSeconds(spacing);
         }
         queueRoutine = null;
-    }
-
-    private void Update()
-    {
-        if (speechActive && Time.time >= speechEndTime)
-        {
-            speechActive = false;
-        }
     }
 
     private AudioClip PickStableClip(List<AudioClip> clips, string key)
@@ -701,7 +650,7 @@ public class Sounds : SearcherByName
 
     private Game GetGame()
     {
-        if (cachedGame == null) cachedGame = FindFirstObjectByType<Game>();
+        if (cachedGame == null) cachedGame = Game.Instance;
         return cachedGame;
     }
 

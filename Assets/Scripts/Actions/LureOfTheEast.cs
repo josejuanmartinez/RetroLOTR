@@ -43,7 +43,7 @@ public class LureOfTheEast : CharacterAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             List<Character> targets = character.hex.GetHexesInRadius(Radius)

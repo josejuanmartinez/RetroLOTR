@@ -36,7 +36,7 @@ public class ShirriffsAndBoundersAction : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             Leader owner = character.GetOwner();
             if (board == null || owner == null) return false;
 
@@ -64,7 +64,7 @@ public class ShirriffsAndBoundersAction : EventAction
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             return GetShireHexes(board).Count > 0;
         };
 

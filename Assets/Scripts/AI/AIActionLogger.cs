@@ -102,17 +102,50 @@ public class AIActionLogEntry
 public static class AIActionLogger
 {
     private static readonly string LogFilePath = Path.Combine(Application.persistentDataPath, "ai_actions.jsonl");
+    private static StreamWriter writer;
+    private static int pendingSinceFlush;
+    private const int FlushEveryNEntries = 25;
+
+    [RuntimeInitializeOnLoadMethod]
+    private static void RegisterFlushOnQuit()
+    {
+        Application.quitting -= Flush;
+        Application.quitting += Flush;
+    }
+
+    private static StreamWriter GetWriter()
+    {
+        // Kept open across calls instead of File.AppendAllText's open-seek-write-close per
+        // call — this used to run synchronously for every single AI action across the whole
+        // game (every character, every pick, every turn), a meaningful chunk of real per-turn
+        // AI cost paid purely for telemetry nobody's actively watching mid-game.
+        writer ??= new StreamWriter(LogFilePath, append: true) { AutoFlush = false };
+        return writer;
+    }
 
     public static void Log(AIActionLogEntry entry)
     {
         try
         {
             string json = JsonUtility.ToJson(entry);
-            File.AppendAllText(LogFilePath, json + Environment.NewLine);
+            StreamWriter w = GetWriter();
+            w.WriteLine(json);
+            pendingSinceFlush++;
+            if (pendingSinceFlush >= FlushEveryNEntries)
+            {
+                w.Flush();
+                pendingSinceFlush = 0;
+            }
         }
         catch (Exception e)
         {
             Debug.LogWarning($"AIActionLogger failed to write log: {e.Message}");
         }
+    }
+
+    public static void Flush()
+    {
+        try { writer?.Flush(); }
+        catch (Exception e) { Debug.LogWarning($"AIActionLogger failed to flush log: {e.Message}"); }
     }
 }

@@ -10,7 +10,7 @@ public class Twilight : EventAction
 {
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         AlignmentEnum caster = GetCasterAlignment();
@@ -72,7 +72,7 @@ public class Twilight : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
             Leader owner = character.GetOwner();
-            Game game = FindFirstObjectByType<Game>();
+            Game game = Game.Instance;
             if (owner == null || game == null || owner != game.player) return false;
             var radiusHexes = character.hex.GetHexesInRadius(2);
             int hiddenPcs = 0;
@@ -97,7 +97,7 @@ public class Twilight : EventAction
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null || character.hex == null) return false;
             Leader owner = character.GetOwner();
-            Game game = FindFirstObjectByType<Game>();
+            Game game = Game.Instance;
             return owner != null && game != null && owner == game.player;
         };
         asyncEffect = async (character) => { if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false; return true; };

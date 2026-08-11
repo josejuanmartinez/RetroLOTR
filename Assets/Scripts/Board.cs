@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -114,7 +114,7 @@ public class Board : MonoBehaviour
 
     private Game GetGame()
     {
-        if (cachedGame == null) cachedGame = FindFirstObjectByType<Game>();
+        if (cachedGame == null) cachedGame = Game.Instance;
         return cachedGame;
     }
 
@@ -165,8 +165,19 @@ public class Board : MonoBehaviour
         StartCoroutine(BeginAfterScenarioChoice());
     }
 
+    // Board is instantiated once at game start and lives for the whole session. Every action
+    // class's condition/effect closures used to resolve it via FindFirstObjectByType<Board>()
+    // individually — a scene-wide type search — and with ~150 cards in the full deck scored
+    // per pick, per character, per AI turn, that was thousands of scene-wide lookups repeated
+    // every single AI turn (the same anti-pattern documented as a prior board-load freeze
+    // incident, see Hex.cs's own sharedBoard cache). Cached here instead, same pattern as
+    // UtilityAIContext.GetSharedBoard.
+    public static Board Instance { get; private set; }
+
     private void Awake()
     {
+        Instance = this;
+
         // Fresh scene load = fresh choice. SkipIntro reloads (scenario switch from
         // the old dropdown flow) keep the already-made choice.
         if (!GameConfig.SkipIntro) GameConfig.ScenarioChosen = false;
@@ -400,7 +411,7 @@ public class Board : MonoBehaviour
         // Get all hexes
         List<Hex> hexes = GetHexes();
 
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : DeckManager.Instance;
         List<CardData> hiddenObjectPool = deckManager != null ? deckManager.GetAllObjectCardClones() : new List<CardData>();
 
         RemoveScenarioStartingObjectsFromPool(hiddenObjectPool);
@@ -434,7 +445,7 @@ public class Board : MonoBehaviour
     {
         List<Hex> hexes = GetHexes();
 
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : DeckManager.Instance;
         List<CardData> encounterPool = deckManager != null ? deckManager.GetAllEncounterCardClones() : new List<CardData>();
 
         List<Hex> shuffledHexes = hexes.OrderBy(hex => UnityEngine.Random.value).ToList();
@@ -1105,6 +1116,28 @@ public class Board : MonoBehaviour
             Hex newHex = hexes[path[i + 1]];
             currentHex = previousHex;
 
+            // Nobody sees this hop (see ShouldShowPlayerUi) — skip sprite lookups and
+            // tweening entirely, just apply the data-model move. Per-hop tweening (0.35s) plus
+            // the walk's own 0.5s settle delay was real wall-clock time burned for every AI
+            // character's every hex of movement, every AI turn, for an animation the human
+            // never sees — a dominant contributor to a full AI turn's total duration.
+            if (!showPlayerUi)
+            {
+                try
+                {
+                    MoveCharacterOneHex(character, previousHex, newHex, false, false, deferVisibilityRefresh: true);
+                    currentHex = newHex;
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Error during character movement at step {i}: {e.Message}\n{e.StackTrace}");
+                    SuppressHexIconGrids = false;
+                    HandleMovementFailure(character, currentHex, path, i);
+                    yield break;
+                }
+                continue;
+            }
+
             // Get the visible sprites on each hex
             SpriteRenderer fromSR = previousHex.GetCharacterSpriteRendererOnHex();
             SpriteRenderer toSR = newHex.GetCharacterSpriteRendererOnHex();
@@ -1250,7 +1283,7 @@ public class Board : MonoBehaviour
 
         // Now that the walk has finished, reconcile fog/visibility for the whole board once,
         // spread across frames (batched yields) so it never spikes the frame.
-        Game moveGame = FindFirstObjectByType<Game>();
+        Game moveGame = Game.Instance;
         if (moveGame != null && moveGame.IsPlayerCurrentlyPlaying() && moveGame.player == character.GetOwner())
         {
             yield return StartCoroutine(moveGame.player.RevealVisibleHexesAsync());
@@ -1275,8 +1308,9 @@ public class Board : MonoBehaviour
             HandleMovementFailure(character, currentHex, path, path.Count - 1);
         }
 
-        // Final delay outside try block
-        yield return new WaitForSeconds(0.5f);
+        // Final delay outside try block — purely a settle beat for the human's own visible
+        // walk; skip it for AI moves nobody watches (see the per-hop skip above).
+        if (showPlayerUi) yield return new WaitForSeconds(0.5f);
         moving = false;
         if (showPlayerUi)
         {
@@ -1349,7 +1383,7 @@ public class Board : MonoBehaviour
                         PC pc = newHex.GetPCData();
                         if (pc != null)
                         {
-                            DeckManager dm = FindFirstObjectByType<DeckManager>();
+                            DeckManager dm = DeckManager.Instance;
                             if (dm != null) hexRegion = dm.ResolveRegionForPc(pc);
                         }
                     }
@@ -1575,7 +1609,7 @@ public class Board : MonoBehaviour
 
     private ActionsManager GetActionsManager()
     {
-        if (cachedActionsManager == null) cachedActionsManager = FindFirstObjectByType<ActionsManager>();
+        if (cachedActionsManager == null) cachedActionsManager = ActionsManager.Instance;
         return cachedActionsManager;
     }
 
@@ -1621,7 +1655,7 @@ public class Board : MonoBehaviour
     private static void RespawnEncounterElsewhere(CardData card, Hex excludeHex)
     {
         if (card == null) return;
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Instance;
         if (board == null) return;
 
         List<Hex> candidates = board.GetHexes()
@@ -1658,13 +1692,13 @@ public class Board : MonoBehaviour
     private void CheckAndShowSituationCards(Character character, Hex hex)
     {
         if (character == null || hex == null) { Debug.Log("[SituationCards] null character or hex"); return; }
-        Game g = FindFirstObjectByType<Game>();
+        Game g = Game.Instance;
         if (g == null) { Debug.Log("[SituationCards] no Game found"); return; }
         if (!g.IsPlayerCurrentlyPlaying()) { Debug.Log("[SituationCards] not player's turn"); return; }
         if (g.player != character.GetOwner()) { Debug.Log($"[SituationCards] character {character.characterName} not owned by player"); return; }
         if (g.IsPlayerAutoplayEnabledFor(character.GetOwner())) return;
 
-        DeckManager deckManager = FindFirstObjectByType<DeckManager>();
+        DeckManager deckManager = DeckManager.Instance;
         if (deckManager == null) { Debug.Log("[SituationCards] no DeckManager found"); return; }
 
         var activeSituations = SituationEvaluator.GetActiveSituations(character, hex);
@@ -1700,7 +1734,7 @@ public class Board : MonoBehaviour
 
         // The situation was true for THIS hex when the walk ended; if the world moved on while
         // we waited (character moved/died, turn changed hands), don't show stale opportunities.
-        Game g = FindFirstObjectByType<Game>();
+        Game g = Game.Instance;
         if (character == null || character.killed || character.hex != hex) { situationCardsSequence = null; yield break; }
         if (g == null || !g.IsPlayerCurrentlyPlaying() || g.player != character.GetOwner()) { situationCardsSequence = null; yield break; }
 
@@ -1738,7 +1772,7 @@ public class Board : MonoBehaviour
     // through the normal grant methods so their shared CharacterAction instances remain safe.
     public async void TriggerTurnStartResourceGrants(IEnumerable<Character> characters)
     {
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : DeckManager.Instance;
         if (deckManager == null || characters == null) return;
 
         List<TurnStartResourceGrant> grants = new();
@@ -1774,7 +1808,7 @@ public class Board : MonoBehaviour
 
         if (grants.Count == 0) return;
 
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         bool showToPlayer = game != null && game.player == grants[0].character.GetOwner();
         if (showToPlayer)
         {
@@ -1844,7 +1878,7 @@ public class Board : MonoBehaviour
             return;
         }
 
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : DeckManager.Instance;
         CardData pcCard = deckManager?.FindPcCardByPcName(pc.pcName);
         if (pcCard == null)
         {
@@ -1852,7 +1886,7 @@ public class Board : MonoBehaviour
             return;
         }
 
-        ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
+        ActionsManager actionsManager = ActionsManager.Instance;
         if (actionsManager?.ResolveActionByRef(pcCard.GetActionRef(), pcCard) is not PCAction pcAction)
         {
             Debug.Log($"[PCGrant] aborted — could not resolve PCAction for '{pcCard.name}' (actionsManager={actionsManager != null})");
@@ -1867,8 +1901,19 @@ public class Board : MonoBehaviour
         }
         Debug.Log($"[PCGrant] '{pc.pcName}' proceeding for {character.characterName}");
 
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         bool showToPlayer = game != null && game.player == character.GetOwner();
+
+        // Nothing is ever shown to the human for another leader's character — skip the whole
+        // presentation gate (TurnBanner poll + CenterDisplayLock queueing) and just execute the
+        // grant. Paying for that serialization on every AI PC landing was pure overhead: real
+        // scene-wide lookups and an async yield-poll loop for an animation nobody sees.
+        if (!showToPlayer)
+        {
+            pcAction.Initialize(character, pcCard);
+            await pcAction.Execute();
+            return;
+        }
 
         // Don't even queue for the lock while the Turn/Gathering-Resources banners are still
         // playing - SemaphoreSlim always hands a released permit to an already-queued async
@@ -1882,7 +1927,7 @@ public class Board : MonoBehaviour
         Debug.Log($"[CenterLock] PC grant '{pcCard.name}' acquired lock.");
         try
         {
-            if (showToPlayer && !suppressPresentation)
+            if (!suppressPresentation)
             {
                 // Turn-start gathering is a single center-screen card sequence. Do not pan to
                 // every source hex: the flight still marks each destination on the board, but
@@ -1932,7 +1977,7 @@ public class Board : MonoBehaviour
             return;
         }
 
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : DeckManager.Instance;
         CardData landCard = deckManager?.FindLandCardByRegion(region);
         if (landCard == null)
         {
@@ -1940,7 +1985,7 @@ public class Board : MonoBehaviour
             return;
         }
 
-        ActionsManager actionsManager = FindFirstObjectByType<ActionsManager>();
+        ActionsManager actionsManager = ActionsManager.Instance;
         CharacterAction action = actionsManager?.ResolveActionByRef(landCard.GetActionRef(), landCard);
         if (action == null)
         {
@@ -1949,8 +1994,17 @@ public class Board : MonoBehaviour
         }
         Debug.Log($"[RegionGrant] '{landCard.name}' proceeding for {character.characterName}");
 
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         bool showToPlayer = game != null && game.player == character.GetOwner();
+
+        // See TriggerOwnPcGrantIfStandingOnOne: nothing is shown to the human for another
+        // leader's character, so skip the presentation gate entirely and just execute the grant.
+        if (!showToPlayer)
+        {
+            action.Initialize(character, landCard);
+            await action.Execute();
+            return;
+        }
 
         // See TriggerOwnPcGrantIfStandingOnOne: hold off queuing for the lock until the
         // Turn/Gathering-Resources banners have fully finished.
@@ -1962,7 +2016,7 @@ public class Board : MonoBehaviour
         Debug.Log($"[CenterLock] Region grant '{landCard.name}' acquired lock.");
         try
         {
-            if (showToPlayer && !suppressPresentation)
+            if (!suppressPresentation)
             {
                 // See the PC grant above: keep turn-start gathering centered while its
                 // card-flight animation continues to point at the granting region's hex.

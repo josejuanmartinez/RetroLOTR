@@ -35,7 +35,7 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
 
     public void Initialize(NonPlayableLeader leader)
     {
-        game = FindFirstObjectByType<Game>();
+        game = Game.Instance;
         nonPlayableLeader = leader;
         leaderSprite = illustrations.GetIllustrationByName(leader.characterName);
         alignment = leader.alignment;

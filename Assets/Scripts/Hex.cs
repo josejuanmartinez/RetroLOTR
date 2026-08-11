@@ -217,9 +217,9 @@ public class Hex : MonoBehaviour
         pc = null;
 
         // Cache singletons once per scene, not once per hex
-        if (sharedGame == null) sharedGame = FindFirstObjectByType<Game>();
+        if (sharedGame == null) sharedGame = Game.Instance;
         if (sharedColors == null) sharedColors = FindFirstObjectByType<Colors>();
-        if (sharedBoard == null) sharedBoard = FindFirstObjectByType<Board>();
+        if (sharedBoard == null) sharedBoard = Board.Instance;
         if (sharedNavigator == null) sharedNavigator = FindFirstObjectByType<BoardNavigator>();
         if (sharedIllustrations == null) sharedIllustrations = FindFirstObjectByType<Illustrations>();
         game = sharedGame;
@@ -411,7 +411,7 @@ public class Hex : MonoBehaviour
     public bool IsHexSeen() => IsHexRevealed() && !mapOnlyRevealed && !isCurrentlyUnseen;
     public List<Hex> GetHexesInRadius(int radius)
     {
-        if (board == null) board = FindFirstObjectByType<Board>();
+        if (board == null) board = Board.Instance;
         List<Hex> results = new();
         if (board == null) return results;
 
@@ -511,7 +511,7 @@ public class Hex : MonoBehaviour
         v2 = new Vector2Int(row, col);
         assignedLandRegion = null;
         if (hexRegion != null) hexRegion.enabled = false;
-        if (game == null) game = FindFirstObjectByType<Game>();
+        if (game == null) game = Game.Instance;
         // SpriteRenderer.sortingOrder is effectively signed 16-bit, so keep
         // terrain in (-9999, 0): above the hexRegionFrame underlay (-9999),
         // below every fixed-order hex child. Row decides front-to-back —
@@ -575,7 +575,7 @@ public class Hex : MonoBehaviour
     public bool TryGetKnownCharacterForIcon(out Character known)
     {
         known = null;
-        if (board == null) board = FindFirstObjectByType<Board>();
+        if (board == null) board = Board.Instance;
 
         PlayableLeader player = GetPlayer();
         bool isSeen = IsHexSeen();
@@ -799,7 +799,7 @@ public class Hex : MonoBehaviour
     public void RedrawPC(bool refreshHoverText = true)
     {
         if(pc == null) return;
-        if (game == null) game = FindFirstObjectByType<Game>();
+        if (game == null) game = Game.Instance;
 
         bool seen = IsHexSeen();
         PlayableLeader viewingLeader = game != null ? game.currentlyPlaying : null;
@@ -1046,7 +1046,7 @@ public class Hex : MonoBehaviour
         yield return new WaitForSeconds(pcCardPreviewHoverDelay);
         pcCardPreviewCoroutine = null;
 
-        if (_deckManager == null) _deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        if (_deckManager == null) _deckManager = DeckManager.Instance != null ? DeckManager.Instance : DeckManager.Instance;
         if (_deckManager == null || CardCenterPreview.Instance == null) yield break;
 
         List<CardData> previewCards = new();
@@ -1228,7 +1228,7 @@ public class Hex : MonoBehaviour
         if (charLink < 0 || charLink >= _hexInfoCharacters.Count) return;
         Character ch = _hexInfoCharacters[charLink];
         if (ch == null || ch.killed) return;
-        if (board == null) board = FindFirstObjectByType<Board>();
+        if (board == null) board = Board.Instance;
         if (board != null) board.SelectCharacter(ch);
     }
 
@@ -1492,7 +1492,7 @@ public class Hex : MonoBehaviour
 
     public void RevealArea(int radius = 1, bool lookAt = true, Leader scoutedByPlayer = null)
     {
-        if (board == null) board = FindFirstObjectByType<Board>();
+        if (board == null) board = Board.Instance;
 
         bool isPlayerTurn = game.IsPlayerCurrentlyPlaying();
         RevealInternal(scoutedByPlayer, isPlayerTurn);
@@ -1538,7 +1538,7 @@ public class Hex : MonoBehaviour
 
     public void RevealMapOnlyArea(int radius = 1, bool lookAt = true, bool refreshMinimap = true)
     {
-        if (board == null) board = FindFirstObjectByType<Board>();
+        if (board == null) board = Board.Instance;
 
         RevealMapOnlyInternal();
         if (radius <= 0 || board == null)
@@ -1589,7 +1589,7 @@ public class Hex : MonoBehaviour
     private void RevealNonPlayableLeadersOnHex(PlayableLeader leader, bool showPopup)
     {
         if (leader == null) return;
-        if (game == null) game = FindFirstObjectByType<Game>();
+        if (game == null) game = Game.Instance;
 
         if (!IsHexSeen()) return;
         bool isScouted = IsScouted(leader);
@@ -1737,7 +1737,7 @@ public class Hex : MonoBehaviour
         if (pc == null || !pc.hasPort) return false;
         bool seen = IsHexSeen();
         if (!seen) return false;
-        if (game == null) game = FindFirstObjectByType<Game>();
+        if (game == null) game = Game.Instance;
 
         PlayableLeader viewingLeader = game != null ? game.currentlyPlaying : null;
         bool ownerIsNonPlayableLeader = pc.owner is NonPlayableLeader;
@@ -1896,7 +1896,7 @@ public class Hex : MonoBehaviour
             return true;
         }
 
-        if (board == null) board = FindFirstObjectByType<Board>();
+        if (board == null) board = Board.Instance;
 
         PlayableLeader player = GetPlayer();
         bool isScouted = IsScouted(player);
@@ -2179,19 +2179,32 @@ public class Hex : MonoBehaviour
         // Exception: if a walk cleared this hex's icon grids (SuppressHexIconGrids), the
         // redraws below are what repopulates them — don't skip until that has happened.
         if (wasSeen && scoutedByPlayer == null && !_iconGridsPendingRebuild) return;
-        isRevealed = true;
-        mapOnlyRevealed = false;
+
+        var g = game ?? Game.Instance;
+        // isRevealed (and everything it drives below: fog/minimap/redraws) is a single,
+        // global flag — there is no per-leader visibility state, only this one shared render
+        // of the board on the human's screen. An action attributed to an AI leader
+        // (scoutedByPlayer set, but not the human) must still record that leader's own
+        // knowledge below, but must NOT flip what's rendered — otherwise any AI character's
+        // scout/spell/patrol action during another leader's turn flashed newly-discovered
+        // terrain onto the human's screen mid-AI-turn.
+        bool revealsToHuman = scoutedByPlayer == null || g == null || scoutedByPlayer == g.player;
+
         if (scoutedByPlayer)
         {
             scoutedByTurns[scoutedByPlayer] = Math.Max(2, scoutedByTurns.TryGetValue(scoutedByPlayer, out int current) ? current : 0);
             scoutedBy.Add(scoutedByPlayer);
         }
+
+        if (!revealsToHuman) return;
+
+        isRevealed = true;
+        mapOnlyRevealed = false;
         if (isPlayerTurn) isCurrentlyUnseen = false;
         UpdateVisibilityForFog();
         UpdateMinimapTerrain(IsHexRevealed());
         PlayableLeader viewer = scoutedByPlayer as PlayableLeader;
         if (viewer == null && game != null) viewer = game.currentlyPlaying;
-        var g = game ?? FindFirstObjectByType<Game>();
         bool showPopup = viewer != null && g != null && viewer == g.player && isPlayerTurn;
         RevealNonPlayableLeadersOnHex(viewer, showPopup);
         // Cleared before the redraws: if grids are still suppressed (mid-walk) the
@@ -2398,7 +2411,7 @@ public class Hex : MonoBehaviour
 
     public void UnrevealArea(int radius = 1, bool lookAt = true, Leader unrevealedBy = null)
     {
-        if (board == null) board = FindFirstObjectByType<Board>();
+        if (board == null) board = Board.Instance;
 
         Unreveal(unrevealedBy);
         if (radius <= 0 || board == null) { if (lookAt) LookAt(); return; }
@@ -2436,7 +2449,7 @@ public class Hex : MonoBehaviour
 
     public void ObscureArea(int radius = 1, bool lookAt = true, Leader obscuredBy = null)
     {
-        if (board == null) board = FindFirstObjectByType<Board>();
+        if (board == null) board = Board.Instance;
 
         Obscure(obscuredBy);
         if (radius <= 0 || board == null) { if (lookAt) LookAt(); return; }
@@ -2477,7 +2490,7 @@ public class Hex : MonoBehaviour
         bool shouldBeUnseen = IsHexRevealed() && mapOnlyRevealed;
         bool unseenChanged = isCurrentlyUnseen != shouldBeUnseen;
         isCurrentlyUnseen = shouldBeUnseen;
-        if (game == null) game = FindFirstObjectByType<Game>();
+        if (game == null) game = Game.Instance;
         bool scoutingChanged = false;
         if (game != null)
         {
@@ -2609,7 +2622,7 @@ public class Hex : MonoBehaviour
         if (leader == null) return;
         if (!leader.visibleHexes.Contains(this)) leader.visibleHexes.Add(this);
         scoutedBy.Add(leader);
-        if (game == null) game = FindFirstObjectByType<Game>();
+        if (game == null) game = Game.Instance;
         if (game != null && game.player == leader && game.IsPlayerCurrentlyPlaying())
         {
             Reveal(leader);
@@ -2636,7 +2649,7 @@ public class Hex : MonoBehaviour
         if (pc == null || pc.citySize == PCSizeEnum.NONE) return false;
         bool seen = IsHexSeen();
         if (!seen) return false;
-        if (game == null) game = FindFirstObjectByType<Game>();
+        if (game == null) game = Game.Instance;
 
         PlayableLeader viewingLeader = game != null ? game.currentlyPlaying : null;
         bool pcRevealed = IsPCRevealed();
@@ -2891,13 +2904,13 @@ public class Hex : MonoBehaviour
     private bool ShouldShowPlayerParticles()
     {
         if (!IsHexSeen()) return false;
-        if (game == null) game = FindFirstObjectByType<Game>();
+        if (game == null) game = Game.Instance;
         return game != null && game.player != null;
     }
 
     private void UpdateParticles()
     {
-        if (game == null) game = FindFirstObjectByType<Game>();
+        if (game == null) game = Game.Instance;
         PlayableLeader player = game != null ? game.player : null;
         bool seen = IsHexSeen();
         bool scoutedByPlayer = player != null && scoutedBy.Contains(player);
@@ -3335,7 +3348,7 @@ public class Hex : MonoBehaviour
             return;
         }
 
-        if (board == null) board = FindFirstObjectByType<Board>();
+        if (board == null) board = Board.Instance;
         Character selected = board != null ? board.selectedCharacter : null;
 
         if (selected != null && selected.hex == this && characterSpriteRenderer.sprite != null)

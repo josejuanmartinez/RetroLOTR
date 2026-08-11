@@ -22,7 +22,7 @@ public class StealLeather : AgentPCAction
             pc.owner.RemoveLeather(toSteal);
             MessageDisplayNoUI.ShowMessage(pc.hex, c, $"-{toSteal} <sprite name=\"leather\"> stolen!", Color.red);
             MessageDisplay.ShowMessage($"+{toSteal} <sprite name=\"leather\"> stolen!", Color.green);
-            if (playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
+            if (playable == Game.Instance.player) FindFirstObjectByType<StoresManager>().RefreshStores();
             return true; 
         };
         condition = (c) => {

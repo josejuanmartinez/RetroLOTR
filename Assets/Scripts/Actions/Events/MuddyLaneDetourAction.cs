@@ -9,7 +9,7 @@ public class MuddyLaneDetourAction : EventAction
 
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         List<Character> commanders = board.GetHexes()
@@ -87,7 +87,7 @@ public class MuddyLaneDetourAction : EventAction
             int goldLoss = Mathf.Min(owner.goldAmount, remainingValue);
             if (goldLoss > 0)
             {
-                owner.RemoveGold(goldLoss, owner == FindFirstObjectByType<Game>()?.player);
+                owner.RemoveGold(goldLoss, owner == Game.Instance?.player);
                 remainingValue -= goldLoss;
             }
 
@@ -111,7 +111,7 @@ public class MuddyLaneDetourAction : EventAction
                 int maxUnits = Mathf.Min(available, remainingValue / entry.value);
                 if (maxUnits <= 0) continue;
 
-                entry.remover(maxUnits, owner == FindFirstObjectByType<Game>()?.player);
+                entry.remover(maxUnits, owner == Game.Instance?.player);
                 drainedParts.Add($"{maxUnits}<sprite name=\"{entry.resource.ToString().ToLowerInvariant()}\">");
                 remainingValue -= maxUnits * entry.value;
             }
@@ -119,7 +119,7 @@ public class MuddyLaneDetourAction : EventAction
             if (remainingValue > 0 && owner.goldAmount > 0)
             {
                 int extraGold = Mathf.Min(owner.goldAmount, remainingValue);
-                owner.RemoveGold(extraGold, owner == FindFirstObjectByType<Game>()?.player);
+                owner.RemoveGold(extraGold, owner == Game.Instance?.player);
                 drainedParts.Add($"{extraGold}<sprite name=\"gold\">");
                 remainingValue -= extraGold;
             }

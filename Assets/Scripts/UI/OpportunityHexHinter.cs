@@ -20,7 +20,7 @@ public static class OpportunityHexHinter
         HintsEnabled = enabled;
         if (enabled)
         {
-            Refresh(Object.FindFirstObjectByType<Board>()?.selectedCharacter);
+            Refresh(Board.Instance?.selectedCharacter);
         }
         else
         {
@@ -34,11 +34,11 @@ public static class OpportunityHexHinter
         if (!HintsEnabled) return;
         if (character == null || character.killed || character.hex == null) return;
 
-        Game game = Object.FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         if (game == null || game.player == null || character.GetOwner() != game.player) return;
         if (character.GetOwner() is not PlayableLeader leader) return;
 
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : Object.FindFirstObjectByType<DeckManager>();
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : DeckManager.Instance;
         HexPathRenderer pathRenderer = Object.FindFirstObjectByType<HexPathRenderer>();
         if (deckManager == null || pathRenderer == null) return;
 

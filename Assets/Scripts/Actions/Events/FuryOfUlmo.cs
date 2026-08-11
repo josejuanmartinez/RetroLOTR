@@ -19,7 +19,7 @@ public class FuryOfUlmo : EventAction
 
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         AlignmentEnum caster = GetCasterAlignment();
@@ -80,7 +80,7 @@ public class FuryOfUlmo : EventAction
         effect = (ch) =>
         {
             if (originalEffect != null && !originalEffect(ch)) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
             var targets = board.GetHexes().Where(h => h != null && h.characters != null).SelectMany(h => h.characters).Where(IsNaval).Distinct().ToList();
             if (targets.Count == 0) return false;
@@ -92,7 +92,7 @@ public class FuryOfUlmo : EventAction
         condition = (ch) =>
         {
             if (originalCondition != null && !originalCondition(ch)) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             return board != null && board.GetHexes().Any(h => h != null && h.characters != null && h.characters.Any(IsNaval));
         };
         asyncEffect = async (ch) => { if (originalAsyncEffect != null && !await originalAsyncEffect(ch)) return false; return true; };

@@ -17,6 +17,13 @@ public class Leader : Character
     // which is fine: fog state is rebuilt at runtime.
     public HashSet<Hex> visibleHexes = new();
     public bool playedLandThisTurn;
+    // Per-turn cap: only one environmental card may be played per leader per turn (the board
+    // only has a single active-environment slot — see EnvironmentalCardManager). Tracked here
+    // rather than on PlayableLeader.RecordPlayedCard's land/PC history so it also covers
+    // NonPlayableLeader AI turns. lastEnvironmentalCardPlayedTurn additionally feeds UtilityAI's
+    // EnvironmentalPenalty decay (see UtilityAIContext.GetEnvironmentalPenaltyScore).
+    public bool playedEnvironmentalCardThisTurn;
+    public int lastEnvironmentalCardPlayedTurn = -999;
     // Last two cards this leader has paid the cost of, most recent last — capped at 2 since
     // the only reader (Vaire's Loom) only ever needs "the card played immediately before this
     // one", not a full history. Updated in DeckManager.ApplyCardCosts, not per-card-type, so it
@@ -52,7 +59,7 @@ public class Leader : Character
 
     public void Initialize(Hex hex, LeaderBiomeConfig leaderBiome, bool showSpawnMessage = true, bool applyNoScenarioStart = false)
     {
-        game = FindFirstObjectByType<Game>();
+        game = Game.Instance;
         this.leaderBiome = leaderBiome;
 		InitializeFromBiome(this, hex, leaderBiome, showSpawnMessage, applyNoScenarioStart);
     }
@@ -110,6 +117,7 @@ public class Leader : Character
     public void RefreshForNewTurn()
     {
         playedLandThisTurn = false;
+        playedEnvironmentalCardThisTurn = false;
         DecrementTemporarySeenHexes();
         DecrementTemporaryScoutCenters();
         if (!killed && goldAmount < -10) Killed(this);
@@ -121,7 +129,7 @@ public class Leader : Character
         // Make all characters in nation act!
         controlledCharacters.FindAll(c => !c.killed).ForEach(x => x.NewTurn());
 
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : DeckManager.Instance;
         if (deckManager != null && this is PlayableLeader playable)
         {
             deckManager.ReplenishHandForTurn(playable);
@@ -146,7 +154,7 @@ public class Leader : Character
     // ordering across controlledCharacters is what decides which character "gets credit".
     private void RunTurnStartResourceGrants()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null)
         {
             Debug.LogWarning("[PCGrant] RunTurnStartResourceGrants aborted — no Board found.");
@@ -163,7 +171,7 @@ public class Leader : Character
         if (this is not PlayableLeader playable) return;
         if (!pcFoundingOfferPending && turnsSinceLastPcFoundingOffer < 5) return;
 
-        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+        DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : DeckManager.Instance;
         if (deckManager == null) return;
 
         foreach (Character c in controlledCharacters)
@@ -210,7 +218,7 @@ public class Leader : Character
             StartCoroutine(RevealVisibleHexesAsync(() =>
             {
                 // Prompt for action to the player
-                FindFirstObjectByType<Board>()?.SelectCharacter(this, true, 1.0f, 0.0f);
+                Board.Instance?.SelectCharacter(this, true, 1.0f, 0.0f);
             }
             ));
         }
@@ -224,6 +232,17 @@ public class Leader : Character
     public bool HasPlayedLandThisTurn()
     {
         return playedLandThisTurn;
+    }
+
+    public void RecordEnvironmentalCardPlayed(int turn)
+    {
+        playedEnvironmentalCardThisTurn = true;
+        lastEnvironmentalCardPlayedTurn = turn;
+    }
+
+    public bool HasPlayedEnvironmentalCardThisTurn()
+    {
+        return playedEnvironmentalCardThisTurn;
     }
 
     // Shared prelude for the two visibility-refresh passes below. A single manual sweep
@@ -262,10 +281,10 @@ public class Leader : Character
     // The async version of RevealVisibleHexes
     public IEnumerator RevealVisibleHexesAsync(System.Action onComplete = null)
     {
-        if (game == null) game = FindFirstObjectByType<Game>();
+        if (game == null) game = Game.Instance;
         if (game == null || game.player != this) yield break; // This will exit without calling onComplete
 
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null || board.hexes == null) yield break;
 
         CollectVisibilityRefreshSets(board, out List<Hex> radiusHexes, out List<Hex> scoutedOnly, out List<Hex> spiedHexes);
@@ -296,9 +315,9 @@ public class Leader : Character
 
     public void RefreshVisibleHexesImmediate()
     {
-        Game g = FindFirstObjectByType<Game>();
+        Game g = Game.Instance;
         if (g == null || g.player != this) return;
-        Board currentBoard = FindFirstObjectByType<Board>();
+        Board currentBoard = Board.Instance;
         if (currentBoard == null || currentBoard.hexes == null) return;
 
         CollectVisibilityRefreshSets(currentBoard, out List<Hex> radiusHexes, out List<Hex> scoutedOnly, out List<Hex> spiedHexes);
@@ -571,7 +590,7 @@ public class Leader : Character
     {
         if (amount <= 0) return;
 
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         Leader owner = GetOwner();
         if (game == null || owner == null || owner != game.player) return;
 
@@ -586,7 +605,7 @@ public class Leader : Character
     {
         if (amount <= 0) return;
 
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         Leader owner = GetOwner();
         if (game == null || owner == null || owner != game.player) return;
 

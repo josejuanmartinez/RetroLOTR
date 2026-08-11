@@ -7,7 +7,7 @@ public class ScryArtifact: Spell
 {
     override public void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
-        List<Hex> remainingArtifactsHexes = FindFirstObjectByType<Board>().GetHexes().FindAll(x => x.hiddenObjects.Count > 0);
+        List<Hex> remainingArtifactsHexes = Board.Instance.GetHexes().FindAll(x => x.hiddenObjects.Count > 0);
         var originalEffect = effect;
         var originalCondition = condition;
         var originalAsyncEffect = asyncEffect;

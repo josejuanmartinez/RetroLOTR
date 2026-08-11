@@ -68,7 +68,7 @@ public class LookForCharacterDestination : CharacterAction
                 {
                     destination = enemyCharacter.hex;
                 }
-                else if (c.GetOwner().controlledPcs.Count >= FindFirstObjectByType<Game>().maxPcsPerPlayer)
+                else if (c.GetOwner().controlledPcs.Count >= Game.Instance.maxPcsPerPlayer)
                 {
                     // Don't explore, you can't build more PCs
                     destination = ownPC.hex;
@@ -92,7 +92,7 @@ public class LookForCharacterDestination : CharacterAction
                     // Otherwise, explore
                 }
             }
-            FindFirstObjectByType<Board>().MoveCharacter(c, c.hex, enemyPC.hex, true);*/
+            Board.Instance.MoveCharacter(c, c.hex, enemyPC.hex, true);*/
             return originalEffect == null || originalEffect(c); 
         };
         condition = (c) => {

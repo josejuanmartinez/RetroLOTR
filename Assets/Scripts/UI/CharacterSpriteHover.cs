@@ -15,16 +15,17 @@ public class CharacterSpriteHover : MonoBehaviour
 
     private void Awake()
     {
-        board = FindFirstObjectByType<Board>();
+        board = Board.Instance;
         selectedIcon = FindFirstObjectByType<SelectedCharacterIcon>();
     }
 
     private void OnMouseEnter()
     {
-        if (BoardNavigator.IsNavigationInputLocked()) return;
         if (hex == null || hex.characterSpriteRenderer == null) return;
         if (hex.characterSpriteRenderer.sprite == null) return;
         if (!hex.TryGetKnownCharacterForIcon(out Character character)) return;
+        Sounds.Instance?.PlayUiHover();
+        if (BoardNavigator.IsNavigationInputLocked()) return;
 
         // Every known character loses the unhovered dim tint while hovered, regardless of
         // nation. Keep the clickable cursor restricted to selectable (player-controlled)
@@ -36,7 +37,7 @@ public class CharacterSpriteHover : MonoBehaviour
         }
         hex.Hover();
 
-        board ??= FindFirstObjectByType<Board>();
+        board ??= Board.Instance;
         bool isSelected = board != null && board.selectedCharacter == character;
         bool isScouted = hex.IsScouted();
 
@@ -90,17 +91,23 @@ public class CharacterSpriteHover : MonoBehaviour
     private void OnMouseDown()
     {
         if (!Input.GetMouseButtonDown(0)) return;
-        if (BoardNavigator.IsNavigationInputLocked()) return;
-        if (PopupManager.IsShowing) return;
         if (BoardNavigator.IsPointerOverVisibleUIElement()) return;
         if (hex == null || !hex.TryGetKnownCharacterForIcon(out Character character)) return;
-        if (!character.isPlayerControlled) return;
+        if (BoardNavigator.IsNavigationInputLocked() || PopupManager.IsShowing || !character.isPlayerControlled)
+        {
+            Sounds.Instance?.PlayNegative();
+            return;
+        }
 
-        board ??= FindFirstObjectByType<Board>();
+        board ??= Board.Instance;
         if (board == null) return;
 
         Sounds.Instance?.PlayUiClick();
         board.SelectHex(hex.v2, characterToSelect: character);
+        if (board.selectedCharacter == character)
+        {
+            SituationCardsUI.Instance?.TryRestoreBloom(character);
+        }
     }
 
     private void OnMouseExit()
@@ -171,7 +178,7 @@ public class CharacterSpriteHover : MonoBehaviour
         }
         if (selectedIcon == null) return;
 
-        board ??= FindFirstObjectByType<Board>();
+        board ??= Board.Instance;
         if (board != null && board.selectedCharacter != null)
         {
             selectedIcon.Refresh(board.selectedCharacter);

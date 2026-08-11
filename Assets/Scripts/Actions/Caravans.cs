@@ -80,7 +80,7 @@ public class Caravans : CharacterAction
 
             owner.AddGold(totalGold);
 
-            if (owner == FindFirstObjectByType<Game>().player)
+            if (owner == Game.Instance.player)
             {
                 stores.RefreshStores();
             }

@@ -21,7 +21,7 @@ public class DwarUnleashed : EventAction
 
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         int cavalryBoosted = 0;

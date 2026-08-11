@@ -9,7 +9,7 @@ public class Dawn : EventAction
 {
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         AlignmentEnum caster = GetCasterAlignment();
@@ -66,7 +66,7 @@ public class Dawn : EventAction
         {
             if (originalEffect != null && !originalEffect(ch)) return false;
             if (ch == null) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
             var freePeople = board.GetHexes().Where(h => h != null && h.characters != null).SelectMany(h => h.characters)
                 .Where(x => x != null && !x.killed && x.GetAlignment() == AlignmentEnum.freePeople).Distinct().ToList();
@@ -83,7 +83,7 @@ public class Dawn : EventAction
         {
             if (originalCondition != null && !originalCondition(ch)) return false;
             if (ch == null || ch.GetAlignment() == AlignmentEnum.darkServants) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             return board != null && board.GetHexes().Any(h => h != null && h.characters != null && h.characters.Any(x => x != null && !x.killed && x.GetAlignment() == AlignmentEnum.freePeople));
         };
 

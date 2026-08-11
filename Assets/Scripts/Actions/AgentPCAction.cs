@@ -11,7 +11,7 @@ public class AgentPCAction : AgentAction
         effect = (c) => {
             if (originalEffect != null && !originalEffect(c)) return false;
             if (c.hex.GetPC() == null) return false;
-            Hex capitalHex = FindFirstObjectByType<Board>().GetHexes().Find(x => x.GetPC() != null && x.GetPC().owner == c.GetOwner() && x.GetPC().isCapital);
+            Hex capitalHex = Board.Instance.GetHexes().Find(x => x.GetPC() != null && x.GetPC().owner == c.GetOwner() && x.GetPC().isCapital);
             if (capitalHex == null) return false;
             int random = UnityEngine.Random.Range(0, 5);
             string message = "Agent returned to capital";
@@ -20,7 +20,7 @@ public class AgentPCAction : AgentAction
                 message += " wounded";
                 c.Wounded(c.hex.GetPC().owner, random * 10);
             }
-            FindFirstObjectByType<Board>().MoveCharacterOneHex(c, c.hex, capitalHex, true);
+            Board.Instance.MoveCharacterOneHex(c, c.hex, capitalHex, true);
             MessageDisplayNoUI.ShowMessage(c.hex, c, message, Color.green);
             return true;
         };

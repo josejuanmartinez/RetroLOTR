@@ -26,7 +26,7 @@ public class TheNineRideAgain : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             List<Character> nazguls = board.GetHexes()
@@ -64,7 +64,7 @@ public class TheNineRideAgain : EventAction
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
             return board.GetHexes().Any(h => h != null && h.characters != null
                 && h.characters.Any(ch => ch != null && !ch.killed && ch.race == RacesEnum.Nazgul));

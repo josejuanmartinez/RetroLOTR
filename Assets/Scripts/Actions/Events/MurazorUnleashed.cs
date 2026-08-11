@@ -27,7 +27,7 @@ public class MurazorUnleashed : EventAction
 
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         int fortified = 0;
@@ -60,7 +60,7 @@ public class MurazorUnleashed : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             List<Character> targetCommanders = board.GetHexes()
@@ -87,7 +87,7 @@ public class MurazorUnleashed : EventAction
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
             return board.GetHexes().Any(h => h != null && IsInTargetHex(h) && h.characters != null
                 && h.characters.Any(ch => ch != null && !ch.killed && ch.IsArmyCommander() && IsDarkServant(ch)));

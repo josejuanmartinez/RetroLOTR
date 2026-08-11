@@ -11,7 +11,7 @@ public class FrozenPasses : EventAction
 {
     public override void ApplyOngoingEffect()
     {
-        Board board = FindFirstObjectByType<Board>();
+        Board board = Board.Instance;
         if (board == null) return;
 
         AlignmentEnum caster = GetCasterAlignment();
@@ -76,7 +76,7 @@ public class FrozenPasses : EventAction
         {
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
             var enemies = board.GetHexes().Where(h => h != null && h.terrainType == TerrainEnum.mountains && h.characters != null)
                 .SelectMany(h => h.characters).Where(ch => ch != null && !ch.killed && ch.GetAlignment() != character.GetAlignment() && ch.race != RacesEnum.Dwarf && !ch.IsImmuneToNegativeEnvironmentalCards()).Distinct().ToList();
@@ -87,7 +87,7 @@ public class FrozenPasses : EventAction
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             return board != null && board.GetHexes().Any(h => h != null && h.terrainType == TerrainEnum.mountains && h.characters != null && h.characters.Any(ch => ch != null && !ch.killed && ch.GetAlignment() != character?.GetAlignment() && ch.race != RacesEnum.Dwarf));
         };
         asyncEffect = async (character) => { if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false; return true; };

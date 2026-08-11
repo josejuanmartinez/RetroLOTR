@@ -46,7 +46,7 @@ public class OldRuinsOfArthedainAction : EventAction
             if (character == null || character.hex == null) return false;
 
             Leader owner = character.GetOwner();
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (owner == null || board == null) return false;
 
             List<Hex> revealedHexes = new();
@@ -83,7 +83,7 @@ public class OldRuinsOfArthedainAction : EventAction
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             return TargetRegions.Any(region => ChooseRandomHexesInRegion(board, region, 1).Count > 0);

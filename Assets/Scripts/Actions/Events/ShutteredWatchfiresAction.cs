@@ -21,7 +21,7 @@ public class ShutteredWatchfiresAction : EventAction
             Leader owner = character.GetOwner();
             if (owner == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             List<Hex> ownedPcs = board.GetHexes()
@@ -62,7 +62,7 @@ public class ShutteredWatchfiresAction : EventAction
             Leader owner = character.GetOwner();
             if (owner == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             return board.GetHexes()

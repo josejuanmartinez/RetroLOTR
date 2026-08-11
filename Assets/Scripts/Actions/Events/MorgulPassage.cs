@@ -60,7 +60,7 @@ public class MorgulPassage : EventAction
         {
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null) return false;
-            Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             return GetTravelTarget(character) != null && GetNearestAlliedNazgulHex(character, board) != null;
         };
 
@@ -70,7 +70,7 @@ public class MorgulPassage : EventAction
             if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
             if (character == null) return false;
 
-            Board board = UnityEngine.Object.FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             Character target = GetTravelTarget(character);
             Hex destination = GetNearestAlliedNazgulHex(character, board);
             if (target?.hex == null || destination == null || target.hex == destination) return false;

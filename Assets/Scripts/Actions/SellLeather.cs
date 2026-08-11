@@ -20,7 +20,7 @@ public class SellLeather : EmmissaryPCAction
             int payout = stores.GetSellPrice(ProducesEnum.leather, quantity);
             playable.AddGold(payout);
             stores.AdjustStock(ProducesEnum.leather, quantity);
-            if(playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
+            if(playable == Game.Instance.player) FindFirstObjectByType<StoresManager>().RefreshStores();
             return true; 
         };
         condition = (c) => {

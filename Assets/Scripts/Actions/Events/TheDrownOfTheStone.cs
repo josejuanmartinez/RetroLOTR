@@ -23,7 +23,7 @@ public class TheDrownOfTheStone : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             List<Hex> waterHexes = board.GetHexes()
@@ -76,7 +76,7 @@ public class TheDrownOfTheStone : EventAction
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             bool hasWaterHex = board.GetHexes().Any(h => h != null && h.IsWaterTerrain());

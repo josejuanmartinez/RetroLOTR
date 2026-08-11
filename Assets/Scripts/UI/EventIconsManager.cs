@@ -187,12 +187,9 @@ public class EventIconsManager : MonoBehaviour
         {
             if (selectedIcon.icon != null && selectedIcon.icon.sprite != null)
                 return selectedIcon.icon.sprite;
-
-            if (selectedIcon.rawImage != null && selectedIcon.rawImage.texture is Texture2D tex)
-                return Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f));
         }
 
-        Game game = FindFirstObjectByType<Game>();
+        Game game = Game.Instance;
         Leader leader = null;
         if (game != null)
             leader = game.currentlyPlaying ?? game.player;

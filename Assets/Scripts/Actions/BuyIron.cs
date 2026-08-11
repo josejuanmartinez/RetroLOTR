@@ -27,7 +27,7 @@ public class BuyIron : EmmissaryPCAction
             playable.RemoveGold(totalCost);
             playable.AddIron(quantity);
             stores.AdjustStock(ProducesEnum.iron, -quantity);
-            if (playable == FindFirstObjectByType<Game>().player) FindFirstObjectByType<StoresManager>().RefreshStores();
+            if (playable == Game.Instance.player) FindFirstObjectByType<StoresManager>().RefreshStores();
             return true; 
         };
         condition = (c) => {

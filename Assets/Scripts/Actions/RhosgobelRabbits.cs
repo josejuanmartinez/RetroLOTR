@@ -16,7 +16,7 @@ public class RhosgobelRabbits : CharacterAction
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null || character.IsArmyCommander()) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             bool hasRhosgobel = board.GetHexes().Any(x => x.GetPC() != null && x.GetPC().pcName == "Rhosgobel");
@@ -31,7 +31,7 @@ public class RhosgobelRabbits : CharacterAction
             if (originalAsyncEffect != null && !await originalAsyncEffect(character)) return false;
             if (character == null || character.IsArmyCommander()) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             Hex targetHex = board.GetHexes().Find(x => x.GetPC() != null && x.GetPC().pcName == "Rhosgobel");

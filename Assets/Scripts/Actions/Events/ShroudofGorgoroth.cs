@@ -18,7 +18,7 @@ public class ShroudofGorgoroth : EventAction
             if (originalEffect != null && !originalEffect(character)) return false;
             if (character == null || character.hex == null) return false;
 
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
 
             // Obscure all hexes in radius 4
@@ -56,7 +56,7 @@ public class ShroudofGorgoroth : EventAction
         {
             if (originalCondition != null && !originalCondition(character)) return false;
             if (character == null || character.GetAlignment() == AlignmentEnum.freePeople) return false;
-            Board board = FindFirstObjectByType<Board>();
+            Board board = Board.Instance;
             if (board == null) return false;
             return board.GetHexes().Any(h => h != null && h.characters != null
                 && h.characters.Any(ch => ch != null && !ch.killed && ch.GetAlignment() == AlignmentEnum.darkServants));
