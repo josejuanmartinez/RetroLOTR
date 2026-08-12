@@ -66,7 +66,7 @@ public class SelectionDialog : MonoBehaviour
             return Task.FromResult(string.Empty);
         }
 
-        return Instance.Show(message, yesString, noString, options, null, isAI, portrait, EventIconType.MultiChoice, true, dialogTitle);
+        return Instance.Show(message, yesString, noString, options, null, isAI, portrait, EventIconType.MultiChoice, dialogTitle);
     }
 
     public static Task<string> Ask(string message, string yesString, string noString, List<string> options, bool isAI, Sprite portrait, EventIconType iconType, string dialogTitle = null)
@@ -77,7 +77,7 @@ public class SelectionDialog : MonoBehaviour
             return Task.FromResult(string.Empty);
         }
 
-        return Instance.Show(message, yesString, noString, options, null, isAI, portrait, iconType, true, dialogTitle);
+        return Instance.Show(message, yesString, noString, options, null, isAI, portrait, iconType, dialogTitle);
     }
 
     public static Task<string> Ask(string message, string yesString, string noString, List<string> options, List<string> optionDescriptions, bool isAI, Sprite portrait, EventIconType iconType, string dialogTitle = null, List<string> optionIcons = null)
@@ -88,7 +88,7 @@ public class SelectionDialog : MonoBehaviour
             return Task.FromResult(string.Empty);
         }
 
-        return Instance.Show(message, yesString, noString, options, optionDescriptions, isAI, portrait, iconType, true, dialogTitle, optionIcons);
+        return Instance.Show(message, yesString, noString, options, optionDescriptions, isAI, portrait, iconType, dialogTitle, optionIcons);
     }
 
     public static Task<string> AskImmediate(string message, string yesString, string noString, List<string> options, List<string> optionDescriptions, bool isAI, Sprite portrait, EventIconType iconType, string dialogTitle = null, List<string> optionIcons = null)
@@ -99,10 +99,10 @@ public class SelectionDialog : MonoBehaviour
             return Task.FromResult(string.Empty);
         }
 
-        return Instance.Show(message, yesString, noString, options, optionDescriptions, isAI, portrait, iconType, false, dialogTitle, optionIcons);
+        return Instance.Show(message, yesString, noString, options, optionDescriptions, isAI, portrait, iconType, dialogTitle, optionIcons);
     }
 
-    private Task<string> Show(string message, string yesString, string noString, List<string> options, List<string> optionDescriptions, bool isAI, Sprite portrait, EventIconType iconType, bool useEventIcon, string dialogTitle = null, List<string> optionIcons = null)
+    private Task<string> Show(string message, string yesString, string noString, List<string> options, List<string> optionDescriptions, bool isAI, Sprite portrait, EventIconType iconType, string dialogTitle = null, List<string> optionIcons = null)
     {
         BindUiReferences();
         WireUiListeners();
@@ -133,39 +133,11 @@ public class SelectionDialog : MonoBehaviour
             int index = Random.Range(0, options.Count);
             request.tcs.TrySetResult(options[index]);
         }
-        else if (!useEventIcon)
+        else
         {
             OpenRequest(request);
         }
-        else
-        {
-            EventIconsManager iconsManager = EventIconsManager.FindManager();
-            if (iconsManager == null)
-            {
-                OpenRequest(request);
-            }
-            else
-            {
-                EventIcon icon = null;
-                icon = iconsManager.AddEventIcon(
-                    iconType,
-                    false,
-                    () =>
-                    {
-                        OpenRequest(request);
-                        Instance?.StartCoroutine(ConsumeIconNextFrame(icon));
-                    });
-            }
-        }
         return request.tcs.Task;
-    }
-
-    private static IEnumerator ConsumeIconNextFrame(EventIcon icon)
-    {
-        yield return null;
-        icon?.ConsumeAndDestroy();
-        Canvas.ForceUpdateCanvases();
-        EventSystem.current?.UpdateModules();
     }
 
     private void OpenRequest(DialogRequest request)

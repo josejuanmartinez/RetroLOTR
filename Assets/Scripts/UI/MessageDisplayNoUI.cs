@@ -12,9 +12,6 @@ public class MessageDisplayNoUI : MonoBehaviour
     [Header("References")]
     [SerializeField] private TextMeshPro textMesh;   // 3D TextMeshPro component
 
-    [Header("Presentation")]
-    [SerializeField] private ShowMode showMode = ShowMode.Both;
-
     [Header("Timing")]
     [SerializeField] private float displayDuration = 0.07f;
     [SerializeField] private float fadeDuration = 0.02f;
@@ -151,12 +148,19 @@ public class MessageDisplayNoUI : MonoBehaviour
             {
                 instance.DispatchMessage(hex, displayMessage, worldPos, resolved);
             }
+
+            string nation = character?.GetOwner()?.characterName ?? character?.characterName;
+            LogManager.Log(LogCategory.Notification, nation, character?.characterName, rawMessage);
         }
 
         if (recordRumour)
         {
             Rumour rumour = new Rumour {leader = character.GetOwner(), character = character, characterName = character?.characterName, rumour = rawMessage, v2 = hex.v2};
-            RumoursManager.AddRumour(rumour, publicRumour);
+            // canDisplayToPlayer and publicRumour share the same playerCanSeeHex trigger, so
+            // whenever the Notification line above already fired, the rumour log would just
+            // repeat it verbatim (nation/character/text all match). Only let it log here for
+            // the case that line can't cover: forceDisplay/off-screen own-action rumours.
+            RumoursManager.AddRumour(rumour, publicRumour, logToWidget: !canDisplayToPlayer);
         }
     }
 
@@ -212,40 +216,8 @@ public class MessageDisplayNoUI : MonoBehaviour
     {
         if (hex == null) return;
 
-        bool immediate = showMode is ShowMode.OnlyImmediate or ShowMode.Both;
-        bool viaIcon = showMode is ShowMode.OnlyEventIcon or ShowMode.Both;
-
-        void Present()
-        {
-            PlayMessageSound(textColor);
-            EnqueueMessage(hex, message, worldPos, textColor);
-        }
-
-        if (immediate) Present();
-
-        if (viaIcon)
-        {
-            EventIconsManager iconsManager = EventIconsManager.FindManager();
-            if (iconsManager != null)
-            {
-                EventIcon icon = null;
-                icon = iconsManager.AddEventIcon(
-                    EventIconType.HexMessage,
-                    true,
-                    () =>
-                    {
-                        // Always re-present on click, even if the message already flashed by
-                        // immediately (Both mode) - otherwise the icon is a void click once the
-                        // immediate toast has already faded.
-                        Present();
-                        icon?.ConsumeAndDestroy();
-                    });
-            }
-            else if (!immediate)
-            {
-                Present();
-            }
-        }
+        PlayMessageSound(textColor);
+        EnqueueMessage(hex, message, worldPos, textColor);
     }
 
     private void EnqueueDeferred(Hex hex, string message, Vector3 worldPos, Color textColor)
@@ -346,6 +318,12 @@ public class MessageDisplayNoUI : MonoBehaviour
 
         activeTextMesh.text = data.Message;
         activeTextMesh.color = new Color(data.TextColor.r, data.TextColor.g, data.TextColor.b, 0f);
+
+        // MessageNoUIText.prefab's background band (SpriteRendererFitToTMP) only re-fits
+        // itself in OnEnable/editor-Update, which runs before the line above assigns the new
+        // message text — without this, the band would size itself off the previous (or empty)
+        // text every time this cached TMP gets reused for a new message.
+        activeTextMesh.GetComponentInChildren<SpriteRendererFitToTMP>()?.Fit();
 
         // Fade in
         yield return Fade(activeTextMesh, 0f, 1f, fadeDuration, data.TextColor);

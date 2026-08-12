@@ -1799,31 +1799,9 @@ public class DeckManager : MonoBehaviour
 
     public static void NotifyEncounterPlaced(Hex targetHex)
     {
-        EventIconsManager iconsManager = EventIconsManager.FindManager();
-        BoardNavigator navigator = BoardNavigator.Instance ?? FindFirstObjectByType<BoardNavigator>();
-        // suppressIcon: the Encounter icon (added below when an icon manager exists) already
-        // covers the "also as an event icon" half of the default Both presentation, with its
-        // own camera-focus behavior on click.
-        static void showMessage() => MessageDisplay.ShowMessage("An encounter can be investigated", Color.yellow, forceImmediate: true, suppressIcon: true);
-
-        if (iconsManager != null)
-        {
-            // Both is the default presentation: show the text immediately as well as leaving
-            // the persistent event icon below (previously this only ever showed as an icon).
-            showMessage();
-
-            iconsManager.AddEventIcon(EventIconType.Encounter, true, () =>
-            {
-                if (navigator != null && targetHex != null)
-                    navigator.EnqueueFocus(targetHex, 0.5f, 0.18f, true, showMessage);
-                else
-                    showMessage();
-            });
-        }
-        else
-        {
-            showMessage();
-        }
+        const string text = "An encounter can be investigated";
+        MessageDisplay.ShowMessage(text, Color.yellow, forceImmediate: true, logToWidget: false);
+        LogManager.Log(LogCategory.Event, Game.Instance?.currentlyPlaying?.characterName, null, text);
     }
 
     private static bool HandHasRegionCard(PlayerDeckState state)
@@ -2595,68 +2573,24 @@ public class DeckManager : MonoBehaviour
 
         FindFirstObjectByType<RegionLabelManager>()?.ShowLabel(regionName.Trim());
 
-        EventIconsManager iconsManager = EventIconsManager.FindManager();
-        BoardNavigator navigator = BoardNavigator.Instance != null ? BoardNavigator.Instance : FindFirstObjectByType<BoardNavigator>();
         string displayName = FormatDisplayName(regionName);
         string text = $"{displayName} discovered!";
-        // suppressIcon: the Discovery icon below already covers the "also as an event icon"
-        // half of the default Both presentation, with its own camera-focus behavior on click.
-        Action showMessage = () => MessageDisplay.ShowMessage(text, Color.cyan, forceImmediate: true, suppressIcon: true);
-
-        // Both is the default presentation: show the text immediately as well as leaving the
-        // persistent event icon below (previously this only ever showed as an icon).
-        showMessage();
-
-        if (iconsManager != null)
-        {
-            iconsManager.AddEventIcon(EventIconType.Discovery, true, () =>
-            {
-                if (navigator != null && anchorHex != null)
-                    navigator.EnqueueFocus(anchorHex, 0.5f, 0.18f, true, showMessage);
-                else
-                    showMessage();
-            });
-        }
+        MessageDisplay.ShowMessage(text, Color.cyan, forceImmediate: true, logToWidget: false);
+        LogManager.Log(LogCategory.Event, Game.Instance?.currentlyPlaying?.characterName, null, text);
     }
 
     private static void QueueRevealMessages(List<Hex> revealedPcHexes, string message)
     {
         if (revealedPcHexes == null || revealedPcHexes.Count == 0) return;
 
-        EventIconsManager iconsManager = EventIconsManager.FindManager();
         BoardNavigator navigator = BoardNavigator.Instance != null ? BoardNavigator.Instance : FindFirstObjectByType<BoardNavigator>();
         Hex anchorHex = ChooseFocusHex(revealedPcHexes);
         if (anchorHex == null) return;
 
         string revealText = string.IsNullOrWhiteSpace(message) ? "The lands were revealed" : message;
+        Action showRevealMessage = () => MessageDisplay.ShowMessage(revealText, Color.yellow, forceImmediate: true, logToWidget: false);
 
-        // suppressIcon: the MapReveal icon (added below when an icon manager exists) already
-        // covers the "also as an event icon" half of the default Both presentation, with its
-        // own camera-focus behavior on click - this action must not pile on a second, redundant
-        // HexMessage icon each time it fires.
-        Action showRevealMessage = () => MessageDisplay.ShowMessage(revealText, Color.yellow, forceImmediate: true, suppressIcon: true);
-        if (iconsManager != null)
-        {
-            // Both is the default presentation: show the text immediately as well as leaving
-            // the persistent event icon below (previously this only ever showed as an icon).
-            showRevealMessage();
-
-            iconsManager.AddEventIcon(
-                EventIconType.MapReveal,
-                true,
-                () =>
-                {
-                    if (navigator != null)
-                    {
-                        navigator.EnqueueFocus(anchorHex, 0.5f, 0.18f, true, showRevealMessage);
-                    }
-                    else
-                    {
-                        showRevealMessage();
-                    }
-                });
-        }
-        else if (navigator != null)
+        if (navigator != null)
         {
             navigator.EnqueueFocus(anchorHex, 0.5f, 0.18f, true, showRevealMessage);
         }
@@ -2664,6 +2598,8 @@ public class DeckManager : MonoBehaviour
         {
             showRevealMessage();
         }
+
+        LogManager.Log(LogCategory.Event, Game.Instance?.currentlyPlaying?.characterName, null, revealText);
     }
 
     private static string FormatDisplayName(string value)

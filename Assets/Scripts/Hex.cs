@@ -63,8 +63,10 @@ public class Hex : MonoBehaviour
     [Header("Lazily attached sub-prefabs (Resources/HexParts)")]
     [Tooltip("Instantiated ONCE per scene as the shared particle-system pool templates (fire/ice/poison/courage/hope + selection).")]
     [SerializeField] private GameObject sharedParticlesPrefab;
-    [Tooltip("Attached to a hex on first hover / first floating message: hover info panel, terrain tooltip link, floating message text.")]
+    [Tooltip("Attached to a hex on first hover: hover info panel, terrain tooltip link.")]
     [SerializeField] private GameObject hoverPanelPrefab;
+    [Tooltip("Attached to a hex on its first floating message (MessageNoUIText.prefab): TMP text + fitted SpriteRenderer band.")]
+    [SerializeField] private GameObject messageNoUITextPrefab;
     [Tooltip("Attached to a hex when a character needs to show: character sprite/Animator, banner, class icons.")]
     [SerializeField] private GameObject characterLayerPrefab;
     [Tooltip("Attached to a hex when its PC name label needs to show.")]
@@ -312,9 +314,7 @@ public class Hex : MonoBehaviour
         hexInfo = FindPart(panelRoot, "HexInfoBackground");
         hexInfoText = hexInfo != null ? hexInfo.GetComponentInChildren<TextMeshPro>(true) : null;
         if (terrainTooltipPrefab == null) terrainTooltipPrefab = FindPart(panelRoot, "InfoTooltip");
-        messageNoUI = FindPart<TextMeshPro>(panelRoot, "MessageNoUI");
         ApplyCurrentFont(hexInfoText);
-        ApplyCurrentFont(messageNoUI);
 
         SetActiveFast(hexInfoArrow, false);
         SetActiveFast(hexInfo, false);
@@ -322,10 +322,26 @@ public class Hex : MonoBehaviour
         return hexInfo != null;
     }
 
+    private bool EnsureMessageNoUIText()
+    {
+        if (messageNoUI != null) return true;
+        if (messageNoUITextPrefab == null)
+        {
+            Debug.LogError("Hex.messageNoUITextPrefab is not assigned in the Inspector; floating message text disabled.");
+            return false;
+        }
+
+        Transform textRoot = Instantiate(messageNoUITextPrefab, transform, false).transform;
+        textRoot.name = "MessageNoUIText";
+        messageNoUI = textRoot.GetComponent<TextMeshPro>();
+        ApplyCurrentFont(messageNoUI);
+        return messageNoUI != null;
+    }
+
     /// <summary>Used by MessageDisplayNoUI for per-hex floating text.</summary>
     public TextMeshPro GetOrCreateMessageText()
     {
-        if (messageNoUI == null) EnsureHoverPanel();
+        if (messageNoUI == null) EnsureMessageNoUIText();
         return messageNoUI;
     }
 

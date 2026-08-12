@@ -14,7 +14,6 @@ public class MessageDisplay : MonoBehaviour
     [SerializeField] private TextMeshProUGUI messageText;
     [SerializeField] private float displayDuration = 0.08f;
     [SerializeField] private float fadeDuration = 0.02f;
-    [SerializeField] private ShowMode showMode = ShowMode.Both;
 
     private Queue<MessageData> messageQueue = new Queue<MessageData>();
     private bool isDisplayingMessage = false;
@@ -33,9 +32,17 @@ public class MessageDisplay : MonoBehaviour
         instance = this;
         DontDestroyOnLoad(gameObject);
 
-        // Hide message initially
+        // messageText itself stays enabled permanently; the canvas group governs visibility
+        // (alpha for the fade, interactable/blocksRaycasts for hit-testing) instead.
+        messageText.enabled = true;
         canvasGroup.alpha = 0f;
-        messageText.enabled = false;
+        SetCanvasGroupVisible(false);
+    }
+
+    private void SetCanvasGroupVisible(bool visible)
+    {
+        canvasGroup.interactable = visible;
+        canvasGroup.blocksRaycasts = visible;
     }
 
     /// <summary>
@@ -43,11 +50,7 @@ public class MessageDisplay : MonoBehaviour
     /// </summary>
     /// <param name="message">Text message to display</param>
     /// <param name="color">Color for the text (defaults to white if not specified)</param>
-    // suppressIcon lets a caller that already manages its own event icon (e.g. the discovery/
-    // reveal notifications in DeckManager, which use a dedicated icon type with camera-focus
-    // behavior) show the immediate text without Both mode piling on a second, redundant
-    // HexMessage icon.
-    public static void ShowMessage(string message, Color? color = null, bool forceImmediate = false, bool suppressIcon = false)
+    public static void ShowMessage(string message, Color? color = null, bool forceImmediate = false, bool logToWidget = true)
     {
         Game game = Game.Instance;
         if (game == null) return;
@@ -67,39 +70,14 @@ public class MessageDisplay : MonoBehaviour
             Sounds.Instance?.PlayMessage();
         }
 
-        bool immediate = forceImmediate || instance.showMode is ShowMode.OnlyImmediate or ShowMode.Both;
-        bool viaIcon = !suppressIcon && instance.showMode is ShowMode.OnlyEventIcon or ShowMode.Both;
+        if (forceImmediate) instance.ShowNow(formattedMessage, resolved);
+        else instance.EnqueueMessage(formattedMessage, resolved);
 
-        void Present()
+        // Callers that log their own (more specific) category right after this call pass
+        // logToWidget: false, so the event doesn't also show up here as a plain Notification.
+        if (logToWidget)
         {
-            if (forceImmediate) instance.ShowNow(formattedMessage, resolved);
-            else instance.EnqueueMessage(formattedMessage, resolved);
-        }
-
-        if (immediate) Present();
-
-        if (viaIcon)
-        {
-            EventIconsManager iconsManager = EventIconsManager.FindManager();
-            if (iconsManager != null)
-            {
-                EventIcon icon = null;
-                icon = iconsManager.AddEventIcon(
-                    EventIconType.HexMessage,
-                    true,
-                    () =>
-                    {
-                        // Always re-present on click, even if the message already flashed by
-                        // immediately (Both mode) - otherwise the icon is a void click once the
-                        // immediate toast has already faded.
-                        Present();
-                        icon?.ConsumeAndDestroy();
-                    });
-            }
-            else if (!immediate)
-            {
-                Present();
-            }
+            LogManager.Log(LogCategory.Notification, game.currentlyPlaying?.characterName, null, message);
         }
     }
 
@@ -236,7 +214,7 @@ public class MessageDisplay : MonoBehaviour
     private IEnumerator DisplayCoroutine(string message, Color textColor)
     {
         isDisplayingMessage = true;
-        messageText.enabled = true;
+        SetCanvasGroupVisible(true);
 
         // Set up the message
         messageText.text = message;
@@ -253,7 +231,7 @@ public class MessageDisplay : MonoBehaviour
         // Fade out
         yield return FadeCanvasGroup(canvasGroup, 1f, 0f, fadeDuration);
 
-        messageText.enabled = false;
+        SetCanvasGroupVisible(false);
 
         // Process the next message in the queue if there is one
         ProcessNextMessage();
@@ -310,10 +288,10 @@ public class MessageDisplay : MonoBehaviour
         isDisplayingMessage = false;
         persistentActive = true;
 
-        messageText.enabled = true;
         messageText.text = message;
         messageText.color = textColor;
         canvasGroup.alpha = 1f;
+        SetCanvasGroupVisible(true);
     }
 
     private void RemovePersistent()
@@ -325,8 +303,8 @@ public class MessageDisplay : MonoBehaviour
         }
         persistentActive = false;
         messageText.text = "";
-        messageText.enabled = false;
         canvasGroup.alpha = 0f;
+        SetCanvasGroupVisible(false);
 
         // Anything enqueued while the persistent banner was up (ProcessNextMessage bails out
         // early whenever persistentActive is true) was left sitting in the queue with nothing

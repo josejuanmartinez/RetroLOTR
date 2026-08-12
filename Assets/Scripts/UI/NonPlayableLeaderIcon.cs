@@ -125,25 +125,7 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
             true
         );
 
-        EventIconsManager iconsManager = EventIconsManager.FindManager();
-        if (iconsManager != null)
-        {
-            iconsManager.AddEventIcon(
-                EventIconType.LeaderRevealed,
-                true,
-                () => {
-                    PopupManager.Show(
-                        $"{nonPlayableLeader.characterName} discovered",
-                        FindFirstObjectByType<Illustrations>().GetIllustrationByName(player.characterName),
-                        FindFirstObjectByType<Illustrations>().GetIllustrationByName(nonPlayableLeader.characterName),
-                        sb.ToString(),
-                        true
-                    );
-                },
-                null,
-                leaderSprite
-            );
-        }
+        LogManager.Log(LogCategory.Event, nonPlayableLeader.characterName, player.characterName, $"{nonPlayableLeader.characterName} reveals themselves!");
 
         isUnrevealed = false;
     }

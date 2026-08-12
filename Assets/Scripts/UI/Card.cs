@@ -1018,9 +1018,6 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         }
 
         CardData playedCard = cardData;
-        Sprite playedSprite = cardArtImage != null && cardArtImage.sprite != null
-            ? cardArtImage.sprite
-            : ResolveCardArtwork(playedCard);
         IsPlayInProgress = true;
 
         if (!deckManager.TryConsumeCard(playerLeader, playedCard.name, false, out CardData consumedCard))
@@ -1033,7 +1030,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         EnvironmentalCardManager.GetOrCreate().SetActiveCard(activeCard);
         playerLeader.RecordPlayedCard(activeCard);
         playerLeader.RecordEnvironmentalCardPlayed(game.turn);
-        selected?.RecordPlayedCard(activeCard, playedSprite);
+        selected?.RecordPlayedCard(activeCard);
 
         if (selected?.hex != null)
             MessageDisplayNoUI.ShowMessage(selected.hex, selected, $"{activeCard.name} takes hold — effects begin next turn", Color.green);
@@ -1061,7 +1058,6 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         Leader resourceOwner = GetHumanPlayerLeader();
         CardData playedCard = cardData;
         Character playedSelected = selected;
-        Sprite playedSprite = cardArtImage != null && cardArtImage.sprite != null ? cardArtImage.sprite : ResolveCardArtwork(playedCard);
         bool actionConditionsMet = true;
         string actionRef = playedCard.GetActionRef();
         if (!string.IsNullOrWhiteSpace(actionRef) && actionsManager != null && playedSelected != null)
@@ -1163,7 +1159,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         if (success)
         {
-            playedSelected?.RecordPlayedCard(playedCard, playedSprite);
+            playedSelected?.RecordPlayedCard(playedCard);
 
             if (actionRollFailed)
             {

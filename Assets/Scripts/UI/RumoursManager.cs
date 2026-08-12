@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 
 public struct Rumour
 {
@@ -17,17 +16,9 @@ public class RumoursManager : MonoBehaviour
 {
     public static RumoursManager Instance { get; private set; }
 
-    [Header("Config")]
-    public int rumoursShown = 25;
-
-    [Header("References")]
-    public GameObject rumourIconPrefab;
-    public GridLayoutGroup rumoursGridLayout;
-    public CanvasGroup rumoursCanvasGroup;
-
     private List<Rumour> rumours = new();
     private List<Rumour> privateRumours = new();
-    
+
     private Game game;
     private void Awake()
     {
@@ -42,36 +33,7 @@ public class RumoursManager : MonoBehaviour
         game = Game.Instance;
     }
 
-    public void Show()
-    {
-        if (rumours.Count < 1)
-        {
-            _ = ConfirmationDialog.AskOk("No rumours yet. Hear Stories with an Emmissary to get information about the world");
-            return;
-        }
-
-        if (rumoursCanvasGroup != null)
-        {
-            rumoursCanvasGroup.alpha = 1f;
-            rumoursCanvasGroup.interactable = true;
-            rumoursCanvasGroup.blocksRaycasts = true;
-        }
-
-        MarkAllPublicRumoursSeen();
-    }
-
-    public void Close()
-    {
-        if (rumoursCanvasGroup != null)
-        {
-            rumoursCanvasGroup.alpha = 0f;
-            rumoursCanvasGroup.interactable = false;
-            rumoursCanvasGroup.blocksRaycasts = false;
-            return;
-        }
-    }
-
-    public static void AddRumour(Rumour rumour, bool isPublic)
+    public static void AddRumour(Rumour rumour, bool isPublic, bool logToWidget = true)
     {
         if (!EnsureInstance(nameof(AddRumour)))
             return;
@@ -80,8 +42,13 @@ public class RumoursManager : MonoBehaviour
         {
             rumour.seen = false;
             Instance.rumours.Add(rumour);
-            UpdateRumourText();
-            RefreshNewRumoursUI();
+            // Callers that already displayed this exact event another way (see
+            // MessageDisplayNoUI.ShowMessage) pass logToWidget: false, so it's still recorded
+            // here for GetRumours/spying without also duplicating that line in the log widget.
+            if (logToWidget)
+            {
+                LogManager.Log(LogCategory.Rumour, rumour.leader?.characterName, rumour.characterName, rumour.rumour);
+            }
         }
         else
         {
@@ -120,8 +87,7 @@ public class RumoursManager : MonoBehaviour
 
         rumour.seen = false;
         Instance.rumours.Add(rumour);
-        UpdateRumourText();
-        RefreshNewRumoursUI();
+        LogManager.Log(LogCategory.Rumour, rumour.leader?.characterName, rumour.characterName, rumour.rumour);
     }
 
 
@@ -180,96 +146,7 @@ public class RumoursManager : MonoBehaviour
         
         toRemove.ForEach(x => Instance.privateRumours.RemoveAt(x));
 
-        UpdateRumourText();
-        RefreshNewRumoursUI();
         return totalRumours;
-    }
-
-    public static int GetUnseenRumoursCount(Leader leader)
-    {
-        if (leader == null || !EnsureInstance(nameof(GetUnseenRumoursCount)))
-            return 0;
-
-        int count = 0;
-        for (int i = 0; i < Instance.rumours.Count; i++)
-        {
-            Rumour rumour = Instance.rumours[i];
-            if (rumour.leader == leader && !rumour.seen)
-            {
-                count++;
-            }
-        }
-
-        return count;
-    }
-
-    /// <summary>
-    /// Updates the textWidget to show up to MAX_RUMOURS_SHOWN latest rumours.
-    /// </summary>
-    private static void UpdateRumourText()
-    {
-        if (!EnsureInstance(nameof(UpdateRumourText)))
-            return;
-
-        if (!Instance.game.IsPlayerCurrentlyPlaying()) return;
-
-        if (Instance.rumourIconPrefab == null || Instance.rumoursGridLayout == null)
-            return;
-
-        for (int i = Instance.rumoursGridLayout.transform.childCount - 1; i >= 0; i--)
-        {
-            Destroy(Instance.rumoursGridLayout.transform.GetChild(i).gameObject);
-        }
-
-        if (Instance.rumours.Count == 0)
-            return;
-
-        int toShow = Mathf.Min(Instance.rumoursShown, Instance.rumours.Count);
-        int startIndex = Instance.rumours.Count - toShow;
-        List<Rumour> recentRumours = Instance.rumours.GetRange(startIndex, toShow);
-
-        for (int i = 0; i < recentRumours.Count; i++)
-        {
-            Rumour rumour = recentRumours[i];
-            string formatted = FormatRumourText(rumour);
-            if (string.IsNullOrWhiteSpace(formatted)) continue;
-
-            Character iconCharacter = rumour.character != null ? rumour.character : rumour.leader;
-            CharacterIconWithTextAndRumour icon = Instantiate(Instance.rumourIconPrefab, Instance.rumoursGridLayout.transform).GetComponent<CharacterIconWithTextAndRumour>();
-            icon.Initialize(iconCharacter, formatted);
-        }
-    }
-
-    private static string FormatRumourText(Rumour rumour)
-    {
-        string leaderName = rumour.leader?.characterName ?? "Unknown";
-        string body = string.IsNullOrWhiteSpace(rumour.rumour) ? string.Empty : rumour.rumour.Trim();
-        if (string.IsNullOrEmpty(body)) return string.Empty;
-        return $"[{leaderName}] {body}";
-    }
-
-    private void MarkAllPublicRumoursSeen()
-    {
-        if (rumours.Count == 0) return;
-
-        for (int i = 0; i < rumours.Count; i++)
-        {
-            Rumour rumour = rumours[i];
-            if (rumour.seen) continue;
-            rumour.seen = true;
-            rumours[i] = rumour;
-        }
-
-        RefreshNewRumoursUI();
-    }
-
-    private static void RefreshNewRumoursUI()
-    {
-        if (!EnsureInstance(nameof(RefreshNewRumoursUI)))
-            return;
-
-        PlayableLeaderIcons icons = FindFirstObjectByType<PlayableLeaderIcons>();
-        if (icons != null) icons.RefreshNewRumoursCounts();
     }
 
     private static bool EnsureInstance(string caller)

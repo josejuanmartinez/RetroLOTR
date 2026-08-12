@@ -78,7 +78,9 @@
       "Bash(python3 -c \"import uuid; print\\(uuid.uuid4\\(\\).hex\\)\")",
       "Bash(node -e \"console.log\\(require\\('crypto'\\).randomBytes\\(16\\).toString\\('hex'\\)\\)\")",
       "Bash(powershell -Command \"[guid]::NewGuid\\(\\).ToString\\('N'\\)\")",
-      "Bash(python3 \"C:/Users/jjmca/AppData/Local/Temp/claude/c--Users-jjmca-RetroLOTR/62816b91-bdf7-4a06-9789-7287b4d792f4/scratchpad/migrate_biomes.py\" \"Assets/Resources/PlayableLeaderBiomes.json\" \"Assets/Resources/NonPlayableLeaderBiomes.json\")"
+      "Bash(python3 \"C:/Users/jjmca/AppData/Local/Temp/claude/c--Users-jjmca-RetroLOTR/62816b91-bdf7-4a06-9789-7287b4d792f4/scratchpad/migrate_biomes.py\" \"Assets/Resources/PlayableLeaderBiomes.json\" \"Assets/Resources/NonPlayableLeaderBiomes.json\")",
+      "Bash(xargs grep -l \"16e53e41b83e36849850051d5a7d89cf\")",
+      "Bash(xargs grep -l \"MessageDisplayNoUI\")"
     ]
   }
 }

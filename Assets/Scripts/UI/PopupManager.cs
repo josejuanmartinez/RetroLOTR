@@ -154,37 +154,14 @@ public class PopupManager : MonoBehaviour
 
     public static void Show(string title, Sprite spriteActor1, Sprite spriteActor2, string text, bool typeWrite, int restrictHeight = 0, Action onClose = null)
     {
-        ShowWithIconType(EventIconType.Story, title, spriteActor1, spriteActor2, text, typeWrite, restrictHeight, onClose);
+        if (Instance == null) return;
+        Instance.Initialize(title, spriteActor1, spriteActor2, text, typeWrite, restrictHeight, onClose);
     }
 
     public static void ShowImmediate(string title, Sprite spriteActor1, Sprite spriteActor2, string text, bool typeWrite, int restrictHeight = 0, Action onClose = null)
     {
         if (Instance == null) return;
         Instance.InitializeInternal(title, spriteActor1, spriteActor2, text, typeWrite, restrictHeight, onClose, true);
-    }
-
-    public static void ShowWithIconType(EventIconType iconType, string title, Sprite spriteActor1, Sprite spriteActor2, string text, bool typeWrite, int restrictHeight = 0, Action onClose = null)
-    {
-        if (Instance == null) return;
-
-        EventIconsManager iconsManager = EventIconsManager.FindManager();
-        if (iconsManager == null)
-        {
-            Instance.Initialize(title, spriteActor1, spriteActor2, text, typeWrite, restrictHeight, onClose);
-            return;
-        }
-
-        EventIcon icon = null;
-        Action wrappedClose = () =>
-        {
-            onClose?.Invoke();
-            icon?.ConsumeAndDestroy();
-        };
-
-        icon = iconsManager.AddEventIcon(
-            iconType,
-            true,
-            () => Instance.Initialize(title, spriteActor1, spriteActor2, text, typeWrite, restrictHeight, wrappedClose));
     }
 
     public static void HidePopup()

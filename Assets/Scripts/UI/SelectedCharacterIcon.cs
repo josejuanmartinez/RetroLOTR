@@ -46,10 +46,6 @@ public class SelectedCharacterIcon : MonoBehaviour
     [FormerlySerializedAs("artifactsGridLayoutTransform")]
     public Transform artifactStatusGridLayoutTransform;
 
-    [Header("Played cards")]
-    [SerializeField] private CanvasGroup cardCanvasGroup;
-    [SerializeField] public GameObject playedCard;
-
     [Header("Card Bloom Hint")]
     [Tooltip("Idle pulse range (0-255 alpha) of the concentric circles, inviting the mouse over.")]
     [Range(0, 255)][SerializeField] private int circlesPulseAlphaMin = 56;
@@ -78,14 +74,10 @@ public class SelectedCharacterIcon : MonoBehaviour
 
     public Character CurrentCharacter { get; private set; }
     private readonly List<ArtifactRenderer> artifactStatusRenderers = new();
-    private readonly List<GameObject> playedCardInstances = new();
     private string hoveredPreviewCardName;
 
     private void Awake()
     {
-        BindPlayedCardTemplate();
-        ClearPlayedCardInstances();
-        SetPlayedCardVisible(false);
         if (icon != null && icon.GetComponent<CharacterShineEffect>() == null)
             icon.gameObject.AddComponent<CharacterShineEffect>();
     }
@@ -327,7 +319,6 @@ public class SelectedCharacterIcon : MonoBehaviour
         RefreshArtifactStatusItems(c.objects, c);
 
         RefreshMovementLeft(c);
-        RefreshPlayedCards(c);
         if (!isHover) RefreshOtherCharacters(c);
     }
 
@@ -398,9 +389,6 @@ public class SelectedCharacterIcon : MonoBehaviour
         if (showHealth) health.fillAmount = c.health / 100f;
 
         RefreshArtifactStatusItems(showArtifacts ? c.objects : null, showArtifacts ? c : null);
-
-        ClearPlayedCardInstances();
-        SetPlayedCardVisible(false);
     }
 
 
@@ -427,8 +415,6 @@ SetVisible(true);
 
         health.gameObject.SetActive(false);
         RefreshArtifactStatusItems(null, null);
-        ClearPlayedCardInstances();
-        SetPlayedCardVisible(false);
     }
 
     private Sprite ResolveArmySprite(Army army)
@@ -467,8 +453,6 @@ SetVisible(true);
         actioned.SetActive(false);
         moved.SetActive(false);
         health.gameObject.SetActive(false);
-        ClearPlayedCardInstances();
-        SetPlayedCardVisible(false);
         CurrentCharacter = null;
         RefreshOtherCharacters(null);
     }
@@ -598,104 +582,6 @@ SetVisible(true);
         }
     }
 
-    private void RefreshPlayedCards(Character c)
-    {
-        ClearPlayedCardInstances();
-
-        if (c == null || c.playedCardSpritesThisTurn == null || c.playedCardSpritesThisTurn.Count == 0)
-        {
-            SetPlayedCardVisible(false);
-            return;
-        }
-
-        BindPlayedCardTemplate();
-        if (playedCard == null)
-        {
-            SetPlayedCardVisible(false);
-            return;
-        }
-
-        Transform parent = cardCanvasGroup != null ? cardCanvasGroup.transform : playedCard.transform.parent;
-        if (parent == null)
-        {
-            SetPlayedCardVisible(false);
-            return;
-        }
-
-        playedCard.SetActive(false);
-        for (int i = 0; i < c.playedCardSpritesThisTurn.Count; i++)
-        {
-            Sprite playedSprite = c.playedCardSpritesThisTurn[i];
-            if (playedSprite == null) continue;
-
-            GameObject instance = Instantiate(playedCard, parent);
-            instance.name = $"PlayedCard_{i + 1}";
-            instance.SetActive(true);
-
-            PlayedCard playedCardComponent = instance.GetComponent<PlayedCard>();
-            playedCardComponent?.Initialize(playedSprite);
-
-            playedCardInstances.Add(instance);
-        }
-
-        SetPlayedCardVisible(playedCardInstances.Count > 0);
-    }
-
-    private void SetPlayedCardVisible(bool visible)
-    {
-        if (cardCanvasGroup != null)
-        {
-            cardCanvasGroup.alpha = visible ? 1f : 0f;
-            cardCanvasGroup.interactable = visible;
-            cardCanvasGroup.blocksRaycasts = visible;
-        }
-    }
-
-    private void BindPlayedCardTemplate()
-    {
-        if (playedCard != null)
-        {
-            playedCard.SetActive(false);
-            if (cardCanvasGroup == null)
-            {
-                Transform parent = playedCard.transform.parent;
-                if (parent != null)
-                {
-                    cardCanvasGroup = parent.GetComponent<CanvasGroup>();
-                    if (cardCanvasGroup == null)
-                    {
-                        cardCanvasGroup = parent.gameObject.AddComponent<CanvasGroup>();
-                    }
-                }
-            }
-            return;
-        }
-
-        Transform[] children = GetComponentsInChildren<Transform>(true);
-        for (int i = 0; i < children.Length; i++)
-        {
-            Transform child = children[i];
-            if (child != null && string.Equals(child.name, "playedCard", System.StringComparison.OrdinalIgnoreCase))
-            {
-                playedCard = child.gameObject;
-                playedCard.SetActive(false);
-                if (cardCanvasGroup == null)
-                {
-                    Transform parent = child.parent;
-                    if (parent != null)
-                    {
-                        cardCanvasGroup = parent.GetComponent<CanvasGroup>();
-                        if (cardCanvasGroup == null)
-                        {
-                            cardCanvasGroup = parent.gameObject.AddComponent<CanvasGroup>();
-                        }
-                    }
-                }
-                break;
-            }
-        }
-    }
-
     private void RefreshOtherCharacters(Character c)
     {
         if (otherCharacters == null) return;
@@ -711,19 +597,6 @@ SetVisible(true);
             icons.BuildIconsForPlayerExcluding(owner, c);
         else
             icons.BuildIconsForPlayer(owner);
-    }
-
-    private void ClearPlayedCardInstances()
-    {
-        for (int i = 0; i < playedCardInstances.Count; i++)
-        {
-            GameObject instance = playedCardInstances[i];
-            if (instance != null)
-            {
-                Destroy(instance);
-            }
-        }
-        playedCardInstances.Clear();
     }
 
     private void RefreshArtifactStatusItems(List<CardData> artifacts, Character c)
@@ -748,9 +621,13 @@ SetVisible(true);
         CardData activeEnvironmentalCard = EnvironmentalCardManager.Instance?.ActiveCard;
         if (activeEnvironmentalCard != null && c != null && !c.IsImmuneToNegativeEnvironmentalCards())
         {
-            string hover = string.IsNullOrWhiteSpace(activeEnvironmentalCard.description)
+            // Environmental cards carry their mechanical effect in actionEffect, not
+            // description (which is typically blank for them) — GetDescriptionBody() is the
+            // same resolver the card's own face/tooltip uses, so this stays in sync with it.
+            string effectText = activeEnvironmentalCard.GetDescriptionBody();
+            string hover = string.IsNullOrWhiteSpace(effectText)
                 ? activeEnvironmentalCard.name
-                : $"{activeEnvironmentalCard.name}: {activeEnvironmentalCard.description}";
+                : $"{activeEnvironmentalCard.name}: {effectText}";
             items.Add((activeEnvironmentalCard.GetSpriteString(), hover));
         }
 

@@ -29,6 +29,9 @@ public class Colors : SearcherByName
     [FormerlySerializedAs("spellCard")] public Color spell;
     public Color encounter;
     public Color environmental;
+    public Color logNotification = new Color(0.55f, 0.85f, 1f);
+    public Color logRumour = new Color(0.85f, 0.55f, 1f);
+    public Color logEvent = new Color(1f, 0.75f, 0.3f);
     public Color MAX;
 
     private Dictionary<string, FieldInfo> normalizedLookup;

@@ -28,31 +28,9 @@ public class EventIconsManager : MonoBehaviour
     {
         bool isRevealed = targetHex != null && targetHex.IsHexRevealed();
         Hex immediateHex = isRevealed ? targetHex : fallbackHex;
-        // Nothing to anchor the text to at all - skip the icon too, rather than leaving a
-        // void click behind that can never show anything.
         if (immediateHex == null) return;
 
-        // Both is the default presentation: show the anchored text immediately as well as
-        // leaving a persistent, navigable event icon behind for revisiting it later.
         MessageDisplayNoUI.ShowAnchoredMessage(immediateHex, message, color, true);
-
-        EventIconsManager iconsManager = FindManager();
-        if (iconsManager == null) return;
-
-        EventIcon icon = null;
-        icon = iconsManager.AddEventIcon(type, true, () =>
-        {
-            if (isRevealed && BoardNavigator.Instance != null)
-            {
-                BoardNavigator.Instance.EnqueueMessageFocus(targetHex, () =>
-                    MessageDisplayNoUI.ShowAnchoredMessage(targetHex, message, color, true));
-            }
-            else if (fallbackHex != null)
-            {
-                MessageDisplayNoUI.ShowAnchoredMessage(fallbackHex, message, color, true);
-            }
-            icon?.ConsumeAndDestroy();
-        });
     }
 
     public EventIcon AddEventIcon(EventIconType type, bool discardable, Action onOpen)
