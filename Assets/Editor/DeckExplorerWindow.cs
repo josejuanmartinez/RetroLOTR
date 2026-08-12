@@ -82,7 +82,6 @@ public class DeckExplorerWindow : EditorWindow
     private int editedCharacterEmissary;
     private int editedCharacterMage;
     private string editedStartingPC = string.Empty;
-    private int editedAmount;
     private CardTypeEnum editedCardType;
     private CardSituationEnum editedSituation;
     private string editedName = string.Empty;
@@ -524,9 +523,6 @@ public class DeckExplorerWindow : EditorWindow
             }
             EditorGUILayout.EndHorizontal();
         }
-
-        GUILayout.Space(4);
-        editedAmount = EditorGUILayout.IntField("Amount (copies)", editedAmount);
 
         GUILayout.Space(4);
         editedCommanderSkillRequired = EditorGUILayout.IntField("Commander", editedCommanderSkillRequired);
@@ -991,7 +987,6 @@ public class DeckExplorerWindow : EditorWindow
         editedCharacterEmissary = Mathf.Max(0, card.emmissary);
         editedCharacterMage = Mathf.Max(0, card.mage);
         editedStartingPC = card.startingPC ?? string.Empty;
-        editedAmount = Mathf.Max(1, card.amount);
         editedCardType = card.GetCardType();
         editedSituation = card.GetSituation();
         editedActionEffect = card.actionEffect ?? string.Empty;
@@ -1063,7 +1058,6 @@ public class DeckExplorerWindow : EditorWindow
             target = card;
         }
 
-        target.amount = Mathf.Max(1, editedAmount);
         target.commanderSkillRequired = Mathf.Max(0, editedCommanderSkillRequired);
         target.agentSkillRequired = Mathf.Max(0, editedAgentSkillRequired);
         target.emissarySkillRequired = Mathf.Max(0, editedEmissarySkillRequired);

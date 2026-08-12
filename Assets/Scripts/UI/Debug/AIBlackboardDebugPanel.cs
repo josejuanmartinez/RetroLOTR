@@ -2,31 +2,78 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-// Runtime debug overlay — Ctrl+Tab toggles a top-right panel where typing a character's name
-// and pressing Enter (or the Show button) renders that character's current CharacterBlackboard:
-// the active HTN branch/leaf, its preferred-parameter scores, category viability, the resolved
-// target hex, and a live re-score of which cards would currently be most suitable.
+// Runtime debug overlay / cheat engine — Ctrl+Tab toggles a top-right panel. Typing narrows
+// the character search dropdown (refreshed with every character in the scene each time the
+// panel opens); picking one and clicking Show renders that character's current
+// CharacterBlackboard: the active HTN branch/leaf, its preferred-parameter scores, category
+// viability, the resolved target hex, and a live re-score of which cards would currently be
+// most suitable. The card dropdown + Play Card button below lists every card that scoring
+// pass found playable for this character and force-plays whichever one is selected, through
+// the exact same AITurnController path a real AI pick takes (deck consumption, map reveal,
+// environmental bookkeeping, everything) — see OnPlayCard.
 //
 // Entirely self-built at runtime (no prefab/scene wiring) — bootstrapped via
 // RuntimeInitializeOnLoadMethod so dropping this script into the project is enough; no manual
 // scene setup required.
 //
-// Otherwise read-only: it only reads whatever the blackboard already holds from the AI's last
-// real turn, plus fresh (non-mutating) UtilityAIContext/ScoreFullDeck snapshots. The one
-// exception is a character that has never been processed by an AI turn yet (no blackboard) —
-// rather than just reporting that, it triggers a real AITurnController.AdvanceHtnStrategy
-// evaluation on the spot so the panel always shows a live result instead of "nothing yet".
+// The report itself stays read-only: it only reads whatever the blackboard already holds from
+// the AI's last real turn, plus fresh (non-mutating) UtilityAIContext/ScoreFullDeck snapshots.
+// The one exception on the read side is a character that has never been processed by an AI turn
+// yet (no blackboard) — rather than just reporting that, it triggers a real
+// AITurnController.AdvanceHtnStrategy evaluation on the spot so the panel always shows a live
+// result instead of "nothing yet". The Play Card button is the one deliberately mutating action
+// this panel exposes.
 public class AIBlackboardDebugPanel : MonoBehaviour
 {
     private const int MaxSuitableCardsShown = 12;
 
     private GameObject panelRoot;
-    private TMP_InputField nameInput;
     private TMP_Text reportText;
+    private TMP_InputField characterSearchInput;
+    private TMP_Dropdown characterDropdown;
+    private Button showButton;
+    private TMP_InputField cardSearchInput;
+    private TMP_Dropdown cardDropdown;
+    private Button playButton;
+
+    // Refreshed from the scene every time the panel opens (see Update's Ctrl+Tab toggle) —
+    // characters can die/spawn/change hands between panel opens, so this is deliberately not
+    // cached longer than one open/close cycle. Never filtered in place — characterSearchInput
+    // narrows it into displayedCharacters instead (see ApplyCharacterFilter).
+    private List<Character> allCharacters;
+
+    // The subset of allCharacters currently shown in characterDropdown, narrowed by
+    // characterSearchInput's text. characterDropdown.value indexes directly into this list.
+    private List<Character> displayedCharacters;
+
+    // The character the report is currently showing — set when Show is clicked, independent of
+    // whatever characterDropdown/displayedCharacters happen to hold afterward (e.g. after
+    // OnPlayCard re-runs BuildReport to refresh the same character's report post-play).
+    private Character currentCharacter;
+
+    // Populated by the last successful BuildReport call — the same ScoreFullDeck result the
+    // report's "Cards that would be suitable now" section already computed, just kept around
+    // (sorted descending by score, full list rather than the report's MaxSuitableCardsShown-
+    // capped view) so the dropdown has something to offer without re-scoring. Never filtered in
+    // place — cardSearchInput narrows it into displayedCards instead, so typing a search never
+    // throws away cards outside the current filter.
+    private List<(CardData card, float score)> lastScoredCards;
+
+    // The subset of lastScoredCards currently shown in cardDropdown, narrowed by
+    // cardSearchInput's text (see ApplyCardFilter). cardDropdown.value indexes directly into
+    // this list, so the two must always be kept in the same order.
+    private List<(CardData card, float score)> displayedCards;
+    private Leader lastLeader;
+    private Character lastCharacter;
+    private ActionsManager lastActionsManager;
+    private UtilityAIContext.PrecomputedData? lastPrecomputed;
+    private string lastActiveHtnTaskId;
+    private Hex lastActiveHtnTargetHex;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void Bootstrap()
@@ -46,38 +93,218 @@ public class AIBlackboardDebugPanel : MonoBehaviour
     private void Update()
     {
         bool ctrl = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
-        if (ctrl && Input.GetKeyDown(KeyCode.Tab))
+        // Ctrl+Shift+Tab is KeyManager's autoplay toggle — excluding shift here keeps that
+        // shortcut from also popping this panel open.
+        bool shift = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+        if (ctrl && !shift && Input.GetKeyDown(KeyCode.Tab))
         {
-            panelRoot.SetActive(!panelRoot.activeSelf);
-            if (panelRoot.activeSelf) nameInput.ActivateInputField();
+            bool willBeActive = !panelRoot.activeSelf;
+            panelRoot.SetActive(willBeActive);
+            if (willBeActive)
+            {
+                RefreshCharacterList();
+                characterSearchInput.ActivateInputField();
+            }
         }
     }
 
-    private void OnSubmit()
+    // Rebuilds allCharacters from the scene and re-applies whatever search text is currently
+    // in the box — called on every panel open so a stale roster (deaths, new spawns, changed
+    // ownership) never lingers from a previous session.
+    private void RefreshCharacterList()
     {
+        allCharacters = FindObjectsByType<Character>(FindObjectsSortMode.None)
+            .Where(c => c != null && !c.killed && !string.IsNullOrWhiteSpace(c.characterName))
+            .OrderBy(c => c.characterName, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+        ApplyCharacterFilter(characterSearchInput != null ? characterSearchInput.text : string.Empty);
+    }
+
+    // Narrows allCharacters by substring match (case-insensitive, empty = everything) into
+    // displayedCharacters and repopulates characterDropdown from it — same pattern as
+    // ApplyCardFilter below. Options are labeled with the owner too since character names
+    // are not guaranteed unique across leaders (e.g. multiple "Gloin"s).
+    private void ApplyCharacterFilter(string filterText)
+    {
+        characterDropdown.ClearOptions();
+
+        displayedCharacters = allCharacters == null
+            ? new List<Character>()
+            : allCharacters.Where(c => string.IsNullOrWhiteSpace(filterText)
+                || c.characterName.IndexOf(filterText, StringComparison.OrdinalIgnoreCase) >= 0)
+                .ToList();
+
+        if (displayedCharacters.Count == 0)
+        {
+            characterDropdown.AddOptions(new List<string> { allCharacters is { Count: > 0 } ? "(no match)" : "(no characters)" });
+            characterDropdown.interactable = false;
+            return;
+        }
+
+        characterDropdown.AddOptions(displayedCharacters.Select(DescribeCharacterOption).ToList());
+        characterDropdown.interactable = true;
+        characterDropdown.value = 0;
+        characterDropdown.RefreshShownValue();
+    }
+
+    private static string DescribeCharacterOption(Character character)
+    {
+        Leader owner = character.GetOwner();
+        return $"{character.characterName} ({(owner != null ? owner.characterName : "no owner")})";
+    }
+
+    private void OnShowCharacter()
+    {
+        if (displayedCharacters == null || displayedCharacters.Count == 0) return;
+        int index = characterDropdown.value;
+        if (index < 0 || index >= displayedCharacters.Count) return;
+        Character character = displayedCharacters[index];
+        if (character == null) return;
+
+        currentCharacter = character;
         try
         {
-            reportText.text = BuildReport(nameInput.text);
+            reportText.text = BuildReport(character);
         }
         catch (Exception e)
         {
             reportText.text = $"<color=#ff6666>Error building report: {e.Message}</color>";
+            lastScoredCards = null;
+        }
+        // A fresh character lookup invalidates whatever the search box was narrowed down to
+        // for the previous one.
+        cardSearchInput.SetTextWithoutNotify(string.Empty);
+        ApplyCardFilter(string.Empty);
+    }
+
+    private async void OnPlayCard()
+    {
+        if (displayedCards == null || displayedCards.Count == 0) return;
+        if (lastLeader == null || lastCharacter == null) return;
+
+        int index = cardDropdown.value;
+        if (index < 0 || index >= displayedCards.Count) return;
+        CardData chosenCard = displayedCards[index].card;
+        if (chosenCard == null) return;
+
+        playButton.interactable = false;
+        try
+        {
+            await PresentCardPlayAnimationAsync(chosenCard, lastCharacter);
+            UtilityAIContext context = await AITurnController.ExecuteChosenCardAsync(
+                lastLeader, lastCharacter, lastActionsManager, lastPrecomputed, chosenCard,
+                lastActiveHtnTaskId, lastActiveHtnTargetHex);
+            Game.Instance?.RefreshPlayerControlState();
+
+            // ExecuteChosenCardAsync silently falls back to a Pass on failure (see its own
+            // implementation) — the animation above already played regardless, so without this
+            // check a rejected play looks identical to a successful one from this panel alone.
+            bool succeeded = context?.LastChosenAction != null && context.LastChosenAction.LastExecutionSucceeded;
+            string report = BuildReport(currentCharacter);
+            reportText.text = succeeded ? report : BuildPlayFailureNote(chosenCard, lastLeader) + "\n\n" + report;
+        }
+        catch (Exception e)
+        {
+            reportText.text = $"<color=#ff6666>Error playing card: {e.Message}</color>";
+        }
+        finally
+        {
+            // Keep whatever the operator had typed rather than resetting it — BuildReport just
+            // rescored a fresh lastScoredCards above, so this both repopulates the dropdown and
+            // re-applies the still-active search term to it.
+            ApplyCardFilter(cardSearchInput.text);
         }
     }
 
-    // ------------------------------------------------------------------
-    // Report content — read-only inspection only, see class header.
-    // ------------------------------------------------------------------
-
-    private static string BuildReport(string typedName)
+    // ExecuteChosenCardAsync/TryExecuteChosenActionAsync give no reason on failure — this
+    // covers the one Environmental-specific gate (PrepareActionForExecution,
+    // UtilityAIContext.cs) that scoring itself doesn't pre-filter for a card that was
+    // playable when scored but stopped being playable by the time Play Card was clicked
+    // (e.g. this leader's one-environmental-card-per-turn allowance got used up in between —
+    // by a real AI turn elsewhere, or an earlier cheat-engine play this same turn).
+    private static string BuildPlayFailureNote(CardData card, Leader leader)
     {
-        if (string.IsNullOrWhiteSpace(typedName)) return "Type a character name and press Enter.";
+        string reason = card != null && card.GetCardType() == CardTypeEnum.Environmental
+            && leader != null && leader.HasPlayedEnvironmentalCardThisTurn()
+            ? "this leader already played an environmental card this turn (one per leader per turn) — likely stale since it was scored"
+            : "no specific reason detected — the card may no longer be in the deck, or a playability condition changed since it was scored";
+        return $"<color=#ff8080><b>Play did not take effect</b></color> — \"{card?.name}\" was selected but execution failed ({reason}). Deck/leader state unchanged.";
+    }
 
-        Character character = FindObjectsByType<Character>(FindObjectsSortMode.None)
-            .FirstOrDefault(c => c != null && !string.IsNullOrEmpty(c.characterName)
-                && string.Equals(c.characterName, typedName, StringComparison.OrdinalIgnoreCase));
+    // Same two-beat presentation a real AI turn shows for the human player's own autoplay
+    // (AITurnController.PresentChosenCardAsync, private there) — card enlarged center-screen,
+    // then the token spirals down to the acting character's hex (Board's PC/region grant
+    // sequences use this identical CenterDisplayLock-held preview+flight pattern) — except
+    // unconditional: a deliberate cheat-engine force-play should always show it, not just when
+    // the human player's own leader happens to be on autoplay.
+    private static async Task PresentCardPlayAnimationAsync(CardData card, Character character)
+    {
+        if (card == null) return;
 
-        if (character == null) return $"No character named \"{typedName}\" found.";
+        await CenterDisplayLock.WaitAsync();
+        try
+        {
+            CardCenterPreview.Instance?.ShowPreview(card, speedMultiplier: 1.35f, hoverDriven: false);
+            await Task.Delay(1200);
+            CardCenterPreview.Instance?.HidePreview();
+
+            if (character?.hex != null)
+            {
+                TaskCompletionSource<bool> arrived = new();
+                CardPlayFlight.LaunchFromData(card, character.hex, () => arrived.TrySetResult(true));
+                await arrived.Task;
+            }
+        }
+        finally
+        {
+            CenterDisplayLock.Release();
+        }
+    }
+
+    // Narrows lastScoredCards by substring match (case-insensitive, empty = everything) into
+    // displayedCards and repopulates cardDropdown from it. cardDropdown.value indexes into
+    // displayedCards, not lastScoredCards, so a search never has to touch the underlying scored
+    // list itself.
+    private void ApplyCardFilter(string filterText)
+    {
+        cardDropdown.ClearOptions();
+
+        displayedCards = lastScoredCards == null
+            ? new List<(CardData card, float score)>()
+            : lastScoredCards.Where(s => s.card != null
+                && (string.IsNullOrWhiteSpace(filterText) || s.card.name.IndexOf(filterText, StringComparison.OrdinalIgnoreCase) >= 0))
+                .ToList();
+
+        if (displayedCards.Count == 0)
+        {
+            cardDropdown.AddOptions(new List<string> { lastScoredCards is { Count: > 0 } ? "(no match)" : "(no cards)" });
+            cardDropdown.interactable = false;
+            playButton.interactable = false;
+            return;
+        }
+
+        cardDropdown.AddOptions(displayedCards.Select(s => $"{s.card.name} ({s.score:0.##})").ToList());
+        cardDropdown.interactable = true;
+        cardDropdown.value = 0;
+        cardDropdown.RefreshShownValue();
+        playButton.interactable = true;
+    }
+
+    // ------------------------------------------------------------------
+    // Report content — read-only inspection, see class header (Play Card is the exception).
+    // ------------------------------------------------------------------
+
+    private string BuildReport(Character character)
+    {
+        lastScoredCards = null;
+        lastLeader = null;
+        lastCharacter = null;
+        lastActionsManager = null;
+        lastPrecomputed = null;
+        lastActiveHtnTaskId = null;
+        lastActiveHtnTargetHex = null;
+
+        if (character == null) return "Search for a character above, pick one from the dropdown, then click Show.";
 
         StringBuilder sb = new();
         sb.AppendLine($"<b>{character.characterName}</b>");
@@ -209,6 +436,14 @@ public class AIBlackboardDebugPanel : MonoBehaviour
                     leader, character, actionsManager, deckManager, precomputed, new HashSet<CardData>(),
                     activePrimitive?.PreferredParameters);
 
+                lastScoredCards = scored.OrderByDescending(s => s.score).ToList();
+                lastLeader = leader;
+                lastCharacter = character;
+                lastActionsManager = actionsManager;
+                lastPrecomputed = precomputed;
+                lastActiveHtnTaskId = activePrimitive?.TaskId;
+                lastActiveHtnTargetHex = blackboard.TargetHex;
+
                 if (scored.Count == 0)
                 {
                     sb.AppendLine("(no playable card found)");
@@ -333,7 +568,7 @@ public class AIBlackboardDebugPanel : MonoBehaviour
         panelRect.anchorMin = panelRect.anchorMax = panelRect.pivot = new Vector2(1f, 1f);
         panelRect.anchoredPosition = new Vector2(-20f, -20f);
 
-        TMP_Text title = CreateText(panelRoot.transform, "Title", "AI Blackboard (Ctrl+Tab to close)", 16, FontStyles.Bold);
+        TMP_Text title = CreateText(panelRoot.transform, "Title", "AI Blackboard / Cheat Engine (Ctrl+Tab to close)", 16, FontStyles.Bold);
         RectTransform titleRect = title.rectTransform;
         titleRect.anchorMin = new Vector2(0f, 1f);
         titleRect.anchorMax = new Vector2(1f, 1f);
@@ -341,11 +576,25 @@ public class AIBlackboardDebugPanel : MonoBehaviour
         titleRect.anchoredPosition = new Vector2(0f, -10f);
         titleRect.sizeDelta = new Vector2(-20f, 26f);
 
-        nameInput = CreateInputField(panelRoot.transform, new Vector2(0f, -44f), 300f);
-        nameInput.onSubmit.AddListener(_ => OnSubmit());
+        characterSearchInput = CreateInputField(panelRoot.transform, new Vector2(0f, -44f), 440f, "Search characters...");
+        characterSearchInput.onValueChanged.AddListener(ApplyCharacterFilter);
+        characterSearchInput.onSubmit.AddListener(_ => OnShowCharacter());
 
-        Button showButton = CreateButton(panelRoot.transform, "Show", new Vector2(160f, -44f), 90f);
-        showButton.onClick.AddListener(OnSubmit);
+        characterDropdown = CreateDropdown(panelRoot.transform, new Vector2(0f, -78f), 300f);
+
+        showButton = CreateButton(panelRoot.transform, "Show", new Vector2(310f, -78f), 130f);
+        showButton.onClick.AddListener(OnShowCharacter);
+
+        cardSearchInput = CreateInputField(panelRoot.transform, new Vector2(0f, -112f), 440f, "Search cards...");
+        cardSearchInput.onValueChanged.AddListener(ApplyCardFilter);
+
+        cardDropdown = CreateDropdown(panelRoot.transform, new Vector2(0f, -146f), 300f);
+
+        playButton = CreateButton(panelRoot.transform, "Play Card", new Vector2(310f, -146f), 130f);
+        playButton.onClick.AddListener(OnPlayCard);
+
+        ApplyCharacterFilter(string.Empty);
+        ApplyCardFilter(string.Empty);
 
         GameObject scrollGo = new("ScrollView", typeof(RectTransform));
         scrollGo.transform.SetParent(panelRoot.transform, false);
@@ -353,7 +602,7 @@ public class AIBlackboardDebugPanel : MonoBehaviour
         scrollRectTransform.anchorMin = new Vector2(0f, 0f);
         scrollRectTransform.anchorMax = new Vector2(1f, 1f);
         scrollRectTransform.offsetMin = new Vector2(10f, 10f);
-        scrollRectTransform.offsetMax = new Vector2(-10f, -76f);
+        scrollRectTransform.offsetMax = new Vector2(-10f, -182f);
         ScrollRect scrollRect = scrollGo.AddComponent<ScrollRect>();
         scrollRect.horizontal = false;
         scrollRect.vertical = true;
@@ -367,7 +616,7 @@ public class AIBlackboardDebugPanel : MonoBehaviour
         viewportRect.offsetMax = Vector2.zero;
         viewportGo.AddComponent<RectMask2D>();
 
-        reportText = CreateText(viewportGo.transform, "ReportText", "Type a character name and press Enter.", 14, FontStyles.Normal);
+        reportText = CreateText(viewportGo.transform, "ReportText", "Search for a character above, pick one from the dropdown, then click Show.", 14, FontStyles.Normal);
         RectTransform reportRect = reportText.rectTransform;
         reportRect.anchorMin = new Vector2(0f, 1f);
         reportRect.anchorMax = new Vector2(1f, 1f);
@@ -417,7 +666,7 @@ public class AIBlackboardDebugPanel : MonoBehaviour
         return text;
     }
 
-    private static TMP_InputField CreateInputField(Transform parent, Vector2 anchoredPosition, float width)
+    private static TMP_InputField CreateInputField(Transform parent, Vector2 anchoredPosition, float width, string placeholderText = "Character name...")
     {
         GameObject fieldGo = new("NameInput", typeof(RectTransform));
         fieldGo.transform.SetParent(parent, false);
@@ -442,7 +691,7 @@ public class AIBlackboardDebugPanel : MonoBehaviour
         text.color = Color.black;
         StretchFull(text.rectTransform);
 
-        TMP_Text placeholder = CreateText(viewportGo.transform, "Placeholder", "Character name...", 14, FontStyles.Italic);
+        TMP_Text placeholder = CreateText(viewportGo.transform, "Placeholder", placeholderText, 14, FontStyles.Italic);
         placeholder.color = new Color(0f, 0f, 0f, 0.5f);
         StretchFull(placeholder.rectTransform);
 
@@ -452,6 +701,112 @@ public class AIBlackboardDebugPanel : MonoBehaviour
         inputField.placeholder = placeholder;
         inputField.lineType = TMP_InputField.LineType.SingleLine;
         return inputField;
+    }
+
+    // Hand-rolled minimal TMP_Dropdown — no editor-only TMP_DefaultControls at runtime, so this
+    // reproduces just the pieces the component actually requires (template/captionText/itemText)
+    // and skips the purely cosmetic ones (arrow glyph, selected-item checkmark, scrollbar —
+    // ScrollRect still supports drag-to-scroll without one). TMP_Dropdown.Show() clones the
+    // (inactive) Item template per option and wires its Toggle up internally, so no manual
+    // toggle/selection listener is needed here.
+    private static TMP_Dropdown CreateDropdown(Transform parent, Vector2 anchoredPosition, float width)
+    {
+        const float itemHeight = 22f;
+
+        GameObject root = new("CardDropdown", typeof(RectTransform));
+        root.transform.SetParent(parent, false);
+        Image rootImage = root.AddComponent<Image>();
+        rootImage.color = new Color(1f, 1f, 1f, 0.9f);
+        RectTransform rootRect = root.GetComponent<RectTransform>();
+        rootRect.anchorMin = rootRect.anchorMax = new Vector2(0f, 1f);
+        rootRect.pivot = new Vector2(0f, 1f);
+        rootRect.anchoredPosition = anchoredPosition;
+        rootRect.sizeDelta = new Vector2(width, 28f);
+
+        TMP_Text caption = CreateText(root.transform, "Caption", "(no cards)", 13, FontStyles.Normal);
+        caption.color = Color.black;
+        caption.alignment = TextAlignmentOptions.MidlineLeft;
+        RectTransform captionRect = caption.rectTransform;
+        captionRect.anchorMin = Vector2.zero;
+        captionRect.anchorMax = Vector2.one;
+        captionRect.offsetMin = new Vector2(8f, 2f);
+        captionRect.offsetMax = new Vector2(-8f, -2f);
+
+        GameObject template = new("Template", typeof(RectTransform));
+        template.transform.SetParent(root.transform, false);
+        Image templateImage = template.AddComponent<Image>();
+        templateImage.color = new Color(0.12f, 0.12f, 0.12f, 0.98f);
+        RectTransform templateRect = template.GetComponent<RectTransform>();
+        templateRect.anchorMin = new Vector2(0f, 0f);
+        templateRect.anchorMax = new Vector2(1f, 0f);
+        templateRect.pivot = new Vector2(0.5f, 1f);
+        templateRect.anchoredPosition = new Vector2(0f, 2f);
+        templateRect.sizeDelta = new Vector2(0f, itemHeight * 8f);
+
+        ScrollRect scrollRect = template.AddComponent<ScrollRect>();
+        scrollRect.horizontal = false;
+        scrollRect.vertical = true;
+        scrollRect.movementType = ScrollRect.MovementType.Clamped;
+
+        GameObject viewport = new("Viewport", typeof(RectTransform));
+        viewport.transform.SetParent(template.transform, false);
+        viewport.AddComponent<Image>().color = Color.white;
+        Mask viewportMask = viewport.AddComponent<Mask>();
+        viewportMask.showMaskGraphic = false;
+        RectTransform viewportRect = viewport.GetComponent<RectTransform>();
+        viewportRect.anchorMin = Vector2.zero;
+        viewportRect.anchorMax = Vector2.one;
+        viewportRect.offsetMin = Vector2.zero;
+        viewportRect.offsetMax = Vector2.zero;
+
+        GameObject content = new("Content", typeof(RectTransform));
+        content.transform.SetParent(viewport.transform, false);
+        RectTransform contentRect = content.GetComponent<RectTransform>();
+        contentRect.anchorMin = new Vector2(0f, 1f);
+        contentRect.anchorMax = new Vector2(1f, 1f);
+        contentRect.pivot = new Vector2(0.5f, 1f);
+        contentRect.anchoredPosition = Vector2.zero;
+        contentRect.sizeDelta = new Vector2(0f, itemHeight);
+
+        GameObject item = new("Item", typeof(RectTransform));
+        item.transform.SetParent(content.transform, false);
+        RectTransform itemRect = item.GetComponent<RectTransform>();
+        itemRect.anchorMin = new Vector2(0f, 0.5f);
+        itemRect.anchorMax = new Vector2(1f, 0.5f);
+        itemRect.sizeDelta = new Vector2(0f, itemHeight);
+
+        GameObject itemBackground = new("Item Background", typeof(RectTransform));
+        itemBackground.transform.SetParent(item.transform, false);
+        Image itemBackgroundImage = itemBackground.AddComponent<Image>();
+        itemBackgroundImage.color = new Color(1f, 1f, 1f, 0.08f);
+        StretchFull(itemBackground.GetComponent<RectTransform>());
+
+        Toggle itemToggle = item.AddComponent<Toggle>();
+        itemToggle.targetGraphic = itemBackgroundImage;
+        itemToggle.isOn = true;
+
+        TMP_Text itemLabel = CreateText(item.transform, "Item Label", "Option", 13, FontStyles.Normal);
+        itemLabel.color = Color.white;
+        itemLabel.alignment = TextAlignmentOptions.MidlineLeft;
+        RectTransform itemLabelRect = itemLabel.rectTransform;
+        itemLabelRect.anchorMin = Vector2.zero;
+        itemLabelRect.anchorMax = Vector2.one;
+        itemLabelRect.offsetMin = new Vector2(8f, 1f);
+        itemLabelRect.offsetMax = new Vector2(-8f, -1f);
+
+        scrollRect.viewport = viewportRect;
+        scrollRect.content = contentRect;
+
+        template.SetActive(false);
+
+        TMP_Dropdown dropdown = root.AddComponent<TMP_Dropdown>();
+        dropdown.targetGraphic = rootImage;
+        dropdown.captionText = caption;
+        dropdown.itemText = itemLabel;
+        dropdown.template = templateRect;
+        dropdown.options.Clear();
+
+        return dropdown;
     }
 
     private static Button CreateButton(Transform parent, string label, Vector2 anchoredPosition, float width)

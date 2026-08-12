@@ -375,7 +375,11 @@ public static class AITurnController
     // instance returned by ResolveActionByRef is a shared singleton per action *type*
     // (ActionsManager caches one CharacterAction component per class), so it must never be
     // reused across candidates without a fresh Initialize immediately before each use.
-    private static async Task<UtilityAIContext> ExecuteChosenCardAsync(Leader leader, Character character, ActionsManager actionsManager, UtilityAIContext.PrecomputedData? precomputed, CardData chosenCard, string activeHtnTaskId, Hex activeHtnTargetHex)
+    // Public: also reused by AIBlackboardDebugPanel's "Play Card" cheat-engine control to
+    // force-play an operator-chosen card outside the normal AI pick loop, through the exact
+    // same execution path (deck consumption, map reveal, environmental bookkeeping) a real AI
+    // pick takes.
+    public static async Task<UtilityAIContext> ExecuteChosenCardAsync(Leader leader, Character character, ActionsManager actionsManager, UtilityAIContext.PrecomputedData? precomputed, CardData chosenCard, string activeHtnTaskId, Hex activeHtnTargetHex)
     {
         if (chosenCard != null)
         {

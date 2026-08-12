@@ -189,7 +189,6 @@ public class CardData
 
     public string startingPC = string.Empty;
     public InspireEffectData inspireEffectData;
-    public int amount = 1;
     public string deckSpriteName;
     public string situation = string.Empty;
     public string situation2 = string.Empty;
@@ -202,10 +201,9 @@ public class CardData
     // leader (Artifact's per-item alignment field was deliberately dropped, not carried over).
     public bool hidden;
     // How many instances of this Object exist in the world's random hidden-object scatter pool
-    // (Board.SpawnArtifacts via GetAllObjectCardClones) — distinct from `amount`, which governs
-    // draw-pile repeats for Action/Event/Spell decks and is not read by the Object scatter path.
-    // A unique legendary item (Andúril, Narya) should stay at the default 1; a common item that
-    // narratively grows in multiple places (Athelas) can be set higher so it's not a one-shot find.
+    // (Board.SpawnArtifacts via GetAllObjectCardClones). A unique legendary item (Andúril, Narya)
+    // should stay at the default 1; a common item that narratively grows in multiple places
+    // (Athelas) can be set higher so it's not a one-shot find.
     public int copies = 1;
     public int commanderBonus;
     public int agentBonus;
@@ -2074,7 +2072,6 @@ public class DeckManager : MonoBehaviour
             goldGranted = card.goldGranted,
             startingPC = card.startingPC,
             inspireEffectData = card.inspireEffectData,
-            amount = card.amount,
             deckSpriteName = card.deckSpriteName,
             situation = card.situation,
             situation2 = card.situation2,
@@ -2420,7 +2417,8 @@ public class DeckManager : MonoBehaviour
             || cardType == CardTypeEnum.Event
             || cardType == CardTypeEnum.Encounter
             || cardType == CardTypeEnum.Land
-            || cardType == CardTypeEnum.PC;
+            || cardType == CardTypeEnum.PC
+            || cardType == CardTypeEnum.Environmental;
         if (!supportedType) return false;
 
         return !string.IsNullOrWhiteSpace(card.GetActionRef());
@@ -2755,7 +2753,7 @@ public class DeckManager : MonoBehaviour
                 basePool.AddRange(
                     ownedDeck.cards
                         .Where(card => ShouldIncludeCardInDeck(state.deckId, ownedDeck.deckId, card))
-                        .SelectMany(card => Enumerable.Repeat(card, Math.Max(1, card.amount)).Select(CloneCard))
+                        .Select(CloneCard)
                         .Where(card => card != null));
             }
 
@@ -2764,7 +2762,7 @@ public class DeckManager : MonoBehaviour
                 subdeckPool.AddRange(
                     leafDeck.cards
                         .Where(card => ShouldIncludeCardInDeck(state.deckId, leafDeck.deckId, card))
-                        .SelectMany(card => Enumerable.Repeat(card, Math.Max(1, card.amount)).Select(CloneCard))
+                        .Select(CloneCard)
                         .Where(card => card != null));
             }
 
@@ -2783,7 +2781,7 @@ public class DeckManager : MonoBehaviour
                 basePool.AddRange(
                     baseDeck.cards
                         .Where(card => ShouldIncludeCardInDeck(state.deckId, baseDeck.deckId, card))
-                        .SelectMany(card => Enumerable.Repeat(card, Math.Max(1, card.amount)).Select(CloneCard))
+                        .Select(CloneCard)
                         .Where(card => card != null));
             }
 
@@ -2793,7 +2791,7 @@ public class DeckManager : MonoBehaviour
                 subdeckPool.AddRange(
                     descendantDeck.cards
                         .Where(card => ShouldIncludeCardInDeck(state.deckId, descendantDeck.deckId, card))
-                        .SelectMany(card => Enumerable.Repeat(card, Math.Max(1, card.amount)).Select(CloneCard))
+                        .Select(CloneCard)
                         .Where(card => card != null));
             }
 
@@ -2807,7 +2805,7 @@ public class DeckManager : MonoBehaviour
             sharedPool.AddRange(
                 sharedDeck.cards
                     .Where(card => ShouldIncludeCardInDeck(state.deckId, sharedDeck.deckId, card))
-                    .SelectMany(card => Enumerable.Repeat(card, Math.Max(1, card.amount)).Select(CloneCard))
+                    .Select(CloneCard)
                     .Where(card => card != null));
         }
         Shuffle(sharedPool);
