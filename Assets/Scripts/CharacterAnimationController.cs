@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 // Plays a character's baked per-facing spritesheet animation (see AnimationSpritesheetBaker +
@@ -46,6 +47,11 @@ public class CharacterAnimationController : MonoBehaviour
     // fps otherwise makes it play at the same pace as walk/idle, which reads as sluggish when a
     // character turns to face its next hex mid-move). Doesn't affect any other animation kind.
     public float turnAnimationSpeedMultiplier = 3f;
+
+    // Extra SpriteRenderers that should mirror this character's current frame every tick —
+    // used by Hex to draw an army-size stack (duplicate silhouettes) without running a second
+    // animation state machine per copy. Populated/cleared by Hex, never by this component.
+    public readonly List<SpriteRenderer> stackMirrorRenderers = new();
 
     // ── Animation bools — one checkbox per baked state. Names/casing match the atlas manifest's
     // "name" field exactly (see AnimationBindings below); default is Standing Idle. ──────────
@@ -222,7 +228,12 @@ public class CharacterAnimationController : MonoBehaviour
         }
 
         Sprite sprite = CharacterSpritesheets.GetSprite($"{state.spriteNamePrefix}_{frameIndex:D2}");
-        if (sprite != null) spriteRenderer.sprite = sprite;
+        if (sprite != null)
+        {
+            spriteRenderer.sprite = sprite;
+            for (int i = 0; i < stackMirrorRenderers.Count; i++)
+                if (stackMirrorRenderers[i] != null) stackMirrorRenderers[i].sprite = sprite;
+        }
     }
 
     private static CharacterSpritesheets.AtlasState FindState(CharacterSpritesheets.AtlasManifest manifest, string stateName)
@@ -537,6 +548,8 @@ public class CharacterAnimationController : MonoBehaviour
         currentStateName = null;
         pendingCharacter = null;
         if (spriteRenderer != null) spriteRenderer.sprite = null;
+        for (int i = 0; i < stackMirrorRenderers.Count; i++)
+            if (stackMirrorRenderers[i] != null) stackMirrorRenderers[i].sprite = null;
     }
 
     // Called by CharacterSpriteHover, which owns the actual collider/mouse events (this

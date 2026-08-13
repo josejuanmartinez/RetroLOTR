@@ -282,6 +282,8 @@ MonoBehaviour:
   characterSpriteRenderer: {fileID: 0}
   bannerSpriteRenderer: {fileID: 0}
   characterAnimationController: {fileID: 0}
+  armyStackOffset: {x: 0.08, y: 0.08}
+  armyStackSizeThresholds: 960000005e0100008a0200004c040000
   pcName: {fileID: 0}
   revealDuration: 1
   artifact: {fileID: 1548661320021129584}
@@ -990,7 +992,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.593, y: -0.34, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1016752862782569053}
@@ -1007,9 +1009,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d0c1d158cda64a47880be8b18c53ccd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpriteRendererGridLayout
-  cellSize: {x: 0.2, y: 0.2}
-  spacing: {x: -0.05, y: 0}
-  constraintCount: 3
+  cellSize: {x: 0.25, y: 0.15}
+  spacing: {x: 0, y: 0}
+  constraintCount: 5
   centerAlignment: 1
   scaleToCellSize: 1
   autoArrangeOnStart: 1

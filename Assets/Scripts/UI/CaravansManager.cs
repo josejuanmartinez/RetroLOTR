@@ -4,7 +4,7 @@ using UnityEngine;
 public class CaravansManager : MonoBehaviour
 {
     public ProducesEnum produce;
-
+    public int fontSize = 25;
     private string caravanPricesString;
 
     void OnEnable()
@@ -38,7 +38,7 @@ public class CaravansManager : MonoBehaviour
         caravanPricesString = $"<sprite name=\"{spriteName}\">{produceName}\nBuild: {buildPrice}\nSell: {sellPrice}";
 
         Hover hover = GetComponent<Hover>();
-        if (hover != null) hover.Initialize(caravanPricesString);
+        if (hover != null) hover.Initialize(caravanPricesString, fontSize);
 
         return caravanPricesString;
     }

@@ -36,6 +36,10 @@ public class Hex : MonoBehaviour
     public SpriteRenderer characterSpriteRenderer;
     public SpriteRenderer bannerSpriteRenderer;
     [SerializeField] private CharacterAnimationController characterAnimationController;
+    [Tooltip("Local-space offset applied per extra army-size duplicate, stacking toward the top-right behind the main character sprite.")]
+    [SerializeField] private Vector2 armyStackOffset = new Vector2(0.08f, 0.08f);
+    [Tooltip("Army.GetSize() breakpoints mapping troop count to stack copies 2-5: a size at or above thresholds[i] shows i+3 total copies.")]
+    [SerializeField] private int[] armyStackSizeThresholds = { 150, 350, 650, 1100 };
 
     [Header("PC Name")]
     public TextMeshPro pcName;
@@ -106,6 +110,11 @@ public class Hex : MonoBehaviour
     public List<Character> characters = new();
     public List<CardData> hiddenObjects = new();
     private readonly List<CardData> _pendingEncounters = new();
+    // Extra duplicate SpriteRenderers stacked behind characterSpriteRenderer, one per army-size
+    // tier above 1 (see UpdateArmyStackVisual) — kept even when hidden so redraws just toggle them.
+    private readonly List<SpriteRenderer> armyStackExtraRenderers = new();
+    private const int MaxArmyStackExtraRenderers = 4;
+    private static readonly int ArmyStackOutlineSizeShaderId = Shader.PropertyToID("_OutlineSize");
 
 
     private Coroutine armyArrangeCoroutine;
@@ -792,8 +801,10 @@ public class Hex : MonoBehaviour
 
         // Pre-apply the outline colour before the renderer becomes visible so there
         // is no one-frame flash of the previous (possibly white/cleared) colour.
-        if (seen && hasCharacter && TryGetKnownCharacterForIcon(out Character knownForOutline))
-            GetCharacterAnimationController()?.SetOutlineForCharacter(knownForOutline);
+        Character known = null;
+        bool hasKnown = seen && hasCharacter && TryGetKnownCharacterForIcon(out known);
+        if (hasKnown)
+            GetCharacterAnimationController()?.SetOutlineForCharacter(known);
         else
             GetCharacterAnimationController()?.ClearOutline();
 
@@ -808,8 +819,82 @@ public class Hex : MonoBehaviour
             GetCharacterAnimationController()?.Clear();
             ClearClassIcons();
         }
+        UpdateArmyStackVisual(hasKnown ? known : null);
         UpdateBannerSpriteForKnownCharacter();
         if (refreshHoverText) RefreshHoverText();
+    }
+
+    // Shows army size as a stack of duplicate silhouettes peeking from behind the main character
+    // sprite: 1 copy for a non-commander (or an empty army), up to 5 for a large one. The
+    // duplicates don't run their own animation state — CharacterAnimationController mirrors its
+    // resolved frame onto them each tick (see stackMirrorRenderers), so the only added GPU cost
+    // is a few extra batchable quads, not extra animation logic.
+    private void UpdateArmyStackVisual(Character known)
+    {
+        if (characterSpriteRenderer == null) return;
+
+        bool visible = characterSpriteRenderer.gameObject.activeSelf;
+        int extrasNeeded = visible ? Mathf.Clamp(GetArmyStackCount(known) - 1, 0, MaxArmyStackExtraRenderers) : 0;
+
+        for (int i = 0; i < MaxArmyStackExtraRenderers; i++)
+        {
+            bool active = i < extrasNeeded;
+            if (active && i >= armyStackExtraRenderers.Count) armyStackExtraRenderers.Add(CreateArmyStackExtraRenderer());
+            if (i >= armyStackExtraRenderers.Count) continue;
+
+            SpriteRenderer extra = armyStackExtraRenderers[i];
+            if (extra == null) continue;
+            SetActiveFast(extra.gameObject, active);
+            if (!active) continue;
+
+            extra.transform.localScale = characterSpriteRenderer.transform.localScale;
+            extra.transform.localRotation = characterSpriteRenderer.transform.localRotation;
+            extra.transform.localPosition = characterSpriteRenderer.transform.localPosition + (Vector3)(armyStackOffset * (i + 1));
+            extra.sortingLayerID = characterSpriteRenderer.sortingLayerID;
+            // Stacked behind the main sprite, but never below the terrain art beneath it —
+            // terrainTexture/characterSpriteRenderer's own sortingOrder is assigned at runtime
+            // (see Hex.ApplyTerrainOverdraw), so this can't just assume fixed prefab numbers.
+            int desiredOrder = characterSpriteRenderer.sortingOrder - (i + 1);
+            if (hexRegion != null) desiredOrder = Mathf.Max(desiredOrder, hexRegion.sortingOrder + 1);
+            extra.sortingOrder = desiredOrder;
+            extra.sprite = characterSpriteRenderer.sprite;
+        }
+
+        CharacterAnimationController controller = GetCharacterAnimationController();
+        if (controller == null) return;
+        controller.stackMirrorRenderers.Clear();
+        for (int i = 0; i < extrasNeeded; i++)
+            controller.stackMirrorRenderers.Add(armyStackExtraRenderers[i]);
+    }
+
+    private int GetArmyStackCount(Character character)
+    {
+        if (character == null || !character.IsArmyCommander()) return 1;
+
+        Army army = character.GetArmy();
+        int size = army != null ? army.GetSize() : 0;
+        if (size <= 0) return 1;
+
+        int count = 2;
+        for (int i = 0; i < armyStackSizeThresholds.Length; i++)
+            if (size >= armyStackSizeThresholds[i]) count = i + 3;
+        return count;
+    }
+
+    private SpriteRenderer CreateArmyStackExtraRenderer()
+    {
+        GameObject extraObject = new GameObject("ArmyStackExtra");
+        extraObject.transform.SetParent(characterSpriteRenderer.transform.parent, false);
+
+        SpriteRenderer extra = extraObject.AddComponent<SpriteRenderer>();
+        extra.sharedMaterial = characterSpriteRenderer.sharedMaterial;
+
+        var propertyBlock = new MaterialPropertyBlock();
+        propertyBlock.SetFloat(ArmyStackOutlineSizeShaderId, 0f);
+        extra.SetPropertyBlock(propertyBlock);
+
+        SetActiveFast(extraObject, false);
+        return extra;
     }
 
     public void RedrawPC(bool refreshHoverText = true)
@@ -3355,12 +3440,14 @@ public class Hex : MonoBehaviour
 
         CharacterAnimationController controller = characterAnimationController;
         float outlineSize = controller != null ? controller.outlineSize : 10f;
+        Color color;
 
         if (isCharacterHovered)
         {
-            characterSpriteRenderer.color = Color.white;
+            color = Color.white;
             controller?.SetOutlineAlpha(1f);
             controller?.SetOutlineSize(outlineSize);
+            ApplyCharacterAndStackColor(color);
             return;
         }
 
@@ -3374,15 +3461,32 @@ public class Hex : MonoBehaviour
             float pulseSpeed = controller != null ? controller.selectionPulseSpeed : 1f;
             float colorT = Mathf.PingPong(Time.time * pulseSpeed, 1f);
             Color baseColor = controller != null ? controller.unhoveredColor : Color.white;
-            characterSpriteRenderer.color = Color.Lerp(baseColor, Color.white, colorT);
+            color = Color.Lerp(baseColor, Color.white, colorT);
             controller?.SetOutlineSize(outlineSize);
         }
         else
         {
-            characterSpriteRenderer.color = controller != null ? controller.unhoveredColor : Color.white;
+            color = controller != null ? controller.unhoveredColor : Color.white;
             controller?.SetOutlineSize(outlineSize);
         }
         controller?.SetOutlineAlpha(1f);
+        ApplyCharacterAndStackColor(color);
+    }
+
+    // Extras dim slightly more than the main sprite so the stack still reads as "one figure in
+    // front, duplicates behind" rather than five identical, equally bright copies. They stay
+    // outline-free (set once in CreateArmyStackExtraRenderer) so only the front figure gets one.
+    private void ApplyCharacterAndStackColor(Color color)
+    {
+        characterSpriteRenderer.color = color;
+        for (int i = 0; i < armyStackExtraRenderers.Count; i++)
+        {
+            SpriteRenderer extra = armyStackExtraRenderers[i];
+            if (extra == null || !extra.gameObject.activeSelf) continue;
+            Color extraColor = color;
+            extraColor.a *= 0.85f;
+            extra.color = extraColor;
+        }
     }
 
 }
