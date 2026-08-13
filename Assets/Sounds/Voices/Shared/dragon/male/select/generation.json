@@ -1,0 +1,37 @@
+{
+  "voice_id": "0iUaozCSsoQP3Z3nFNMx",
+  "model": "eleven_v3",
+  "output_format": "mp3_44100_128",
+  "generated": [
+    {
+      "id": "dragon_male_select_01",
+      "text": "You dare disturb me?",
+      "file": "dragon_male_select_01.mp3",
+      "headers": {
+        "character-cost": "11",
+        "request-id": "zkN5ZzGIGcRYr7yqFPb9",
+        "x-trace-id": "00858cf9d683abc53b81199913eb69b2"
+      }
+    },
+    {
+      "id": "dragon_male_select_02",
+      "text": "Speak, little one.",
+      "file": "dragon_male_select_02.mp3",
+      "headers": {
+        "character-cost": "10",
+        "request-id": "GyQKwDKyZL72g5nQSxKN",
+        "x-trace-id": "136d628ecaaa4df161d0c27c071050a6"
+      }
+    },
+    {
+      "id": "dragon_male_select_03",
+      "text": "What treasure awaits?",
+      "file": "dragon_male_select_03.mp3",
+      "headers": {
+        "character-cost": "12",
+        "request-id": "rrvp7umDHJ6bfsOfjPha",
+        "x-trace-id": "9b8eb61b60f414d92117610a72bc750e"
+      }
+    }
+  ]
+}

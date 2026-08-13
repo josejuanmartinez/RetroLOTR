@@ -1,0 +1,37 @@
+{
+  "voice_id": "Rsizh9fHHZ0ZE0geoMbe",
+  "model": "eleven_v3",
+  "output_format": "mp3_44100_128",
+  "generated": [
+    {
+      "id": "easterling_male_select_01",
+      "text": "The host awaits.",
+      "file": "easterling_male_select_01.mp3",
+      "headers": {
+        "character-cost": "9",
+        "request-id": "swtCuPWYJYbsV5jpB2PF",
+        "x-trace-id": "7fd87fcaf13b6a6e0037e9c19e7e20d9"
+      }
+    },
+    {
+      "id": "easterling_male_select_02",
+      "text": "Name our road.",
+      "file": "easterling_male_select_02.mp3",
+      "headers": {
+        "character-cost": "8",
+        "request-id": "VbJBRKN0Vs78E7MfmJRM",
+        "x-trace-id": "15297b3020f1da2500aa9fb39694bd2e"
+      }
+    },
+    {
+      "id": "easterling_male_select_03",
+      "text": "Your command is heard.",
+      "file": "easterling_male_select_03.mp3",
+      "headers": {
+        "character-cost": "12",
+        "request-id": "mIQNHmUqVeIg1RUw8AH4",
+        "x-trace-id": "6c418de6a712e064158edad5027458df"
+      }
+    }
+  ]
+}

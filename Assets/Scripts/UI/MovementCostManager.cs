@@ -7,6 +7,7 @@ public class MovementCostManager : MonoBehaviour
     public TextMeshPro movementText;
     public SpriteRenderer dot;
     private Color dotBaseColor = Color.white;
+    private static Colors sharedColors;
 
     private void Awake()
     {
@@ -67,8 +68,9 @@ public class MovementCostManager : MonoBehaviour
         int maxMovement = character != null ? character.GetMaxMovement() : 0;
         float ratio = maxMovement > 0 ? Mathf.Clamp01(movementLeft / (float)maxMovement) : 0f;
 
-        Color low = new(0.95f, 0.35f, 0.28f, 1f);
-        Color high = new(0.25f, 0.9f, 0.45f, 1f);
+        if (sharedColors == null) sharedColors = FindFirstObjectByType<Colors>();
+        Color low = sharedColors != null ? sharedColors.movementStart : new Color(0.72f, 0.16f, 0.2f, 1f);
+        Color high = sharedColors != null ? sharedColors.movementEnd : new Color(0.08f, 0.58f, 0.52f, 1f);
         return Color.Lerp(low, high, ratio);
     }
 }

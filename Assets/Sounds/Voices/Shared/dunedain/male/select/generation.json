@@ -1,0 +1,37 @@
+{
+  "voice_id": "q1h5HGdnfVxp4TXTJRNN",
+  "model": "eleven_v3",
+  "output_format": "mp3_44100_128",
+  "generated": [
+    {
+      "id": "dunedain_male_select_01",
+      "text": "I keep watch.",
+      "file": "dunedain_male_select_01.mp3",
+      "headers": {
+        "character-cost": "7",
+        "request-id": "GtNxYimR6qy7zULqrPhn",
+        "x-trace-id": "c23cfd670c0fc29460e34321b4569f43"
+      }
+    },
+    {
+      "id": "dunedain_male_select_02",
+      "text": "The road is known.",
+      "file": "dunedain_male_select_02.mp3",
+      "headers": {
+        "character-cost": "10",
+        "request-id": "8BmQPlDI3GrSf8zuWUxL",
+        "x-trace-id": "5ca9bbfc6266718992d5f7b6dce4ffbd"
+      }
+    },
+    {
+      "id": "dunedain_male_select_03",
+      "text": "Give me your word.",
+      "file": "dunedain_male_select_03.mp3",
+      "headers": {
+        "character-cost": "10",
+        "request-id": "PPkeB1AWXc2gSwf2tzsk",
+        "x-trace-id": "f782b745375929ca95bc867875eb8143"
+      }
+    }
+  ]
+}

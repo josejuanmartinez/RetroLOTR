@@ -1,0 +1,37 @@
+{
+  "voice_id": "zNsotODqUhvbJ5wMG7Ei",
+  "model": "eleven_v3",
+  "output_format": "mp3_44100_128",
+  "generated": [
+    {
+      "id": "saruman_select_01",
+      "text": "Speak. I am listening.",
+      "file": "saruman_select_01.mp3",
+      "headers": {
+        "character-cost": "12",
+        "request-id": "0p9d3koLvWIQY3yHk0P7",
+        "x-trace-id": "720d0d093160a3b1181418c13bd6fbed"
+      }
+    },
+    {
+      "id": "saruman_select_02",
+      "text": "My counsel is not lightly set aside.",
+      "file": "saruman_select_02.mp3",
+      "headers": {
+        "character-cost": "20",
+        "request-id": "6h9rwuqQKGiUR1DGrquY",
+        "x-trace-id": "a284ab05f7cd8c2631322b7db5f8008a"
+      }
+    },
+    {
+      "id": "saruman_select_03",
+      "text": "All proceeds according to design.",
+      "file": "saruman_select_03.mp3",
+      "headers": {
+        "character-cost": "18",
+        "request-id": "dHFkaKcYkTHfCBDVd19T",
+        "x-trace-id": "e7730f7797f0d0716c0a86e7f4038f81"
+      }
+    }
+  ]
+}

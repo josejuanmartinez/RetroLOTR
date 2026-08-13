@@ -1,0 +1,37 @@
+{
+  "voice_id": "U5UjeJMsOvyhYhXfZdvZ",
+  "model": "eleven_v3",
+  "output_format": "mp3_44100_128",
+  "generated": [
+    {
+      "id": "wildman_male_select_01",
+      "text": "I hear the hills.",
+      "file": "wildman_male_select_01.mp3",
+      "headers": {
+        "character-cost": "9",
+        "request-id": "rQKwjIYfxqaJDwSuxy3f",
+        "x-trace-id": "fc49642887aaffcd5a6f8c716a2f1983"
+      }
+    },
+    {
+      "id": "wildman_male_select_02",
+      "text": "Show me the trail.",
+      "file": "wildman_male_select_02.mp3",
+      "headers": {
+        "character-cost": "10",
+        "request-id": "wgOVeIccjj2fAmKKDGg9",
+        "x-trace-id": "4eea3769a664f9ddd0aeba6a7f33174b"
+      }
+    },
+    {
+      "id": "wildman_male_select_03",
+      "text": "We move unseen.",
+      "file": "wildman_male_select_03.mp3",
+      "headers": {
+        "character-cost": "8",
+        "request-id": "wMWsR19OYsBFKzjpkxom",
+        "x-trace-id": "c97f9189130831101db599b9b9010348"
+      }
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "voice_id": "yZ3w1DL4ZAxIdOscv2t8",
+  "model": "eleven_v3",
+  "output_format": "mp3_44100_128",
+  "generated": [
+    {
+      "id": "radagast_select_01",
+      "text": "The birds are restless. What have you seen?",
+      "file": "radagast_select_01.mp3",
+      "headers": {
+        "character-cost": "24",
+        "request-id": "7KoUg0oRaP0mNPNTElsh",
+        "x-trace-id": "d29b48bae8103dbab5bee20c0d6a311f"
+      }
+    },
+    {
+      "id": "radagast_select_02",
+      "text": "Tread gently; the wood is listening.",
+      "file": "radagast_select_02.mp3",
+      "headers": {
+        "character-cost": "20",
+        "request-id": "lje5hoHC9cscoDrtzWSy",
+        "x-trace-id": "1b5869fdfffc5fdb4ebfd2cd962a7733"
+      }
+    },
+    {
+      "id": "radagast_select_03",
+      "text": "There is news upon the wind.",
+      "file": "radagast_select_03.mp3",
+      "headers": {
+        "character-cost": "15",
+        "request-id": "PK2XgxFQ54rUBNka45ju",
+        "x-trace-id": "f34f4552dc5fd218806a60965172a290"
+      }
+    }
+  ]
+}

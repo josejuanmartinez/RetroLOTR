@@ -15,6 +15,7 @@ public class CarouselItem : MonoBehaviour
     public void SetLabel(string str, AlignmentEnum? alignment = null)
     {
         if (label == null) return;
+        FontManager.Instance?.ApplyCurrentFont(label);
         label.richText = true;
         label.extraPadding = true;
         label.overflowMode = TextOverflowModes.Overflow;

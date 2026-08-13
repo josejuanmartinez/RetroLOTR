@@ -1,0 +1,37 @@
+{
+  "voice_id": "89Kgs92Nt98ksRIEHzSd",
+  "model": "eleven_v3",
+  "output_format": "mp3_44100_128",
+  "generated": [
+    {
+      "id": "goblin_male_select_01",
+      "text": "What d'you want?",
+      "file": "goblin_male_select_01.mp3",
+      "headers": {
+        "character-cost": "9",
+      "request-id": "seSXp1koGEO7hBLkhkyz",
+      "x-trace-id": "5eaf1d1f968893cf436c712974e44a63"
+      }
+    },
+    {
+      "id": "goblin_male_select_02",
+      "text": "I heard you!",
+      "file": "goblin_male_select_02.mp3",
+      "headers": {
+        "character-cost": "7",
+      "request-id": "OS9PoGBIDBqI9mkQGk9H",
+      "x-trace-id": "39b61693f48e237b22086f6c04eab788"
+      }
+    },
+    {
+      "id": "goblin_male_select_03",
+      "text": "Show me the dark way.",
+      "file": "goblin_male_select_03.mp3",
+      "headers": {
+        "character-cost": "12",
+      "request-id": "DGWFzvMSzPL6LETieTrl",
+      "x-trace-id": "7cd6eba376b161d9227972c752881dc9"
+      }
+    }
+  ]
+}

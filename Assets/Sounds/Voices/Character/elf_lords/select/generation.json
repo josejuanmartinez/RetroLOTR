@@ -1,0 +1,37 @@
+{
+  "voice_id": "Veg2qijYoJAS8VPKOOmi",
+  "model": "eleven_v3",
+  "output_format": "mp3_44100_128",
+  "generated": [
+    {
+      "id": "elf_lords_select_01",
+      "text": "What counsel do you seek?",
+      "file": "elf_lords_select_01.mp3",
+      "headers": {
+        "character-cost": "14",
+        "request-id": "mIibVsd5MhHuJgOCdBXi",
+        "x-trace-id": "2d6c0e61b48e3664fdbfa408c0865485"
+      }
+    },
+    {
+      "id": "elf_lords_select_02",
+      "text": "The realm is under my care.",
+      "file": "elf_lords_select_02.mp3",
+      "headers": {
+        "character-cost": "15",
+        "request-id": "eluf8Q2rZjtZNNQ9WNbR",
+        "x-trace-id": "ef52130613f07a7f58f1baf32a216cda"
+      }
+    },
+    {
+      "id": "elf_lords_select_03",
+      "text": "Speak; I shall consider it.",
+      "file": "elf_lords_select_03.mp3",
+      "headers": {
+        "character-cost": "15",
+        "request-id": "WInN5zxaoh6yYjpYGPzN",
+        "x-trace-id": "12f8388e16a11a9689de7f7403240dfe"
+      }
+    }
+  ]
+}

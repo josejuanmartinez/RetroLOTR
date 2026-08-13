@@ -50,22 +50,25 @@ public class MessageDisplay : MonoBehaviour
     /// </summary>
     /// <param name="message">Text message to display</param>
     /// <param name="color">Color for the text (defaults to white if not specified)</param>
-    public static void ShowMessage(string message, Color? color = null, bool forceImmediate = false, bool logToWidget = true)
+    public static void ShowMessage(string message, Color? color = null, bool forceImmediate = false, bool logToWidget = true, bool playSound = true)
     {
         Game game = Game.Instance;
         if (game == null) return;
         if (!game.started || game.currentlyPlaying != game.player) return;
         string formattedMessage = FormatMessageForDisplay(ResourceSpriteFormatter.ReplaceResourceWordsWithSprites(message));
         Color resolved = color ?? Color.white;
-        if (IsNegativeColor(resolved))
+        // playSound: false lets a caller that already plays its own cue (see
+        // PlayableLeader.ApplyVariantTransformation, which follows this with
+        // PlayArtifactFound) skip the color-based sound instead of stacking an extra one.
+        if (playSound && IsNegativeColor(resolved))
         {
             Sounds.Instance?.PlayNegative();
         }
-        else if (IsPositiveColor(resolved))
+        else if (playSound && IsPositiveColor(resolved))
         {
             Sounds.Instance?.PlayPositive();
         }
-        else
+        else if (playSound)
         {
             Sounds.Instance?.PlayMessage();
         }

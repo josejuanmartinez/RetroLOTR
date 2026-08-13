@@ -1,0 +1,37 @@
+{
+  "voice_id": "ZUz67EWNNT6d1i38Xmcm",
+  "model": "eleven_v3",
+  "output_format": "mp3_44100_128",
+  "generated": [
+    {
+      "id": "gandalf_select_01",
+      "text": "What news from the road?",
+      "file": "gandalf_select_01.mp3",
+      "headers": {
+        "character-cost": "13",
+        "request-id": "1wvofsbUFhZ9hpHsqaXH",
+        "x-trace-id": "56359fa1b24f848b1c1acf247e0d55a3"
+      }
+    },
+    {
+      "id": "gandalf_select_02",
+      "text": "There is still time, if we use it well.",
+      "file": "gandalf_select_02.mp3",
+      "headers": {
+        "character-cost": "21",
+        "request-id": "UnOxUvvBQl4npiMheuWW",
+        "x-trace-id": "d8e9feaa706380ba7336170365186e35"
+      }
+    },
+    {
+      "id": "gandalf_select_03",
+      "text": "A small deed may turn the tide.",
+      "file": "gandalf_select_03.mp3",
+      "headers": {
+        "character-cost": "17",
+        "request-id": "QMXqfW6lsHI2Bz7A0tbM",
+        "x-trace-id": "8ac4c354827604412874f638e494c996"
+      }
+    }
+  ]
+}

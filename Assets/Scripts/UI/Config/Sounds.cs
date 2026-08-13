@@ -5,9 +5,25 @@ using UnityEngine;
 
 public class Sounds : SearcherByName
 {
+    [System.Serializable]
+    public class NamedVoiceProfile
+    {
+        public string profileId;
+        public List<string> characterNames = new();
+        public List<AudioClip> selectClips = new();
+    }
+
+    [System.Serializable]
+    public class SharedVoiceProfile
+    {
+        public string profileId;
+        public RacesEnum race;
+        public SexEnum sex;
+        public List<AudioClip> selectClips = new();
+    }
+
     private class VoiceSet
     {
-        public AudioClip expression;
         public AudioClip attack;
         public AudioClip effort;
         public AudioClip pain;
@@ -31,25 +47,13 @@ public class Sounds : SearcherByName
     public List<AudioClip> messageClips = new();
     public List<AudioClip> artifactFoundClips = new();
 
-    [Header("Voice - Race")]
-    public List<AudioClip> voiceOrcClips = new();
-    public List<AudioClip> voiceTrollClips = new();
-    public List<AudioClip> voiceGoblinClips = new();
-    public List<AudioClip> voiceNazgulClips = new();
-    public List<AudioClip> voiceUndeadClips = new();
-    public List<AudioClip> voiceDragonClips = new();
-    public List<AudioClip> voiceSpiderClips = new();
-    public List<AudioClip> voiceBalrogClips = new();
-    public List<AudioClip> voiceEagleClips = new();
-    public List<AudioClip> voiceEntClips = new();
-    public List<AudioClip> voiceBeorningClips = new();
-    public List<AudioClip> voiceWoseClips = new();
-    public List<AudioClip> voiceMaiaClips = new();
-    public List<AudioClip> voiceGenericClips = new();
+    [Header("Voice - Named Characters")]
+    public List<NamedVoiceProfile> namedVoiceProfiles = new();
 
-    [Header("Voice - Humanoid")]
-    public List<AudioClip> voiceExpressionMaleClips = new();
-    public List<AudioClip> voiceExpressionFemaleClips = new();
+    [Header("Voice - Shared Race and Sex")]
+    public List<SharedVoiceProfile> sharedVoiceProfiles = new();
+
+    [Header("Voice - Combat")]
     public List<AudioClip> voiceAttackMaleClips = new();
     public List<AudioClip> voiceAttackFemaleClips = new();
     public List<AudioClip> voiceEffortMaleClips = new();
@@ -105,6 +109,7 @@ public class Sounds : SearcherByName
     private readonly Queue<SfxRequest> queue = new();
     private readonly Dictionary<string, float> lastPlayByKey = new();
     private readonly Dictionary<string, AudioClip> stablePickByKey = new();
+    private readonly Dictionary<string, int> nextVoiceClipIndexByKey = new();
     private float lastPlayTime = -999f;
     private Coroutine queueRoutine;
     private float lastFootstepTime = -999f;
@@ -148,6 +153,8 @@ public class Sounds : SearcherByName
 
     private void EnsureAudioClipLists()
     {
+        namedVoiceProfiles ??= new List<NamedVoiceProfile>();
+        sharedVoiceProfiles ??= new List<SharedVoiceProfile>();
         var fields = GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
         foreach (var field in fields)
         {
@@ -189,51 +196,15 @@ public class Sounds : SearcherByName
         EnqueueFromList(uiNegativeClips, "ui_negative", 0.25f, 0.9f);
     }
 
-    public void PlayVoiceForRace(RacesEnum race)
-    {
-        var clips = race switch
-        {
-            RacesEnum.Orc => voiceOrcClips,
-            RacesEnum.Troll => voiceTrollClips,
-            RacesEnum.Goblin => voiceGoblinClips,
-            RacesEnum.Nazgul => voiceNazgulClips,
-            RacesEnum.Undead => voiceUndeadClips,
-            RacesEnum.Dragon => voiceDragonClips,
-            RacesEnum.Spider => voiceSpiderClips,
-            RacesEnum.Balrog => voiceBalrogClips,
-            RacesEnum.Eagle => voiceEagleClips,
-            RacesEnum.Ent => voiceEntClips,
-            RacesEnum.Beorning => voiceBeorningClips,
-            RacesEnum.Wildman => voiceWoseClips,
-            RacesEnum.Maia => voiceMaiaClips,
-            _ => voiceGenericClips
-        };
-
-        var clip = PickStableClip(clips, $"voice_race_{race}");
-        if (!clip) return;
-        Enqueue(clip, voiceVolume, 0.3f);
-    }
-
     public void PlayVoiceExpression(Character character)
     {
         if (character == null) return;
         if (soundAudioSource == null) return;
         if (!PlayerCanSeeHex(character.hex)) return;
-        if (!IsHumanoidRace(character.race))
-        {
-            PlayRaceVoice(character, 0.5f);
-            return;
-        }
+        if (character.race == RacesEnum.Machine) return;
 
-        if (character.health < 50)
-        {
-            PlayVoicePain(character);
-            return;
-        }
-
-        var voiceSet = GetOrCreateVoiceSet(character);
-        if (voiceSet == null || !voiceSet.expression) return;
-        Enqueue(voiceSet.expression, voiceVolume, 0.5f);
+        if (TryPlayNamedVoiceExpression(character.characterName, character.GetInstanceID().ToString())) return;
+        TryPlaySharedVoiceExpression(character);
     }
 
     public void PlayVoiceAttack(Character character)
@@ -241,11 +212,7 @@ public class Sounds : SearcherByName
         if (character == null) return;
         if (soundAudioSource == null) return;
         if (!PlayerCanSeeHex(character.hex)) return;
-        if (!IsHumanoidRace(character.race))
-        {
-            PlayRaceVoice(character, 0.4f);
-            return;
-        }
+        if (!IsHumanoidRace(character.race)) return;
 
         var voiceSet = GetOrCreateVoiceSet(character);
         if (voiceSet == null || !voiceSet.attack) return;
@@ -257,11 +224,7 @@ public class Sounds : SearcherByName
         if (character == null) return;
         if (soundAudioSource == null) return;
         if (!PlayerCanSeeHex(character.hex)) return;
-        if (!IsHumanoidRace(character.race))
-        {
-            PlayRaceVoice(character, 0.4f);
-            return;
-        }
+        if (!IsHumanoidRace(character.race)) return;
 
         var voiceSet = GetOrCreateVoiceSet(character);
         if (voiceSet == null || !voiceSet.effort) return;
@@ -273,11 +236,7 @@ public class Sounds : SearcherByName
         if (character == null) return;
         if (soundAudioSource == null) return;
         if (!PlayerCanSeeHex(character.hex)) return;
-        if (!IsHumanoidRace(character.race))
-        {
-            PlayRaceVoice(character, 0.4f);
-            return;
-        }
+        if (!IsHumanoidRace(character.race)) return;
 
         var voiceSet = GetOrCreateVoiceSet(character);
         if (voiceSet == null || !voiceSet.pain) return;
@@ -287,11 +246,7 @@ public class Sounds : SearcherByName
     public void PlayVoiceForAction(Character character, string actionName)
     {
         if (character == null || string.IsNullOrWhiteSpace(actionName)) return;
-        if (!IsHumanoidRace(character.race))
-        {
-            PlayRaceVoice(character, 0.4f);
-            return;
-        }
+        if (!IsHumanoidRace(character.race)) return;
 
         string lower = actionName.ToLowerInvariant();
         if (lower.Contains("attack") || lower.Contains("assassinate") || lower.Contains("wound") || lower.Contains("siege"))
@@ -553,6 +508,27 @@ public class Sounds : SearcherByName
         return chosen;
     }
 
+    private AudioClip PickRotatingVoiceClip(List<AudioClip> clips, string key)
+    {
+        if (clips == null || clips.Count == 0) return null;
+
+        if (!nextVoiceClipIndexByKey.TryGetValue(key, out int startIndex))
+        {
+            startIndex = UnityEngine.Random.Range(0, clips.Count);
+        }
+
+        for (int offset = 0; offset < clips.Count; offset++)
+        {
+            int index = (startIndex + offset) % clips.Count;
+            AudioClip candidate = clips[index];
+            if (candidate == null) continue;
+            nextVoiceClipIndexByKey[key] = (index + 1) % clips.Count;
+            return candidate;
+        }
+
+        return null;
+    }
+
     private static AudioClip PickRandomClip(List<AudioClip> clips)
     {
         if (clips == null || clips.Count == 0) return null;
@@ -605,11 +581,10 @@ public class Sounds : SearcherByName
         bool isFemale = sex == SexEnum.Female;
         return type switch
         {
-            VoiceType.Expression => isFemale ? voiceExpressionFemaleClips : voiceExpressionMaleClips,
             VoiceType.Attack => isFemale ? voiceAttackFemaleClips : voiceAttackMaleClips,
             VoiceType.Effort => isFemale ? voiceEffortFemaleClips : voiceEffortMaleClips,
             VoiceType.Pain => isFemale ? voicePainFemaleClips : voicePainMaleClips,
-            _ => isFemale ? voiceExpressionFemaleClips : voiceExpressionMaleClips
+            _ => null
         };
     }
 
@@ -628,6 +603,63 @@ public class Sounds : SearcherByName
         return g.player.visibleHexes.Contains(hex) && hex.IsHexSeen();
     }
 
+    public bool PlayNamedVoiceExpression(string characterName, bool interruptQueuedAudio = false)
+    {
+        if (string.IsNullOrWhiteSpace(characterName) || soundAudioSource == null) return false;
+        return TryPlayNamedVoiceExpression(characterName, "ui", interruptQueuedAudio);
+    }
+
+    private bool TryPlayNamedVoiceExpression(string characterName, string rotationKey, bool interruptQueuedAudio = false)
+    {
+        if (string.IsNullOrWhiteSpace(characterName)) return false;
+        if (namedVoiceProfiles == null || namedVoiceProfiles.Count == 0) return false;
+
+        foreach (NamedVoiceProfile profile in namedVoiceProfiles)
+        {
+            if (profile == null || profile.characterNames == null || profile.selectClips == null) continue;
+            bool matches = false;
+            foreach (string configuredName in profile.characterNames)
+            {
+                if (!string.Equals(configuredName, characterName, System.StringComparison.OrdinalIgnoreCase)) continue;
+                matches = true;
+                break;
+            }
+            if (!matches) continue;
+
+            string profileKey = string.IsNullOrWhiteSpace(profile.profileId) ? characterName : profile.profileId;
+            AudioClip clip = PickRotatingVoiceClip(profile.selectClips, $"voice_named_{profileKey}_{rotationKey}");
+            if (!clip) return false;
+            if (interruptQueuedAudio)
+            {
+                soundAudioSource.Stop();
+                queue.Clear();
+            }
+            Enqueue(clip, voiceVolume, 0.5f);
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool TryPlaySharedVoiceExpression(Character character)
+    {
+        if (character == null || sharedVoiceProfiles == null || sharedVoiceProfiles.Count == 0) return false;
+
+        foreach (SharedVoiceProfile profile in sharedVoiceProfiles)
+        {
+            if (profile == null || profile.race != character.race || profile.sex != character.sex) continue;
+            string profileKey = string.IsNullOrWhiteSpace(profile.profileId)
+                ? $"{character.race}_{character.sex}"
+                : profile.profileId;
+            AudioClip clip = PickRotatingVoiceClip(profile.selectClips, $"voice_shared_{profileKey}_{character.GetInstanceID()}");
+            if (!clip) return false;
+            Enqueue(clip, voiceVolume, 0.5f);
+            return true;
+        }
+
+        return false;
+    }
+
     private VoiceSet GetOrCreateVoiceSet(Character character)
     {
         int key = character.GetInstanceID();
@@ -639,7 +671,6 @@ public class Sounds : SearcherByName
         var created = new VoiceSet
         {
             voiceIndex = voiceIndex,
-            expression = PickVoiceClip(VoiceType.Expression, character.sex, voiceIndex),
             attack = PickVoiceClip(VoiceType.Attack, character.sex, voiceIndex),
             effort = PickVoiceClip(VoiceType.Effort, character.sex, voiceIndex),
             pain = PickVoiceClip(VoiceType.Pain, character.sex, voiceIndex)
@@ -668,41 +699,9 @@ public class Sounds : SearcherByName
         }
     }
 
-    private void PlayRaceVoice(Character character, float minInterval)
-    {
-        var clips = GetRaceVoiceClips(character.race);
-        if (clips == null || clips.Count == 0) return;
-        string key = $"voice_race_{character.race}_{character.GetInstanceID()}";
-        var clip = PickStableClip(clips, key);
-        if (!clip) return;
-        Enqueue(clip, voiceVolume, minInterval);
-    }
-
-    private List<AudioClip> GetRaceVoiceClips(RacesEnum race)
-    {
-        return race switch
-        {
-            RacesEnum.Orc => voiceOrcClips,
-            RacesEnum.Troll => voiceTrollClips,
-            RacesEnum.Goblin => voiceGoblinClips,
-            RacesEnum.Nazgul => voiceNazgulClips,
-            RacesEnum.Undead => voiceUndeadClips,
-            RacesEnum.Dragon => voiceDragonClips,
-            RacesEnum.Spider => voiceSpiderClips,
-            RacesEnum.Balrog => voiceBalrogClips,
-            RacesEnum.Eagle => voiceEagleClips,
-            RacesEnum.Ent => voiceEntClips,
-            RacesEnum.Beorning => voiceBeorningClips,
-            RacesEnum.Wildman => voiceWoseClips,
-            RacesEnum.Maia => voiceMaiaClips,
-            _ => voiceGenericClips
-        };
-    }
-
     private int GetVoiceIndex(SexEnum sex)
     {
         int maxCount = 0;
-        maxCount = Mathf.Max(maxCount, GetVoiceClips(VoiceType.Expression, sex).Count);
         maxCount = Mathf.Max(maxCount, GetVoiceClips(VoiceType.Attack, sex).Count);
         maxCount = Mathf.Max(maxCount, GetVoiceClips(VoiceType.Effort, sex).Count);
         maxCount = Mathf.Max(maxCount, GetVoiceClips(VoiceType.Pain, sex).Count);
@@ -712,7 +711,6 @@ public class Sounds : SearcherByName
 
     private enum VoiceType
     {
-        Expression,
         Attack,
         Effort,
         Pain

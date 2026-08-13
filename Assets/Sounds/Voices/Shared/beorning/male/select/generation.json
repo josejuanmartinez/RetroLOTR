@@ -1,0 +1,37 @@
+{
+  "voice_id": "ljo9gAlSqKOvF6D8sOsX",
+  "model": "eleven_v3",
+  "output_format": "mp3_44100_128",
+  "generated": [
+    {
+      "id": "beorning_male_select_01",
+      "text": "Speak plainly.",
+      "file": "beorning_male_select_01.mp3",
+      "headers": {
+        "character-cost": "8",
+        "request-id": "BBuQJFKTocAwCusTnLnt",
+        "x-trace-id": "cbd9c88869939ae4cd008838d72fe928"
+      }
+    },
+    {
+      "id": "beorning_male_select_02",
+      "text": "The wild is listening.",
+      "file": "beorning_male_select_02.mp3",
+      "headers": {
+        "character-cost": "12",
+        "request-id": "W11uYJ7GlaWsTSkxXNCp",
+        "x-trace-id": "f422fd8e3b3ed6ea036da97e01c7ef87"
+      }
+    },
+    {
+      "id": "beorning_male_select_03",
+      "text": "I am no tame hound.",
+      "file": "beorning_male_select_03.mp3",
+      "headers": {
+        "character-cost": "10",
+        "request-id": "GhgTbtjc6qKpnXl9VRoD",
+        "x-trace-id": "3ff41988cfe1e184c5f8a0a8102e7ef6"
+      }
+    }
+  ]
+}

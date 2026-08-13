@@ -1,0 +1,37 @@
+{
+  "voice_id": "8JqXlfVnL2hOaXuNNM3e",
+  "model": "eleven_v3",
+  "output_format": "mp3_44100_128",
+  "generated": [
+    {
+      "id": "undead_male_select_01",
+      "text": "Who calls the dead?",
+      "file": "undead_male_select_01.mp3",
+      "headers": {
+        "character-cost": "10",
+        "request-id": "Wgty8QrJ5sweCZzDfDl6",
+        "x-trace-id": "18a8d2da03c6dfe1a7d1f2a2f83dbb1b"
+      }
+    },
+    {
+      "id": "undead_male_select_02",
+      "text": "The grave remembers.",
+      "file": "undead_male_select_02.mp3",
+      "headers": {
+        "character-cost": "11",
+        "request-id": "6aRzjCQc2tVyr8AAMEXQ",
+        "x-trace-id": "1e8aaa62fdc2bc7fcb0387174c3122cd"
+      }
+    },
+    {
+      "id": "undead_male_select_03",
+      "text": "We do not rest.",
+      "file": "undead_male_select_03.mp3",
+      "headers": {
+        "character-cost": "8",
+        "request-id": "G2ZnUjmgpz4dUGfCQrUI",
+        "x-trace-id": "69ba9a72e40b1b6ac020984aca2422de"
+      }
+    }
+  ]
+}

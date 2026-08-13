@@ -1,0 +1,37 @@
+{
+  "voice_id": "M5E055lOUxMi0kJpGyE9",
+  "model": "eleven_v3",
+  "output_format": "mp3_44100_128",
+  "generated": [
+    {
+      "id": "dwarf_male_select_01",
+      "text": "Aye, what work?",
+      "file": "dwarf_male_select_01.mp3",
+      "headers": {
+        "character-cost": "8",
+        "request-id": "oUm0tS1Rx08x49lDVQnu",
+        "x-trace-id": "a2ab23f6bcb110583781f632ccfefe57"
+      }
+    },
+    {
+      "id": "dwarf_male_select_02",
+      "text": "Name the road.",
+      "file": "dwarf_male_select_02.mp3",
+      "headers": {
+        "character-cost": "8",
+        "request-id": "ma69RmYVaWy5ucPPSX5H",
+        "x-trace-id": "148a4b8c96be801b4a38557cb7bea853"
+      }
+    },
+    {
+      "id": "dwarf_male_select_03",
+      "text": "My axe is ready.",
+      "file": "dwarf_male_select_03.mp3",
+      "headers": {
+        "character-cost": "9",
+        "request-id": "usaQeEB5Bbin8s3xKyyS",
+        "x-trace-id": "95080235edb75e453dd5f8f69ed164b0"
+      }
+    }
+  ]
+}

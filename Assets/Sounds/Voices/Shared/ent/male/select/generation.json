@@ -1,0 +1,37 @@
+{
+  "voice_id": "F3DPYUG20zUxgjCZimID",
+  "model": "eleven_v3",
+  "output_format": "mp3_44100_128",
+  "generated": [
+    {
+      "id": "ent_male_select_01",
+      "text": "Do not be hasty.",
+      "file": "ent_male_select_01.mp3",
+      "headers": {
+        "character-cost": "9",
+        "request-id": "FZo4dtIeICqmg8zgyXMH",
+        "x-trace-id": "2b90b766a30f7924015578c68095dd28"
+      }
+    },
+    {
+      "id": "ent_male_select_02",
+      "text": "The wood is awake.",
+      "file": "ent_male_select_02.mp3",
+      "headers": {
+        "character-cost": "10",
+        "request-id": "Bf5ugcm8lLuD9j9XYmqu",
+        "x-trace-id": "2f315211ad88a3a7e3a24cf7aaf4ce34"
+      }
+    },
+    {
+      "id": "ent_male_select_03",
+      "text": "I am listening... slowly.",
+      "file": "ent_male_select_03.mp3",
+      "headers": {
+        "character-cost": "14",
+        "request-id": "YoL3U9TvwKfr695Gh4z4",
+        "x-trace-id": "69ada5777044d29fd5f7c4c7c10c1193"
+      }
+    }
+  ]
+}

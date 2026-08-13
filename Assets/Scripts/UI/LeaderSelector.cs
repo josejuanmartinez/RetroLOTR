@@ -53,6 +53,7 @@ public class LeaderSelector : SearcherByName
     bool selectionScreenShown = false;
     bool selectionScreenQueued = false;
     Coroutine deferredRefreshRoutine;
+    LeaderSelectionEntry lastVoicedSelection;
     Canvas rootCanvas;
     void Awake()
     {
@@ -225,6 +226,8 @@ public class LeaderSelector : SearcherByName
             leaderCarousel.SetIndex(leaderCarousel.GetCurrentIndex());
         }
 
+        ApplyCurrentSkinFont();
+
         if (textUI != null)
         {
             textUI.ForceMeshUpdate();
@@ -312,6 +315,8 @@ public class LeaderSelector : SearcherByName
 
         selectionScreenShown = true;
         selectionScreenQueued = false;
+        Music.Instance?.PlayLeaderSelectionAmbience();
+        ApplyCurrentSkinFont();
         SelectLeader(leaderCarousel != null ? leaderCarousel.GetCurrentIndex() : 0);
         Board.Instance?.HideGenerationProgressUi();
         ForceLeaderSelectionRefresh();
@@ -534,6 +539,8 @@ public class LeaderSelector : SearcherByName
             carouselItem.SetSprite(sprite);
             carouselItem.SetLabel(BuildCarouselLabel(selection), selection.alignment);
         }
+
+        ApplyCurrentSkinFont(item);
     }
 
     string BuildCarouselLabel(LeaderSelectionEntry selection)
@@ -568,6 +575,32 @@ public class LeaderSelector : SearcherByName
 
             UpdateBannerImage(player);
             Game.Instance.SelectPlayer(player);
+
+            if (selectionScreenShown && selection != lastVoicedSelection)
+            {
+                string voiceName = string.IsNullOrWhiteSpace(selection.characterName)
+                    ? selection.baseLeaderName
+                    : selection.characterName;
+                bool played = Sounds.Instance?.PlayNamedVoiceExpression(voiceName, true) ?? false;
+                if (!played && !string.Equals(voiceName, selection.baseLeaderName, StringComparison.OrdinalIgnoreCase))
+                {
+                    played = Sounds.Instance?.PlayNamedVoiceExpression(selection.baseLeaderName, true) ?? false;
+                }
+                if (played) lastVoicedSelection = selection;
+            }
+        }
+    }
+
+    void ApplyCurrentSkinFont(GameObject root = null)
+    {
+        FontManager fontManager = FontManager.Instance;
+        if (fontManager == null) return;
+
+        GameObject target = root != null ? root : leaderSelectionFullScreen;
+        if (target == null) target = gameObject;
+        foreach (TMP_Text text in target.GetComponentsInChildren<TMP_Text>(true))
+        {
+            fontManager.ApplyCurrentFont(text);
         }
     }
 

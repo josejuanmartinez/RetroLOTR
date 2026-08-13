@@ -1,0 +1,37 @@
+{
+  "voice_id": "XsPtP38I4HSf3xAk74TO",
+  "model": "eleven_v3",
+  "output_format": "mp3_44100_128",
+  "generated": [
+    {
+      "id": "balrog_male_select_01",
+      "text": "The flame awakens.",
+      "file": "balrog_male_select_01.mp3",
+      "headers": {
+        "character-cost": "10",
+        "request-id": "SeMWfXnr7V8qyvjj2XI6",
+        "x-trace-id": "6fe8309d519cf17c55fcc502861a980d"
+      }
+    },
+    {
+      "id": "balrog_male_select_02",
+      "text": "Shadow answers fire.",
+      "file": "balrog_male_select_02.mp3",
+      "headers": {
+        "character-cost": "11",
+        "request-id": "7S6FFX3cX1WPZTyjStHy",
+        "x-trace-id": "cdd430e48233bd957601c02ce9eda3fd"
+      }
+    },
+    {
+      "id": "balrog_male_select_03",
+      "text": "You stand before ruin.",
+      "file": "balrog_male_select_03.mp3",
+      "headers": {
+        "character-cost": "12",
+        "request-id": "C5xYx1DQ00U0VfijCp9O",
+        "x-trace-id": "aaebc14cb0810f343b356052a802457e"
+      }
+    }
+  ]
+}

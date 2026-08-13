@@ -1,0 +1,37 @@
+{
+  "voice_id": "ZNJndNLVRD1Hk0wkwdbJ",
+  "model": "eleven_v3",
+  "output_format": "mp3_44100_128",
+  "generated": [
+    {
+      "id": "troll_male_select_01",
+      "text": "What?",
+      "file": "troll_male_select_01.mp3",
+      "headers": {
+        "character-cost": "3",
+        "request-id": "0bsZeRHTj4DAe5dXD4Og",
+        "x-trace-id": "3964143884680d4b09e5b9d49eb60c5c"
+      }
+    },
+    {
+      "id": "troll_male_select_02",
+      "text": "Point the way.",
+      "file": "troll_male_select_02.mp3",
+      "headers": {
+        "character-cost": "8",
+        "request-id": "HoZxMoVRZmA7QuleHva8",
+        "x-trace-id": "f5c1678eb11ada4b2d0326750a856dd2"
+      }
+    },
+    {
+      "id": "troll_male_select_03",
+      "text": "Ready to break things.",
+      "file": "troll_male_select_03.mp3",
+      "headers": {
+        "character-cost": "12",
+        "request-id": "8PQFBVnMp8iq9qadoFAA",
+        "x-trace-id": "3bcb149cf8fbcae52865fb55fecd3299"
+      }
+    }
+  ]
+}

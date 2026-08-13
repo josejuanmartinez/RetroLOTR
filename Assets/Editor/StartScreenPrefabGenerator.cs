@@ -10,6 +10,7 @@ public static class StartScreenPrefabGenerator
 {
     private const string PrefabPath = "Assets/GameObjects/StartScreen.prefab";
     private const string ScenePath = "Assets/Scenes/InGame.unity";
+    private const string LogoPath = "Assets/Art/UI/RuneboardLogo.png";
 
     [InitializeOnLoadMethod]
     private static void GenerateOnceInOpenEditor()
@@ -92,7 +93,9 @@ public static class StartScreenPrefabGenerator
         CreateImage("Dark Veil", root.transform, new Color(0.02f, 0.025f, 0.04f, 0.58f), false);
 
         GameObject barObject = CreateRect("Menu Bar", root.transform, new Vector2(0.06f, 0.12f), new Vector2(0.32f, 0.88f), Vector2.zero, Vector2.zero);
-        barObject.AddComponent<Image>().color = new Color(0.035f, 0.04f, 0.065f, 0.9f);
+        Image barImage = barObject.AddComponent<Image>();
+        barImage.color = Color.white;
+        barImage.material = AssetDatabase.LoadAssetAtPath<Material>("Assets/Art/Materials/Fog.mat");
         VerticalLayoutGroup layout = barObject.AddComponent<VerticalLayoutGroup>();
         layout.padding = new RectOffset(42, 42, 44, 44);
         layout.spacing = 16;
@@ -101,7 +104,7 @@ public static class StartScreenPrefabGenerator
         layout.childControlHeight = false;
 
         RectTransform bar = barObject.GetComponent<RectTransform>();
-        CreateLabel("Title", "RETROLOTR", bar, 48, FontStyles.Bold, 72);
+        CreateLogo(bar);
         CreateLabel("Subtitle", "THE UNTOLD WAR OF THE RING", bar, 16, FontStyles.Italic, 35);
         CreateSpacer(bar, 20);
         Button start = CreateButton("StartButton", "Start", bar, 58);
@@ -159,6 +162,17 @@ public static class StartScreenPrefabGenerator
         label.color = new Color(0.96f, 0.88f, 0.67f);
         label.raycastTarget = false;
         return label;
+    }
+
+    private static void CreateLogo(RectTransform parent)
+    {
+        GameObject go = new("Title", typeof(RectTransform), typeof(Image), typeof(LayoutElement));
+        go.transform.SetParent(parent, false);
+        go.GetComponent<LayoutElement>().preferredHeight = 190f;
+        Image image = go.GetComponent<Image>();
+        image.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(LogoPath);
+        image.preserveAspect = true;
+        image.raycastTarget = false;
     }
 
     private static Button CreateButton(string name, string text, RectTransform parent, float height)

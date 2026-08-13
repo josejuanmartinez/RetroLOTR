@@ -1,0 +1,37 @@
+{
+  "voice_id": "H1CuHzAGVrv9ODHDEOZe",
+  "model": "eleven_v3",
+  "output_format": "mp3_44100_128",
+  "generated": [
+    {
+      "id": "southron_male_select_01",
+      "text": "I await the command.",
+      "file": "southron_male_select_01.mp3",
+      "headers": {
+        "character-cost": "11",
+        "request-id": "meMV5Q2SXLXOqYL1qLzI",
+        "x-trace-id": "bb4063cff4273a6198222c794481c9cf"
+      }
+    },
+    {
+      "id": "southron_male_select_02",
+      "text": "The sun is high.",
+      "file": "southron_male_select_02.mp3",
+      "headers": {
+        "character-cost": "9",
+        "request-id": "oEj1QfxsPGuGyZ1acDSh",
+        "x-trace-id": "ffb35a87f40df1392bb81f8203f3d130"
+      }
+    },
+    {
+      "id": "southron_male_select_03",
+      "text": "My spear is ready.",
+      "file": "southron_male_select_03.mp3",
+      "headers": {
+        "character-cost": "10",
+        "request-id": "B3o88OuJHibnIsj4yZbc",
+        "x-trace-id": "64bb5dd2c22f2352cd153050482015a9"
+      }
+    }
+  ]
+}

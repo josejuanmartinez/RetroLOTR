@@ -878,7 +878,7 @@ public class NationSpawner : MonoBehaviour
             characterName = characterName,
             alignment = card != null ? (AlignmentEnum)card.alignment : owner.GetAlignment(),
             race = card != null ? card.race : RacesEnum.Common,
-            sex = SexEnum.Male,
+            sex = card?.sex ?? SexEnum.Male,
             commander = card?.commander ?? 0,
             agent = card?.agent ?? 0,
             emmissary = card?.emmissary ?? 0,

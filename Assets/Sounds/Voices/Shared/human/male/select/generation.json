@@ -1,0 +1,37 @@
+{
+  "voice_id": "7rQX8r6PVq3gfJ8rZzyE",
+  "model": "eleven_v3",
+  "output_format": "mp3_44100_128",
+  "generated": [
+    {
+      "id": "human_male_select_01",
+      "text": "At your service.",
+      "file": "human_male_select_01.mp3",
+      "headers": {
+        "character-cost": "9",
+        "request-id": "Iv9DaBxcZ0jxxEn7RJFv",
+        "x-trace-id": "32e212bd4f094ac94a2b4dbe4caa8dac"
+      }
+    },
+    {
+      "id": "human_male_select_02",
+      "text": "What is required?",
+      "file": "human_male_select_02.mp3",
+      "headers": {
+        "character-cost": "9",
+        "request-id": "Lf5cnE7jchgCtgZtsSNe",
+        "x-trace-id": "aa97d309c8161d8fc7b19a1130acbad9"
+      }
+    },
+    {
+      "id": "human_male_select_03",
+      "text": "I am ready.",
+      "file": "human_male_select_03.mp3",
+      "headers": {
+        "character-cost": "6",
+        "request-id": "AKD08awPH7HnFaWy0b7X",
+        "x-trace-id": "7166c8bf5bef7071b60dab0ed49d558d"
+      }
+    }
+  ]
+}

@@ -32,6 +32,8 @@ public class Colors : SearcherByName
     public Color logNotification = new Color(0.55f, 0.85f, 1f);
     public Color logRumour = new Color(0.85f, 0.55f, 1f);
     public Color logEvent = new Color(1f, 0.75f, 0.3f);
+    public Color movementStart = new Color(0.72f, 0.16f, 0.2f);
+    public Color movementEnd = new Color(0.08f, 0.58f, 0.52f);
     public Color MAX;
 
     private Dictionary<string, FieldInfo> normalizedLookup;

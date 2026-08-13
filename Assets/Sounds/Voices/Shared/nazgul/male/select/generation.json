@@ -1,0 +1,37 @@
+{
+  "voice_id": "eAWx9EU0I0kuVORpvKgP",
+  "model": "eleven_v3",
+  "output_format": "mp3_44100_128",
+  "generated": [
+    {
+      "id": "nazgul_male_select_01",
+      "text": "We hear.",
+      "file": "nazgul_male_select_01.mp3",
+      "headers": {
+        "character-cost": "4",
+        "request-id": "FZ4iOKgIclVWd7rIH820",
+        "x-trace-id": "27500145d292368ef5f0e0661bc61f22"
+      }
+    },
+    {
+      "id": "nazgul_male_select_02",
+      "text": "The hunt continues.",
+      "file": "nazgul_male_select_02.mp3",
+      "headers": {
+        "character-cost": "10",
+        "request-id": "xfpiLCgv3IxeEeMSNW2E",
+        "x-trace-id": "30fa1b517aac49db7b75ae9e9565cd5a"
+      }
+    },
+    {
+      "id": "nazgul_male_select_03",
+      "text": "None shall escape.",
+      "file": "nazgul_male_select_03.mp3",
+      "headers": {
+        "character-cost": "10",
+        "request-id": "T9Y6UtfiPLwZloOW8sjv",
+        "x-trace-id": "270af39690637effa1bdd68697d07439"
+      }
+    }
+  ]
+}

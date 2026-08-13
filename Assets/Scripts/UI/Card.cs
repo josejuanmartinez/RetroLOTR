@@ -1866,7 +1866,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                 characterName = characterName,
                 alignment = (AlignmentEnum)cardData.alignment,
                 race = cardData.race,
-                sex = SexEnum.Male,
+                sex = cardData.sex,
                 commander = cardData.commander,
                 agent = cardData.agent,
                 emmissary = cardData.emmissary,

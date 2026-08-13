@@ -146,6 +146,52 @@ public class Music : MonoBehaviour
             musicFadeRoutine = null;
         }
         musicAudioSource?.Stop();
+        StopAmbient();
+    }
+
+    public void PlayLeaderSelectionAmbience()
+    {
+        ClearVideoSuspension();
+        StopMusicPlayback();
+
+        AudioClip clip = PickStableClip(ambientGrasslandsClips, "ambient_leader_selection")
+            ?? PickStableClip(ambientPlainsClips, "ambient_leader_selection_plains")
+            ?? PickStableClip(ambientForestClips, "ambient_leader_selection_forest");
+        if (clip == null)
+        {
+            StopAmbient();
+            return;
+        }
+
+        currentAmbientKey = "ambient_leader_selection";
+        currentAmbientTerrain = null;
+        CrossfadeAmbient(clip);
+    }
+
+    public void PlayGameMusic()
+    {
+        ClearVideoSuspension();
+        StopAmbient();
+        PlayStartingMusic();
+    }
+
+    private void StopMusicPlayback()
+    {
+        if (musicFadeRoutine != null)
+        {
+            StopCoroutine(musicFadeRoutine);
+            musicFadeRoutine = null;
+        }
+        musicAudioSource?.Stop();
+        currentMusicKey = null;
+    }
+
+    private void ClearVideoSuspension()
+    {
+        musicSuspendedForVideo = false;
+        musicBeforeVideo = null;
+        musicTimeBeforeVideo = 0f;
+        musicLoopBeforeVideo = false;
     }
 
     public void RestoreMusicAfterVideo()

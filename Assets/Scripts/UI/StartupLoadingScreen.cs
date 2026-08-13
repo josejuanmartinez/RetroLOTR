@@ -32,13 +32,13 @@ public sealed class StartupLoadingScreen : MonoBehaviour
             float combined = Mathf.Clamp01(deckProgress * 0.25f + artProgress * 0.75f);
             if (progressBar != null) progressBar.value = combined;
             SetStatus(deckProgress < 1f
-                ? $"> Reading the Decks - {combined * 100f:0}% <"
-                : $"> Illuminating the Cards - {combined * 100f:0}% <");
+                ? $"Reading the Decks ..."
+                : $"Illuminating the Cards ...");
             yield return null;
         }
 
         if (progressBar != null) progressBar.value = 1f;
-        SetStatus("> The Runeboard Awaits <");
+        SetStatus("Done!");
         yield return FadeOut();
         SetVisible(false);
         gameObject.SetActive(false);

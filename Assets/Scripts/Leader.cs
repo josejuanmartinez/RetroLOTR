@@ -217,8 +217,15 @@ public class Leader : Character
             // Refresh hexes
             StartCoroutine(RevealVisibleHexesAsync(() =>
             {
-                // Prompt for action to the player
-                Board.Instance?.SelectCharacter(this, true, 1.0f, 0.0f);
+                // Prompt for action to the player - skip if already selected (e.g. Game.
+                // SelectFirstPlayerCharacter already selected it earlier this same turn-start
+                // sequence): Board.SelectHex's single-character branch unconditionally replays
+                // the character's voice bark on every call, so a redundant call here would
+                // double-play it.
+                if (Board.Instance != null && Board.Instance.selectedCharacter != this)
+                {
+                    Board.Instance.SelectCharacter(this, true, 1.0f, 0.0f);
+                }
             }
             ));
         }

@@ -1,0 +1,37 @@
+{
+  "voice_id": "3VkFsBHdRPqWKsitgYhJ",
+  "model": "eleven_v3",
+  "output_format": "mp3_44100_128",
+  "generated": [
+    {
+      "id": "orc_male_select_01",
+      "text": "What now?",
+      "file": "orc_male_select_01.mp3",
+      "headers": {
+        "character-cost": "5",
+        "request-id": "XMAFUerjmMgeo3Dvz3hB",
+        "x-trace-id": "fdfa690f4e9e15156b3754c6dce8c58d"
+      }
+    },
+    {
+      "id": "orc_male_select_02",
+      "text": "Give the word.",
+      "file": "orc_male_select_02.mp3",
+      "headers": {
+        "character-cost": "8",
+        "request-id": "Jfmy667K8yF2U4ml7B3v",
+        "x-trace-id": "1dd4f1c6fa40593f2f3bb33d14296966"
+      }
+    },
+    {
+      "id": "orc_male_select_03",
+      "text": "Who do we hunt?",
+      "file": "orc_male_select_03.mp3",
+      "headers": {
+        "character-cost": "8",
+        "request-id": "QKVUWNExigf9KKOtjusQ",
+        "x-trace-id": "a6c1d6c656f7695183cbaaaaa409dd2a"
+      }
+    }
+  ]
+}

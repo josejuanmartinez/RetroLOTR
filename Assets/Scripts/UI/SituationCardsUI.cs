@@ -829,7 +829,7 @@ public class SituationCardsUI : MonoBehaviour
                 characterName = cardData.name,
                 alignment = (AlignmentEnum)cardData.alignment,
                 race = cardData.race,
-                sex = SexEnum.Male,
+                sex = cardData.sex,
                 commander = cardData.commander,
                 agent = cardData.agent,
                 emmissary = cardData.emmissary,

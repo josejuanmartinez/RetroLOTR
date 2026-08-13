@@ -1,0 +1,37 @@
+{
+  "voice_id": "wo6udizrrtpIxWGp2qJk",
+  "model": "eleven_v3",
+  "output_format": "mp3_44100_128",
+  "generated": [
+    {
+      "id": "hobbit_male_select_01",
+      "text": "Yes? Is it time?",
+      "file": "hobbit_male_select_01.mp3",
+      "headers": {
+        "character-cost": "9",
+        "request-id": "vdkelOGxXRyW72fBlcWt",
+        "x-trace-id": "a12ca980557bf7c7cd41c254ca3b5188"
+      }
+    },
+    {
+      "id": "hobbit_male_select_02",
+      "text": "Which way?",
+      "file": "hobbit_male_select_02.mp3",
+      "headers": {
+        "character-cost": "6",
+        "request-id": "0Crdjlpek2iz6RWEK1hg",
+        "x-trace-id": "f728faf4f86108c495bb13e981fed456"
+      }
+    },
+    {
+      "id": "hobbit_male_select_03",
+      "text": "I am ready... I think.",
+      "file": "hobbit_male_select_03.mp3",
+      "headers": {
+        "character-cost": "12",
+        "request-id": "aIvxMyL2bPoF9Fy79AVp",
+        "x-trace-id": "0fe923ef1bdfa4109e92d462304b613a"
+      }
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "voice_id": "XEoBW4iDmiawQP72xnAF",
+  "model": "eleven_v3",
+  "output_format": "mp3_44100_128",
+  "generated": [
+    {
+      "id": "elf_female_select_01",
+      "text": "I hear you.",
+      "file": "elf_female_select_01.mp3",
+      "headers": {
+        "character-cost": "6",
+        "request-id": "HwMjbTZsUM0U5PDIeP2u",
+        "x-trace-id": "6d92030cd565a7651bb6c0faeebd1dd0"
+      }
+    },
+    {
+      "id": "elf_female_select_02",
+      "text": "Speak, and I shall heed.",
+      "file": "elf_female_select_02.mp3",
+      "headers": {
+        "character-cost": "13",
+        "request-id": "sO12AXsHsPcHp7RyMbBA",
+        "x-trace-id": "c1e9ecf394093aec0d53b4ffebc5b658"
+      }
+    },
+    {
+      "id": "elf_female_select_03",
+      "text": "The stars are watchful.",
+      "file": "elf_female_select_03.mp3",
+      "headers": {
+        "character-cost": "13",
+        "request-id": "FGyRspqf4atMsnRhKINn",
+        "x-trace-id": "28de3f8d1c8b43633d58beac76f3a43f"
+      }
+    }
+  ]
+}

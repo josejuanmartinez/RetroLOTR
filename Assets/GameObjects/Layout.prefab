@@ -10709,7 +10709,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5933319007499456120, guid: e18b1993dfe4c2c4a9b5963ab33a96d8, type: 3}
       propertyPath: m_Size
-      value: 0.9999999
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5933319007499456120, guid: e18b1993dfe4c2c4a9b5963ab33a96d8, type: 3}
       propertyPath: m_Value
@@ -10896,6 +10896,10 @@ PrefabInstance:
     - target: {fileID: 4181293669788447730, guid: 240ecf9d757aca84b8bf2e29b9e16fdb, type: 3}
       propertyPath: m_Name
       value: PlayableLeaderIcon
+      objectReference: {fileID: 0}
+    - target: {fileID: 8847494346013140870, guid: 240ecf9d757aca84b8bf2e29b9e16fdb, type: 3}
+      propertyPath: m_Alpha
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 4687812502949268115, guid: 240ecf9d757aca84b8bf2e29b9e16fdb, type: 3}

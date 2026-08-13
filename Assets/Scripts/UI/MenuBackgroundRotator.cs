@@ -20,7 +20,7 @@ public sealed class MenuBackgroundRotator : MonoBehaviour
         rect.anchorMax = Vector2.one;
         rect.offsetMin = rect.offsetMax = Vector2.zero;
 
-        if (back == null) back = CreateLayer("Backdrop A", transform, 0.9f);
+        if (back == null) back = CreateLayer("Backdrop A", transform, 1f);
         if (front == null) front = CreateLayer("Backdrop B", transform, 0f);
     }
 
@@ -38,7 +38,7 @@ public sealed class MenuBackgroundRotator : MonoBehaviour
         if (sprites == null || sprites.Length == 0) return;
 
         back.sprite = sprites[0];
-        back.color = new Color(1f, 1f, 1f, 0.9f);
+        back.color = new Color(1f, 1f, 1f, 1f);
         front.color = new Color(1f, 1f, 1f, 0f);
         if (routine != null) StopCoroutine(routine);
         routine = StartCoroutine(Rotate());
@@ -53,7 +53,7 @@ public sealed class MenuBackgroundRotator : MonoBehaviour
             front.sprite = sprites[index];
             for (float t = 0f; t < 1f; t += Time.unscaledDeltaTime / 1.15f)
             {
-                front.color = new Color(1f, 1f, 1f, Mathf.SmoothStep(0f, 0.9f, t));
+                front.color = new Color(1f, 1f, 1f, Mathf.SmoothStep(0f, 1f, t));
                 yield return null;
             }
             back.sprite = front.sprite;

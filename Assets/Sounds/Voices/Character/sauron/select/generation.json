@@ -1,0 +1,37 @@
+{
+  "voice_id": "S3B28HJQD38WYxWyv9pR",
+  "model": "eleven_v3",
+  "output_format": "mp3_44100_128",
+  "generated": [
+    {
+      "id": "sauron_select_01",
+      "text": "Nothing is hidden from me.",
+      "file": "sauron_select_01.mp3",
+      "headers": {
+        "character-cost": "14",
+        "request-id": "dPJ4wd7Yz588U4vVs5T2",
+        "x-trace-id": "b48c06ac1936c847fdd23b9145cabedc"
+      }
+    },
+    {
+      "id": "sauron_select_02",
+      "text": "All wills bend in time.",
+      "file": "sauron_select_02.mp3",
+      "headers": {
+        "character-cost": "13",
+        "request-id": "WxRs2nyqigfFFQAQWJQR",
+        "x-trace-id": "dbea3907fbedfbd8b162af1ebb5e2682"
+      }
+    },
+    {
+      "id": "sauron_select_03",
+      "text": "The hour of dominion draws near.",
+      "file": "sauron_select_03.mp3",
+      "headers": {
+        "character-cost": "18",
+        "request-id": "apsWf1wdVEYEj3OTTHtO",
+        "x-trace-id": "ef02932bde7dc755377d3d77c5f4f4b8"
+      }
+    }
+  ]
+}

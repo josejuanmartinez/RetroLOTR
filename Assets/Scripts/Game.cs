@@ -204,6 +204,7 @@ public class Game : MonoBehaviour
 
         turn = 0;
         started = true;
+        Music.Instance?.PlayGameMusic();
         blockLookAtUntilStartupPopupCloses = true;
         startupPopupShown = false;
 
@@ -533,6 +534,10 @@ public class Game : MonoBehaviour
         PopupManager.CloseAll();
         ConfirmationDialog.CloseAll();
         SelectionDialog.CloseAll();
+        // Close any opportunity-card bloom left open for the human before handing control to
+        // AI leaders (same call RunPlayerAutoplayTurn uses at Game.cs:969) - it must never sit
+        // open over the board while AI turns run.
+        SituationCardsUI.Instance?.DismissForAutoplay();
 
         bool shouldPrompt = currentlyPlaying == player && !skipNextTurnPrompt;
         if (currentlyPlaying == player) playerTurnAcceptingInput = false;
@@ -841,7 +846,14 @@ public class Game : MonoBehaviour
                 firstAlive.hex.RevealArea(1, true, null);
             }
             ShowHumanPlayerWidgetsWidgets();
-            board.SelectCharacter(firstAlive, true, 1.0f, 0.0f);
+            // Skip re-selecting if this character is already the selection (e.g. Leader.
+            // WaitUntilEndOfTurn already selected it earlier this same turn-start sequence) -
+            // Board.SelectHex's single-character branch unconditionally replays the character's
+            // voice bark on every call, so a redundant call here double-plays it.
+            if (board.selectedCharacter != firstAlive)
+            {
+                board.SelectCharacter(firstAlive, true, 1.0f, 0.0f);
+            }
         }
         else
         {

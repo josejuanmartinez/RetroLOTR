@@ -160,6 +160,7 @@ public class CardData
     public int emmissary;
     public int mage;
     public RacesEnum race;
+    public SexEnum sex = SexEnum.Male;
     public List<string> artifacts = new();
     public TroopsTypeEnum troopType;
     public List<ArmySpecialAbilityEnum> specialAbilities = new();

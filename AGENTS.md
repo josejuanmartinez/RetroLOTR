@@ -26,6 +26,7 @@ Skills live under `.agents/skills/<skill-name>/SKILL.md`. Use them by name when 
 | `colorify-banner` | Colorize a banner/crest image while preserving its transparent cutout silhouette. |
 | `new-banner` | Generate a new heraldic banner sprite and save to `Assets/Art/UI/Alignment/Banners/`. |
 | `extract-sprite-slices` | Extract sliced sub-assets from a Unity multi-sprite atlas into standalone PNG files. |
+| `elevenlabs-character-audio` | Find or create ElevenLabs character voices and creature SFX, generate selection lines, download clips, and wire approved audio into Unity. |
 
 ## Card And Deck Work
 

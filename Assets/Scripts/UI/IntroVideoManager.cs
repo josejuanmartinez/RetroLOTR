@@ -69,7 +69,6 @@ public class IntroVideoManager : MonoBehaviour
         {
             vp.Stop();
             boardGenerator.SetVideoPlaying(false);
-            Music.Instance?.RestoreMusicAfterVideo();
             gameObject.SetActive(false);
         }
     }
@@ -82,17 +81,15 @@ public class IntroVideoManager : MonoBehaviour
     void OnVideoFinished(VideoPlayer p)
     {
         boardGenerator.SetVideoPlaying(false);
-        Music.Instance?.RestoreMusicAfterVideo();
     }
 
     void OnVideoError(VideoPlayer p, string msg)
     {
         boardGenerator.SetVideoPlaying(false);
-        Music.Instance?.RestoreMusicAfterVideo();
     }
 
     private void OnDisable()
     {
-        Music.Instance?.RestoreMusicAfterVideo();
+        if (vp != null && vp.isPlaying) vp.Stop();
     }
 }
