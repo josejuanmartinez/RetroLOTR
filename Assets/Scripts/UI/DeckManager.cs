@@ -981,6 +981,7 @@ public class DeckManager : MonoBehaviour
     private readonly Dictionary<Leader, PlayerDeckState> playerDecks = new();
 
     private bool loaded;
+    public bool IsLoaded => loaded;
 
     public IReadOnlyList<string> AvailableStatusEffectIds => availableStatusEffectIds;
 
@@ -1000,9 +1001,14 @@ public class DeckManager : MonoBehaviour
         Instance = this;
     }
 
-    private void Start()
+    private IEnumerator Start()
     {
-        if (!initializeOnStart) return;
+        if (!initializeOnStart) yield break;
+
+        // Let the active startup canvas render once before parsing the full card catalog.
+        // InitializeFromResources is synchronous, so doing it in the first Start frame made
+        // the application look frozen before Unity had presented any feedback at all.
+        yield return null;
 
         if (!loaded) InitializeFromResources();
 

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -32,13 +33,27 @@ public class Illustrations : SearcherByName
     private AsyncOperationHandle<IList<IResourceLocation>> locationsHandle;
     private readonly List<AsyncOperationHandle<Sprite>> spriteHandles = new();
     private int pendingLocationLoads;
+    private int totalLocationLoads;
+    private bool locationScanFinished;
     private bool isLoaded;
     private bool loggedNotReadyWarning;
 
     public bool IsLoaded => isLoaded;
+    public float LoadProgress => isLoaded
+        ? 1f
+        : !locationScanFinished || totalLocationLoads <= 0
+            ? 0.05f
+            : 1f - (float)pendingLocationLoads / totalLocationLoads;
 
     private void Awake()
     {
+        StartCoroutine(BeginLoadingAfterFirstFrame());
+    }
+
+    private IEnumerator BeginLoadingAfterFirstFrame()
+    {
+        // Give StartupLoadingScreen one rendered frame before queuing 1,000+ Addressables.
+        yield return null;
         locationsHandle = Addressables.LoadResourceLocationsAsync(IllustrationsLabel, typeof(Sprite));
         locationsHandle.Completed += OnIllustrationLocationsLoaded;
     }
@@ -65,11 +80,14 @@ public class Illustrations : SearcherByName
     {
         if (handle.Status != AsyncOperationStatus.Succeeded || handle.Result == null)
         {
+            locationScanFinished = true;
             illustrationsByName = new Dictionary<string, Sprite>();
             cardArtByName = new Dictionary<string, Sprite>();
             characterArtByName = new Dictionary<string, Sprite>();
             deckArtByName = new Dictionary<string, Sprite>();
-            isLoaded = false;
+            // Complete in a degraded state so a failed Addressables label cannot leave the
+            // full-screen startup blocker up forever. The error remains explicit in the log.
+            isLoaded = true;
             Debug.LogError($"Illustrations: failed to load Addressables label '{IllustrationsLabel}'.");
             return;
         }
@@ -79,6 +97,7 @@ public class Illustrations : SearcherByName
         characterArtByName = new Dictionary<string, Sprite>();
         deckArtByName = new Dictionary<string, Sprite>();
         pendingLocationLoads = 0;
+        locationScanFinished = true;
         int queuedCount = 0;
         foreach (IResourceLocation location in handle.Result)
         {
@@ -96,6 +115,7 @@ public class Illustrations : SearcherByName
         }
 
         isLoaded = pendingLocationLoads == 0;
+        totalLocationLoads = queuedCount;
         Debug.Log($"Illustrations: queued {queuedCount} sprites from Addressables label '{IllustrationsLabel}'.");
     }
 

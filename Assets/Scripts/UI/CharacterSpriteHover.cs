@@ -103,11 +103,10 @@ public class CharacterSpriteHover : MonoBehaviour
         if (board == null) return;
 
         Sounds.Instance?.PlayUiClick();
+        // SelectHex itself now drives the situation-card bloom for whichever character ends up
+        // selected (restore-if-dismissed, or a fresh check) — see
+        // SituationCardsUI.RefreshBloomForCharacterSelection.
         board.SelectHex(hex.v2, characterToSelect: character);
-        if (board.selectedCharacter == character)
-        {
-            SituationCardsUI.Instance?.TryRestoreBloom(character);
-        }
     }
 
     private void OnMouseExit()

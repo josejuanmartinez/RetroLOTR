@@ -85,7 +85,12 @@ public class MessageDisplayNoUI : MonoBehaviour
     // handle these: by the time such a message fires, the very event being reported (the army's
     // death) has usually already made that check false, so it would roll "unspotted" for a
     // combatant the player is, by definition, actively fighting and already knows by name.
-    public static void ShowMessage(Hex hex, Character character, string message, Color? color = null, bool recordRumour = true, bool forceDisplay = false, bool knownIdentity = false)
+    // forcePrivateForOthers: for messages that reveal sensitive detail (e.g. exactly what a
+    // caravan sold and for how much) that should only ever reach the player through the
+    // rumour/spying system for anyone but themselves — even on a hex they can currently see.
+    // The floating hex text still displays as normal; only the public LogWidget entry and the
+    // rumour's public/private classification are affected.
+    public static void ShowMessage(Hex hex, Character character, string message, Color? color = null, bool recordRumour = true, bool forceDisplay = false, bool knownIdentity = false, bool forcePrivateForOthers = false)
     {
         if (hex == null || hex.gameObject == null) return;
 
@@ -110,7 +115,8 @@ public class MessageDisplayNoUI : MonoBehaviour
             && game.player.visibleHexes.Contains(hex)
             && hex.IsHexSeen();
         bool canDisplayToPlayer = forceDisplay || playerCanSeeHex;
-        bool publicRumour = character != null && (character.GetOwner() == game.player || playerCanSeeHex);
+        bool publicRumour = character != null &&
+            (character.GetOwner() == game.player || (!forcePrivateForOthers && playerCanSeeHex));
 
         Color resolved = color ?? Color.white;
         string displayMessage = formattedMessage;
@@ -149,8 +155,14 @@ public class MessageDisplayNoUI : MonoBehaviour
                 instance.DispatchMessage(hex, displayMessage, worldPos, resolved);
             }
 
-            string nation = character?.GetOwner()?.characterName ?? character?.characterName;
-            LogManager.Log(LogCategory.Notification, nation, character?.characterName, rawMessage);
+            // Only a publicly-known rumour earns an unconditional LogWidget entry here — a
+            // private one (see forcePrivateForOthers) still surfaces, but only once actually
+            // gathered as intel (RumoursManager.AddRumour/PromoteRumourToPublic logs it then).
+            if (publicRumour)
+            {
+                string nation = character?.GetOwner()?.characterName ?? character?.characterName;
+                LogManager.Log(LogCategory.Notification, nation, character?.characterName, rawMessage);
+            }
         }
 
         if (recordRumour)

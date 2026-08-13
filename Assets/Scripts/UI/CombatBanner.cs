@@ -121,6 +121,14 @@ public class CombatBanner : MonoBehaviour
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        // This is a cinematic display, not an interactive modal. The scene used to override
+        // blocksRaycasts=true while alpha was zero, leaving an invisible sorting-order-32767
+        // canvas above every menu and swallowing all pointer input.
+        if (rootGroup != null)
+        {
+            rootGroup.interactable = false;
+            rootGroup.blocksRaycasts = false;
+        }
         attackerAnimator = new ActorAnimator(attackerImage);
         defenderAnimator = new ActorAnimator(defenderImage);
     }

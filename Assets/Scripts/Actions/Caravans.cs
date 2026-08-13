@@ -85,7 +85,10 @@ public class Caravans : CharacterAction
                 stores.RefreshStores();
             }
 
-            MessageDisplayNoUI.ShowMessage(c.hex, c, $"Caravans sold {soldUnits} total unit(s) across {soldTypes} type(s), gaining {totalGold} gold.", Color.yellow);
+            // Trade income is private to the nation that earned it — other leaders only learn
+            // the specifics (what sold, for how much) via the rumour/spying system, never as a
+            // standing public LogWidget entry just because their hex happened to be in view.
+            MessageDisplayNoUI.ShowMessage(c.hex, c, $"Caravans sold {soldUnits} total unit(s) across {soldTypes} type(s), gaining {totalGold} gold.", Color.yellow, forcePrivateForOthers: true);
             return true;
         };
 

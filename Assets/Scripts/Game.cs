@@ -909,12 +909,25 @@ public class Game : MonoBehaviour
         ConfirmationDialog.CloseAll();
         SelectionDialog.CloseAll();
         SituationCardsUI.Instance?.DismissForAutoplay();
+        OpportunityHexHinter.ClearAll();
         MessageDisplay.ShowPersistent("Autoplay enabled — Ctrl+Shift+Tab to stop", Color.yellow);
 
         if (currentlyPlaying == player && playerTurnAcceptingInput && !playerAutoplayTurnRunning)
         {
             StartCoroutine(RunPlayerAutoplayTurn(resumingHumanTurn: true));
         }
+    }
+
+    /// <summary>Runs exactly the current human player's turn under AI control, then returns to normal turn flow.</summary>
+    public void AutoplayOneTurn()
+    {
+        if (!started || player == null || currentlyPlaying != player || !playerTurnAcceptingInput || playerAutoplayTurnRunning)
+        {
+            Debug.LogWarning("Autoplay one turn is only available during the active player's turn.");
+            return;
+        }
+
+        StartCoroutine(RunPlayerAutoplayTurn(resumingHumanTurn: true));
     }
 
     // Keeps ownership/viewpoint (game.player) separate from who makes this leader's decisions.
@@ -946,6 +959,7 @@ public class Game : MonoBehaviour
         ConfirmationDialog.CloseAll();
         SelectionDialog.CloseAll();
         SituationCardsUI.Instance?.DismissForAutoplay();
+        OpportunityHexHinter.ClearAll();
 
         yield return AITurnController.ExecuteLeaderTurn(
             player,

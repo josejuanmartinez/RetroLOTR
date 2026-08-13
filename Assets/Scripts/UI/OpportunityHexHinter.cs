@@ -36,6 +36,11 @@ public static class OpportunityHexHinter
 
         Game game = Game.Instance;
         if (game == null || game.player == null || character.GetOwner() != game.player) return;
+        // Suppress while an AI is actually making the moves for this character — either
+        // another leader's turn (ownership check above already covers that in practice) or
+        // the human's own turn being resolved by Autoplay. Hints pulsing toward opportunity
+        // hexes while nobody's hand is on the wheel just reads as visual noise.
+        if (!game.IsPlayerCurrentlyPlaying() || game.IsPlayerAutoplayEnabledFor(character.GetOwner())) return;
         if (character.GetOwner() is not PlayableLeader leader) return;
 
         DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : DeckManager.Instance;

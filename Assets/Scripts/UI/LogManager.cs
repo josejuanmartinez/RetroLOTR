@@ -32,6 +32,7 @@ public class LogManager : MonoBehaviour
     private readonly List<GameObject> entryObjects = new();
     private Colors colors;
     private bool collapsed;
+    private string lastEntryText;
 
     private void Awake()
     {
@@ -75,6 +76,12 @@ public class LogManager : MonoBehaviour
     {
         if (content == null || entryTemplate == null) return;
 
+        string formatted = FormatEntry(nation, character, text);
+        // Several systems (turn-start grants, per-hop notifications, etc.) can fire the exact
+        // same line back to back — skip the repeat instead of stacking identical rows.
+        if (formatted == lastEntryText) return;
+        lastEntryText = formatted;
+
         GameObject row = Instantiate(entryTemplate, content);
         row.SetActive(true);
         row.transform.SetAsLastSibling();
@@ -82,7 +89,7 @@ public class LogManager : MonoBehaviour
         TextMeshProUGUI label = row.GetComponentInChildren<TextMeshProUGUI>(true);
         if (label != null)
         {
-            label.text = FormatEntry(nation, character, text);
+            label.text = formatted;
             Color targetColor = ResolveColor(category);
             StartCoroutine(FlashNewEntry(label, row.transform, targetColor));
         }

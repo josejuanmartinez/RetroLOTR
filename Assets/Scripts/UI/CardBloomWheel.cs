@@ -226,6 +226,18 @@ public class CardBloomWheel : MonoBehaviour
                 if (go == null) continue;
                 RectTransform rt = go.GetComponent<RectTransform>();
                 if (rt == null) continue;
+
+                // Bloom targets are offsets from this wheel's centre. TokenCard.prefab is
+                // authored with bottom-left anchors, which makes an anchoredPosition of
+                // (x, y) land at (x - halfWidth, y - halfHeight) in this 100x100 wheel.
+                // That shifted the whole nominal semicircle 50px left/down: the left and
+                // right spokes became 330px and 230px respectively, and the end tokens fell
+                // below the shared origin. Normalize every supplied token to the coordinate
+                // system RecalculateBloomTargets and CardBloomLinesGraphic both use.
+                Vector2 center = new(0.5f, 0.5f);
+                rt.anchorMin = center;
+                rt.anchorMax = center;
+                rt.pivot = center;
                 cardRects.Add(rt);
                 cardGroups.Add(go.GetComponent<CanvasGroup>());
 
@@ -460,7 +472,14 @@ public class CardBloomWheel : MonoBehaviour
             return;
         }
 
-        CardCenterPreview.Instance?.ShowPreview(data, hoverDriven: true);
+        // When this wheel is world-anchored (the SituationCardsUI opportunity-card bloom, parked
+        // over a hex rather than its usual hand-tray spot), the enlarged preview must center on
+        // that same world point — otherwise it shows at its own unrelated fixed screen anchor
+        // while the ring of tokens it "bloomed" from surrounds a completely different spot.
+        if (useWorldAnchor)
+            CardCenterPreview.Instance?.ShowPreview(data, hoverDriven: true, worldAnchor: worldAnchorPosition, worldAnchorCamera: worldAnchorCamera);
+        else
+            CardCenterPreview.Instance?.ShowPreview(data, hoverDriven: true);
     }
 
     private int FindHoveredCardIndex(Camera cam)

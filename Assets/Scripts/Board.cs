@@ -182,16 +182,12 @@ public class Board : MonoBehaviour
         // the old dropdown flow) keep the already-made choice.
         if (!GameConfig.SkipIntro) GameConfig.ScenarioChosen = false;
 
-        // Kicked off here (rather than lazily on the first Hex.RedrawCharacters() call) so the
-        // baked spritesheet load has the whole campaign-selection-screen + board-generation
-        // window as a head start, instead of starting cold right as the board first becomes
-        // visible with characters already standing on it.
-        CharacterSpritesheets.EnsureLoading();
     }
 
     [Header("Campaign Selection")]
     [Tooltip("Disabled campaign/scenario selection object already present in the scene.")]
     [SerializeField] private RetroLOTR.Scenarios.CampaignSelectionManager campaignSelectionScreen;
+    [SerializeField] private StartScreenController startScreenController;
 
     // Nothing happens — no intro video, no generation, no leader selector — until the
     // player picks an authored scenario or the default random campaign.
@@ -202,6 +198,11 @@ public class Board : MonoBehaviour
             ShowCampaignSelection();
             yield return new WaitUntil(() => GameConfig.ScenarioChosen);
         }
+
+        // The title and campaign menus do not use the 17,000+ baked animation frames. Starting
+        // this load in Awake made those menus compete with atlas deserialization and feel
+        // unresponsive. Campaign choice gives it the board-generation window as a head start.
+        CharacterSpritesheets.EnsureLoading();
 
         StartCoroutine(ReleaseThrottleIfNoVideo());
         ResolveActiveScenario();
@@ -214,7 +215,9 @@ public class Board : MonoBehaviour
     {
         if (campaignSelectionScreen != null)
         {
-            campaignSelectionScreen.gameObject.SetActive(true);
+            if (startScreenController == null)
+                startScreenController = gameObject.AddComponent<StartScreenController>();
+            startScreenController.Show(campaignSelectionScreen);
             return;
         }
 
@@ -600,6 +603,7 @@ public class Board : MonoBehaviour
                 {
                     SetSelectedCharacter(null);
                     HideSelectedCharacterUi();
+                    SituationCardsUI.Instance?.RefreshBloomForCharacterSelection(null);
                     return;
                 }
 
@@ -611,6 +615,7 @@ public class Board : MonoBehaviour
 
                     SetSelectedCharacter(myCharacters[0]);
                     RefreshSelectedCharacterUi();
+                    SituationCardsUI.Instance?.RefreshBloomForCharacterSelection(myCharacters[0]);
                 }
                 else
                 {
@@ -622,10 +627,11 @@ public class Board : MonoBehaviour
                     {
                         toSelectIndex = (myCharacters.IndexOf(selectedCharacter) + 1) % myCharacters.Count;
                     }
-                    
+
                     SetSelectedCharacter(myCharacters[toSelectIndex]);
-                    
+
                     RefreshSelectedCharacterUi();
+                    SituationCardsUI.Instance?.RefreshBloomForCharacterSelection(myCharacters[toSelectIndex]);
                 }
 
             }
@@ -697,6 +703,11 @@ public class Board : MonoBehaviour
             FindFirstObjectByType<HexPathRenderer>()?.HidePath();
             return;
         }
+
+        // Actually walking now — a bloom left open at the hex being departed no longer applies;
+        // close it instead of leaving movement stalled behind SituationCardsUI.IsShowing (see
+        // HasBlockingEventPending). It reopens fresh at wherever the character stops.
+        SituationCardsUI.Instance?.DismissActiveBloomFor(character);
 
         moving = true;
         HexPathRenderer pathRenderer = FindFirstObjectByType<HexPathRenderer>();
@@ -1687,6 +1698,15 @@ public class Board : MonoBehaviour
         if (!situationCardsHoldCenterLock) return;
         situationCardsHoldCenterLock = false;
         CenterDisplayLock.Release();
+    }
+
+    // Entry point for selection-driven (as opposed to movement-landing-driven) situation-card
+    // checks — e.g. clicking directly onto a character that hasn't moved this turn. See
+    // SituationCardsUI.RefreshBloomForCharacterSelection, hooked from SelectHex below.
+    public void CheckSituationCardsForSelectedCharacter(Character character)
+    {
+        if (character == null || character.hex == null) return;
+        CheckAndShowSituationCards(character, character.hex);
     }
 
     private void CheckAndShowSituationCards(Character character, Hex hex)

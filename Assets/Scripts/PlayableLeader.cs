@@ -103,7 +103,7 @@ public class PlayableLeader : Leader
 
     public string GetSelectedVariantName()
     {
-        return selectedVariantName;
+        return selectedVariantName; 
     }
 
     public void RecordPlayedCard(CardData card)

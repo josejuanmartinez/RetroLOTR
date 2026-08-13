@@ -19,6 +19,8 @@ public class SkinManager : MonoBehaviour
     private FontManager fontManager;
     private Skins currentSkin = Skins.Default;
 
+    public Skins CurrentSkin => currentSkin;
+
     void Awake()
     {
         videos = FindFirstObjectByType<Videos>();

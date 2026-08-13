@@ -30,11 +30,11 @@ namespace RetroLOTR.Scenarios
         [SerializeField] private GameObject enableAfterSelection;
         [Tooltip("TokenCard prefab used to build each scenario button's representative card token. Same prefab as DeckManager's tokenCardTemplate.")]
         [SerializeField] private GameObject cardTemplate;
-        [Tooltip("Optional authored dropdown. If omitted, one is created in the top-right of this screen.")]
-        [SerializeField] private TMP_Dropdown skinDropdown;
 
         private void Start()
         {
+            RemoveLegacySkinControls();
+
             if (defaultCampaignButton != null)
             {
                 defaultCampaignButton.onClick.AddListener(() => Choose(null));
@@ -44,40 +44,19 @@ namespace RetroLOTR.Scenarios
                 Debug.LogError("CampaignSelectionManager: defaultCampaignButton is not wired in the prefab.");
 
             PopulateScenarioButtons();
-            SetupSkinDropdown();
         }
 
-        private void SetupSkinDropdown()
+        // Older InGame scene instances added these controls directly to the prefab root.
+        // Skin selection now belongs to the title screen and pause/config screen only.
+        private void RemoveLegacySkinControls()
         {
-            if (skinDropdown == null)
+            foreach (string legacyName in new[] { "Skin", "Dropdown", "SkinDropdown" })
             {
-                GameObject dropdownObject = TMP_DefaultControls.CreateDropdown(new TMP_DefaultControls.Resources());
-                dropdownObject.name = "SkinDropdown";
-                dropdownObject.transform.SetParent(transform, false);
-                skinDropdown = dropdownObject.GetComponent<TMP_Dropdown>();
-
-                RectTransform rect = dropdownObject.GetComponent<RectTransform>();
-                rect.anchorMin = new Vector2(1f, 1f);
-                rect.anchorMax = new Vector2(1f, 1f);
-                rect.pivot = new Vector2(1f, 1f);
-                rect.anchoredPosition = new Vector2(-32f, -32f);
-                rect.sizeDelta = new Vector2(240f, 48f);
+                Transform legacyControl = transform.Find(legacyName);
+                if (legacyControl == null) continue;
+                legacyControl.gameObject.SetActive(false);
+                Destroy(legacyControl.gameObject);
             }
-
-            skinDropdown.ClearOptions();
-            skinDropdown.AddOptions(new List<string>(Enum.GetNames(typeof(Skins))));
-
-            SkinManager skinManager = FindFirstObjectByType<SkinManager>();
-            if (skinManager == null)
-            {
-                Debug.LogError("CampaignSelectionManager: SkinManager was not found.");
-                skinDropdown.interactable = false;
-                return;
-            }
-
-            skinDropdown.SetValueWithoutNotify((int)Skins.Default);
-            skinManager.ChangeSkin(Skins.Default);
-            skinDropdown.onValueChanged.AddListener(value => skinManager.ChangeSkin((Skins)value));
         }
 
         private void PopulateScenarioButtons()

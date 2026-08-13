@@ -67,10 +67,11 @@ public class CardCenterPreview : MonoBehaviour
 
     public RectTransform CurrentPreviewRect => centerPreviewRects.Count > 0 ? centerPreviewRects[0] : null;
 
-    // Above the base gameplay canvas CardBloomWheel's tokens/connecting lines render on
-    // (sibling order there otherwise decides it, which is what let the wheel draw over the
-    // preview) and below SituationCardsUI's own 200/LevelChangeEffectUI's 210 overlays.
-    private const int PreviewSortingOrder = 50;
+    // Above every CardBloomWheel this can be triggered from — including the SituationCardsUI
+    // opportunity-card wheel (CardBloomOverlay), which lives inside SituationCardsUI's own
+    // prefab and therefore inherits its canvas at sortingOrder 200 (a plain "above the base
+    // gameplay canvas" order like 50 rendered behind it). Still below LevelChangeEffectUI's 210.
+    private const int PreviewSortingOrder = 205;
 
     private void Awake()
     {
@@ -99,10 +100,10 @@ public class CardCenterPreview : MonoBehaviour
         AnimateCenterPreview();
     }
 
-    public void ShowPreview(CardData data, float speedMultiplier = 1f, bool hoverDriven = false)
+    public void ShowPreview(CardData data, float speedMultiplier = 1f, bool hoverDriven = false, Vector3? worldAnchor = null, Camera worldAnchorCamera = null)
     {
         if (data == null) return;
-        ShowPreview(new List<CardData> { data }, speedMultiplier, hoverDriven);
+        ShowPreview(new List<CardData> { data }, speedMultiplier, hoverDriven, worldAnchor, worldAnchorCamera);
     }
 
     // Shared by every character-hover site (roster lists, hex map): the character's own
@@ -143,7 +144,11 @@ public class CardCenterPreview : MonoBehaviour
     // hoverAutoHideDistance pixels from where it was at that moment, the preview force-hides
     // itself even if the hover source never calls HidePreview (see Update's safety net).
     // Leave false for scripted/timed reveals that aren't tied to the cursor sitting still.
-    public void ShowPreview(IReadOnlyList<CardData> cardsData, float speedMultiplier = 1f, bool hoverDriven = false)
+    // worldAnchor: when supplied (e.g. by CardBloomWheel, whose own tokens fan out around a
+    // world-anchored hex rather than this preview's usual fixed centerPreviewAnchor spot),
+    // the preview is centered on that world point instead — otherwise the enlarged card and
+    // the ring of tokens it "bloomed" from end up anchored to two unrelated screen positions.
+    public void ShowPreview(IReadOnlyList<CardData> cardsData, float speedMultiplier = 1f, bool hoverDriven = false, Vector3? worldAnchor = null, Camera worldAnchorCamera = null)
     {
         List<CardData> validCards = cardsData?.Where(c => c != null).ToList();
         if (validCards == null || validCards.Count == 0) return;
@@ -152,9 +157,25 @@ public class CardCenterPreview : MonoBehaviour
         previewSpeedMultiplier = Mathf.Max(0.1f, speedMultiplier);
         hoverDrivenActive = hoverDriven;
         hoverAnchorMousePos = Input.mousePosition;
+        // Keep generated cards beneath this object's dedicated override-sorting Canvas.
+        // Parenting them to parentCanvas.rootCanvas escaped that Canvas entirely, so its
+        // sortingOrder could not put previews in front of the SituationCardsUI bloom.
         Transform parent = centerPreviewAnchor != null
             ? (Transform)centerPreviewAnchor
-            : (parentCanvas != null ? parentCanvas.rootCanvas.transform : transform);
+            : transform;
+
+        Vector2 anchorOffset = Vector2.zero;
+        if (worldAnchor.HasValue && parent is RectTransform parentRect)
+        {
+            Camera sceneCam = worldAnchorCamera != null ? worldAnchorCamera : Camera.main;
+            Canvas uiCanvas = parentRect.GetComponentInParent<Canvas>();
+            Camera uiCam = uiCanvas != null && uiCanvas.renderMode != RenderMode.ScreenSpaceOverlay ? uiCanvas.worldCamera : null;
+            if (sceneCam != null)
+            {
+                Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(sceneCam, worldAnchor.Value);
+                RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRect, screenPoint, uiCam, out anchorOffset);
+            }
+        }
 
         DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : DeckManager.Instance;
         GameObject template = deckManager != null ? deckManager.GetCardPrefabTemplate() : null;
@@ -189,7 +210,7 @@ public class CardCenterPreview : MonoBehaviour
                 rect.pivot = center;
 
                 float unscaledX = count > 1 ? (i * step) - contentWidth * 0.5f + cardWidth * 0.5f : 0f;
-                targetPos = new Vector2(unscaledX * scale, 0f);
+                targetPos = new Vector2(unscaledX * scale, 0f) + anchorOffset;
             }
 
             Card previewCard = instance.GetComponent<Card>();
@@ -308,7 +329,7 @@ public class CardCenterPreview : MonoBehaviour
     {
         RectTransform reference = centerPreviewAnchor != null
             ? centerPreviewAnchor
-            : (parentCanvas != null ? parentCanvas.rootCanvas.transform as RectTransform : null);
+            : transform as RectTransform;
         return reference != null ? reference.rect.width : 0f;
     }
 

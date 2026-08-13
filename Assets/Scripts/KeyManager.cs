@@ -68,6 +68,12 @@ public class KeyManager : MonoBehaviour
         // Check if ESC key was pressed
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            if (game != null && game.started)
+            {
+                PauseMenuController.Toggle();
+                return;
+            }
+
             if (PopupManager.IsShowing)
             {
                 PopupManager.HidePopup();
@@ -77,6 +83,7 @@ public class KeyManager : MonoBehaviour
             if (board != null)
             {
                 board.UnselectHex();
+                SituationCardsUI.Instance?.RefreshBloomForCharacterSelection(null);
                 return;
             }
 

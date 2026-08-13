@@ -507,6 +507,56 @@ public class SituationCardsUI : MonoBehaviour
         IsShowing = false;
     }
 
+    // Watchdog for the forced-open bloom: it's anchored to activeBloomCharacter/activeBloomHex
+    // for as long as those stay valid, but nothing else routes every possible way a character
+    // can act, move, or die back through DismissBloom. Rather than chase each of those sites,
+    // just check every frame while a bloom is actually up (cheap) and close it the moment it's
+    // stale — a bloom must never sit open over a hex the character has left, or offering cards
+    // to someone who has already acted this turn.
+    private void Update()
+    {
+        if (activeBloomWheel == null || activeBloomCharacter == null) return;
+        if (activeBloomCharacter.killed || activeBloomCharacter.hasActionedThisTurn
+            || activeBloomCharacter.hex == null || activeBloomCharacter.hex != activeBloomHex)
+        {
+            DismissBloom(saveForCharacter: false);
+        }
+    }
+
+    // Called from Board.Move so starting a walk always clears whatever offer was left open at
+    // the old hex for the character that's about to move — movement should never sit blocked
+    // behind a stale offer (see SituationCardsUI.IsShowing / Board.HasBlockingEventPending).
+    public void DismissActiveBloomFor(Character character)
+    {
+        if (activeBloomWheel != null && activeBloomCharacter == character)
+        {
+            DismissBloom(saveForCharacter: false);
+        }
+    }
+
+    // Central hook for "a character became the selection" (sprite click, roster icon,
+    // keyboard nav, ...) — see Board.SelectHex. Closes whatever bloom belongs to whoever was
+    // selected before, then either restores this character's previously-dismissed offer (if
+    // it still applies — see TryRestoreBloom's own hex/moved/acted checks) or runs a fresh
+    // check. This is what lets a bloom appear from simply selecting a character, not only
+    // after it moves (that case is still handled by Board.CheckAndShowSituationCards, called
+    // directly from MoveCoroutine/MoveCharacterOneHex on arrival).
+    public void RefreshBloomForCharacterSelection(Character character)
+    {
+        if (character == null)
+        {
+            if (activeBloomWheel != null) DismissBloom(saveForCharacter: true);
+            return;
+        }
+
+        if (activeBloomCharacter == character) return;
+
+        if (activeBloomWheel != null) DismissBloom(saveForCharacter: true);
+
+        if (TryRestoreBloom(character)) return;
+        Board.Instance?.CheckSituationCardsForSelectedCharacter(character);
+    }
+
     public bool TryRestoreBloom(Character character)
     {
         if (!bloom || IsShowing || character == null) return false;
