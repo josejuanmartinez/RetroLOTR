@@ -52,6 +52,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     [Header("Tuning")]
     [SerializeField] private Color requirementsMessageColor = Color.red;
+    [SerializeField] private bool showRequirementWarnings = true;
+    [SerializeField] private bool showCloseIcon = true;
     [Tooltip("True on TokenCard instances that only carry the compact token visual: hovering unfolds the card into CardCenterPreview instead of flipping the (absent) RealCard subtree in place.")]
     [SerializeField] private bool isTokenOnlyPresentation;
 
@@ -68,6 +70,24 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private Graphic rootHitGraphic;
     public bool SuppressHoverEffects { get; set; }
     public bool UseCardArtFolderOnly { get; set; }
+    public bool ShowRequirementWarnings
+    {
+        get => showRequirementWarnings;
+        set
+        {
+            showRequirementWarnings = value;
+            if (cardData != null) UpdateInteractableState();
+        }
+    }
+    public bool ShowCloseIcon
+    {
+        get => showCloseIcon;
+        set
+        {
+            showCloseIcon = value;
+            UpdateDiscardButtonState();
+        }
+    }
     private bool lockedToRealCard;
     private string baseDescription = string.Empty;
     private Image encounterArtOverlay;
@@ -716,6 +736,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             CardTypeEnum.Event => "event",
             CardTypeEnum.Action => "action",
             CardTypeEnum.Spell => "spell",
+            CardTypeEnum.Object => "object",
             CardTypeEnum.Encounter => "encounter",
             CardTypeEnum.Environmental => "environmental",
             _ => null
@@ -755,6 +776,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             CardTypeEnum.Event => "Event",
             CardTypeEnum.Action => "Action",
             CardTypeEnum.Spell => "Spell",
+            CardTypeEnum.Object => "Object",
             CardTypeEnum.Encounter => "Encounter",
             CardTypeEnum.Environmental => "Environmental",
             _ => string.Empty
@@ -882,7 +904,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         if (!isTypewriting && descriptionText != null)
         {
-            if (isPlayable)
+            if (isPlayable || !showRequirementWarnings)
             {
                 descriptionText.text = baseDescription;
             }
@@ -1000,10 +1022,11 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         Game game = Game.Instance;
         PlayableLeader playerLeader = game != null ? game.player : null;
         if (playerLeader == null || deckManager == null) return;
-        if (playerLeader.HasPlayedEnvironmentalCardThisTurn())
+        EnvironmentalCardManager environment = EnvironmentalCardManager.GetOrCreate();
+        if (!environment.CanNationPlay(playerLeader, game.turn, out string environmentalReason))
         {
             if (selected?.hex != null)
-                MessageDisplayNoUI.ShowMessage(selected.hex, selected, "Already played an environmental card this turn.", Color.red);
+                MessageDisplayNoUI.ShowMessage(selected.hex, selected, environmentalReason, Color.red);
             return;
         }
         if (!cardData.MeetsResourceRequirements(playerLeader))
@@ -1027,10 +1050,12 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         }
 
         CardData activeCard = consumedCard ?? playedCard;
-        EnvironmentalCardManager.GetOrCreate().SetActiveCard(activeCard);
-        playerLeader.RecordPlayedCard(activeCard);
-        playerLeader.RecordEnvironmentalCardPlayed(game.turn);
-        selected?.RecordPlayedCard(activeCard);
+        if (!environment.TrySetActiveCard(activeCard, playerLeader, out _))
+        {
+            IsPlayInProgress = false;
+            return;
+        }
+        if (selected?.hex != null) selected.hex.PlayCharacterActionAnimation(selected);
 
         if (selected?.hex != null)
             MessageDisplayNoUI.ShowMessage(selected.hex, selected, $"{activeCard.name} takes hold — effects begin next turn", Color.green);
@@ -1159,8 +1184,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         if (success)
         {
-            playedSelected?.RecordPlayedCard(playedCard);
-
+            if (playedSelected?.hex != null) playedSelected.hex.PlayCharacterActionAnimation(playedSelected);
             if (actionRollFailed)
             {
                 // The card was spent but its difficulty roll failed — no effect landed, so it
@@ -1209,6 +1233,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private void UpdateDiscardButtonState()
     {
         if (discardButton == null) return;
+        discardButton.SetActive(showCloseIcon);
+        if (!showCloseIcon) return;
         Button btn = discardButton.GetComponent<Button>();
         if (btn == null) return;
         btn.interactable = cardData != null && !cardData.IsEncounterCard();
@@ -1672,7 +1698,6 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             return (true, true);
         }
 
-        playerLeader.RecordPlayedCard(cardData);
         return (true, false);
     }
 
@@ -1683,19 +1708,19 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         PlayableLeader playerLeader = game.player;
         if (playerLeader == null) return Task.FromResult(false);
 
-        if (playerLeader.HasPlayedEnvironmentalCardThisTurn())
+        EnvironmentalCardManager environment = EnvironmentalCardManager.GetOrCreate();
+        if (!environment.CanNationPlay(playerLeader, game.turn, out string environmentalReason))
         {
             if (selected?.hex != null)
-                MessageDisplayNoUI.ShowMessage(selected.hex, selected, "Already played an environmental card this turn.", Color.red);
+                MessageDisplayNoUI.ShowMessage(selected.hex, selected, environmentalReason, Color.red);
             return Task.FromResult(false);
         }
 
         if (!deckManager.TryConsumeCard(playerLeader, cardData.name, false, out _))
             return Task.FromResult(false);
 
-        EnvironmentalCardManager.GetOrCreate().SetActiveCard(cardData);
-        playerLeader.RecordPlayedCard(cardData);
-        playerLeader.RecordEnvironmentalCardPlayed(game.turn);
+        if (!environment.TrySetActiveCard(cardData, playerLeader, out _))
+            return Task.FromResult(false);
 
         // Environmental cards don't roll/resolve immediately like Action cards — they become
         // the ongoing effect and apply at the start of next turn. Without an explicit message

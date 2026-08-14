@@ -8,8 +8,6 @@ using UnityEngine;
 public class NonPlayableLeader : Leader
 {
     public bool joined = false;
-    private bool iconsInitialized = false;
-
     public List<PlayableLeader> revealedTo = new();
     private bool playerRevealPopupShown = false;
 
@@ -19,38 +17,13 @@ public class NonPlayableLeader : Leader
     {
         this.nonPlayableLeaderBiome = nonPlayableLeaderBiome;
         base.Initialize(hex, nonPlayableLeaderBiome, showSpawnMessage, applyNoScenarioStart);
-        Game game = Game.Instance;
-        if (game != null && game.started)
-        {
-            InitializeIcons();
-        }
-    }
-
-    public void InitializeIcons()
-    {
-        if (iconsInitialized) return;
-        iconsInitialized = true;
-        if (nonPlayableLeaderBiome == null) return;
-
-        PlayableLeaderIcon alignmentPlayableLeader = FindObjectsByType<PlayableLeaderIcon>(FindObjectsSortMode.None)
-            .FirstOrDefault(x => x.alignment == nonPlayableLeaderBiome.alignment);
-        if (!alignmentPlayableLeader)
-        {
-            Debug.LogWarning($"Could not find PlayableLeaderIcons for alignment {nonPlayableLeaderBiome.alignment}");
-            return;
-        }
-        alignmentPlayableLeader.AddNonPlayableLeader(this);
     }
 
     public bool CanJoinWithStateAllegiance(PlayableLeader leader)
     {
         if (leader == null || killed || joined) return false;
         if (leader == this) return false;
-        if (leader.GetAlignment() != alignment) return false;
-
-        string capitalName = GetCapitalName();
-        if (string.IsNullOrWhiteSpace(capitalName)) return false;
-        return leader.HasPlayedPcCard(capitalName);
+        return leader.GetAlignment() == alignment;
     }
 
     public string GetJoiningConditionsText(Leader leader)
@@ -58,17 +31,13 @@ public class NonPlayableLeader : Leader
         StringBuilder sb = new();
         string capitalName = GetCapitalName();
         bool sameAlignment = leader != null && leader.GetAlignment() == alignment;
-        bool hasCapitalCard = leader is PlayableLeader playableLeader
-            && !string.IsNullOrWhiteSpace(capitalName)
-            && playableLeader.HasPlayedPcCard(capitalName);
 
         sb.Append($"<b>{characterName}</b> only accepts AFriendOrThree from a leader of the same alignment.<br>");
         sb.Append(FormatRequirement("Alignment matches", sameAlignment));
 
         if (!string.IsNullOrWhiteSpace(capitalName))
         {
-            sb.Append(FormatRequirement($"Play the PC card '{capitalName}' first", hasCapitalCard));
-            sb.Append($"Then send an emissary to {capitalName} and issue AFriendOrThree.");
+            sb.Append($"Send an emissary to {capitalName} and issue AFriendOrThree.");
         }
         else
         {

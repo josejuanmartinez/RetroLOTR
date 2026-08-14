@@ -695,7 +695,6 @@ public class SituationCardsUI : MonoBehaviour
         {
             bool succeeded = ResolveCharacterOpportunity(cardData, character, leader);
             Debug.Log($"[SituationCards] '{cardData.name}' character opportunity resolved, succeeded={succeeded}");
-            if (succeeded) leader.RecordPlayedCard(cardData);
             return;
         }
 
@@ -704,9 +703,11 @@ public class SituationCardsUI : MonoBehaviour
         // generic actionRef->action.Execute() path below, same as Card.HandleEnvironmentalCardPlayed.
         if (cardData.GetCardType() == CardTypeEnum.Environmental)
         {
-            if (leader.HasPlayedEnvironmentalCardThisTurn())
+            EnvironmentalCardManager environment = EnvironmentalCardManager.GetOrCreate();
+            int currentTurn = Game.Instance?.turn ?? 0;
+            if (!environment.CanNationPlay(leader, currentTurn, out string environmentalReason))
             {
-                Debug.Log($"[SituationCards] click aborted — {leader.characterName} already played an environmental card this turn");
+                Debug.Log($"[SituationCards] click aborted — {environmentalReason}");
                 return;
             }
 
@@ -721,10 +722,7 @@ public class SituationCardsUI : MonoBehaviour
                 return;
             }
 
-            Game envGame = Game.Instance;
-            EnvironmentalCardManager.GetOrCreate().SetActiveCard(cardData);
-            leader.RecordEnvironmentalCardPlayed(envGame != null ? envGame.turn : 0);
-            leader.RecordPlayedCard(cardData);
+            if (!environment.TrySetActiveCard(cardData, leader, out _)) return;
             Debug.Log($"[SituationCards] '{cardData.name}' environmental card activated");
             return;
         }
@@ -771,10 +769,6 @@ public class SituationCardsUI : MonoBehaviour
 
         Debug.Log($"[SituationCards] '{cardData.name}' action executed, succeeded={action.LastExecutionSucceeded}");
 
-        if (action.LastExecutionSucceeded)
-        {
-            leader.RecordPlayedCard(cardData);
-        }
     }
 
     private static bool IsCardPlayable(CardData cardData, Character character)

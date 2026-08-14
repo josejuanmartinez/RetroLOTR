@@ -379,6 +379,7 @@ public class Sounds : SearcherByName
 
     public void PlayMovement(Hex from, Hex to)
     {
+        if (ShouldSuppressBackgroundNplAudio()) return;
         if (soundAudioSource == null) return;
 
         List<AudioClip> clips = footstepDefaultClips;
@@ -447,6 +448,7 @@ public class Sounds : SearcherByName
 
     private void Enqueue(AudioClip clip, float volume, float minInterval)
     {
+        if (ShouldSuppressBackgroundNplAudio()) return;
         if (clip == null || soundAudioSource == null) return;
         float now = Time.time;
         if (now - lastPlayTime < globalMinInterval) return;
@@ -465,6 +467,11 @@ public class Sounds : SearcherByName
         });
 
         if (queueRoutine == null) queueRoutine = StartCoroutine(ProcessQueue());
+    }
+
+    private static bool ShouldSuppressBackgroundNplAudio()
+    {
+        return AITurnController.CurrentExecutingLeader is NonPlayableLeader;
     }
 
     private IEnumerator ProcessQueue()

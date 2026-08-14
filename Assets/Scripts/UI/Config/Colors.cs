@@ -27,6 +27,7 @@ public class Colors : SearcherByName
     [FormerlySerializedAs("eventCard")] public Color @event;
     [FormerlySerializedAs("actionCard")] public Color action;
     [FormerlySerializedAs("spellCard")] public Color spell;
+    [FormerlySerializedAs("objectCard")] public Color @object = new Color(0.62f, 0.36f, 0.14f, 1f);
     public Color encounter;
     public Color environmental;
     public Color logNotification = new Color(0.55f, 0.85f, 1f);

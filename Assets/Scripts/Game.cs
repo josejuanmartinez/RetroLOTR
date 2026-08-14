@@ -79,6 +79,7 @@ public class Game : MonoBehaviour
     private bool leaderTransitionRunning;
     private bool blockLookAtUntilStartupPopupCloses;
     private bool startupPopupShown;
+    public bool IsInitialTurnStarting => started && turn == 0 && !playerTurnAcceptingInput;
     // Same rationale as Board.Instance: dozens of card actions' condition/effect closures were
     // each independently resolving Game via FindFirstObjectByType<Game>() — a scene-wide search
     // repeated for every card scored, every pick, every character, every AI turn. Cached here.
@@ -221,7 +222,6 @@ public class Game : MonoBehaviour
 
         AssignNationColors();
         InitializePlayableLeaderIcons();
-        InitializeNonPlayableLeaderIcons();
         if (player != null)
         {
             var layout = FindFirstObjectByType<Layout>();
@@ -272,9 +272,8 @@ public class Game : MonoBehaviour
         currentlyPlaying.NewTurn();
         StartAlignedNplTurns(currentlyPlaying.GetAlignment());
         yield return RefreshDeckUiAfterStartup();
-        while (UtilityAIContextCacheManager.Instance != null
-            && !UtilityAIContextCacheManager.Instance.PlayerRecommendationsReady)
-            yield return null;
+        // Recommendations and NPL contexts are optional background work. Never withhold the
+        // human turn while the cache processes a large campaign's leaders.
         if (playerAutoplayEnabled)
         {
             RefreshPlayerControlState();
@@ -386,14 +385,6 @@ public class Game : MonoBehaviour
         foreach (PlayableLeader competitor in competitors)
         {
             if (competitor != null) leaderIcons.Instantiate(competitor);
-        }
-    }
-
-    private void InitializeNonPlayableLeaderIcons()
-    {
-        foreach (NonPlayableLeader nonPlayableLeader in FindObjectsByType<NonPlayableLeader>(FindObjectsSortMode.None))
-        {
-            if (nonPlayableLeader != null) nonPlayableLeader.InitializeIcons();
         }
     }
 
@@ -715,11 +706,8 @@ public class Game : MonoBehaviour
         currentlyPlaying.NewTurn();
         StartAlignedNplTurns(currentlyPlaying.GetAlignment());
 
-        // Precompute was already kicked off in NextPlayer(), concurrently with the NPC turns
-        // that just ran above — just wait for it here rather than clearing and restarting it.
-        while (UtilityAIContextCacheManager.Instance != null
-            && !UtilityAIContextCacheManager.Instance.PlayerRecommendationsReady)
-            yield return null;
+        // Precompute was already kicked off in NextPlayer() and continues within its frame
+        // budget. Human input must not depend on the size of that background queue.
 
         yield return WaitForCameraAndMessages();
 

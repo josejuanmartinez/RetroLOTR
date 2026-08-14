@@ -274,8 +274,21 @@ public class CardData
 
     public bool GetNegativeStatusImmunity(StatusEffectEnum effect)
     {
-        return !string.IsNullOrWhiteSpace(negativeStatusImmunity)
-            && string.Equals(negativeStatusImmunity, effect.ToString(), StringComparison.OrdinalIgnoreCase);
+        return TryGetNegativeStatusImmunity(out StatusEffectEnum immunity) && immunity == effect;
+    }
+
+    // Enum.TryParse accepts numeric strings (for example "0" => Halted). Card JSON should store
+    // the named value, so reject numeric serialization debris instead of treating it as a real
+    // immunity or generating a broken TMP sprite tag such as <sprite name="0">.
+    private bool TryGetNegativeStatusImmunity(out StatusEffectEnum effect)
+    {
+        effect = default;
+        if (string.IsNullOrWhiteSpace(negativeStatusImmunity) ||
+            int.TryParse(negativeStatusImmunity, out _))
+            return false;
+
+        return Enum.TryParse(negativeStatusImmunity, true, out effect)
+            && Enum.IsDefined(typeof(StatusEffectEnum), effect);
     }
 
     public int GetNegativeStatusDurationReduction() => Mathf.Max(0, negativeStatusDurationReduction);
@@ -371,8 +384,8 @@ public class CardData
         if (scryAreaBonus > 0) details.Add($"+{scryAreaBonus} Scry Area range");
         if (scryObjectBonus > 0) details.Add($"+{scryObjectBonus} Find Object");
 
-        if (!string.IsNullOrWhiteSpace(negativeStatusImmunity))
-            details.Add($"immune to <sprite name=\"{negativeStatusImmunity.ToLower()}\">{negativeStatusImmunity}");
+        if (TryGetNegativeStatusImmunity(out StatusEffectEnum immunity))
+            details.Add($"immune to <sprite name=\"{immunity.ToString().ToLowerInvariant()}\">{immunity}");
         if (negativeStatusDurationReduction > 0) details.Add($"-{negativeStatusDurationReduction} negative status duration");
         if (negativeStatusDamageReduction > 0) details.Add($"-{negativeStatusDamageReduction} negative status damage");
         if (positiveStatusDurationBonus > 0) details.Add($"+{positiveStatusDurationBonus} positive status duration");
@@ -697,8 +710,10 @@ public class CardData
         {
             bool environmentalResourcesOk = resourceCheck == null || resourceCheck(selectedCharacter);
             bool environmentalConditionsOk = conditionCheck == null || conditionCheck(selectedCharacter);
-            Leader environmentalOwner = selectedCharacter?.GetOwner();
-            bool environmentalTurnLimitOk = environmentalOwner == null || !environmentalOwner.HasPlayedEnvironmentalCardThisTurn();
+            Leader environmentalOwner = selectedCharacter?.GetOwner() ?? Game.Instance?.currentlyPlaying;
+            int currentTurn = Game.Instance?.turn ?? 0;
+            bool environmentalTurnLimitOk = environmentalOwner == null
+                || EnvironmentalCardManager.GetOrCreate().CanNationPlay(environmentalOwner, currentTurn, out _);
             playability.failsResourceRequirements = !environmentalResourcesOk;
             playability.failsActionConditions = !environmentalConditionsOk || !environmentalTurnLimitOk;
             isPlayable = environmentalResourcesOk && environmentalConditionsOk && environmentalTurnLimitOk;

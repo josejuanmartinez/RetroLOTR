@@ -1320,8 +1320,6 @@ public class KingUnderTheMountainAction : EventAction
 
             target.hasActionedThisTurn = false;
             target.moved = 0;
-            target.lastPlayedActionClassNameThisTurn = null;
-            target.lastPlayedActionNameThisTurn = null;
             MessageDisplayNoUI.ShowMessage(character.hex, character, $"King Under the Mountain readies {target.characterName} for one more labor this turn.", Color.yellow);
             return true;
         };

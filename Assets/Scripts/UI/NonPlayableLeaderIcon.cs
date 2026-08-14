@@ -109,7 +109,6 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
         }
         if (nonPlayableLeader.alignment == game.currentlyPlaying.alignment)
         {
-            sb.Append("They can join your side if you have already played their capital PC card.<br><br>");
             sb.Append(nonPlayableLeader.GetJoiningConditionsText(game.currentlyPlaying));
             sb.Append("<br><br>");
         }
@@ -117,15 +116,30 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
         {
             sb.Append("Only a leader of the same alignment can recruit this nation. You can still attack to weaken their forces.");
         }
-        PopupManager.Show(
-            $"{nonPlayableLeader.characterName} reveals themselves!",
-            FindFirstObjectByType<Illustrations>().GetIllustrationByName(player.characterName),
-            FindFirstObjectByType<Illustrations>().GetIllustrationByName(nonPlayableLeader.characterName),
-            sb.ToString(),
-            true
-        );
+        string popupTitle = $"{nonPlayableLeader.characterName} reveals themselves!";
+        Sprite playerPortrait = FindFirstObjectByType<Illustrations>().GetIllustrationByName(player.characterName);
+        Sprite nationPortrait = FindFirstObjectByType<Illustrations>().GetIllustrationByName(nonPlayableLeader.characterName);
+        EventIconsManager eventIcons = EventIconsManager.FindManager();
+        if (eventIcons != null)
+        {
+            EventIcon icon = null;
+            icon = eventIcons.AddEventIcon(
+                EventIconType.LeaderRevealed,
+                discardable: false,
+                onOpen: () =>
+                {
+                    icon?.ConsumeAndDestroy();
+                    PopupManager.ShowImmediate(popupTitle, playerPortrait, nationPortrait, sb.ToString(), true);
+                },
+                onRemove: null,
+                characterPortrait: nationPortrait);
+        }
+        else
+        {
+            Debug.LogWarning($"Could not queue the discovery of '{nonPlayableLeader.characterName}': EventIconsManager was not found.");
+        }
 
-        LogManager.Log(LogCategory.Event, nonPlayableLeader.characterName, player.characterName, $"{nonPlayableLeader.characterName} reveals themselves!");
+        LogManager.Log(LogCategory.Event, nonPlayableLeader.characterName, player.characterName, popupTitle);
 
         isUnrevealed = false;
     }

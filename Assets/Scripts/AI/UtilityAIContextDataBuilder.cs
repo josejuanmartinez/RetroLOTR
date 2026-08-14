@@ -136,8 +136,8 @@ public static class UtilityAIContextDataBuilder
     // could still recruit at all — NonPlayableLeader.joined is a single global "has joined
     // ANY leader" flag, not per-leader (see NonPlayableLeader.cs), so !joined + matching
     // alignment is the full "still available to recruit" test at this coarse, board-wide level.
-    // Deep per-target eligibility (HasPlayedPcCard/capital gate) stays on DiplomaticNplRecruitment
-    // in CacheNpcTargets below, which is about "is there one specific target nearby right now".
+    // Per-target eligibility additionally verifies the candidate is a capital that can accept
+    // AFriendOrThree from this playable leader.
     private static int CountUnrecruitedSameAlignmentNpls(Leader leader)
     {
         if (leader == null) return 0;
@@ -294,9 +294,8 @@ public static class UtilityAIContextDataBuilder
             }
 
             // Recruitment eligibility, not proximity to reveal — CanJoinWithStateAllegiance
-            // already checks joined/killed/alignment/HasPlayedPcCard internally, so this is the
-            // same gate StateAllegiance (the AFriendOrThree card) itself uses before letting the
-            // trivia gauntlet run.
+            // checks joined/killed/alignment, matching the gate AFriendOrThree uses before its
+            // trivia gauntlet runs.
             if (pc.isCapital && leader is PlayableLeader recruitingLeader && npc.CanJoinWithStateAllegiance(recruitingLeader) && distance < data.NearestNplRecruitmentDistance)
             {
                 data.NearestNplRecruitmentDistance = distance;

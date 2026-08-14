@@ -1340,6 +1340,7 @@ public class Board : MonoBehaviour
 
     public void MoveCharacterOneHex(Character character, Hex previousHex, Hex newHex, bool finishMovement = false, bool lookAt = true, bool rememberPreviousHex = true, bool deferVisibilityRefresh = false) {
         int movedBefore = character.moved;
+        bool actionedBefore = character.hasActionedThisTurn;
         bool wasWater = previousHex != null && previousHex.IsWaterTerrain();
         bool isWater = newHex != null && newHex.IsWaterTerrain();
         Game g = GetGame();
@@ -1425,14 +1426,6 @@ public class Board : MonoBehaviour
                 character.GetOwner().RefreshVisibleHexesImmediate();
             }
 
-            // Re-evaluating every card in hand is wasted work on each hop of a walk —
-            // nothing is playable mid-transit. Deferred (multi-hex) moves refresh once
-            // after arrival in MoveCoroutine instead.
-            if (!deferVisibilityRefresh && ShouldRefreshCardInteractionsFor(character))
-            {
-                RefreshCardInteractions();
-            }
-
             // Opportunity cards only fire where the character STOPS — stepping through a hex
             // mid-path never interrupts the walk with a full-screen overlay.
             if (finishMovement)
@@ -1453,6 +1446,10 @@ public class Board : MonoBehaviour
             if ((!wasWater && isWater) || (wasWater && !isWater) || finishMovement)
             {
                 character.moved = character.GetMaxMovement();
+                // Embarking/disembarking ends movement, but it is not an action. Preserve the
+                // character's action state explicitly so sailing can never consume the human
+                // player's one action through movement-side callbacks or UI refreshes.
+                if (wasWater != isWater) character.hasActionedThisTurn = actionedBefore;
                 if(!wasWater && isWater) MessageDisplayNoUI.ShowMessage(newHex, character, "Set Sail!", Color.cyan);
                 if(wasWater && !isWater) MessageDisplayNoUI.ShowMessage(newHex, character, "Disembarked", Color.cyan);
             }
@@ -1463,6 +1460,13 @@ public class Board : MonoBehaviour
 
             // Climate hazards of the tile just entered (snow frostbite / desert sunburn).
             TerrainEntryEffects.ProcessEntry(character, newHex);
+
+            // Refresh after movement/action state has reached its final value. Previously a
+            // direct water transition refreshed the cards before the Set Sail state change.
+            if (!deferVisibilityRefresh && ShouldRefreshCardInteractionsFor(character))
+            {
+                RefreshCardInteractions();
+            }
 
             if (g != null && g.player != null && character.GetOwner() != g.player)
             {

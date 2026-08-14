@@ -64,15 +64,19 @@ public class MessageDisplay : MonoBehaviour
         // playSound: false lets a caller that already plays its own cue (see
         // PlayableLeader.ApplyVariantTransformation, which follows this with
         // PlayArtifactFound) skip the color-based sound instead of stacking an extra one.
-        if (playSound && IsNegativeColor(resolved))
+        // Turn zero already has its popup and TurnBanner cues. Calendar/startup messages are
+        // still displayed and logged, but must not create a rapid stack of identical chimes
+        // before control reaches the player.
+        bool allowSound = playSound && !game.IsInitialTurnStarting;
+        if (allowSound && IsNegativeColor(resolved))
         {
             Sounds.Instance?.PlayNegative();
         }
-        else if (playSound && IsPositiveColor(resolved))
+        else if (allowSound && IsPositiveColor(resolved))
         {
             Sounds.Instance?.PlayPositive();
         }
-        else if (playSound)
+        else if (allowSound)
         {
             Sounds.Instance?.PlayMessage();
         }

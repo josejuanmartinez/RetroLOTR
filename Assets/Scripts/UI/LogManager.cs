@@ -43,7 +43,6 @@ public class LogManager : MonoBehaviour
         }
 
         Instance = this;
-        DontDestroyOnLoad(gameObject);
 
         colors = FindFirstObjectByType<Colors>();
         if (entryTemplate != null) entryTemplate.SetActive(false);

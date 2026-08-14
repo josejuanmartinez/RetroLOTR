@@ -150,8 +150,6 @@ public static class AITurnController
             if (succeeded)
             {
                 deckManager.ApplyMapRevealForPlayedCard(leader, consumedCard);
-                // RecordPlayedCard (played-land/PC-card history) is PlayableLeader-only bookkeeping.
-                if (leader is PlayableLeader playableLeader) playableLeader.RecordPlayedCard(consumedCard);
             }
         }
     }

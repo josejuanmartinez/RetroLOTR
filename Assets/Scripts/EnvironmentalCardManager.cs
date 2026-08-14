@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class EnvironmentalCardManager : MonoBehaviour
 {
+    public const int NationEnvironmentalCooldownTurns = 5;
+
     public static EnvironmentalCardManager Instance { get; private set; }
 
     public CardData ActiveCard { get; private set; }
@@ -20,6 +22,8 @@ public class EnvironmentalCardManager : MonoBehaviour
     public float DarkServantsArmyAttackFactor = 1f;
 
     private Game subscribedGame;
+    private Leader lastNationToPlay;
+    private int lastNationPlayTurn = -999;
 
     private void Awake()
     {
@@ -49,6 +53,44 @@ public class EnvironmentalCardManager : MonoBehaviour
         Layout layout = FindFirstObjectByType<Layout>();
         Debug.Log($"[EnvCardToken] SetActiveCard('{card?.name}') — layout found={layout != null}, instanceId={(layout != null ? layout.GetInstanceID().ToString() : "n/a")}");
         layout?.SetEnvironmentalCard(card);
+    }
+
+    public bool CanNationPlay(Leader leader, int turn, out string reason)
+    {
+        if (leader == null)
+        {
+            reason = "No nation is available to play this environmental card.";
+            return false;
+        }
+
+        int turnsSinceOwnCard = turn - leader.lastEnvironmentalCardPlayedTurn;
+        if (turnsSinceOwnCard < NationEnvironmentalCooldownTurns)
+        {
+            int turnsRemaining = NationEnvironmentalCooldownTurns - turnsSinceOwnCard;
+            reason = $"{leader.characterName} must wait {turnsRemaining} more turn(s) before playing another environmental card.";
+            return false;
+        }
+
+        if (lastNationToPlay != null && lastNationToPlay != leader && lastNationPlayTurn == turn)
+        {
+            reason = $"{lastNationToPlay.characterName} already changed the environment this turn. Another nation may do so next turn.";
+            return false;
+        }
+
+        reason = null;
+        return true;
+    }
+
+    public bool TrySetActiveCard(CardData card, Leader leader, out string reason)
+    {
+        int turn = Game.Instance?.turn ?? 0;
+        if (!CanNationPlay(leader, turn, out reason)) return false;
+
+        SetActiveCard(card);
+        leader.RecordEnvironmentalCardPlayed(turn);
+        lastNationToPlay = leader;
+        lastNationPlayTurn = turn;
+        return true;
     }
 
     private void OnNewTurn(int turn)

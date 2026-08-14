@@ -18,9 +18,9 @@ public class Leader : Character
     public HashSet<Hex> visibleHexes = new();
     public bool playedLandThisTurn;
     // Per-turn cap: only one environmental card may be played per leader per turn (the board
-    // only has a single active-environment slot — see EnvironmentalCardManager). Tracked here
-    // rather than on PlayableLeader.RecordPlayedCard's land/PC history so it also covers
-    // NonPlayableLeader AI turns. lastEnvironmentalCardPlayedTurn additionally feeds UtilityAI's
+    // only has a single active-environment slot — see EnvironmentalCardManager). Stored on
+    // Leader so it covers both playable leaders and NPL AI turns.
+    // lastEnvironmentalCardPlayedTurn additionally feeds UtilityAI's
     // EnvironmentalPenalty decay (see UtilityAIContext.GetEnvironmentalPenaltyScore).
     public bool playedEnvironmentalCardThisTurn;
     public int lastEnvironmentalCardPlayedTurn = -999;

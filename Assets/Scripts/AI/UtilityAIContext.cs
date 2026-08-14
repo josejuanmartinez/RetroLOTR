@@ -252,7 +252,9 @@ public class UtilityAIContext
         // card once one's been played this turn, but AvailableActions in the legacy
         // TryExecuteBestAvailableActionAsync path isn't guaranteed pre-filtered the same way.
         bool isEnvironmental = card.GetCardType() == CardTypeEnum.Environmental;
-        if (isEnvironmental && Leader.HasPlayedEnvironmentalCardThisTurn())
+        EnvironmentalCardManager environment = isEnvironmental ? EnvironmentalCardManager.GetOrCreate() : null;
+        int currentTurn = Game.Instance?.turn ?? 0;
+        if (isEnvironmental && !environment.CanNationPlay(Leader, currentTurn, out _))
         {
             return false;
         }
@@ -271,18 +273,13 @@ public class UtilityAIContext
         action.card = consumedCard;
         action.difficulty = Mathf.Max(0, consumedCard.difficulty);
         deckManager.ApplyMapRevealForPlayedCard(Leader, consumedCard);
-        // RecordPlayedCard (played-land/PC-card history) is PlayableLeader-only bookkeeping.
-        if (Leader is PlayableLeader playableLeader) playableLeader.RecordPlayedCard(consumedCard);
-
         // AI card execution otherwise never routes through EnvironmentalCardManager at all —
         // the resolved action's own Execute() only runs its immediate effect, not the board's
         // ongoing-effect/token machinery (see Card.HandleEnvironmentalCardPlayed for the human
         // equivalent of these two calls).
         if (isEnvironmental)
         {
-            EnvironmentalCardManager.GetOrCreate().SetActiveCard(consumedCard);
-            int currentTurn = Game.Instance?.turn ?? 0;
-            Leader.RecordEnvironmentalCardPlayed(currentTurn);
+            if (!environment.TrySetActiveCard(consumedCard, Leader, out _)) return false;
         }
 
         return true;

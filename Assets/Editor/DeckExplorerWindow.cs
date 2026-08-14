@@ -2972,11 +2972,6 @@ public class DeckExplorerWindow : EditorWindow
             errors.Add("Only one land card can be played each turn.");
         }
 
-        if (card.GetCardType() == CardTypeEnum.PC && !string.IsNullOrWhiteSpace(card.region) && resourceOwner is PlayableLeader playablePcLeader && !playablePcLeader.HasPlayedLandCardForRegion(card.region))
-        {
-            errors.Add($"{card.region} not discovered yet.");
-        }
-
         if (!string.IsNullOrWhiteSpace(card.GetActionRef()) && selected != null)
         {
             ActionsManager actionsManager = UnityEngine.Object.FindFirstObjectByType<ActionsManager>();

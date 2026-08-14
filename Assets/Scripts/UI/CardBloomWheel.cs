@@ -267,6 +267,7 @@ public class CardBloomWheel : MonoBehaviour
             CardTypeEnum.Event => "event",
             CardTypeEnum.Action => "action",
             CardTypeEnum.Spell => "spell",
+            CardTypeEnum.Object => "object",
             CardTypeEnum.Encounter => "encounter",
             CardTypeEnum.Environmental => "environmental",
             _ => null

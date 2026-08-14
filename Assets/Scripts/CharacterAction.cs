@@ -341,10 +341,6 @@ public class CharacterAction
                 return;
             }
 
-            // Store last successful action for selected-character UI "played card" slot.
-            character.lastPlayedActionClassNameThisTurn = GetType().Name;
-            character.lastPlayedActionNameThisTurn = actionName;
-
             RollForSkillLevelUp();
 
             if (!isAI && ConsumesAction && character.HasStatusEffect(StatusEffectEnum.Hope) && UnityEngine.Random.Range(0, 100) < 25)

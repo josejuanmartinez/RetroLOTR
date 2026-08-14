@@ -35,7 +35,16 @@ public class NonPlayableLeaderIcons : MonoBehaviour
 
     public void RevealToPlayerIfNot(NonPlayableLeader leader)
     {
-        NonPlayableLeaderIcon npli = nonPlayableLeaderIcons.Find(x => x.nonPlayableLeader == leader);
+        if (leader == null || playableLeader == null || leader.GetAlignment() != playableLeader.GetAlignment()) return;
+
+        nonPlayableLeaderIcons ??= new List<NonPlayableLeaderIcon>();
+        NonPlayableLeaderIcon npli = nonPlayableLeaderIcons.Find(x => x != null && x.nonPlayableLeader == leader);
+        if (npli == null)
+        {
+            // Undiscovered leaders have no GameObject and therefore reserve no layout slot.
+            Instantiate(leader, playableLeader);
+            npli = nonPlayableLeaderIcons.Find(x => x != null && x.nonPlayableLeader == leader);
+        }
         if (npli != null) npli.RevealToPlayer();
     }
 

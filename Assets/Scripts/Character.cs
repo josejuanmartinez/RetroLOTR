@@ -52,9 +52,6 @@ public class Character : MonoBehaviour
 
     [Header("Turn data")]
     public bool hasActionedThisTurn;
-    public string lastPlayedActionClassNameThisTurn;
-    public string lastPlayedActionNameThisTurn;
-    public string lastPlayedCardSpriteNameThisTurn;
     public Hex previousHex;
     public bool isEmbarked;
     public List<Hex> reachableHexes = new();
@@ -147,9 +144,6 @@ public class Character : MonoBehaviour
         temporaryActionDifficultyReductionTurns = 0;
         temporaryActionDifficultyReductionHex = null;
         killed = false;
-        lastPlayedActionClassNameThisTurn = null;
-        lastPlayedActionNameThisTurn = null;
-        lastPlayedCardSpriteNameThisTurn = null;
         awaken = true;
         colors = FindFirstObjectByType<Colors>();
     }
@@ -503,17 +497,6 @@ public class Character : MonoBehaviour
         ResetStatusSpecialState(effect);
     }
 
-    public void RecordPlayedCard(CardData card)
-    {
-        if (card == null) return;
-
-        lastPlayedCardSpriteNameThisTurn = !string.IsNullOrWhiteSpace(card.spriteName)
-            ? card.spriteName
-            : lastPlayedCardSpriteNameThisTurn;
-
-        if (hex != null) hex.PlayCharacterActionAnimation(this);
-    }
-
     public void NewTurn()
     {
         Game game = Game.Instance;
@@ -560,26 +543,17 @@ public class Character : MonoBehaviour
             moved = 0;
             hasActionedThisTurn = true;
             MessageDisplayNoUI.ShowMessage(hex, this, "Blocked: action lost.", Color.red);
-            lastPlayedActionClassNameThisTurn = null;
-            lastPlayedActionNameThisTurn = null;
-            lastPlayedCardSpriteNameThisTurn = null;
         }
         else if (halted)
         {
             moved = GetMaxMovement();
             hasActionedThisTurn = false;
             MessageDisplayNoUI.ShowMessage(hex, this, "Halted: movement lost.", Color.yellow);
-            lastPlayedActionClassNameThisTurn = null;
-            lastPlayedActionNameThisTurn = null;
-            lastPlayedCardSpriteNameThisTurn = null;
         }
         else
         {
             moved = 0;
             hasActionedThisTurn = false;
-            lastPlayedActionClassNameThisTurn = null;
-            lastPlayedActionNameThisTurn = null;
-            lastPlayedCardSpriteNameThisTurn = null;
         }
 
         if (IsKidnapped())
@@ -1311,9 +1285,6 @@ public class Character : MonoBehaviour
         kidnappedOriginalOwner = null;
         kidnappedCharacters ??= new();
         kidnappedCharacters.Clear();
-        lastPlayedActionClassNameThisTurn = null;
-        lastPlayedActionNameThisTurn = null;
-        lastPlayedCardSpriteNameThisTurn = null;
 
         hex = destinationHex;
 

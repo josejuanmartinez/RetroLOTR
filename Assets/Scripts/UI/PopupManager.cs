@@ -24,7 +24,8 @@ public class PopupManager : MonoBehaviour
     private readonly List<PopupData> queue = new();
     private int currentIndex = -1;
     private RectTransform rectTransform;
-    private CanvasGroup containerCanvasGroup;
+    private GameObject visibilityRoot;
+    private CanvasGroup visibilityCanvasGroup;
     private Vector2 initialSize;
     public static bool IsShowing { get; private set; }
     // private Videos videos;
@@ -57,16 +58,22 @@ public class PopupManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject); // optional: persists across scenes
 
-        if (container != null && !container.activeSelf)
-        {
-            container.SetActive(true);
-        }
+        rectTransform = container != null ? container.GetComponent<RectTransform>() : null;
 
-        rectTransform = container.GetComponent<RectTransform>();
-        containerCanvasGroup = container != null ? container.GetComponent<CanvasGroup>() : null;
-        if (container != null && containerCanvasGroup == null)
+        // `container` is the framed popup panel, while its direct child of PopupManager is the
+        // full-screen Content canvas (including the dark backdrop). Keep that whole UI branch
+        // active and hide/show it with one CanvasGroup. A CanvasGroup on only the inner panel
+        // cannot revive an inactive Content parent and also leaves the backdrop visible.
+        visibilityRoot = ResolveVisibilityRoot();
+        visibilityCanvasGroup = visibilityRoot != null ? visibilityRoot.GetComponent<CanvasGroup>() : null;
+        if (visibilityRoot != null && visibilityCanvasGroup == null)
         {
-            containerCanvasGroup = container.AddComponent<CanvasGroup>();
+            visibilityCanvasGroup = visibilityRoot.AddComponent<CanvasGroup>();
+        }
+        SetContainerVisible(false);
+        if (visibilityRoot != null && !visibilityRoot.activeSelf)
+        {
+            visibilityRoot.SetActive(true);
         }
         initialSize = rectTransform != null ? rectTransform.sizeDelta : Vector2.zero;
         IsShowing = false;
@@ -202,8 +209,6 @@ public class PopupManager : MonoBehaviour
 
         currentIndex = index;
         PopupData data = queue[currentIndex];
-        Sounds.Instance?.PlayMessage();
-        Music.Instance?.PlayEventMusic();
 
         bool hasActor2 = data.spriteActor2 != null;
         if (actor2 != null)
@@ -213,7 +218,14 @@ public class PopupManager : MonoBehaviour
         
         SetActorVisuals(actor1, data.spriteActor1);
         SetActorVisuals(actor2, data.spriteActor2);
-        ShowContainer();
+        if (!ShowContainer())
+        {
+            // A modal that cannot render must not retain IsShowing/startup input locks.
+            Hide();
+            return;
+        }
+        Sounds.Instance?.PlayMessage();
+        Music.Instance?.PlayEventMusic();
         ApplyPopupTextAndTitle(data);
 
         if (rectTransform != null)
@@ -268,23 +280,43 @@ public class PopupManager : MonoBehaviour
         if (rightArrow != null) rightArrow.SetActive(hasQueue && currentIndex < queue.Count - 1);
     }
 
-    private void ShowContainer()
+    private bool ShowContainer()
     {
         SetContainerVisible(true);
+        if (visibilityRoot == null || !visibilityRoot.activeInHierarchy || container == null || !container.activeInHierarchy)
+        {
+            Debug.LogError("PopupManager cannot show its CanvasGroup visibility root because it is inactive in the hierarchy; cancelling the popup to avoid an invisible input lock.");
+            IsShowing = false;
+            return false;
+        }
         IsShowing = true;
+        return true;
     }
 
     private void SetContainerVisible(bool visible)
     {
-        if (container == null) return;
+        if (visibilityRoot == null) return;
         // The popup hierarchy stays active after Awake. Visibility and input are controlled
         // exclusively by CanvasGroup so hiding it cannot leave a background intercepting input.
-        if (containerCanvasGroup != null)
+        if (visibilityCanvasGroup != null)
         {
-            containerCanvasGroup.alpha = visible ? 1f : 0f;
-            containerCanvasGroup.interactable = visible;
-            containerCanvasGroup.blocksRaycasts = visible;
+            visibilityCanvasGroup.alpha = visible ? 1f : 0f;
+            visibilityCanvasGroup.interactable = visible;
+            visibilityCanvasGroup.blocksRaycasts = visible;
         }
+    }
+
+    private GameObject ResolveVisibilityRoot()
+    {
+        if (container == null) return null;
+
+        Transform candidate = container.transform;
+        while (candidate.parent != null && candidate.parent != transform)
+        {
+            candidate = candidate.parent;
+        }
+
+        return candidate.gameObject;
     }
 
     private void ApplyPopupTextAndTitle(PopupData data)
