@@ -56,8 +56,7 @@ public class Caravans : CharacterAction
             };
 
             int totalGold = 0;
-            int soldTypes = 0;
-            int soldUnits = 0;
+            List<string> soldResources = new();
 
             foreach (var r in sellables)
             {
@@ -72,11 +71,10 @@ public class Caravans : CharacterAction
                 stores.AdjustStock(r, qty);
 
                 totalGold += bonusPayout;
-                soldTypes++;
-                soldUnits += qty;
+                soldResources.Add($"{qty} <sprite name=\"{r}\">{r}");
             }
 
-            if (soldTypes == 0) return false;
+            if (soldResources.Count == 0) return false;
 
             owner.AddGold(totalGold);
 
@@ -88,7 +86,7 @@ public class Caravans : CharacterAction
             // Trade income is private to the nation that earned it — other leaders only learn
             // the specifics (what sold, for how much) via the rumour/spying system, never as a
             // standing public LogWidget entry just because their hex happened to be in view.
-            MessageDisplayNoUI.ShowMessage(c.hex, c, $"Caravans sold {soldUnits} total unit(s) across {soldTypes} type(s), gaining {totalGold} gold.", Color.yellow, forcePrivateForOthers: true);
+            MessageDisplayNoUI.ShowMessage(c.hex, c, $"Caravans sold {string.Join(", ", soldResources)}, gaining {totalGold} <sprite name=\"gold\">gold.", Color.yellow, forcePrivateForOthers: true);
             return true;
         };
 

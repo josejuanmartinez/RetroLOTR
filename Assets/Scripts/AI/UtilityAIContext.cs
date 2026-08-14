@@ -60,6 +60,8 @@ public class UtilityAIContext
     private float agentRoleStrength = 0f;
     private float mageRoleStrength = 0f;
     private float emissaryRoleStrength = 0f;
+    private int unrevealedLandHexCount = 0;
+    private Hex nearestUnrevealedLandHex = null;
     public CharacterAction LastChosenAction { get; private set; }
 
     // Set by AITurnController after construction, from the HTN's currently-active
@@ -160,6 +162,8 @@ public class UtilityAIContext
         agentRoleStrength = data.AgentRoleStrength;
         mageRoleStrength = data.MageRoleStrength;
         emissaryRoleStrength = data.EmissaryRoleStrength;
+        unrevealedLandHexCount = data.UnrevealedLandHexCount;
+        nearestUnrevealedLandHex = data.NearestUnrevealedLandHex;
 
         if (data.ArtifactTransferCandidates != null && data.ArtifactTransferCandidates.Count > 0)
         {
@@ -472,6 +476,7 @@ public class UtilityAIContext
             UtilityAIParameters.DiplomaticEmissaryStrength => emissaryRoleStrength,
             UtilityAIParameters.IntelligenceEnemyPressure => GetDistanceScore(true),
             UtilityAIParameters.IntelligenceAgentStrength => agentRoleStrength,
+            UtilityAIParameters.IntelligenceExplorationNeed => unrevealedLandHexCount,
             UtilityAIParameters.LogisticsReachNpc => GetLogisticsProximityScore(nearestUnrevealedNpcHex),
             UtilityAIParameters.LogisticsInterceptEnemy => GetLogisticsProximityScore(closestNonNeutralEnemy.Hex ?? closestEnemy.Hex),
             UtilityAIParameters.LogisticsReachEnemyCharacter => GetLogisticsProximityScore(nearestEnemyCharacterHex),
@@ -539,6 +544,7 @@ public class UtilityAIContext
             UtilityAIParameters.IntelligenceEnemyPressure => closestNonNeutralEnemy.Hex ?? closestEnemy.Hex,
             UtilityAIParameters.IntelligenceEnemyPcVulnerability => nearestEnemyPcVulnerabilityHex,
             UtilityAIParameters.IntelligenceHighValueEnemyCharacter => nearestHighValueEnemyCharacterHex,
+            UtilityAIParameters.IntelligenceExplorationNeed => nearestUnrevealedLandHex,
             UtilityAIParameters.ArtifactsEnemyPressure => closestNonNeutralEnemy.Hex ?? closestEnemy.Hex,
             UtilityAIParameters.LogisticsReachNpc => nearestUnrevealedNpcHex,
             UtilityAIParameters.LogisticsInterceptEnemy => closestNonNeutralEnemy.Hex ?? closestEnemy.Hex,
@@ -716,6 +722,7 @@ public class UtilityAIContext
         if (nearestEnemyPcVulnerabilityHex != null) return nearestEnemyPcVulnerabilityHex;
         if (nearestHighValueEnemyCharacterHex != null) return nearestHighValueEnemyCharacterHex;
         if (nearestNplRecruitmentHex != null) return nearestNplRecruitmentHex;
+        if (nearestUnrevealedLandHex != null) return nearestUnrevealedLandHex;
         return null;
     }
 
@@ -1163,6 +1170,8 @@ public class UtilityAIContext
         public float DuelAdvantage;
         public float SongDuelAdvantage;
         public int UnrecruitedSameAlignmentNplCount;
+        public int UnrevealedLandHexCount;
+        public Hex NearestUnrevealedLandHex;
 
         // Sum of the leader's controlled characters' Agent/Mage/Emissary skill, computed once
         // per character-turn (see UtilityAIContextDataBuilder.Build) rather than re-summed via

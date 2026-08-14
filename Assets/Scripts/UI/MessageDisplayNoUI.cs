@@ -114,8 +114,12 @@ public class MessageDisplayNoUI : MonoBehaviour
         bool playerCanSeeHex = game.player != null
             && game.player.visibleHexes.Contains(hex)
             && hex.IsHexSeen();
-        bool canDisplayToPlayer = forceDisplay || playerCanSeeHex;
+        bool backgroundAiDuringHumanTurn = game.currentlyPlaying == game.player
+            && AITurnController.CurrentExecutingLeader != null
+            && AITurnController.CurrentExecutingLeader != game.player;
+        bool canDisplayToPlayer = !backgroundAiDuringHumanTurn && (forceDisplay || playerCanSeeHex);
         bool publicRumour = character != null &&
+            !backgroundAiDuringHumanTurn &&
             (character.GetOwner() == game.player || (!forcePrivateForOthers && playerCanSeeHex));
 
         Color resolved = color ?? Color.white;
@@ -172,7 +176,7 @@ public class MessageDisplayNoUI : MonoBehaviour
             // whenever the Notification line above already fired, the rumour log would just
             // repeat it verbatim (nation/character/text all match). Only let it log here for
             // the case that line can't cover: forceDisplay/off-screen own-action rumours.
-            RumoursManager.AddRumour(rumour, publicRumour, logToWidget: !canDisplayToPlayer);
+            RumoursManager.AddRumour(rumour, publicRumour, logToWidget: !canDisplayToPlayer && !backgroundAiDuringHumanTurn);
         }
     }
 

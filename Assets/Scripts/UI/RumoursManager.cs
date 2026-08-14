@@ -95,7 +95,7 @@ public class RumoursManager : MonoBehaviour
     /// Moves the last `qty` private rumours into the public list,
     /// then updates the UI.
     /// </summary>
-    public static int GetRumours(AlignmentEnum alignment, int enemyRumoursQty, int friendlyRumoursQty)
+    public static int GetRumours(Leader requester, AlignmentEnum alignment, int enemyRumoursQty, int friendlyRumoursQty)
     {
         if (!EnsureInstance(nameof(GetRumours)))
             return 0;
@@ -124,6 +124,10 @@ public class RumoursManager : MonoBehaviour
         friendlyRumoursQty = Mathf.Clamp(friendlyRumoursQty, 0, friendlyAvailable);
 
         int totalRumours = enemyRumoursQty + friendlyRumoursQty;
+
+        // The public list and LogWidget are the human player's intelligence view. AI/NPL
+        // RevealRumours actions may succeed, but must never promote their discoveries into it.
+        if (requester != Instance.game.player) return totalRumours;
 
         List<int> toRemove = new();
         for(int i=Instance.privateRumours.Count-1; i>=0;i--)

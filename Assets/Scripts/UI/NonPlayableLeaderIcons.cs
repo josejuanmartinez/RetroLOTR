@@ -6,15 +6,30 @@ public class NonPlayableLeaderIcons : MonoBehaviour
 {
     public GameObject nonPlayableLeaderIconPrefab;
     public List<NonPlayableLeaderIcon> nonPlayableLeaderIcons;
-    public PlayableLeader playableLeader;
+
+    public PlayableLeader playableLeader { get; set;}
+
+    public void SetPlayableLeader(PlayableLeader playableLeader)
+    {
+        this.playableLeader = playableLeader;
+    }
     public void Instantiate(NonPlayableLeader leader, PlayableLeader playableLeader)
     {
+        if (leader == null || playableLeader == null || leader.GetAlignment() != playableLeader.GetAlignment())
+        {
+            Debug.LogWarning(
+                $"Cannot place NPL '{leader?.characterName ?? "null"}' under " +
+                $"'{playableLeader?.characterName ?? "null"}': their alignments do not match.");
+            return;
+        }
+
+        nonPlayableLeaderIcons ??= new List<NonPlayableLeaderIcon>();
+        this.playableLeader = playableLeader;
         GameObject icon = Instantiate(nonPlayableLeaderIconPrefab, transform);
         icon.name = leader.characterName;
         NonPlayableLeaderIcon npli = icon.GetComponent<NonPlayableLeaderIcon>();
         npli.Initialize(leader);
         nonPlayableLeaderIcons.Add(npli);
-        this.playableLeader = playableLeader;
         ResortChildrenByAlignment();
     }
 

@@ -225,9 +225,8 @@ public class UtilityAIContextCacheManager : MonoBehaviour
 
         List<string> detailItems = new();
 
-        // NPCs first: they're the first to actually act each round (Game.ProcessNonPlayableLeaderTurns
-        // runs concurrently with this queue, right after it's kicked off — see Game.NextPlayer), so
-        // queuing them last meant they were the group most likely to still hit a cache miss.
+        // NPCs first: the human-aligned group can begin as soon as the player window opens, so
+        // queuing them last would make them the group most likely to hit a cache miss.
         if (game.npcs != null)
         {
             foreach (NonPlayableLeader leader in game.npcs.Where(c => c != null && !c.killed))

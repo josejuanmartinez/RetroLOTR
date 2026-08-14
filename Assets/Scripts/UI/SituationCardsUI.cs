@@ -475,6 +475,14 @@ public class SituationCardsUI : MonoBehaviour
         DismissBloom(saveForCharacter: true);
     }
 
+    /// <summary>Dismisses the forced-open opportunity-card bloom, if one is active.</summary>
+    public bool TryDismissActiveBloom()
+    {
+        if (activeBloomWheel == null) return false;
+        DismissBloom(saveForCharacter: true);
+        return true;
+    }
+
     private void DismissBloom(bool saveForCharacter)
     {
         if (activeBloomWheel == null) return;

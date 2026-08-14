@@ -24,7 +24,7 @@ public class BuyMithril : EmmissaryPCAction
             if (!stores.HasStock(ProducesEnum.mithril, quantity)) return false;
             if (playable.goldAmount < totalCost) return false;
 
-            playable.RemoveGold(totalCost);
+            playable.RemoveGold(totalCost, false);
             playable.AddMithril(quantity);
             stores.AdjustStock(ProducesEnum.mithril, -quantity);
             if (playable == Game.Instance.player) FindFirstObjectByType<StoresManager>().RefreshStores();
@@ -49,4 +49,3 @@ public class BuyMithril : EmmissaryPCAction
         base.Initialize(c, condition, effect, asyncEffect);
     }
 }
-

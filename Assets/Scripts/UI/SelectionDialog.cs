@@ -28,6 +28,7 @@ public class SelectionDialog : MonoBehaviour
     [SerializeField] private TypewriterEffect messageTypewriter;
 
     private readonly List<DialogRequest> queuedRequests = new();
+    private readonly List<DialogRequest> pendingIconRequests = new();
     private DialogRequest activeRequest;
     private readonly List<Button> optionButtons = new();
     private int selectedButtonIndex = -1;
@@ -66,7 +67,7 @@ public class SelectionDialog : MonoBehaviour
             return Task.FromResult(string.Empty);
         }
 
-        return Instance.Show(message, yesString, noString, options, null, isAI, portrait, EventIconType.MultiChoice, dialogTitle);
+        return Instance.Show(message, yesString, noString, options, null, isAI, portrait, EventIconType.MultiChoice, dialogTitle, forceImmediate: false);
     }
 
     public static Task<string> Ask(string message, string yesString, string noString, List<string> options, bool isAI, Sprite portrait, EventIconType iconType, string dialogTitle = null)
@@ -77,7 +78,7 @@ public class SelectionDialog : MonoBehaviour
             return Task.FromResult(string.Empty);
         }
 
-        return Instance.Show(message, yesString, noString, options, null, isAI, portrait, iconType, dialogTitle);
+        return Instance.Show(message, yesString, noString, options, null, isAI, portrait, iconType, dialogTitle, forceImmediate: false);
     }
 
     public static Task<string> Ask(string message, string yesString, string noString, List<string> options, List<string> optionDescriptions, bool isAI, Sprite portrait, EventIconType iconType, string dialogTitle = null, List<string> optionIcons = null)
@@ -88,7 +89,7 @@ public class SelectionDialog : MonoBehaviour
             return Task.FromResult(string.Empty);
         }
 
-        return Instance.Show(message, yesString, noString, options, optionDescriptions, isAI, portrait, iconType, dialogTitle, optionIcons);
+        return Instance.Show(message, yesString, noString, options, optionDescriptions, isAI, portrait, iconType, dialogTitle, optionIcons, forceImmediate: false);
     }
 
     public static Task<string> AskImmediate(string message, string yesString, string noString, List<string> options, List<string> optionDescriptions, bool isAI, Sprite portrait, EventIconType iconType, string dialogTitle = null, List<string> optionIcons = null)
@@ -99,10 +100,10 @@ public class SelectionDialog : MonoBehaviour
             return Task.FromResult(string.Empty);
         }
 
-        return Instance.Show(message, yesString, noString, options, optionDescriptions, isAI, portrait, iconType, dialogTitle, optionIcons);
+        return Instance.Show(message, yesString, noString, options, optionDescriptions, isAI, portrait, iconType, dialogTitle, optionIcons, forceImmediate: true);
     }
 
-    private Task<string> Show(string message, string yesString, string noString, List<string> options, List<string> optionDescriptions, bool isAI, Sprite portrait, EventIconType iconType, string dialogTitle = null, List<string> optionIcons = null)
+    private Task<string> Show(string message, string yesString, string noString, List<string> options, List<string> optionDescriptions, bool isAI, Sprite portrait, EventIconType iconType, string dialogTitle = null, List<string> optionIcons = null, bool forceImmediate = false)
     {
         BindUiReferences();
         WireUiListeners();
@@ -133,11 +134,47 @@ public class SelectionDialog : MonoBehaviour
             int index = Random.Range(0, options.Count);
             request.tcs.TrySetResult(options[index]);
         }
-        else
+        else if (forceImmediate)
         {
             OpenRequest(request);
         }
+        else
+        {
+            QueueBehindEventIcon(request, iconType);
+        }
         return request.tcs.Task;
+    }
+
+    private void QueueBehindEventIcon(DialogRequest request, EventIconType iconType)
+    {
+        EventIconsManager manager = EventIconsManager.FindManager();
+        if (manager == null)
+        {
+            OpenRequest(request);
+            return;
+        }
+
+        pendingIconRequests.Add(request);
+        EventIcon icon = null;
+        icon = manager.AddEventIcon(
+            iconType,
+            discardable: false,
+            onOpen: () =>
+            {
+                pendingIconRequests.Remove(request);
+                request.eventIcon = null;
+                icon?.ConsumeAndDestroy();
+                OpenRequest(request);
+            },
+            onRemove: null,
+            characterPortrait: request.portrait);
+
+        request.eventIcon = icon;
+        if (icon == null)
+        {
+            pendingIconRequests.Remove(request);
+            OpenRequest(request);
+        }
     }
 
     private void OpenRequest(DialogRequest request)
@@ -351,6 +388,7 @@ public class SelectionDialog : MonoBehaviour
         public List<string> optionDescriptions;
         public List<string> optionIcons;
         public Sprite portrait;
+        public EventIcon eventIcon;
         public TaskCompletionSource<string> tcs;
     }
 
@@ -384,8 +422,15 @@ public class SelectionDialog : MonoBehaviour
     {
         DialogRequest requestToClose = activeRequest;
         requestToClose?.tcs?.TrySetResult(string.Empty);
+        for (int i = 0; i < pendingIconRequests.Count; i++)
+        {
+            pendingIconRequests[i]?.eventIcon?.ConsumeAndDestroy();
+            pendingIconRequests[i]?.tcs?.TrySetResult(string.Empty);
+        }
+        pendingIconRequests.Clear();
         for (int i = 0; i < queuedRequests.Count; i++)
         {
+            queuedRequests[i]?.eventIcon?.ConsumeAndDestroy();
             queuedRequests[i]?.tcs?.TrySetResult(string.Empty);
         }
         queuedRequests.Clear();

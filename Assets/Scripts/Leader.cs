@@ -110,7 +110,7 @@ public class Leader : Character
         return leaderBiome.alignment;
     }
     // Everything NewTurn does except kicking off WaitUntilEndOfTurn — split out so
-    // NonPlayableLeader batch processing (see Game.ProcessNonPlayableLeaderTurns) can reuse
+    // alignment-timed NonPlayableLeader processing (see Game) can reuse
     // this safely. WaitUntilEndOfTurn unconditionally calls game.NextPlayer() for any leader
     // that isn't game.player, which is always true for an NPL — looping that per NPL would
     // corrupt the real PlayableLeader turn rotation, so NPLs must never reach it.

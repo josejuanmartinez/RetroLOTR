@@ -50,6 +50,12 @@ public class MaterialManager : SearcherByName
             }
 
             Material originalMaterial = originalImageMaterials[image];
+            if (image.TryGetComponent<ImageUnaffectedBySkin>(out _))
+            {
+                if (image.material != originalMaterial) image.material = originalMaterial;
+                continue;
+            }
+
             if (!IsSkinCandidate(originalMaterial))
             {
                 if (image.material != originalMaterial) image.material = originalMaterial;

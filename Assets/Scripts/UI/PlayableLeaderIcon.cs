@@ -28,6 +28,8 @@ public class PlayableLeaderIcon : MonoBehaviour
     public void Initialize(PlayableLeader leader)
     {
         playableLeader = leader;
+        NonPlayableLeaderIcons icons = ResolveNonPlayableLeaderIcons();
+        if (icons != null) icons.SetPlayableLeader(leader);
         alignment = leader.alignment;
         if (illustrations == null) illustrations = FindFirstObjectByType<Illustrations>();
         leaderSprite = illustrations != null ? illustrations.GetCharacterArtByName(leader.characterName) : null;
@@ -64,11 +66,36 @@ public class PlayableLeaderIcon : MonoBehaviour
 
     public void AddNonPlayableLeader(NonPlayableLeader nonPlayableLeader)
     {
-        NonPlayableLeaderIcons icons = FindFirstObjectByType<NonPlayableLeaderIcons>();
-        if (icons != null)
+        NonPlayableLeaderIcons icons = ResolveNonPlayableLeaderIcons();
+        if (icons == null)
         {
-            icons.Instantiate(nonPlayableLeader, playableLeader);
+            Debug.LogWarning($"No NonPlayableLeaderIcons child is wired for playable leader '{playableLeader?.characterName ?? name}'.");
+            return;
         }
+
+        if (nonPlayableLeader == null || playableLeader == null || nonPlayableLeader.GetAlignment() != playableLeader.GetAlignment())
+        {
+            Debug.LogWarning(
+                $"Refusing to add NPL '{nonPlayableLeader?.characterName ?? "null"}' to mismatched leader icon " +
+                $"'{playableLeader?.characterName ?? name}'.");
+            return;
+        }
+
+        icons.Instantiate(nonPlayableLeader, playableLeader);
+    }
+
+    private NonPlayableLeaderIcons ResolveNonPlayableLeaderIcons()
+    {
+        // The reference must belong to this leader panel. A global lookup here sends every
+        // NPL to whichever NonPlayableLeaderIcons Unity happens to return first.
+        if (nonPlayableLeaderIcons != null &&
+            (nonPlayableLeaderIcons.transform == transform || nonPlayableLeaderIcons.transform.IsChildOf(transform)))
+        {
+            return nonPlayableLeaderIcons;
+        }
+
+        nonPlayableLeaderIcons = GetComponentInChildren<NonPlayableLeaderIcons>(true);
+        return nonPlayableLeaderIcons;
     }
 
     public void HighlighNonPlayableLeader(string leaderName, string leaderText)

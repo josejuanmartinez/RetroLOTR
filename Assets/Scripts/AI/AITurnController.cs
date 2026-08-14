@@ -8,19 +8,31 @@ using UnityEngine;
 
 public static class AITurnController
 {
+    private static bool leaderTurnInProgress;
+    public static Leader CurrentExecutingLeader { get; private set; }
+
     public static IEnumerator ExecuteLeaderTurn(Leader leader, bool presentChosenCards = false, bool skipAlreadyActionedCharacters = false)
     {
         if (leader == null) yield break;
 
-        Game game = Game.Instance;
-        game?.RefreshPlayerControlState();
+        // Playable and alignment-matched NPL turns can be scheduled in the same window, but
+        // ActionsManager caches mutable action instances. Time-slice whole leader turns so those
+        // shared instances are never driven by two coroutines at once.
+        while (leaderTurnInProgress) yield return null;
+        leaderTurnInProgress = true;
+        CurrentExecutingLeader = leader;
 
-        ActionsManager actionsManager = ActionsManager.Instance;
-        if (actionsManager == null)
+        try
         {
-            Debug.LogWarning("AI could not find ActionsManager. Skipping AI turn.");
-            yield break;
-        }
+            Game game = Game.Instance;
+            game?.RefreshPlayerControlState();
+
+            ActionsManager actionsManager = ActionsManager.Instance;
+            if (actionsManager == null)
+            {
+                Debug.LogWarning("AI could not find ActionsManager. Skipping AI turn.");
+                yield break;
+            }
 
         Task economyCardsTask = ConsumeAiResourceCardsAsync(leader, actionsManager, presentChosenCards);
         while (!economyCardsTask.IsCompleted) yield return null;
@@ -51,7 +63,13 @@ public static class AITurnController
             }
         }
 
-        actionsManager.Hide();
+            if (!IsBackgroundAiDuringHumanTurn(leader)) actionsManager.Hide();
+        }
+        finally
+        {
+            CurrentExecutingLeader = null;
+            leaderTurnInProgress = false;
+        }
     }
 
     // Once per character-turn: re-evaluate that character's own persistent HTN strategy
@@ -332,7 +350,7 @@ public static class AITurnController
             await MoveTowardsTargetAsync(lastContext);
             moveMs += chaseStopwatch.Elapsed.TotalMilliseconds;
         }
-        actionsManager.Hide();
+        if (!IsBackgroundAiDuringHumanTurn(leader)) actionsManager.Hide();
 
         double totalMs = totalStopwatch.Elapsed.TotalMilliseconds;
         if (totalMs >= 500)
@@ -551,5 +569,11 @@ public static class AITurnController
             await Task.Delay(50);
             safety++;
         }
+    }
+
+    private static bool IsBackgroundAiDuringHumanTurn(Leader leader)
+    {
+        Game game = Game.Instance;
+        return game != null && game.currentlyPlaying == game.player && leader != null && leader != game.player;
     }
 }

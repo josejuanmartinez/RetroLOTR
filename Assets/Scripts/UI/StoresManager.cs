@@ -82,6 +82,11 @@ public class StoresManager : MonoBehaviour
         EnsureMarketInitialized();
     }
 
+    private void LateUpdate()
+    {
+        pricePopupShownThisFrame = false;
+    }
+
     private void OnDisable()
     {
         foreach (var entry in gainPulseCoroutines)
@@ -271,8 +276,11 @@ public class StoresManager : MonoBehaviour
 
         if (pricePopupShownThisFrame) return;
         pricePopupShownThisFrame = true;
-        MessageDisplay.ShowMessage("Prices in the caravans changed. Please check the <sprite name=\"caravans\">caravans icon above.", Color.yellow);
-        pricePopupShownThisFrame = false;
+        const string notice = "Prices in the caravans changed. Please check the <sprite name=\"caravans\">caravans icon above.";
+        MessageDisplay.ShowMessage(notice, Color.yellow, logToWidget: false);
+        // Market movement is public, but the notice deliberately carries no nation/character
+        // attribution: it must not identify which private transaction caused the change.
+        LogManager.Log(LogCategory.Notification, null, null, notice);
     }
 
     private void RefreshResourceLabel(TextMeshProUGUI label, int value, ref int shownValue)

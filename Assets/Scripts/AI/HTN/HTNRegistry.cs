@@ -124,6 +124,9 @@ public static class HTNRegistry
             (ctx, bb) => ctx.GetUtilityParameter(UtilityAIParameters.IntelligenceEnemyPcVulnerability) > UtilityAI.GetWeight(UtilityAI.Keys.IntelligenceEnemyPcVulnerabilityThreshold)),
         new("Intelligence.HighValueEnemyCharacterReady", "Direct Intelligence.HighValueEnemyCharacter is above its authored threshold — a nearby enemy character's skill sum has reached Intelligence.HighValueSkillAtLeast, a candidate for assassination/kidnap.",
             (ctx, bb) => ctx.GetUtilityParameter(UtilityAIParameters.IntelligenceHighValueEnemyCharacter) > UtilityAI.GetWeight(UtilityAI.Keys.IntelligenceHighValueEnemyCharacterThreshold)),
+        new("Intelligence.ExplorationReady", "True when this leader still has at least one unrevealed land hex. Water hexes never count as exploration targets.",
+            (ctx, bb) => ctx.GetUtilityParameter(UtilityAIParameters.IntelligenceExplorationNeed) > 0f
+                && ctx.GetTargetHexForParameter(UtilityAIParameters.IntelligenceExplorationNeed) != null),
 
         new("Militaristic.OwnPcFortificationNeedReady", "Direct Militaristic.OwnPcFortificationNeed is above its authored threshold — a nearby own PC's defense has fallen below Militaristic.OwnPcDefenseBelow and needs fortifying.",
             (ctx, bb) => ctx.GetUtilityParameter(UtilityAIParameters.MilitaristicOwnPcFortificationNeed) > UtilityAI.GetWeight(UtilityAI.Keys.MilitaristicOwnPcFortificationNeedThreshold)),

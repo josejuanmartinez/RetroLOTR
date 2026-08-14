@@ -304,6 +304,18 @@ public class CardBloomWheel : MonoBehaviour
         if (open) hoverTimer = hoverDelay;
     }
 
+    /// <summary>Closes an open bloom and returns whether Escape was consumed.</summary>
+    public bool TryClose()
+    {
+        if (!isOpen) return false;
+
+        forcedOpen = false;
+        hoverTimer = 0f;
+        SetOpenState(false);
+        ClearCenterPreview();
+        return true;
+    }
+
     // Repositions the wheel to track a world-space point every frame (e.g. a hex the acting
     // character stands on) instead of its authored anchoredPosition. worldCamera should be
     // the scene camera the position was captured in (Camera.main for the board).

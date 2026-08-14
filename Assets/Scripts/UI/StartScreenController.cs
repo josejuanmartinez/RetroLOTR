@@ -21,44 +21,9 @@ public sealed class StartScreenController : MonoBehaviour
     {
         campaignSelection = selector;
         campaignSelection.gameObject.SetActive(false);
-        if (root == null) Build();
         WireAuthoredControls();
         root.SetActive(true);
         ApplySkin(FindFirstObjectByType<SkinManager>()?.CurrentSkin ?? Skins.Default);
-    }
-
-    private void Build()
-    {
-        root = new GameObject("StartScreen", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
-        Canvas canvas = root.GetComponent<Canvas>();
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.sortingOrder = 7000;
-        CanvasScaler scaler = root.GetComponent<CanvasScaler>();
-        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        scaler.referenceResolution = new Vector2(1920, 1080);
-
-        backdrop = new GameObject("Video Screenshot Backdrop").AddComponent<MenuBackgroundRotator>();
-        backdrop.Initialise(root.transform);
-        CreateImage("Dark Veil", root.transform, new Color(0.02f, 0.025f, 0.04f, 0.58f));
-
-        RectTransform bar = CreatePanel("Menu Bar", root.transform, new Vector2(0.06f, 0.5f), new Vector2(0.32f, 0.5f), new Vector2(0f, 0f), new Vector2(0f, 0f), new Color(0.035f, 0.04f, 0.065f, 0.9f));
-        VerticalLayoutGroup layout = bar.gameObject.AddComponent<VerticalLayoutGroup>();
-        layout.padding = new RectOffset(42, 42, 44, 44);
-        layout.spacing = 16;
-        layout.childAlignment = TextAnchor.MiddleCenter;
-        layout.childControlWidth = true;
-        layout.childControlHeight = false;
-
-        CreateLabel("RETROLOTR", bar, 48, FontStyles.Bold, 72);
-        CreateLabel("THE UNTOLD WAR OF THE RING", bar, 16, FontStyles.Italic, 35);
-        CreateSpacer(bar, 20);
-        CreateButton("Start", bar, StartCampaign);
-        CreateLabel("SKIN", bar, 14, FontStyles.Bold, 26);
-        skinValue = CreateButton("", bar, ToggleSkin, 44).GetComponentInChildren<TextMeshProUGUI>();
-        CreateSpacer(bar, 16);
-        CreateButton("Quit", bar, Quit);
-        CreateLabel("© RetroLOTR", bar, 12, FontStyles.Normal, 24);
-        WireAuthoredControls();
     }
 
     private void WireAuthoredControls()
@@ -89,7 +54,7 @@ public sealed class StartScreenController : MonoBehaviour
     {
         FindFirstObjectByType<SkinManager>()?.ChangeSkin(skin);
         backdrop?.SetSkin(skin);
-        if (skinValue != null) skinValue.text = $"Skin: {skin}";
+        if (skinValue != null) skinValue.text = $"<sprite name=\"Skin\"> Skin: {skin}";
     }
 
     private static void Quit()
@@ -108,10 +73,6 @@ public sealed class StartScreenController : MonoBehaviour
         return rect;
     }
 
-    internal static void CreateImage(string name, Transform parent, Color color)
-    {
-        CreatePanel(name, parent, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, color).GetComponent<Image>().raycastTarget = false;
-    }
 
     internal static Button CreateButton(string text, Transform parent, UnityEngine.Events.UnityAction action, float height = 58f)
     {
@@ -137,10 +98,5 @@ public sealed class StartScreenController : MonoBehaviour
         rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one; rect.offsetMin = rect.offsetMax = Vector2.zero;
         if (preferredHeight > 0f) go.AddComponent<LayoutElement>().preferredHeight = preferredHeight;
         return label;
-    }
-
-    private static void CreateSpacer(RectTransform parent, float height)
-    {
-        GameObject spacer = new("Spacer", typeof(RectTransform), typeof(LayoutElement)); spacer.transform.SetParent(parent, false); spacer.GetComponent<LayoutElement>().preferredHeight = height;
     }
 }

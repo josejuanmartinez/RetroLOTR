@@ -62,7 +62,7 @@ public static class EncounterResolver
         bool isAi,
         Sprite portrait)
     {
-        return SelectionDialog.AskImmediate(
+        return SelectionDialog.Ask(
             prompt,
             "Choose",
             string.Empty,

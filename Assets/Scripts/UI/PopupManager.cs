@@ -277,11 +277,8 @@ public class PopupManager : MonoBehaviour
     private void SetContainerVisible(bool visible)
     {
         if (container == null) return;
-        if (!container.activeSelf)
-        {
-            container.SetActive(true);
-        }
-
+        // The popup hierarchy stays active after Awake. Visibility and input are controlled
+        // exclusively by CanvasGroup so hiding it cannot leave a background intercepting input.
         if (containerCanvasGroup != null)
         {
             containerCanvasGroup.alpha = visible ? 1f : 0f;
@@ -316,21 +313,9 @@ public class PopupManager : MonoBehaviour
 
         if (typeWriterEffect != null && data.typeWrite)
         {
-            // StartCoroutine requires typeWriterEffect's whole ancestor chain to be active in
-            // hierarchy, not just its own GameObject — ShowContainer() only guarantees 'container'
-            // itself is active. An intermediate wrapper (e.g. a ScrollRect's "Content" node) can be
-            // left inactive from before this popup was ever shown, which throws instead of typing.
-            EnsureActiveInHierarchy(typeWriterEffect.transform, container != null ? container.transform : null);
+            // Do not activate popup ancestors here. TypewriterEffect falls back to rendering the
+            // complete text if its Content is inactive; CanvasGroup alone controls popup visibility.
             typeWriterEffect.StartWriting();
-        }
-    }
-
-    private static void EnsureActiveInHierarchy(Transform from, Transform upTo)
-    {
-        for (Transform t = from; t != null; t = t.parent)
-        {
-            if (!t.gameObject.activeSelf) t.gameObject.SetActive(true);
-            if (t == upTo) break;
         }
     }
 

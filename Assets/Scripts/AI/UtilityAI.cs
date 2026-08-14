@@ -114,6 +114,7 @@ public static class UtilityAIParameters
     public const string DiplomaticEmissaryStrength = "Diplomatic.EmissaryStrength";
     public const string IntelligenceEnemyPressure = "Intelligence.EnemyPressure";
     public const string IntelligenceAgentStrength = "Intelligence.AgentStrength";
+    public const string IntelligenceExplorationNeed = "Intelligence.ExplorationNeed";
     // Logistics: reposition our own side (renamed from the old, unsplit "Movement") plus healing.
     public const string LogisticsReachNpc = "Logistics.ReachNpc";
     public const string LogisticsInterceptEnemy = "Logistics.InterceptEnemy";
@@ -185,7 +186,7 @@ public static class UtilityAIParameters
         DiplomaticIndirectSafety,
         IntelligenceEnemyCharacter, IntelligenceIndirectSafety,
         ArtifactsArtifactScarcity, ArtifactsArtifactTransfer, ArtifactsEnemyPressure, ArtifactsHiddenArtifacts, ArtifactsMageStrength,
-        DiplomaticEnemyPressure, DiplomaticEmissaryStrength, IntelligenceEnemyPressure, IntelligenceAgentStrength,
+        DiplomaticEnemyPressure, DiplomaticEmissaryStrength, IntelligenceEnemyPressure, IntelligenceAgentStrength, IntelligenceExplorationNeed,
         LogisticsReachNpc, LogisticsInterceptEnemy, LogisticsReachEnemyCharacter, LogisticsHealingNeed, DisruptionEnemyPressure,
         DiplomaticEnemyPcOpportunity, DiplomaticOwnPcLoyaltyRisk, IntelligenceEnemyPcVulnerability, IntelligenceHighValueEnemyCharacter,
         MilitaristicOwnPcFortificationNeed, DiplomaticNplRecruitment, MilitaristicOwnPcDefenderNeed,
@@ -198,6 +199,9 @@ public static class UtilityAIParameters
 
     public static bool IsKnown(string parameter) => !string.IsNullOrWhiteSpace(parameter)
         && Known.Contains(parameter, StringComparer.OrdinalIgnoreCase);
+
+    public static bool IsMovementOnly(string parameter) =>
+        string.Equals(parameter, IntelligenceExplorationNeed, StringComparison.OrdinalIgnoreCase);
 }
 
 public enum EconomyStatus

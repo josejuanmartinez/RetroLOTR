@@ -41,6 +41,10 @@ public class Music : MonoBehaviour
     public float minSwitchSeconds = 6f;
     public float battleMusicHoldSeconds = 10f;
 
+    [Header("Diagnostics")]
+    [Tooltip("Logs every music or ambient clip that actually reaches AudioSource.Play, including its requester and game state.")]
+    public bool logAudioPlayback = true;
+
     private readonly Dictionary<string, AudioClip> stablePickByKey = new();
     private string currentMusicKey;
     private string currentAmbientKey;
@@ -397,7 +401,9 @@ public class Music : MonoBehaviour
         if (ambientAudioSource == null) return;
         if (ambientFadeRoutine != null) StopCoroutine(ambientFadeRoutine);
         float volume = Mathf.Min(ambientVolume, maxVolume);
-        ambientFadeRoutine = StartCoroutine(CrossfadeRoutine(ambientAudioSource, clip, ambientFadeDuration, true, 0f, volume));
+        ambientFadeRoutine = StartCoroutine(CrossfadeRoutine(
+            ambientAudioSource, clip, ambientFadeDuration, true, 0f, volume,
+            "ambient", CaptureExternalCaller()));
     }
 
     private void CrossfadeMusic(AudioClip clip, float startTime, bool loop)
@@ -405,10 +411,20 @@ public class Music : MonoBehaviour
         if (musicAudioSource == null) return;
         if (musicFadeRoutine != null) StopCoroutine(musicFadeRoutine);
         float volume = Mathf.Min(musicVolume, maxVolume);
-        musicFadeRoutine = StartCoroutine(CrossfadeRoutine(musicAudioSource, clip, crossfadeDuration, loop, startTime, volume));
+        musicFadeRoutine = StartCoroutine(CrossfadeRoutine(
+            musicAudioSource, clip, crossfadeDuration, loop, startTime, volume,
+            "music", CaptureExternalCaller()));
     }
 
-    private IEnumerator CrossfadeRoutine(AudioSource source, AudioClip nextClip, float duration, bool loop, float startTime, float targetVolume)
+    private IEnumerator CrossfadeRoutine(
+        AudioSource source,
+        AudioClip nextClip,
+        float duration,
+        bool loop,
+        float startTime,
+        float targetVolume,
+        string channel,
+        string origin)
     {
         if (source.clip == nextClip && source.isPlaying) yield break;
 
@@ -431,6 +447,7 @@ public class Music : MonoBehaviour
             float clampedTime = Mathf.Clamp(startTime, 0f, Mathf.Max(0f, nextClip.length - 0.01f));
             source.time = clampedTime;
         }
+        LogPlayback(channel, nextClip, targetVolume, origin);
         source.Play();
 
         for (float t = 0f; t < duration; t += Time.deltaTime)
@@ -439,6 +456,35 @@ public class Music : MonoBehaviour
             yield return null;
         }
         source.volume = targetVolume;
+    }
+
+    private static string CaptureExternalCaller()
+    {
+        var frames = new System.Diagnostics.StackTrace(1, false).GetFrames();
+        if (frames == null) return "unknown";
+
+        foreach (var frame in frames)
+        {
+            var method = frame.GetMethod();
+            if (method?.DeclaringType == null || method.DeclaringType == typeof(Music)) continue;
+            return $"{method.DeclaringType.Name}.{method.Name}";
+        }
+
+        return "unknown";
+    }
+
+    private void LogPlayback(string channel, AudioClip clip, float volume, string origin)
+    {
+        if (!logAudioPlayback) return;
+
+        Game game = Game.Instance;
+        string currentLeader = game?.currentlyPlaying?.characterName ?? "none";
+        string aiActor = AITurnController.CurrentExecutingLeader?.characterName ?? "none";
+        int turn = game != null ? game.turn : -1;
+        Debug.Log(
+            $"[SoundTrace] PLAY channel={channel} frame={Time.frameCount} time={Time.time:F3} " +
+            $"clip='{clip?.name ?? "null"}' volume={volume:F2} origin={origin} " +
+            $"turn={turn} current='{currentLeader}' aiActor='{aiActor}'");
     }
 
     private AudioClip PickEventClip()

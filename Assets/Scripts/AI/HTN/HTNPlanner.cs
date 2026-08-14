@@ -45,7 +45,10 @@ public static class HTNPlanner
 
             if (firstSubtask is HTNPrimitiveTask primitive)
             {
-                if (primitive.PreferredParameters is { Count: > 0 } && !ctx.HasEligibleCard(primitive.PreferredParameters))
+                bool hasMovementOnlyTarget = primitive.PreferredParameters is { Count: > 0 }
+                    && primitive.PreferredParameters.Any(parameter =>
+                        UtilityAIParameters.IsMovementOnly(parameter) && ctx.GetTargetHexForParameter(parameter) != null);
+                if (primitive.PreferredParameters is { Count: > 0 } && !hasMovementOnlyTarget && !ctx.HasEligibleCard(primitive.PreferredParameters))
                 {
                     continue; // no eligible card for this leaf's parameters — try the next sibling
                 }

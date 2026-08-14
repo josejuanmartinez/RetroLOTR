@@ -25,6 +25,7 @@ public static class HTNStrategyBuilder
         HTNRegistry.TryGetPredicate("Militaristic.OffenseWinRatioReady", out var offenseWinRatioReady);
         HTNRegistry.TryGetPredicate("Intelligence.HighValueEnemyCharacterReady", out var highValueEnemyCharacterReady);
         HTNRegistry.TryGetPredicate("Intelligence.EnemyPcVulnerabilityReady", out var enemyPcVulnerabilityReady);
+        HTNRegistry.TryGetPredicate("Intelligence.ExplorationReady", out var explorationReady);
         HTNRegistry.TryGetPredicate("Diplomatic.NplsNearReady", out var nplsNearReady);
         HTNRegistry.TryGetPredicate("Diplomatic.NplsMidReady", out var nplsMidReady);
         HTNRegistry.TryGetPredicate("Diplomatic.EnemyPcOpportunityNearReady", out var enemyPcOpportunityNearReady);
@@ -389,6 +390,18 @@ public static class HTNStrategyBuilder
         HTNMethod artifactSurplusMethod = new() { TaskId = "root.artifacts.surplus", Precondition = artifactTransferReady };
         artifactSurplusMethod.Subtasks.Add(artifactSurplusLeaf);
 
+        // Low-priority curiosity: only reached after danger, recovery, offense, diplomacy, and
+        // artifact concerns decline. The movement target is always unseen land, never sea.
+        HTNPrimitiveTask explorationLeaf = new()
+        {
+            TaskId = "root.intelligence.explore.leaf",
+            Precondition = explorationReady,
+            CompletionCondition = never,
+            PreferredParameters = new() { UtilityAIParameters.IntelligenceExplorationNeed }
+        };
+        HTNMethod explorationMethod = new() { TaskId = "root.intelligence.explore", Precondition = explorationReady };
+        explorationMethod.Subtasks.Add(explorationLeaf);
+
         // 14. root.militaristic.build: no danger, no offense-ready — proactively build up
         // instead of only ever reacting. Also home for the folded-in Logistics healing-support
         // leaf (the other two Logistics "reach" signals ride along on the offense/build leaves'
@@ -468,6 +481,7 @@ public static class HTNStrategyBuilder
         root.Methods.Add(enemiesMidMethod);
         root.Methods.Add(shoreMethod);
         root.Methods.Add(artifactSurplusMethod);
+        root.Methods.Add(explorationMethod);
         root.Methods.Add(militaristicBuildMethod);
         root.Methods.Add(intelligenceBuildMethod);
         root.Methods.Add(fallbackMethod);

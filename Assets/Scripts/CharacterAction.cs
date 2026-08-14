@@ -290,6 +290,9 @@ public class CharacterAction
                 Sounds.Instance?.PlayActionExecute();
             }
             Hex actionHex = character.hex;
+            ActionCostSnapshot caravanSnapshot = (isBuyCaravans || isSellCaravans)
+                ? CalculateCostSnapshot(GetResourceCostProfile(character.GetOwner()))
+                : default;
             // Only human-controlled characters use the one-action-per-turn flag. AI order
             // count is enforced by AITurnController according to the selected difficulty.
             if (!isAI && ConsumesAction)
@@ -353,8 +356,11 @@ public class CharacterAction
             // Card-authored status effects are no longer part of exposed card design.
             // Status effects remain internal gameplay state only.
 
-            string message = actionName;            
-            string rumourMessage = $"succeeds on {message}";
+            string message = actionName;
+            string tradeMessage = BuildCaravanTransactionMessage(caravanSnapshot);
+            string rumourMessage = !string.IsNullOrWhiteSpace(tradeMessage)
+                ? tradeMessage
+                : $"succeeds on {message}";
             bool isDoubledByPlayer = game != null
                 && game.player != null
                 && character.doubledBy != null
@@ -364,15 +370,25 @@ public class CharacterAction
                 // Always record AI actions privately; if doubled by the player, also promote to public immediately
                 Rumour rumour = new Rumour() { leader = character.GetOwner(), character = character, characterName = character.characterName, rumour = rumourMessage, v2 = character.hex.v2 };
                 RumoursManager.AddRumour(rumour, false);
-                if (isDoubledByPlayer)
+                // Exact trade quantities and proceeds are always private intelligence. Even a
+                // doubled character does not turn a nation's market ledger into public news.
+                if (isDoubledByPlayer && string.IsNullOrWhiteSpace(tradeMessage))
                 {
                     RumoursManager.PromoteRumourToPublic(rumour);
                 }
-                if (ShowsVisibleAiActionNotification && PlayerCanSeeHex(character.hex))
+                if (ShowsVisibleAiActionNotification && string.IsNullOrWhiteSpace(tradeMessage) && PlayerCanSeeHex(character.hex))
                 {
                     MessageDisplayNoUI.ShowMessage(character.hex, character, message, Color.yellow);
                     BoardNavigator.Instance?.EnqueueEnemyFocus(character.hex, character.GetOwner());
                 }
+            }
+            else if (!string.IsNullOrWhiteSpace(tradeMessage))
+            {
+                // The acting player sees their own ledger entry, while the underlying rumour
+                // remains private and can never be exposed as public market news.
+                Rumour tradeRumour = new Rumour { leader = character.GetOwner(), character = character, characterName = character.characterName, rumour = tradeMessage, v2 = character.hex.v2 };
+                RumoursManager.AddRumour(tradeRumour, false, logToWidget: false);
+                LogManager.Log(LogCategory.Rumour, character.GetOwner()?.characterName, character.characterName, tradeMessage);
             }
             if (!isAI) FindFirstObjectByType<Layout>().GetSelectedCharacterIcon().Refresh(character);
             if (!isAI) Card.RequestInteractionRefreshAll();
@@ -1517,6 +1533,18 @@ public class CharacterAction
         {
             owner.AddGold(snapshot.goldDelta);
         }
+    }
+
+    private string BuildCaravanTransactionMessage(ActionCostSnapshot snapshot)
+    {
+        if (!snapshot.isCaravan || snapshot.resourceCosts == null || snapshot.resourceCosts.Count == 0) return null;
+
+        string resources = string.Join(", ", snapshot.resourceCosts.Select(cost =>
+            $"{cost.amount} <sprite name=\"{cost.produce}\">{cost.produce}"));
+        int gold = Mathf.Abs(snapshot.goldDelta);
+        return isBuyCaravans
+            ? $"bought {resources} for {gold} <sprite name=\"gold\">gold"
+            : $"sold {resources} for {gold} <sprite name=\"gold\">gold";
     }
 
     private void ApplySpellFailurePenalty(bool isAI)

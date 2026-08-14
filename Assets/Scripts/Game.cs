@@ -74,6 +74,9 @@ public class Game : MonoBehaviour
     private bool playerAutoplayTurnRunning;
     private bool playerTurnAcceptingInput;
     private readonly List<NpcFocusEntry> npcFocusEntries = new();
+    private readonly HashSet<NonPlayableLeader> nplsActedThisRound = new();
+    private bool alignedNplTurnsRunning;
+    private bool leaderTransitionRunning;
     private bool blockLookAtUntilStartupPopupCloses;
     private bool startupPopupShown;
     // Same rationale as Board.Instance: dozens of card actions' condition/effect closures were
@@ -201,8 +204,12 @@ public class Game : MonoBehaviour
         // not necessarily an ownership relationship).
         board.nationSpawner?.ReconcileScenarioSpawnConditions();
         FindFirstObjectByType<Initialize>()?.UndoInitialState();
+        PauseMenuController.PrepareForGameplay();
 
         turn = 0;
+        nplsActedThisRound.Clear();
+        alignedNplTurnsRunning = false;
+        leaderTransitionRunning = false;
         started = true;
         Music.Instance?.PlayGameMusic();
         blockLookAtUntilStartupPopupCloses = true;
@@ -261,9 +268,10 @@ public class Game : MonoBehaviour
         // way around, unlike every subsequent turn where the banner already goes first.
         StartCoroutine(ShowTurnZeroBanner());
         HideHumanPlayerWidgetsWidgets();
-        currentlyPlaying.NewTurn();
-        yield return RefreshDeckUiAfterStartup();
         UtilityAIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
+        currentlyPlaying.NewTurn();
+        StartAlignedNplTurns(currentlyPlaying.GetAlignment());
+        yield return RefreshDeckUiAfterStartup();
         while (UtilityAIContextCacheManager.Instance != null
             && !UtilityAIContextCacheManager.Instance.PlayerRecommendationsReady)
             yield return null;
@@ -300,7 +308,7 @@ public class Game : MonoBehaviour
         yield return CenterDisplayLock.WaitCoroutine();
         yield return new WaitForSeconds(1.1f);
         TurnBanner.Show(turn, ResolveBannerSprite(player), lockAlreadyHeld: true);
-        TurnBanner.ShowGatheringResources();
+        TurnBanner.ShowGatheringResources(playSound: false);
     }
 
     private static Sprite ResolveBannerSprite(PlayableLeader leader)
@@ -531,6 +539,7 @@ public class Game : MonoBehaviour
 
     public async void NextPlayer()
     {
+        if (leaderTransitionRunning) return;
         PopupManager.CloseAll();
         ConfirmationDialog.CloseAll();
         SelectionDialog.CloseAll();
@@ -584,18 +593,25 @@ public class Game : MonoBehaviour
             return;
         }
 
+        leaderTransitionRunning = true;
+        HideHumanPlayerWidgetsWidgets();
+        StartCoroutine(TransitionToLeader(next));
+    }
+
+    // Finish any alignment-matched NPL work before another playable AI begins. This lets a
+    // human end their turn immediately without allowing shared AI/action state to overlap.
+    private IEnumerator TransitionToLeader(PlayableLeader next)
+    {
+        while (alignedNplTurnsRunning) yield return null;
+
         currentlyPlaying = next;
 
         if (currentlyPlaying == player)
         {
-            // Kick the precompute cache off now, concurrently with the NPC turns about to run
-            // below, instead of only after they finish (see BeginPlayerTurnSequence, which used
-            // to be the sole trigger) — previously every NonPlayableLeader character-turn hit a
-            // cache miss and paid for an unbudgeted, synchronous, full-board-scan rebuild
-            // (UtilityAIContextDataBuilder.Build with no time budget) since NPCs are the first
-            // thing to act each round, before this cache had ever been (re)built for it.
+            // Warm the frame-budgeted context cache while the human-turn handoff runs. The
+            // human-aligned NPL queue and player recommendations can both reuse it.
             UtilityAIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
-            StartCoroutine(ProcessNonPlayableLeaderTurns());
+            StartCoroutine(BeginPlayerTurnSequence());
         }
         else
         {
@@ -604,26 +620,45 @@ public class Game : MonoBehaviour
             MessageDisplayNoUI.SetPaused(true);
             board.RefreshRelevantHexes();
             currentlyPlaying.NewTurn();
+            StartAlignedNplTurns(currentlyPlaying.GetAlignment());
         }
+        leaderTransitionRunning = false;
     }
 
-    // NonPlayableLeaders act once per full round, all at once, right before the human player's
-    // turn begins — not interleaved into the PlayableLeader rotation (game.NextPlayer() only
-    // ever iterates game.competitors). RefreshForNewTurn() is the WaitUntilEndOfTurn()-free half
-    // of Leader.NewTurn(), so this never touches currentlyPlaying/game.NextPlayer() and cannot
-    // corrupt the real turn order.
-    private IEnumerator ProcessNonPlayableLeaderTurns()
+    // RefreshForNewTurn() is the WaitUntilEndOfTurn()-free half of Leader.NewTurn(), allowing an
+    // NPL to act in its alignment's window without advancing the playable-leader rotation.
+    private void StartAlignedNplTurns(AlignmentEnum alignment)
     {
-        if (npcs != null)
+        if (alignedNplTurnsRunning) return;
+        if (npcs == null || !npcs.Any(n => n != null && !n.killed && !nplsActedThisRound.Contains(n) && n.GetAlignment() == alignment)) return;
+        StartCoroutine(ProcessAlignedNonPlayableLeaderTurns(alignment));
+    }
+
+    private IEnumerator ProcessAlignedNonPlayableLeaderTurns(AlignmentEnum alignment)
+    {
+        alignedNplTurnsRunning = true;
+        try
         {
-            foreach (NonPlayableLeader npl in npcs.Where(n => n != null && !n.killed))
+            foreach (NonPlayableLeader npl in npcs.Where(n => n != null && !n.killed && n.GetAlignment() == alignment).ToList())
             {
+                if (!nplsActedThisRound.Add(npl)) continue;
                 npl.RefreshForNewTurn();
                 if (npl.killed) continue;
                 yield return AITurnController.ExecuteLeaderTurn(npl);
+                if (currentlyPlaying == player)
+                {
+                    DeckManager deckManager = DeckManager.Instance != null ? DeckManager.Instance : FindFirstObjectByType<DeckManager>();
+                    deckManager?.RefreshHumanPlayerHandUI();
+                    FindFirstObjectByType<ActionsManager>()?.RefreshInteractableState();
+                }
+                // Explicit frame boundary between leaders in addition to the AI scoring budget.
+                yield return null;
             }
         }
-        StartCoroutine(BeginPlayerTurnSequence());
+        finally
+        {
+            alignedNplTurnsRunning = false;
+        }
     }
 
     private void NewTurn()
@@ -633,6 +668,7 @@ public class Game : MonoBehaviour
         ConfirmationDialog.CloseAll();
         SelectionDialog.CloseAll();
         turn++;
+        nplsActedThisRound.Clear();
         if (turn >= MAX_TURNS)
         {
             EndGame(false);
@@ -671,11 +707,13 @@ public class Game : MonoBehaviour
         if (playerAutoplayEnabled)
         {
             currentlyPlaying.RefreshForNewTurn();
+            StartAlignedNplTurns(currentlyPlaying.GetAlignment());
             yield return RunPlayerAutoplayTurn();
             yield break;
         }
 
         currentlyPlaying.NewTurn();
+        StartAlignedNplTurns(currentlyPlaying.GetAlignment());
 
         // Precompute was already kicked off in NextPlayer(), concurrently with the NPC turns
         // that just ran above — just wait for it here rather than clearing and restarting it.

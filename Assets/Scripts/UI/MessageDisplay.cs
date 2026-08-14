@@ -55,6 +55,10 @@ public class MessageDisplay : MonoBehaviour
         Game game = Game.Instance;
         if (game == null) return;
         if (!game.started || game.currentlyPlaying != game.player) return;
+        // An NPL may now think during the human leader's alignment window. Its center-screen
+        // messages must not inherit the human current-turn context, sound, or LogWidget entry.
+        Leader aiActor = AITurnController.CurrentExecutingLeader;
+        if (aiActor != null && aiActor != game.player) return;
         string formattedMessage = FormatMessageForDisplay(ResourceSpriteFormatter.ReplaceResourceWordsWithSprites(message));
         Color resolved = color ?? Color.white;
         // playSound: false lets a caller that already plays its own cue (see

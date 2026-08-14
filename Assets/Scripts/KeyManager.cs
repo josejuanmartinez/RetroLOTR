@@ -68,6 +68,13 @@ public class KeyManager : MonoBehaviour
         // Check if ESC key was pressed
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            if (SituationCardsUI.Instance != null && SituationCardsUI.Instance.TryDismissActiveBloom())
+                return;
+
+            CardBloomWheel cardBloom = DeckManager.Instance?.GetCardBloomWheel();
+            if (cardBloom != null && cardBloom.TryClose())
+                return;
+
             if (game != null && game.started)
             {
                 PauseMenuController.Toggle();

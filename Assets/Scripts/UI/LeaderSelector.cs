@@ -42,6 +42,7 @@ public class LeaderSelector : SearcherByName
     public GameObject progressText;
     public GameObject leaderSelectionFullScreen;
     public Image bannerImage;
+    public Button startGameButton;
 
     readonly List<LeaderSelectionEntry> selectionEntries = new();
     readonly List<GameObject> carouselItems = new();
@@ -54,6 +55,7 @@ public class LeaderSelector : SearcherByName
     bool selectionScreenQueued = false;
     Coroutine deferredRefreshRoutine;
     LeaderSelectionEntry lastVoicedSelection;
+    bool startConfirmationPending;
     Canvas rootCanvas;
     void Awake()
     {
@@ -67,6 +69,8 @@ public class LeaderSelector : SearcherByName
         {
             leaderCarousel.RegisterOnSelectionChanged(SelectLeader);
         }
+
+        ConfigureStartGameButton();
     }
 
     void OnDestroy()
@@ -80,6 +84,8 @@ public class LeaderSelector : SearcherByName
         {
             leaderCarousel.UnregisterOnSelectionChanged(SelectLeader);
         }
+
+        startGameButton?.onClick.RemoveListener(ConfirmStartGame);
     }
 
     void Update()
@@ -538,9 +544,98 @@ public class LeaderSelector : SearcherByName
         {
             carouselItem.SetSprite(sprite);
             carouselItem.SetLabel(BuildCarouselLabel(selection), selection.alignment);
+            carouselItem.SetClickHandler(() => HandleCarouselItemClick(item));
         }
 
         ApplyCurrentSkinFont(item);
+    }
+
+    void ConfigureStartGameButton()
+    {
+        if (startGameButton == null)
+        {
+            startGameButton = GetComponentsInChildren<Button>(true)
+                .FirstOrDefault(button => button.name == "StartGame");
+        }
+
+        if (startGameButton == null)
+        {
+            Debug.LogError("Leader selection is missing its StartGame button.");
+            return;
+        }
+
+        // Replace the old serialized actions, which started the game and hid this screen
+        // immediately. Both entry points must now wait for the same confirmation dialog.
+        startGameButton.onClick = new Button.ButtonClickedEvent();
+        startGameButton.onClick.AddListener(ConfirmStartGame);
+    }
+
+    void HandleCarouselItemClick(GameObject clickedItem)
+    {
+        if (leaderCarousel == null || clickedItem == null || startConfirmationPending)
+        {
+            return;
+        }
+
+        int clickedIndex = carouselItems.IndexOf(clickedItem);
+        if (clickedIndex < 0)
+        {
+            return;
+        }
+
+        if (clickedIndex != leaderCarousel.GetCurrentIndex())
+        {
+            leaderCarousel.SetIndex(clickedIndex);
+            return;
+        }
+
+        ConfirmStartGame();
+    }
+
+    public async void ConfirmStartGame()
+    {
+        if (startConfirmationPending || selectionEntries.Count == 0)
+        {
+            return;
+        }
+
+        int selectedIndex = leaderCarousel != null ? leaderCarousel.GetCurrentIndex() : 0;
+        if (selectedIndex < 0 || selectedIndex >= selectionEntries.Count)
+        {
+            return;
+        }
+
+        LeaderSelectionEntry selection = selectionEntries[selectedIndex];
+        string selectedName = string.IsNullOrWhiteSpace(selection.variantName)
+            ? selection.baseLeaderName
+            : $"{selection.baseLeaderName} ({selection.variantName})";
+
+        startConfirmationPending = true;
+        bool confirmed;
+        try
+        {
+            confirmed = await ConfirmationDialog.AskYesNo($"Do you want to start as {selectedName}?");
+        }
+        finally
+        {
+            startConfirmationPending = false;
+        }
+
+        if (!confirmed || this == null || Game.Instance == null)
+        {
+            return;
+        }
+
+        if (leaderCarousel != null)
+        {
+            leaderCarousel.SetIndex(selectedIndex);
+        }
+        else
+        {
+            SelectLeader(selectedIndex);
+        }
+
+        Game.Instance.StartGame();
     }
 
     string BuildCarouselLabel(LeaderSelectionEntry selection)

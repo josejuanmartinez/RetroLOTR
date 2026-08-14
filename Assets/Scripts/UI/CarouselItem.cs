@@ -1,11 +1,28 @@
+using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CarouselItem : MonoBehaviour
+public class CarouselItem : MonoBehaviour, IPointerClickHandler
 {
     public Image image;
     public TextMeshProUGUI label;
+
+    private Action clickHandler;
+
+    public void SetClickHandler(Action handler)
+    {
+        clickHandler = handler;
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            clickHandler?.Invoke();
+        }
+    }
 
     public void SetSprite(Sprite spr)
     {

@@ -43,6 +43,9 @@ public static class UtilityAIContextDataBuilder
         if (board == null || character == null || character.hex == null) return data;
         if (ShouldStop(stopwatch, maxMilliseconds)) return data;
 
+        CacheExplorationTarget(board, leader, character, ref data, stopwatch, maxMilliseconds);
+        if (ShouldStop(stopwatch, maxMilliseconds)) return data;
+
         CacheEnemyTargets(board, character, leader, ref data, stopwatch, maxMilliseconds);
         if (ShouldStop(stopwatch, maxMilliseconds)) return data;
 
@@ -57,6 +60,37 @@ public static class UtilityAIContextDataBuilder
         BuildArtifactTransfers(board, leader, character, ref data, stopwatch, maxMilliseconds);
 
         return data;
+    }
+
+    private static void CacheExplorationTarget(Board board, Leader leader, Character character, ref UtilityAIContext.PrecomputedData data, Stopwatch stopwatch, float maxMilliseconds)
+    {
+        if (board?.hexes == null || leader == null || character?.hex == null) return;
+
+        float nearestDistance = float.MaxValue;
+        int landHexCount = 0;
+        foreach (Hex hex in board.hexes.Values)
+        {
+            if (ShouldStop(stopwatch, maxMilliseconds)) break;
+            if (hex == null || hex.IsWaterTerrain()) continue;
+            landHexCount++;
+            if (leader.visibleHexes.Contains(hex)) continue;
+
+            data.UnrevealedLandHexCount++;
+            float distance = Vector2.Distance(character.hex.v2, hex.v2);
+            if (distance < nearestDistance)
+            {
+                nearestDistance = distance;
+                data.NearestUnrevealedLandHex = hex;
+            }
+        }
+
+        // Deterministic once-per-character/turn roll: a largely unknown map strongly invites
+        // exploration, while a handful of remote unseen tiles only occasionally pull someone
+        // away from normal build behavior. This avoids every character dog-piling the same fog.
+        float explorationChance = landHexCount > 0 ? (float)data.UnrevealedLandHexCount / landHexCount : 0f;
+        uint rollSeed = unchecked((uint)(((Game.Instance?.turn ?? 0) * 397) ^ character.GetInstanceID()));
+        float roll = (rollSeed % 10000u) / 10000f;
+        if (roll > explorationChance) data.NearestUnrevealedLandHex = null;
     }
 
     // Win-probability signal for the HTN's ImmediateDanger/Danger PersonalCombat pick: the

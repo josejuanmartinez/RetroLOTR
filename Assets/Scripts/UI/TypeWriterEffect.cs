@@ -31,6 +31,20 @@ public class TypewriterEffect : MonoBehaviour
     public void StartWriting(string text = null)
     {
         if (coroutine != null) StopCoroutine(coroutine);
+        text ??= fullText ?? string.Empty;
+        fullText = text;
+
+        // Unity rejects StartCoroutine when any ancestor is inactive. A popup can be populated
+        // while its scroll Content is still outside the active hierarchy; render the complete
+        // text in that case and let the next visible popup animate normally.
+        if (!isActiveAndEnabled || !gameObject.activeInHierarchy)
+        {
+            coroutine = null;
+            if (textMeshPro == null) textMeshPro = GetComponent<TMP_Text>();
+            if (textMeshPro != null) textMeshPro.text = text;
+            autoScroll?.Refresh();
+            return;
+        }
         coroutine = StartCoroutine(TypeText(text));
     }
 

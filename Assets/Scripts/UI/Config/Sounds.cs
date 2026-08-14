@@ -106,6 +106,10 @@ public class Sounds : SearcherByName
     public int maxQueueSize = 8;
     public float globalMinInterval = 0.05f;
 
+    [Header("Diagnostics")]
+    [Tooltip("Logs every clip that actually reaches AudioSource.PlayOneShot, including its external caller and game state.")]
+    public bool logSoundPlayback = true;
+
     private readonly Queue<SfxRequest> queue = new();
     private readonly Dictionary<string, float> lastPlayByKey = new();
     private readonly Dictionary<string, AudioClip> stablePickByKey = new();
@@ -122,6 +126,7 @@ public class Sounds : SearcherByName
         public float volume;
         public float minInterval;
         public string key;
+        public string origin;
     }
 
     private void Awake()
@@ -394,6 +399,8 @@ public class Sounds : SearcherByName
         var clip = PickRandomClip(clips);
         if (!clip) return;
 
+        string origin = CaptureExternalCaller();
+        LogPlayback("footstep", clip, footstepVolume, origin);
         soundAudioSource.PlayOneShot(clip, footstepVolume);
         lastFootstepTime = Time.time;
         lastPlayTime = Time.time;
@@ -453,7 +460,8 @@ public class Sounds : SearcherByName
             clip = clip,
             volume = volume,
             minInterval = minInterval,
-            key = key
+            key = key,
+            origin = CaptureExternalCaller()
         });
 
         if (queueRoutine == null) queueRoutine = StartCoroutine(ProcessQueue());
@@ -464,6 +472,7 @@ public class Sounds : SearcherByName
         while (queue.Count > 0)
         {
             var req = queue.Dequeue();
+            LogPlayback(req.key, req.clip, req.volume, req.origin);
             soundAudioSource.PlayOneShot(req.clip, req.volume);
             lastPlayByKey[req.key] = Time.time;
             lastPlayTime = Time.time;
@@ -471,6 +480,27 @@ public class Sounds : SearcherByName
             yield return new WaitForSeconds(spacing);
         }
         queueRoutine = null;
+    }
+
+    private static string CaptureExternalCaller()
+    {
+        var trace = new System.Diagnostics.StackTrace(1, false);
+        for (int i = 0; i < trace.FrameCount; i++)
+        {
+            System.Reflection.MethodBase method = trace.GetFrame(i)?.GetMethod();
+            if (method == null || method.DeclaringType == typeof(Sounds)) continue;
+            return $"{method.DeclaringType?.Name}.{method.Name}";
+        }
+        return "unknown";
+    }
+
+    private void LogPlayback(string key, AudioClip clip, float volume, string origin)
+    {
+        if (!logSoundPlayback) return;
+        Game game = Game.Instance;
+        string current = game?.currentlyPlaying?.characterName ?? "none";
+        string aiActor = AITurnController.CurrentExecutingLeader?.characterName ?? "none";
+        Debug.Log($"[SoundTrace] PLAY frame={Time.frameCount} time={Time.time:F3} clip='{clip?.name ?? "null"}' key='{key}' volume={volume:F2} origin={origin ?? "unknown"} turn={game?.turn ?? -1} current='{current}' aiActor='{aiActor}'");
     }
 
     private AudioClip PickStableClip(List<AudioClip> clips, string key)

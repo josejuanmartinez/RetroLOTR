@@ -129,13 +129,13 @@ public class TurnBanner : MonoBehaviour
     // Shown right after the Turn banner and before the PC/region resource grants begin -
     // same cinematic treatment (queues behind the Turn banner via CenterDisplayLock, same as
     // the grant previews would), just announcing the handoff rather than a turn number.
-    public static void ShowGatheringResources()
+    public static void ShowGatheringResources(bool playSound = true)
     {
         if (Instance == null) return;
         activeBannerCount++;
         Instance.StartCoroutine(Instance.PlayAnimation(
             "Gathering Resources", "from controlled Population Centers and Regions", string.Empty, null, lockAlreadyHeld: false));
-        Sounds.Instance?.PlayPositive();
+        if (playSound) Sounds.Instance?.PlayPositive();
     }
 
     // This is THE exclusive center-screen display — it must block opportunity cards and
