@@ -170,6 +170,26 @@ public class Army
         return $" {string.Join(',', BuildTroopHoverLines())}";
     }
 
+    // Same content as GetHoverTextHexInfo(), but keeps each troop group's display line paired
+    // with its card name so callers can wrap every troop in its own TMPro link instead of one
+    // link spanning the whole army (which made hover/lookup treat every card name in the army
+    // as a single concatenated blob rather than separately clickable/hoverable cards).
+    public List<(string troopName, string line)> GetLinkableTroopHoverLines()
+    {
+        List<ArmyTroopAbilityGroup> groups = GetTroopGroups();
+        string xpText = GetXpHoverText();
+        var result = new List<(string troopName, string line)>();
+        for (int i = 0; i < groups.Count; i++)
+        {
+            string line = BuildTroopHoverLine(groups[i]);
+            if (string.IsNullOrWhiteSpace(line)) continue;
+            if (i == groups.Count - 1) line += xpText;
+            string troopName = !string.IsNullOrWhiteSpace(groups[i].troopName) ? groups[i].troopName : GetDefaultTroopName(groups[i].troopType);
+            result.Add((troopName, line));
+        }
+        return result;
+    }
+
     private string GetXpHoverText()
     {
         string color = xp < 25 ? "#ff4d4d" : xp < 50 ? "#ffb347" : xp < 75 ? "#8fd14f" : "#00c853";

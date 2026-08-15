@@ -535,19 +535,21 @@ public class Board : MonoBehaviour
         }
     }
 
-    // UnityEvent pickers (e.g. a UI Button's OnClick) only list public methods/properties, not
-    // plain public fields — showHexGrid itself can't be wired up directly, hence this wrapper.
-    public void ToggleHexGrid()
+    public bool RegionsViewEnabled => terrainTexturesHidden;
+
+    // UnityEvent pickers (e.g. a UI Toggle's OnValueChanged) only list public methods/properties,
+    // not plain public fields — showHexGrid itself can't be wired up directly, hence this wrapper.
+    public void SetHexGridEnabled(bool enabled)
     {
-        showHexGrid = !showHexGrid;
-        appliedHexGridState = showHexGrid;
-        HexSeamlessTerrain.SetGridEnabled(showHexGrid);
+        showHexGrid = enabled;
+        appliedHexGridState = enabled;
+        HexSeamlessTerrain.SetGridEnabled(enabled);
     }
 
-    public void ToggleAllTerrainTextures()
+    public void SetRegionsViewEnabled(bool enabled)
     {
         if (hexes == null) return;
-        terrainTexturesHidden = !terrainTexturesHidden;
+        terrainTexturesHidden = enabled;
         foreach (var hex in hexes.Values)
         {
             if (hex == null) continue;
@@ -952,24 +954,6 @@ public class Board : MonoBehaviour
         }
     }
 
-    private IEnumerator AnimateArmyIcon(GameObject armyIcon, Vector3 start, Vector3 end, float duration)
-    {
-        if (armyIcon == null) yield break;
-        AnimationCurve ease = AnimationCurve.EaseInOut(0, 0, 1, 1);
-        float elapsed = 0f;
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / duration);
-            float e = ease.Evaluate(t);
-            if (armyIcon != null)
-                armyIcon.transform.position = Vector3.Lerp(start, end, e);
-            yield return null;
-        }
-        if (armyIcon != null)
-            armyIcon.transform.position = end;
-    }
-
     // Centralize how you get a hex's world spot.
     // If your Hex already has a center/world pos property, use it here.
     private Vector3 GetHexWorldPosition(Hex h)
@@ -1169,10 +1153,6 @@ public class Board : MonoBehaviour
             SpriteRenderer fromPortSR = previousHex.GetPortSpriteRenderer();
             SpriteRenderer toPortSR = newHex.GetPortSpriteRenderer();
 
-            GameObject armyIconObj = previousHex.GetArmyIconForCommander(character);
-            Vector3 armyIconStart = armyIconObj != null ? armyIconObj.transform.position : previousHex.transform.position;
-            Vector3 armyIconEnd = newHex.transform.position;
-
             // Use the sprite transforms' world positions (NOT RectTransform)
             Vector3 startPos = (fromSR != null) ? fromSR.transform.position : previousHex.transform.position;
             Vector3 endPos = (toSR != null) ? toSR.transform.position : newHex.transform.position;
@@ -1183,7 +1163,6 @@ public class Board : MonoBehaviour
 
             IEnumerator dualTween = null;
             IEnumerator charTween = null;
-            Coroutine armyIconTween = null;
 
             try
             {
@@ -1235,25 +1214,9 @@ public class Board : MonoBehaviour
             if (canAnimateChar && charTween != null)
                 yield return TurnCharacterTowardMovement(character, controller, endPos - startPos);
 
-            // Started here (not earlier, while still preparing the tween above) so the army
-            // icon's own tween begins on the same frame as the character's position tween
-            // instead of during the turn-in-place phase that precedes it — previously the
-            // army icon started sliding while the character was still turning in place.
-            if (armyIconObj != null)
-            {
-                armyIconObj.transform.SetParent(null, true);
-                armyIconTween = StartCoroutine(AnimateArmyIcon(armyIconObj, armyIconStart, armyIconEnd, 0.35f));
-            }
-
             Coroutine dualCoroutine = dualTween != null ? StartCoroutine(dualTween) : null;
             if (charTween != null) yield return charTween;
             if (dualCoroutine != null) yield return dualCoroutine;
-
-            if (armyIconTween != null)
-            {
-                yield return armyIconTween;
-                if (armyIconObj != null) Destroy(armyIconObj);
-            }
 
             try
             {

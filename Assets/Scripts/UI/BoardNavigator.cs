@@ -212,7 +212,7 @@ public class BoardNavigator : MonoBehaviour
     public void EnqueueEnemyFocus(Hex hex, Leader leader = null)
     {
         Game game = FindAnyObjectByType<Game>();
-        if (game != null && game.player != null && game.IsPlayerCurrentlyPlaying())
+        if (game != null && game.player != null && game.IsHumanActivelyActing())
         {
             EnqueueFocus(hex, enemyFocusDuration, enemyFocusPause);
             return;

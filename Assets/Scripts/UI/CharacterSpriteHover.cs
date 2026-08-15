@@ -24,6 +24,7 @@ public class CharacterSpriteHover : MonoBehaviour
         if (hex == null || hex.characterSpriteRenderer == null) return;
         if (hex.characterSpriteRenderer.sprite == null) return;
         if (!hex.TryGetKnownCharacterForIcon(out Character character)) return;
+        if (BoardNavigator.IsPointerOverVisibleUIElement()) return;
         Sounds.Instance?.PlayUiHover();
         if (BoardNavigator.IsNavigationInputLocked()) return;
 
@@ -79,6 +80,21 @@ public class CharacterSpriteHover : MonoBehaviour
     {
         if (!isPreviewing)
         {
+            return;
+        }
+
+        // A UI panel (e.g. SelectedCharacterIcon opened by a click) can appear over this sprite
+        // after the hover already started, without the mouse ever moving — OnMouseEnter alone
+        // wouldn't catch that, so keep checking every frame while the preview is up. Same
+        // teardown as OnMouseExit, since as far as this sprite is concerned the pointer left.
+        if (BoardNavigator.IsPointerOverVisibleUIElement())
+        {
+            if (hex != null)
+            {
+                hex.SetCharacterHovered(false);
+                hex.GetCharacterAnimationController()?.SetHoverCursor(false);
+            }
+            ClearPreview();
             return;
         }
 

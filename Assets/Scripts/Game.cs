@@ -270,7 +270,8 @@ public class Game : MonoBehaviour
         HideHumanPlayerWidgetsWidgets();
         UtilityAIContextCacheManager.Instance?.BeginPlayerTurnPrecompute(this);
         currentlyPlaying.NewTurn();
-        StartAlignedNplTurns(currentlyPlaying.GetAlignment());
+        // NPLs don't act on turn 0 — they start from turn 1 (see BeginPlayerTurnSequence, which
+        // calls StartAlignedNplTurns for every turn after this one).
         yield return RefreshDeckUiAfterStartup();
         // Recommendations and NPL contexts are optional background work. Never withhold the
         // human turn while the cache processes a large campaign's leaders.
@@ -924,6 +925,24 @@ public class Game : MonoBehaviour
     public bool IsPlayerCurrentlyPlaying()
     {
         return currentlyPlaying == player;
+    }
+
+    // IsPlayerCurrentlyPlaying() alone stays true through a NonPlayableLeader's aligned sub-turn
+    // (ProcessAlignedNonPlayableLeaderTurns runs nested inside the human's own turn window, with
+    // currentlyPlaying == player the whole time) — so camera-follow/reveal-pan code that gates on
+    // it fires for NPL moves too, visibly panning the human's camera as if it were their own
+    // character. Use this instead wherever a live camera pan is about to happen; NPL moves are
+    // meant to be queued (see QueueNpcFocus/PlayNpcFocusSequence) and replayed as a batch instead.
+    //
+    // Gated on AITurnController.CurrentExecutingLeader rather than the aligned-NPL-batch flag:
+    // ExecuteLeaderTurn also drives the human's own Watch Mode/autoplay turn (leaderTurnInProgress
+    // makes it a mutex — only one leader's turn ever executes at a time), so checking "is it an NPL
+    // specifically, not just any AI-driven turn" is what keeps the camera panning during the
+    // player's own autoplay even if it happens to be scheduled back-to-back with an NPL's turn.
+    public bool IsHumanActivelyActing()
+    {
+        Leader executing = AITurnController.CurrentExecutingLeader;
+        return IsPlayerCurrentlyPlaying() && (executing == null || executing == player);
     }
 
     public bool IsPlayerAutoplayEnabledFor(Leader leader)

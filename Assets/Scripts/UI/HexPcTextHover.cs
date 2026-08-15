@@ -2,8 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 // Mirrors CharacterSpriteHover, but for the HexPcText label/Band instead of a character sprite.
-// Hovering this (not the hex tile at large) is what shows the PC/Region card preview and reveals
-// the ArmiesAndCharactersSpriteRendererLayout grid, which now lives inside this same sub-prefab.
+// Hovering this (not the hex tile at large) is what shows the PC/Region card preview.
 public class HexPcTextHover : MonoBehaviour
 {
     public Hex hex;

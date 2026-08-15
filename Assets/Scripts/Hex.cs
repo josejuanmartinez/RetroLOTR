@@ -73,7 +73,7 @@ public class Hex : MonoBehaviour
     [SerializeField] private GameObject messageNoUITextPrefab;
     [Tooltip("Attached to a hex when a character needs to show: character sprite/Animator, banner, class icons.")]
     [SerializeField] private GameObject characterLayerPrefab;
-    [Tooltip("Attached to a hex when its PC name label needs to show.")]
+    [Tooltip("Attached to a hex when its label needs to show PC name, armies, and/or scouted characters.")]
     [SerializeField] private GameObject pcTextPrefab;
     [Tooltip("Attached to a hex when a movement cost bubble needs to show.")]
     [SerializeField] private GameObject movementCostPrefab;
@@ -81,7 +81,6 @@ public class Hex : MonoBehaviour
     [Header("Grid Sprite Rendereres")]
     public GameObject spriteRendererLayoutIcon;
     public SpriteRendererGridLayout characterClassesIconGrid;
-    public SpriteRendererGridLayout armyCharactersIconGrid;
 
     public SpriteRenderer terrainTexture;
     public SpriteRenderer pcTexture;
@@ -117,7 +116,6 @@ public class Hex : MonoBehaviour
     private static readonly int ArmyStackOutlineSizeShaderId = Shader.PropertyToID("_OutlineSize");
 
 
-    private Coroutine armyArrangeCoroutine;
     private Coroutine classArrangeCoroutine;
     private Coroutine hexInfoShowCoroutine;
     private Coroutine pcCardPreviewCoroutine;
@@ -125,6 +123,7 @@ public class Hex : MonoBehaviour
     private float _arrowOriginX;
     private readonly List<Character> _hexInfoCharacters = new();
     private readonly List<Army> _hexInfoArmies = new();   // null entry = character link, non-null = army link
+    private readonly List<string> _hexInfoTroopNames = new();   // non-null entry = a single troop card's link within an army (see _hexInfoArmies)
     private readonly List<string> _hexInfoTooltips = new();   // terrain/feature link descriptions, addressed by "t{idx}" link ids
     private int _lastHexInfoLinkIdx = -1;
     private string _hoverTextCache;   // hover text lives here until the lazy panel exists
@@ -136,6 +135,7 @@ public class Hex : MonoBehaviour
     private SelectedCharacterIcon _selectedIcon;
     private DeckManager _deckManager;
     private bool _showingPcCardPreview;
+    private bool _showingTroopCardPreview;
     private bool artifactRevealed = false;
     private static Hex s_hexInfoActiveHex;
 
@@ -262,7 +262,11 @@ public class Hex : MonoBehaviour
         UpdateCharacterSpriteAlpha();
         if (hexInfo != null && hexInfo.activeSelf)
         {
-            if (!IsMouseOverHexOrPanel())
+            // The link hit-test below is a manual world-space raycast against this hex's own
+            // TextMeshPro — it has no idea a uGUI panel (e.g. SelectedCharacterIcon) might be
+            // drawn on top of it on screen, so without this check clicks/hovers "pass through"
+            // whatever UI currently covers this hex.
+            if (!IsMouseOverHexOrPanel() || BoardNavigator.IsPointerOverVisibleUIElement())
                 Unhover();
             else
             {
@@ -293,7 +297,7 @@ public class Hex : MonoBehaviour
     //   sharedParticlesPrefab — instantiated ONCE per scene as the shared pool templates
     //   hoverPanelPrefab      — per hex, on first hover / first floating message
     //   characterLayerPrefab  — per hex, when a character shows (sprite/Animator/banner/class icons)
-    //   pcTextPrefab          — per hex, when the PC name label shows
+    //   pcTextPrefab          — per hex, when the PC name, armies, or scouted characters show
     //   movementCostPrefab    — per hex, when a movement cost bubble shows
 
     private static GameObject FindPart(Transform root, string name)
@@ -397,10 +401,8 @@ public class Hex : MonoBehaviour
         pcTextRoot.name = "PCText";
 
         // The visible name label lives on the "Label" child (not the root anymore) so it can be
-        // shown/hidden independently of the "Band" hover target and
-        // ArmiesAndCharactersSpriteRendererLayout, both root-level siblings now too: Band stays
-        // hoverable (and the grid showable) even on hexes with armies/characters but no PC, where
-        // Label never gets shown at all.
+        // shown/hidden independently of the "Band" hover target, a root-level sibling: Band stays
+        // hoverable even on hexes with armies/characters but no PC, where Label never shows at all.
         Transform labelTransform = pcTextRoot.Find("Label");
         pcName = labelTransform != null ? labelTransform.GetComponent<TextMeshPro>() : null;
         if (pcName == null)
@@ -410,15 +412,12 @@ public class Hex : MonoBehaviour
         }
         ApplyCurrentFont(pcName);
 
-        armyCharactersIconGrid = FindPart<SpriteRendererGridLayout>(pcTextRoot, "ArmiesAndCharactersSpriteRendererLayout");
-
         HexPcTextHover hover = pcTextRoot.GetComponentInChildren<HexPcTextHover>(true);
         if (hover != null) hover.hex = this;   // serialized ref could not cross the prefab split
 
-        // Everything starts hidden; each caller applies the state it needs right after.
+        // Starts hidden; each caller applies the state it needs right after.
         // Band (the hover target) is deliberately left active — see comment above.
         SetActiveFast(pcName.gameObject, false);
-        if (armyCharactersIconGrid != null) SetActiveFast(armyCharactersIconGrid.gameObject, false);
         return true;
     }
 
@@ -584,21 +583,6 @@ public class Hex : MonoBehaviour
         return null;
     }
 
-    public GameObject GetArmyIconForCommander(Character commander)
-    {
-        if (armyCharactersIconGrid == null || commander == null) return null;
-        Transform gridTransform = armyCharactersIconGrid.transform;
-        for (int i = 0; i < gridTransform.childCount; i++)
-        {
-            GameObject child = gridTransform.GetChild(i).gameObject;
-            SpriteRendererIconManager manager = child.GetComponent<SpriteRendererIconManager>();
-            if (manager != null && manager.character == commander)
-            {
-                return child;
-            }
-        }
-        return null;
-    }
 
     public SpriteRenderer GetPortSpriteRenderer()
     {
@@ -706,103 +690,95 @@ public class Hex : MonoBehaviour
         // if(terrainType == TerrainEnum.mountains) this.terrainTexture.sortingOrder += 1000;
     }
 
+    // Armies/characters no longer get their own icon grid — they're appended as inline
+    // <sprite> tags on the same HexPcText label used for the PC name (see RefreshHexLabel),
+    // so a hex with no PC can still show them. RedrawArmies is called far more broadly than
+    // RedrawPC (every army/character move, reveal, etc., often on PC-less hexes), so it owns
+    // the general "recompute and show whatever belongs on this hex's label" duty.
     public void RedrawArmies(bool refreshHoverText = true)
     {
-        ClearArmyIcons();
-
-        // While a unit is animating across hexes, skip the allocation-heavy grid rebuild
-        // (it is repopulated once when the walk finishes). The grid stays hidden meanwhile.
-        if (Board.SuppressHexIconGrids)
-        {
-            _iconGridsPendingRebuild = true;
-            SetActiveFast(armyCharactersIconGrid != null ? armyCharactersIconGrid.gameObject : null, false);
-            UpdatePortIcon();
-            if (refreshHoverText) RefreshHoverText();
-            return;
-        }
-
-        bool hasArmies = armies.Count > 0;
-        bool seen = IsHexSeen();
-
-        // ArmiesAndCharactersSpriteRendererLayout now lives inside the HexPcText sub-prefab, so
-        // make sure that sub-prefab exists even on hexes with no population center to show text
-        // for — armies/characters can sit on any hex, not just settled ones.
-        if (seen && (hasArmies || characters.Count > 0)) EnsurePcText();
-
-        if (seen && spriteRendererLayoutIcon != null && armyCharactersIconGrid != null)
-        {
-            PlayableLeader viewer = GetPlayer();
-            bool isScouted = IsScouted(viewer);
-
-            for (int i = 0, n = armies.Count; i < n; i++)
-            {
-                Army army = armies[i];
-                Character commander = army?.GetCommander();
-                if (commander == null) continue;
-
-                GameObject icon = Instantiate(spriteRendererLayoutIcon, armyCharactersIconGrid.transform);
-                SpriteRendererIconManager manager = icon.GetComponent<SpriteRendererIconManager>();
-                if (manager != null)
-                {
-                    manager.Initialize(commander);
-                }
-            }
-
-            for (int i = 0, n = characters.Count; i < n; i++)
-            {
-                Character ch = characters[i];
-                if (ch == null || ch.killed || ch.hex != this) continue;
-                if (ch.IsArmyCommander()) continue;
-
-                bool isFriendly = IsFriendlyCharacter(ch, viewer);
-                bool canSee = isFriendly || (isScouted && !ch.IsHidden());
-                if (!canSee) continue;
-
-                string spriteName = ch.GetOwner() != null
-                    ? ch.GetOwner().GetAlignment().ToString() + "Character"
-                    : "unknownCharacter";
-
-                GameObject icon = Instantiate(spriteRendererLayoutIcon, armyCharactersIconGrid.transform);
-                SpriteRendererIconManager manager = icon.GetComponent<SpriteRendererIconManager>();
-                if (manager != null)
-                {
-                    manager.Initialize(ch, spriteName);
-                }
-            }
-
-            if (armyArrangeCoroutine != null) StopCoroutine(armyArrangeCoroutine);
-            armyArrangeCoroutine = StartCoroutine(DelayedArrangeArmies());
-        }
-
-        // Content is rebuilt above regardless, but the grid itself only shows while the cursor is
-        // actually on HexPcText — see SetPcTextHovered, driven by HexPcTextHover.
-        bool hasContent = armyCharactersIconGrid != null && armyCharactersIconGrid.transform.childCount > 0;
-        SetActiveFast(armyCharactersIconGrid != null ? armyCharactersIconGrid.gameObject : null, isPcTextHovered && hasContent);
-        UpdatePortIcon();
-
+        RefreshHexLabel();
         if (refreshHoverText) RefreshHoverText();
     }
 
-    private IEnumerator DelayedArrangeArmies()
+    // Force-hides the HexPcText label without evaluating content — used when the whole hex just
+    // became unrevealed (fog), where nothing should show regardless of what pc/armies/characters
+    // exist underneath.
+    private void HideHexLabel()
     {
-        yield return null;
-        if (armyCharactersIconGrid != null) armyCharactersIconGrid.Arrange();
-        armyArrangeCoroutine = null;
+        if (pcName != null)
+        {
+            pcName.text = string.Empty;
+            SetActiveFast(pcName.gameObject, false);
+        }
     }
 
-    private void ClearArmyIcons()
+    // Rebuilds the shared HexPcText label from current pc/armies/characters state and shows or
+    // hides it accordingly. Called by RedrawArmies, RedrawPC, ClearPC, and the reveal/unreveal
+    // paths — whichever one fires must recompute the FULL combined text, since any of
+    // pc/armies/characters may have changed independently of the others since the last call.
+    private void RefreshHexLabel()
     {
-        if (armyCharactersIconGrid == null) return;
-        if (armyArrangeCoroutine != null)
+        bool seen = IsHexSeen();
+        if (!seen) { HideHexLabel(); return; }
+
+        bool shouldShowPc = ShouldShowPcVisual();
+
+        // Armies and scouted characters are each bucketed by alignment (a leaderless army/character
+        // counts as neutral) — one sprite per alignment present, followed by its count, rather than
+        // repeating a sprite per unit.
+        int[] armyCounts = new int[3];
+        int[] characterCounts = new int[3];
+        PlayableLeader viewer = GetPlayer();
+        bool isScouted = IsScouted(viewer);
+
+        for (int i = 0, n = armies.Count; i < n; i++)
         {
-            StopCoroutine(armyArrangeCoroutine);
-            armyArrangeCoroutine = null;
+            Character commander = armies[i]?.GetCommander();
+            if (commander == null) continue;
+            AlignmentEnum align = commander.GetOwner() != null ? commander.GetOwner().GetAlignment() : AlignmentEnum.neutral;
+            armyCounts[(int)align]++;
         }
-        Transform gridTransform = armyCharactersIconGrid.transform;
-        for (int i = gridTransform.childCount - 1; i >= 0; i--)
+
+        for (int i = 0, n = characters.Count; i < n; i++)
         {
-            Destroy(gridTransform.GetChild(i).gameObject);
+            Character ch = characters[i];
+            if (ch == null || ch.killed || ch.hex != this || ch.IsArmyCommander()) continue;
+
+            bool isFriendly = IsFriendlyCharacter(ch, viewer);
+            bool canSee = isFriendly || (isScouted && !ch.IsHidden());
+            if (!canSee) continue;
+
+            AlignmentEnum align = ch.GetOwner() != null ? ch.GetOwner().GetAlignment() : AlignmentEnum.neutral;
+            characterCounts[(int)align]++;
         }
+
+        bool hasContent = shouldShowPc
+            || armyCounts[0] > 0 || armyCounts[1] > 0 || armyCounts[2] > 0
+            || characterCounts[0] > 0 || characterCounts[1] > 0 || characterCounts[2] > 0;
+        if (!hasContent) { HideHexLabel(); return; }
+        if (!EnsurePcText()) return;
+
+        StringBuilder builder = new();
+        if (shouldShowPc) builder.Append(BuildPcNameLabel());
+
+        void AppendGroup(string spriteName, int count)
+        {
+            if (count <= 0) return;
+            if (builder.Length > 0) builder.Append(' ');
+            builder.Append("<sprite name=\"").Append(spriteName).Append("\">").Append(count);
+        }
+
+        AppendGroup("freePeople", armyCounts[(int)AlignmentEnum.freePeople]);
+        AppendGroup("darkServants", armyCounts[(int)AlignmentEnum.darkServants]);
+        AppendGroup("neutral", armyCounts[(int)AlignmentEnum.neutral]);
+        AppendGroup("freePeopleCharacter", characterCounts[(int)AlignmentEnum.freePeople]);
+        AppendGroup("darkServantsCharacter", characterCounts[(int)AlignmentEnum.darkServants]);
+        AppendGroup("neutralCharacter", characterCounts[(int)AlignmentEnum.neutral]);
+
+        pcName.text = builder.ToString();
+        pcName.color = shouldShowPc && pc.owner != null ? pc.owner.nationColor : Color.white;
+        SetActiveFast(pcName.gameObject, true);
     }
 
     public void RedrawCharacters(bool refreshHoverText = true)
@@ -929,10 +905,8 @@ public class Hex : MonoBehaviour
 
         if (seen) RevealNonPlayableLeadersOnHex(viewingLeader, isHuman);
 
-        bool shouldShowPc = ShouldShowPcVisual();
         ApplyHexTextureSprite();
-        UpdatePortIcon(shouldShowPc);
-        UpdatePcWorldText(shouldShowPc);
+        RefreshHexLabel();
 
         if (refreshHoverText) RefreshHoverText();
     }
@@ -975,6 +949,7 @@ public class Hex : MonoBehaviour
         sbNeutral.Clear();
         _hexInfoCharacters.Clear();
         _hexInfoArmies.Clear();
+        _hexInfoTroopNames.Clear();
         _hexInfoTooltips.Clear();
 
         // Track whether we've already shown an Unknown for each bucket
@@ -1015,6 +990,7 @@ public class Hex : MonoBehaviour
                 int linkIdx = _hexInfoCharacters.Count;
                 _hexInfoCharacters.Add(ch);
                 _hexInfoArmies.Add(null);
+                _hexInfoTroopNames.Add(null);
                 string linkedName = $"<link=\"{linkIdx}\"><color=#FFFFFF>{charName}</color></link>";
                 if (ch.IsArmyCommander())
                 {
@@ -1026,11 +1002,35 @@ public class Hex : MonoBehaviour
                         case AlignmentEnum.neutral: sbNeutral.Append(armyText).Append('\n'); break;
                         case AlignmentEnum.darkServants: sbDark.Append(armyText).Append('\n'); break;
                     }
-                    int armyLinkIdx = _hexInfoCharacters.Count;
-                    _hexInfoCharacters.Add(ch);
-                    _hexInfoArmies.Add(army);
-                    string armyDisplay = army != null ? army.GetHoverTextHexInfo() : $"\n\t{armyText.Trim()}";
-                    string linkedArmy = $"<link=\"{armyLinkIdx}\"><color=#FFFFFF>{armyDisplay}</color></link>";
+
+                    string linkedArmy;
+                    if (army != null)
+                    {
+                        // One link per troop group instead of one link for the whole army: they used to
+                        // share a single link, so hovering/clicking any card name in a multi-troop army
+                        // treated the whole block as one target and card lookups saw every name
+                        // concatenated together instead of resolving the specific card under the cursor.
+                        List<(string troopName, string line)> troopLines = army.GetLinkableTroopHoverLines();
+                        var sbArmy = new StringBuilder();
+                        for (int t = 0; t < troopLines.Count; t++)
+                        {
+                            int troopLinkIdx = _hexInfoCharacters.Count;
+                            _hexInfoCharacters.Add(ch);
+                            _hexInfoArmies.Add(army);
+                            _hexInfoTroopNames.Add(troopLines[t].troopName);
+                            sbArmy.Append('\n').Append($"<link=\"{troopLinkIdx}\"><color=#FFFFFF>{troopLines[t].line}</color></link>");
+                        }
+                        linkedArmy = sbArmy.ToString();
+                    }
+                    else
+                    {
+                        int armyLinkIdx = _hexInfoCharacters.Count;
+                        _hexInfoCharacters.Add(ch);
+                        _hexInfoArmies.Add(null);
+                        _hexInfoTroopNames.Add(null);
+                        string armyDisplay = $"\n\t{armyText.Trim()}";
+                        linkedArmy = $"<link=\"{armyLinkIdx}\"><color=#FFFFFF>{armyDisplay}</color></link>";
+                    }
                     sbChars.Append(linkedName).Append(linkedArmy).Append('\n');
                 }
                 else
@@ -1066,17 +1066,41 @@ public class Hex : MonoBehaviour
         // Trim trailing newlines and always push an explicit refresh, even when the hex is empty.
         string charText = sbChars.ToString().TrimEnd('\n');
 
-        // Hex info block: Terrain + Features header (shown for any discovered hex) followed by the
-        // Presence list of visible characters/armies.
+        // Hex info block: PC header (only when a revealed PC sits here) + Terrain/Features header
+        // (shown for any discovered hex) followed by the Presence list of visible characters/armies.
+        string pcHeader = IsHexRevealed() ? BuildPcHeader() : string.Empty;
         string header = IsHexRevealed() ? BuildTerrainFeatureHeader() : string.Empty;
         string presence = string.IsNullOrEmpty(charText)
             ? string.Empty
             : $"<color=#D8C9A3><b>Presence</b>:</color>\n{charText}";
 
-        string hoverText = string.Join("\n", new[] { header, presence }.Where(s => !string.IsNullOrEmpty(s)));
+        string hoverText = string.Join("\n", new[] { pcHeader, header, presence }.Where(s => !string.IsNullOrEmpty(s)));
 
         _hoverTextCache = hoverText;
         if (hexInfoText != null) hexInfoText.text = hoverText;
+    }
+
+    private string BuildPcHeader()
+    {
+        PC pcData = GetPC();
+        if (pcData == null) return string.Empty;
+
+        string ownerText = pcData.owner != null
+            ? $"{pcData.owner.characterName}'s {pcData.pcName}"
+            : $"{pcData.pcName} (Unowned)";
+        string alignmentText = pcData.owner != null ? $" {GetAlignmentDisplayName(pcData.owner.GetAlignment())}" : string.Empty;
+
+        return $"<color=#D8C9A3><b>PC</b></color>: {ownerText}{alignmentText}";
+    }
+
+    private static string GetAlignmentDisplayName(AlignmentEnum alignment)
+    {
+        return alignment switch
+        {
+            AlignmentEnum.freePeople => "Free People",
+            AlignmentEnum.darkServants => "Dark Servants",
+            _ => "Neutral"
+        };
     }
 
     private string BuildTerrainFeatureHeader()
@@ -1259,6 +1283,7 @@ public class Hex : MonoBehaviour
         SetActiveFast(hexInfo, false);
         if (s_hexInfoActiveHex == this) s_hexInfoActiveHex = null;
         CancelPcCardPreview();
+        HideTroopCardPreview();
     }
 
     private void UpdateHexInfoLinkHover()
@@ -1290,6 +1315,7 @@ public class Hex : MonoBehaviour
         {
             ShowTerrainTooltip(_hexInfoTooltips[tIdx]);
             RestoreSelectedIcon();
+            HideTroopCardPreview();
             return;
         }
 
@@ -1305,9 +1331,12 @@ public class Hex : MonoBehaviour
             if (army != null)
             {
                 _selectedIcon.RefreshForArmy(army);
+                string troopName = charLink < _hexInfoTroopNames.Count ? _hexInfoTroopNames[charLink] : null;
+                ShowTroopCardPreview(troopName);
             }
             else
             {
+                HideTroopCardPreview();
                 Character ch = _hexInfoCharacters[charLink];
                 if (ch != null && !ch.killed)
                 {
@@ -1320,7 +1349,27 @@ public class Hex : MonoBehaviour
         else
         {
             RestoreSelectedIcon();
+            HideTroopCardPreview();
         }
+    }
+
+    // Enlarges the specific army card under the cursor — each troop group now has its own
+    // link (see BuildHoverText), so this always resolves one card, never the whole army at once.
+    private void ShowTroopCardPreview(string troopName)
+    {
+        if (string.IsNullOrWhiteSpace(troopName) || CardCenterPreview.Instance == null) { HideTroopCardPreview(); return; }
+        if (_deckManager == null) _deckManager = DeckManager.Instance;
+        CardData card = _deckManager != null ? _deckManager.FindArmyCardByName(troopName) : null;
+        if (card == null) { HideTroopCardPreview(); return; }
+        _showingTroopCardPreview = true;
+        CardCenterPreview.Instance.ShowPreview(card, hoverDriven: true);
+    }
+
+    private void HideTroopCardPreview()
+    {
+        if (!_showingTroopCardPreview) return;
+        _showingTroopCardPreview = false;
+        CardCenterPreview.Instance?.HidePreview();
     }
 
     private void RestoreSelectedIcon()
@@ -1429,6 +1478,9 @@ public class Hex : MonoBehaviour
         hexInfoText.UpdateVertexData(TMP_VertexDataUpdateFlags.Colors32);
     }
 
+    [Tooltip("Extends each hover link's hit box by this fraction of its own text height on every side, so thin single-line links (a single card name) aren't pixel-precise to hit.")]
+    [SerializeField] private float hexInfoLinkHoverPadding = 0.35f;
+
     private int GetHoveredHexInfoLinkIndex(Camera cam)
     {
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
@@ -1442,6 +1494,7 @@ public class Hex : MonoBehaviour
             TMP_LinkInfo link = info.linkInfo[i];
             float minX = float.MaxValue, maxX = float.MinValue;
             float minY = float.MaxValue, maxY = float.MinValue;
+            float maxCharHeight = 0f;
             bool hasVisible = false;
             for (int j = 0; j < link.linkTextLength; j++)
             {
@@ -1454,10 +1507,15 @@ public class Hex : MonoBehaviour
                 maxX = Mathf.Max(maxX, ch.topRight.x);
                 minY = Mathf.Min(minY, ch.bottomLeft.y);
                 maxY = Mathf.Max(maxY, ch.topRight.y);
+                maxCharHeight = Mathf.Max(maxCharHeight, ch.topRight.y - ch.bottomLeft.y);
             }
-            if (hasVisible &&
-                localHit.x >= minX && localHit.x <= maxX &&
-                localHit.y >= minY && localHit.y <= maxY)
+            if (!hasVisible) continue;
+
+            // Pad outward proportionally to the text's own size (world units vary with font
+            // scale), so the extra tolerance stays sensible whatever the hex label is sized at.
+            float pad = maxCharHeight * hexInfoLinkHoverPadding;
+            if (localHit.x >= minX - pad && localHit.x <= maxX + pad &&
+                localHit.y >= minY - pad && localHit.y <= maxY + pad)
                 return i;
         }
         return -1;
@@ -1521,7 +1579,7 @@ public class Hex : MonoBehaviour
 
     public void LookAt(float duration = 1.0f, float delay = 0.0f)
     {
-        if (!game.IsPlayerCurrentlyPlaying()) return;
+        if (!game.IsHumanActivelyActing()) return;
         if (!IsHexSeen()) return;
         // Avoid GameObject.Find/string allocs; use our own transform
         if (navigator == null) navigator = FindFirstObjectByType<BoardNavigator>();
@@ -1824,11 +1882,10 @@ public class Hex : MonoBehaviour
             UpdateEncounterVisibility();
             UpdateParticles();
             RefreshFrontierRowVisuals();
-            UpdatePcWorldText(ShouldShowPcVisual());
+            RefreshHexLabel();
             return;
         }
 
-        SetActiveFast(armyCharactersIconGrid != null ? armyCharactersIconGrid.gameObject : null, false);
         SetActiveFast(characterSpriteRenderer != null ? characterSpriteRenderer.gameObject : null, false);
         SetActiveFast(artifact, false);
         if (artifactHover) SetActiveFast(artifactHover.gameObject, false);
@@ -1848,7 +1905,7 @@ public class Hex : MonoBehaviour
             framesColors.SetDarkness(false);
         }
 
-        UpdatePcWorldText(false);
+        HideHexLabel();
 
         UpdateParticles();
         RefreshFrontierRowVisuals();
@@ -2828,8 +2885,7 @@ public class Hex : MonoBehaviour
         if (pc == null) return;
         pc = null;
         ApplyHexTextureSprite();
-        UpdatePortIcon(false);
-        UpdatePcWorldText(false);
+        RefreshHexLabel();
     }
 
     public void SetPC(PC pc, string pcFeature = "", string fortFeature = "", bool isIsland = false)
@@ -3376,27 +3432,6 @@ public class Hex : MonoBehaviour
         }
     }
 
-    private void UpdatePcWorldText(bool shouldShowPc)
-    {
-        bool showText = shouldShowPc && pc != null && (pc.citySize != PCSizeEnum.NONE || pc.hasPort);
-
-        if (showText) EnsurePcText();
-        if (pcName != null)
-        {
-            if (showText)
-            {
-                pcName.text = BuildPcNameLabel();
-                pcName.color = pc.owner != null ? pc.owner.nationColor : Color.white;
-                SetActiveFast(pcName.gameObject, true);
-            }
-            else
-            {
-                pcName.text = string.Empty;
-                SetActiveFast(pcName.gameObject, false);
-            }
-        }
-    }
-
     // Content only — the visual format (bold white text over a dark backing band, matching the
     // Scenario Creator's hex captions) lives in the HexPcText prefab (font style + Band child).
     private string BuildPcNameLabel()
@@ -3463,15 +3498,12 @@ public class Hex : MonoBehaviour
     }
 
     // Driven by HexPcTextHover (mouse over the HexPcText label/Band), not by hovering the hex at
-    // large — both the PC/Region card preview and the armies/characters icon grid only show up
-    // for that specific, small hover target instead of blanketing the whole tile.
+    // large — the PC/Region card preview only shows up for that specific, small hover target
+    // instead of blanketing the whole tile.
     public void SetPcTextHovered(bool hovered)
     {
         if (isPcTextHovered == hovered) return;
         isPcTextHovered = hovered;
-
-        if (armyCharactersIconGrid != null)
-            SetActiveFast(armyCharactersIconGrid.gameObject, hovered && armyCharactersIconGrid.transform.childCount > 0);
 
         if (hovered) TryShowPcCardPreview();
         else CancelPcCardPreview();
