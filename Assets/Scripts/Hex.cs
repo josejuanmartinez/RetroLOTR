@@ -986,7 +986,9 @@ public class Hex : MonoBehaviour
                     npl.RevealToLeader(g.currentlyPlaying, isHuman);
                 }
                 
-                var charName = ch.GetHoverText(true, true, true, false, false, true);
+                Leader charLeader = ch.GetOwner();
+                string charNamePrefix = (charLeader != null && charLeader != ch) ? $"{charLeader.characterName}'s " : null;
+                var charName = ch.GetHoverText(true, true, true, false, false, true, charNamePrefix);
                 int linkIdx = _hexInfoCharacters.Count;
                 _hexInfoCharacters.Add(ch);
                 _hexInfoArmies.Add(null);

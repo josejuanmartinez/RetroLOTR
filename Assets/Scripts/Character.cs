@@ -742,7 +742,7 @@ public class Character : MonoBehaviour
         return owner;
     }
 
-    public string GetHoverText(bool withAlignment, bool withCharInfo, bool withLevels, bool withArmy, bool withColor, bool withHealth = true)
+    public string GetHoverText(bool withAlignment, bool withCharInfo, bool withLevels, bool withArmy, bool withColor, bool withHealth = true, string namePrefix = null)
     {
         List<string> result = new() { };
         if (withColor) result.Add($"<color={colors.GetHexColorByName(alignment.ToString())}>");
@@ -750,6 +750,7 @@ public class Character : MonoBehaviour
         bool hasArmy = GetArmy() != null;
         string characterSprite = alignment.ToString() + (hasArmy? "" : "Character");
         if(withAlignment) result.Add($"<sprite name=\"{characterSprite}\">");
+        if (!string.IsNullOrEmpty(namePrefix)) result.Add(namePrefix);
         result.Add($"{characterName}");
         if (withCharInfo)
         {
