@@ -8,6 +8,8 @@ public class SpriteRendererFitToTMP : MonoBehaviour
     [SerializeField] private TMP_Text label;
     [SerializeField] private Vector2 padding = new(0.2f, 0.1f);
     [SerializeField] private bool growRight = true;
+    [Tooltip("Optional: kept in sync with the fitted sprite size, so a hover collider on the same object tracks the text width instead of using a fixed size.")]
+    [SerializeField] private BoxCollider2D hoverCollider;
 
     // Sprite's initial localPosition.x in parent space — the fixed left-edge anchor.
     [SerializeField] private bool anchorSet;
@@ -50,6 +52,7 @@ public class SpriteRendererFitToTMP : MonoBehaviour
         _sr.drawMode = SpriteDrawMode.Sliced;
         _sr.size = new Vector2(newWidth, newHeight);
         _sr.enabled = true;
+        if (hoverCollider != null) hoverCollider.size = _sr.size;
 
         if (!growRight) return;
 

@@ -23,14 +23,18 @@ public class NonPlayableLeader : Leader
     {
         if (leader == null || killed || joined) return false;
         if (leader == this) return false;
-        return leader.GetAlignment() == alignment;
+        // A playable leader variant can change the live character alignment from the base
+        // biome's alignment (Sharkey is the important case: Saruman's biome is Neutral, while
+        // Sharkey's card is Dark Servants). Use the live values here so the action gate agrees
+        // with the encounter popup and the units actually in play.
+        return leader.alignment == alignment;
     }
 
     public string GetJoiningConditionsText(Leader leader)
     {
         StringBuilder sb = new();
         string capitalName = GetCapitalName();
-        bool sameAlignment = leader != null && leader.GetAlignment() == alignment;
+        bool sameAlignment = leader != null && leader.alignment == alignment;
 
         sb.Append($"<b>{characterName}</b> only accepts AFriendOrThree from a leader of the same alignment.<br>");
         sb.Append(FormatRequirement("Alignment matches", sameAlignment));
@@ -59,7 +63,7 @@ public class NonPlayableLeader : Leader
 
     private static string FormatRequirement(string description, bool met)
     {
-        string status = met ? "<color=#00ff00>completed</color>" : "<color=#ff0000>pending</color>";
+        string status = met ? "<color=#00ff00>completed</color>" : "<color=#ff0000>not matched</color>";
         return $"- {description} [{status}]<br>";
     }
 
@@ -255,8 +259,8 @@ public class NonPlayableLeader : Leader
         string text = $"{characterName} has pledged allegiance to {joinedTo.characterName}.";
         PopupManager.Show(
             title,
-            illustrations != null ? illustrations.GetIllustrationByName(characterName) : null,
-            illustrations != null ? illustrations.GetIllustrationByName(joinedTo.characterName) : null,
+            illustrations != null ? illustrations.GetIllustrationByName(this) : null,
+            illustrations != null ? illustrations.GetIllustrationByName(joinedTo) : null,
             text,
             false);
     }

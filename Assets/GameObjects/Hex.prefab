@@ -250,7 +250,6 @@ RectTransform:
   - {fileID: 6396470305716476934}
   - {fileID: 1037285435177879252}
   - {fileID: 7857165771249564929}
-  - {fileID: 585888745348916050}
   - {fileID: 4510531204797342640}
   - {fileID: 8748821259972329801}
   - {fileID: 4119044364110641453}
@@ -301,11 +300,11 @@ MonoBehaviour:
   hoverPanelPrefab: {fileID: 6901699456132456031, guid: 9af264c1c9f024051fcc53c9dbf0b944, type: 3}
   messageNoUITextPrefab: {fileID: 0}
   characterLayerPrefab: {fileID: 7160575874330514415, guid: 744a3975880d47458e4786e41443de15, type: 3}
-  pcTextPrefab: {fileID: 8476141763224541840, guid: 359f1cbd8bc14f9283111f83ecec7fd8, type: 3}
+  pcTextPrefab: {fileID: 9000000000000001, guid: 359f1cbd8bc14f9283111f83ecec7fd8, type: 3}
   movementCostPrefab: {fileID: 6692920881900465037, guid: 8d34b62d960849e89c3a73a291dcecfd, type: 3}
   spriteRendererLayoutIcon: {fileID: 5707050488477407365, guid: 3684c0112ce62014a842462cbe19e367, type: 3}
   characterClassesIconGrid: {fileID: 0}
-  armyCharactersIconGrid: {fileID: 8562272294012321577}
+  armyCharactersIconGrid: {fileID: 0}
   terrainTexture: {fileID: 1202935138384858293}
   pcTexture: {fileID: 1246686261725466849}
   underground: {fileID: 2595860277653055481}
@@ -965,56 +964,6 @@ Transform:
   - {fileID: 557637808842708557}
   m_Father: {fileID: 1016752862782569053}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &7020326394473193184
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 585888745348916050}
-  - component: {fileID: 8562272294012321577}
-  m_Layer: 6
-  m_Name: ArmiesAndCharactersSpriteRendererLayout
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &585888745348916050
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7020326394473193184}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.593, y: -0.34, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1016752862782569053}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8562272294012321577
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7020326394473193184}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d0c1d158cda64a47880be8b18c53ccd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpriteRendererGridLayout
-  cellSize: {x: 0.25, y: 0.15}
-  spacing: {x: 0, y: 0}
-  constraintCount: 5
-  centerAlignment: 1
-  scaleToCellSize: 1
-  autoArrangeOnStart: 1
 --- !u!1 &8505419408469819643
 GameObject:
   m_ObjectHideFlags: 0
@@ -1100,15 +1049,15 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: -32768
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: dc55d874e90a07341a1b2bdee5fc28e0, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 722f6d94b3aaddb409b4011eacf34007, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 2.56, y: 3.84}
+  m_Size: {x: 1.1130434, y: 0.8347826}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 1
 --- !u!1 &8846054597242357347
 GameObject:
@@ -1195,15 +1144,15 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: -32768
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: be9f1102d7c06fd489cd975f31ad2714, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8f060a673a65cf8488bb43595b1cb7d2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 2.56, y: 3.84}
+  m_Size: {x: 1.1130434, y: 0.8347826}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 1
 --- !u!1001 &1576129142046017541
 PrefabInstance:

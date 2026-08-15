@@ -607,13 +607,23 @@ public class Game : MonoBehaviour
         else
         {
             HideHumanPlayerWidgetsWidgets();
-            MessageDisplay.ShowPersistent($"{currentlyPlaying.characterName} is playing", Color.yellow);
+            MessageDisplay.ShowPersistent($"{GetAlignmentDisplayName(currentlyPlaying.alignment)} nations are playing", Color.yellow);
             MessageDisplayNoUI.SetPaused(true);
             board.RefreshRelevantHexes();
             currentlyPlaying.NewTurn();
             StartAlignedNplTurns(currentlyPlaying.GetAlignment());
         }
         leaderTransitionRunning = false;
+    }
+
+    private static string GetAlignmentDisplayName(AlignmentEnum alignment)
+    {
+        return alignment switch
+        {
+            AlignmentEnum.freePeople => "Free People",
+            AlignmentEnum.darkServants => "Dark Servants",
+            _ => "Neutral"
+        };
     }
 
     // RefreshForNewTurn() is the WaitUntilEndOfTurn()-free half of Leader.NewTurn(), allowing an

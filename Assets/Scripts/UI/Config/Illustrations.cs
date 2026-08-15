@@ -337,6 +337,25 @@ public class Illustrations : SearcherByName
     public Sprite GetIllustrationByName(Character character)
     {
         if (character == null) return null;
+
+        // Character display names and their shipped art names are not always identical.
+        // Variants such as Sharkey use "Saruman-Sharkey" as the card-art key, stored in
+        // illustrationName when the character card is applied.
+        if (!string.IsNullOrWhiteSpace(character.illustrationName))
+        {
+            Sprite illustration = GetIllustrationByName(character.illustrationName, false);
+            if (illustration != null) return illustration;
+        }
+
+        Sprite namedIllustration = GetIllustrationByName(character.characterName, false);
+        if (namedIllustration != null) return namedIllustration;
+
+        if (!string.IsNullOrWhiteSpace(character.SpriteVariantBaseName))
+        {
+            Sprite baseIllustration = GetIllustrationByName(character.SpriteVariantBaseName, false);
+            if (baseIllustration != null) return baseIllustration;
+        }
+
         return GetIllustrationByName(character.characterName);
     }
 

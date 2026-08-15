@@ -117,8 +117,9 @@ public class NonPlayableLeaderIcon : MonoBehaviour, IPointerEnterHandler, IPoint
             sb.Append("Only a leader of the same alignment can recruit this nation. You can still attack to weaken their forces.");
         }
         string popupTitle = $"{nonPlayableLeader.characterName} reveals themselves!";
-        Sprite playerPortrait = FindFirstObjectByType<Illustrations>().GetIllustrationByName(player.characterName);
-        Sprite nationPortrait = FindFirstObjectByType<Illustrations>().GetIllustrationByName(nonPlayableLeader.characterName);
+        Illustrations popupIllustrations = FindFirstObjectByType<Illustrations>();
+        Sprite playerPortrait = popupIllustrations != null ? popupIllustrations.GetIllustrationByName(player) : null;
+        Sprite nationPortrait = popupIllustrations != null ? popupIllustrations.GetIllustrationByName(nonPlayableLeader) : null;
         EventIconsManager eventIcons = EventIconsManager.FindManager();
         if (eventIcons != null)
         {

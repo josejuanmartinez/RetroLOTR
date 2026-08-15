@@ -276,7 +276,7 @@ public class StoresManager : MonoBehaviour
 
         if (pricePopupShownThisFrame) return;
         pricePopupShownThisFrame = true;
-        const string notice = "Prices in the caravans changed. Please check the <sprite name=\"caravans\">caravans icon above.";
+        const string notice = "Prices in the caravans changed. Please check the <sprite name=\"leather\"><sprite name=\"timber\"><sprite name=\"mounts\"><sprite name=\"iron\"><sprite name=\"steel\"><sprite name=\"mithril\"> icons in Resources.";
         MessageDisplay.ShowMessage(notice, Color.yellow, logToWidget: false);
         // Market movement is public, but the notice deliberately carries no nation/character
         // attribution: it must not identify which private transaction caused the change.

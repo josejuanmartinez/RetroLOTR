@@ -191,6 +191,7 @@ public class Hex : MonoBehaviour
     private const int DarknessTurnsDefault = 2;
     private const int SharedOneShotParticlePoolSize = 3;
     private bool isCharacterHovered = false;
+    private bool isPcTextHovered = false;
 
     // Scene singletons shared by every hex. Cached statically because Awake runs once
     // per instantiated hex and FindFirstObjectByType scans the whole scene — per-hex
@@ -392,18 +393,32 @@ public class Hex : MonoBehaviour
             return false;
         }
 
-        GameObject label = Instantiate(pcTextPrefab, transform, false);
-        label.name = "PCText";
-        pcName = label.GetComponent<TextMeshPro>();
+        Transform pcTextRoot = Instantiate(pcTextPrefab, transform, false).transform;
+        pcTextRoot.name = "PCText";
+
+        // The visible name label lives on the "Label" child (not the root anymore) so it can be
+        // shown/hidden independently of the "Band" hover target and
+        // ArmiesAndCharactersSpriteRendererLayout, both root-level siblings now too: Band stays
+        // hoverable (and the grid showable) even on hexes with armies/characters but no PC, where
+        // Label never gets shown at all.
+        Transform labelTransform = pcTextRoot.Find("Label");
+        pcName = labelTransform != null ? labelTransform.GetComponent<TextMeshPro>() : null;
         if (pcName == null)
         {
-            Debug.LogError("Hex sub-prefab 'HexPcText' is missing its TextMeshPro component.");
+            Debug.LogError("Hex sub-prefab 'HexPcText' is missing its 'Label' child with a TextMeshPro component.");
             return false;
         }
         ApplyCurrentFont(pcName);
 
-        // Starts hidden; UpdatePcWorldText applies the state it needs right after.
-        SetActiveFast(label, false);
+        armyCharactersIconGrid = FindPart<SpriteRendererGridLayout>(pcTextRoot, "ArmiesAndCharactersSpriteRendererLayout");
+
+        HexPcTextHover hover = pcTextRoot.GetComponentInChildren<HexPcTextHover>(true);
+        if (hover != null) hover.hex = this;   // serialized ref could not cross the prefab split
+
+        // Everything starts hidden; each caller applies the state it needs right after.
+        // Band (the hover target) is deliberately left active — see comment above.
+        SetActiveFast(pcName.gameObject, false);
+        if (armyCharactersIconGrid != null) SetActiveFast(armyCharactersIconGrid.gameObject, false);
         return true;
     }
 
@@ -708,7 +723,11 @@ public class Hex : MonoBehaviour
 
         bool hasArmies = armies.Count > 0;
         bool seen = IsHexSeen();
-        bool hasVisibleCharacters = false;
+
+        // ArmiesAndCharactersSpriteRendererLayout now lives inside the HexPcText sub-prefab, so
+        // make sure that sub-prefab exists even on hexes with no population center to show text
+        // for — armies/characters can sit on any hex, not just settled ones.
+        if (seen && (hasArmies || characters.Count > 0)) EnsurePcText();
 
         if (seen && spriteRendererLayoutIcon != null && armyCharactersIconGrid != null)
         {
@@ -739,7 +758,6 @@ public class Hex : MonoBehaviour
                 bool canSee = isFriendly || (isScouted && !ch.IsHidden());
                 if (!canSee) continue;
 
-                hasVisibleCharacters = true;
                 string spriteName = ch.GetOwner() != null
                     ? ch.GetOwner().GetAlignment().ToString() + "Character"
                     : "unknownCharacter";
@@ -756,7 +774,10 @@ public class Hex : MonoBehaviour
             armyArrangeCoroutine = StartCoroutine(DelayedArrangeArmies());
         }
 
-        SetActiveFast(armyCharactersIconGrid != null ? armyCharactersIconGrid.gameObject : null, seen && (hasArmies || hasVisibleCharacters));
+        // Content is rebuilt above regardless, but the grid itself only shows while the cursor is
+        // actually on HexPcText — see SetPcTextHovered, driven by HexPcTextHover.
+        bool hasContent = armyCharactersIconGrid != null && armyCharactersIconGrid.transform.childCount > 0;
+        SetActiveFast(armyCharactersIconGrid != null ? armyCharactersIconGrid.gameObject : null, isPcTextHovered && hasContent);
         UpdatePortIcon();
 
         if (refreshHoverText) RefreshHoverText();
@@ -1108,7 +1129,6 @@ public class Hex : MonoBehaviour
         }
 
         framesColors?.SetHovered(true);
-        TryShowPcCardPreview();
 
         if (s_hexInfoActiveHex != null && s_hexInfoActiveHex != this && s_hexInfoActiveHex.IsMouseOverHexOrPanel())
             return;
@@ -1120,11 +1140,12 @@ public class Hex : MonoBehaviour
         }
     }
 
-    // Shows the PC's card alongside its region's Land card while hovering a hex that holds
-    // a currently-visible PC — mirrors the character/army hover preview, but for hexes.
-    // Only appears after pcCardPreviewHoverDelay seconds of uninterrupted hover (see
-    // ShowPcCardPreviewAfterDelay) rather than immediately, so glancing across PC hexes
-    // while moving the cursor doesn't spam the preview.
+    // Shows the PC's card alongside its region's Land card while hovering the HexPcText
+    // label/Band of a hex that holds a currently-visible PC (see SetPcTextHovered) — mirrors
+    // the character/army hover preview, but for hexes. Only appears after
+    // pcCardPreviewHoverDelay seconds of uninterrupted hover (see ShowPcCardPreviewAfterDelay)
+    // rather than immediately, so glancing across PC hexes while moving the cursor doesn't
+    // spam the preview.
     private void TryShowPcCardPreview()
     {
         // A hovered character sprite sits visually on top of the hex and drives its own
@@ -1938,7 +1959,9 @@ public class Hex : MonoBehaviour
         if (classArrangeCoroutine != null) StopCoroutine(classArrangeCoroutine);
         classArrangeCoroutine = StartCoroutine(DelayedArrangeClasses());
 
-        SetActiveFast(characterClassesIconGrid.gameObject, true);
+        // Content is always (re)built here, but it only stays hidden/shown by hover state —
+        // see SetCharacterHovered, which CharacterSpriteHover drives on OnMouseEnter/Exit.
+        SetActiveFast(characterClassesIconGrid.gameObject, isCharacterHovered);
     }
 
     private void ClearClassIcons()
@@ -3432,6 +3455,26 @@ public class Hex : MonoBehaviour
     {
         if (isCharacterHovered == hovered) return;
         isCharacterHovered = hovered;
+
+        // Class icons (commander/agent/emmissary/mage) only show while the cursor is actually
+        // on the character sprite — otherwise they sit on screen permanently and bury the map.
+        if (characterClassesIconGrid != null)
+            SetActiveFast(characterClassesIconGrid.gameObject, hovered && characterClassesIconGrid.transform.childCount > 0);
+    }
+
+    // Driven by HexPcTextHover (mouse over the HexPcText label/Band), not by hovering the hex at
+    // large — both the PC/Region card preview and the armies/characters icon grid only show up
+    // for that specific, small hover target instead of blanketing the whole tile.
+    public void SetPcTextHovered(bool hovered)
+    {
+        if (isPcTextHovered == hovered) return;
+        isPcTextHovered = hovered;
+
+        if (armyCharactersIconGrid != null)
+            SetActiveFast(armyCharactersIconGrid.gameObject, hovered && armyCharactersIconGrid.transform.childCount > 0);
+
+        if (hovered) TryShowPcCardPreview();
+        else CancelPcCardPreview();
     }
 
     private void UpdateCharacterSpriteAlpha()
