@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#090806">
-  <meta name="description" content="RetroLOTR is a dark, card-driven strategy game of armies, alliances, and ancient powers across Middle-earth.">
-  <meta property="og:title" content="RetroLOTR — The War for Middle-earth">
-  <meta property="og:description" content="Command heroes, raise armies, and reshape the fate of Middle-earth in a hand-painted strategy game.">
-  <meta property="og:image" content="https://raw.githubusercontent.com/josejuanmartinez/RetroLOTR/main/dev-diary-assets/retrolotr-campaign-hero.png">
+  <meta name="description" content="RuneBoard is a dark, hex&card-driven strategy game of armies, alliances, and ancient powers across Middle-earth.">
+  <meta property="og:title" content="RuneBoard">
+  <meta property="og:description" content="Command heroes, settlements, nations. Raise armies, and reshape the fate of the world using a personalized card deck.">
+  <meta property="og:image" content="https://raw.githubusercontent.com/josejuanmartinez/Runeboard/main/dev-diary-assets/retrolotr-campaign-hero.png">
   <meta property="og:type" content="website">
-  <title>RetroLOTR — The War for Middle-earth</title>
+  <title>Runeboard</title>
   <link rel="preconnect" href="https://raw.githubusercontent.com">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -17,29 +17,29 @@
   <a class="skip-link" href="#main">Skip to the tale</a>
 
   <header class="site-header">
-    <a class="brand" href="#top" aria-label="RetroLOTR home">
+    <a class="brand" href="#top" aria-label="Runeboard home">
       <span class="brand-mark" aria-hidden="true">R</span>
-      <span>RetroLOTR</span>
+      <span>Runeboard</span>
     </a>
     <nav aria-label="Main navigation">
       <a href="#game">The Game</a>
       <a href="#gameplay">How to Play</a>
       <a href="#cards">The Interface</a>
-      <a href="#autoplay">Watch Mode</a>
+      <a href="#autoplay">AI</a>
       <a href="#features">Features</a>
       <a href="#gallery">Gallery</a>
-      <a class="nav-cta" href="https://github.com/josejuanmartinez/RetroLOTR">View on GitHub</a>
+      <a class="nav-cta" href="https://github.com/josejuanmartinez/Runeboard">View on GitHub</a>
     </nav>
   </header>
 
   <main id="main">
     <section class="hero" id="top" aria-labelledby="hero-title">
-      <img class="hero-image" src="https://raw.githubusercontent.com/josejuanmartinez/RetroLOTR/main/dev-diary-assets/retrolotr-campaign-hero.png" alt="RetroLOTR campaign map showing heroes, armies, fortresses, and a card in play">
+      <img class="hero-image" src="images/gameplay/01-title.png" alt="Runeboard campaign map showing heroes, armies, fortresses, and a card in play">
       <div class="hero-shade"></div>
       <div class="hero-content">
-        <p class="eyebrow">A hand-painted strategy game</p>
-        <h1 id="hero-title">Middle-earth<br><em>hangs in the balance.</em></h1>
-        <p class="hero-copy">Lead the Free Peoples, bend the world to the Shadow, or pursue the designs of the White Hand in a sprawling war of cards, armies, and ancient power.</p>
+        <p class="eyebrow">A hand-painted strategy & collective card game</p>
+        <h1 id="hero-title">Runeboard<br><em>hangs in the balance.</em></h1>
+        <p class="hero-copy">Lead the Free Peoples, bend the world to the Shadow, or pursue the designs of the Neutral Nations in a sprawling war of cards, armies, and ancient power.</p>
         <div class="hero-actions">
           <a class="button button-primary" href="#game">Enter the campaign</a>
           <a class="button button-ghost" href="#gallery">See the battlefield</a>
@@ -55,27 +55,36 @@
         <h2>Strategy with the soul of an old fantasy table.</h2>
       </div>
       <div class="intro-copy">
-        <p>RetroLOTR brings a sweeping conflict to a living hex map. Muster distinct armies, guide legendary characters, claim strongholds, and play illustrated cards that can turn a desperate battle.</p>
+        <p>Runeboard brings a sweeping conflict to a living hex map. Muster distinct armies, guide legendary characters, claim strongholds, and play illustrated cards that can turn a desperate battle.</p>
         <p>Every campaign grows from competing powers and shifting fronts. Roads, rivers, mountains, and hidden lands shape the choices before you—and the story left behind.</p>
       </div>
     </section>
 
     <section class="factions" aria-label="Playable powers">
       <article class="faction faction-free">
+        <div class="feature-image-wrap">
+          <img src="images/gameplay/26-FreePeople.png" alt="One of the Avatars for the Free People" loading="lazy">          
+        </div>
         <span class="sigil" aria-hidden="true">✦</span>
         <p>The Free Peoples</p>
         <h3>Kindle hope.</h3>
         <span>Rally scattered realms and stand against the gathering dark.</span>
       </article>
       <article class="faction faction-shadow">
+        <div class="feature-image-wrap">
+          <img src="images/gameplay/28-DarkServants.png" alt="One of the Avatars for the Dark Servants" loading="lazy">          
+        </div>
         <span class="sigil" aria-hidden="true">◆</span>
         <p>The Dark Lord</p>
         <h3>Cover the lands.</h3>
-        <span>Unleash vast hosts and break the strongholds of the West.</span>
+        <span>Unleash vast hosts and break the strongholds of the Free People.</span>
       </article>
       <article class="faction faction-hand">
+        <div class="feature-image-wrap">
+          <img src="images/gameplay/27-Neutral.png" alt="One of the Avatars for the Neutral Nations" loading="lazy">          
+        </div>
         <span class="sigil" aria-hidden="true">♜</span>
-        <p>The White Hand</p>
+        <p>Neutral Nations</p>
         <h3>Master the board.</h3>
         <span>Scheme, industrialize, and strike where rival powers are weakest.</span>
       </article>
@@ -83,7 +92,7 @@
 
     <section class="features section" id="features">
       <div class="feature-image-wrap">
-        <img src="https://raw.githubusercontent.com/josejuanmartinez/RetroLOTR/main/output/dev-diary-game-screenshots/retrolotr-rohan-field-battle.png" alt="A cavalry battle unfolding across Rohan in RetroLOTR" loading="lazy">
+        <img src="images/gameplay/24-map-grid-toggled.png" alt="A cavalry battle unfolding across Rohan in Runeboard" loading="lazy">
         <p class="image-caption">The Riddermark · 3018 T.A.</p>
       </div>
       <div class="feature-copy">
@@ -108,14 +117,14 @@
         </ol>
       </div>
       <div class="feature-image-wrap">
-        <img src="images/gameplay/04-confirm-leader.png" alt="Confirmation popup asking whether to start as Sauron (The Necromancer) in RetroLOTR" loading="lazy">
+        <img src="images/gameplay/04-confirm-leader.png" alt="Confirmation popup asking whether to start as Sauron (The Necromancer) in Runeboard" loading="lazy">
         <p class="image-caption">"Do you want to start as Sauron (The Necromancer)?"</p>
       </div>
     </section>
 
     <section class="features section" id="play">
       <div class="feature-image-wrap">
-        <img src="images/gameplay/05-mordor-turn0.png" alt="Turn 0 of a RetroLOTR campaign, showing Sauron's capital at Dol Guldur and Barad-dûr on the hex map" loading="lazy">
+        <img src="images/gameplay/05-mordor-turn0.png" alt="Turn 0 of a Runeboard campaign, showing Sauron's capital at Dol Guldur and Barad-dûr on the hex map" loading="lazy">
         <p class="image-caption">Turn 0 · Dol Guldur, 23 Halimath 3018 T.A.</p>
       </div>
       <div class="feature-copy">
@@ -131,7 +140,7 @@
 
     <section class="features section" id="cards">
       <div class="feature-image-wrap">
-        <img src="images/gameplay/10-character-card.png" alt="Hovering Gandalf the White's name reveals his full character card in RetroLOTR" loading="lazy">
+        <img src="images/gameplay/10-character-card.png" alt="Hovering Gandalf the White's name reveals his full character card in Runeboard" loading="lazy">
         <p class="image-caption">Hover a name, meet the card behind it</p>
       </div>
       <div class="feature-copy">
@@ -156,7 +165,7 @@
         </ol>
       </div>
       <div class="feature-image-wrap">
-        <img src="images/gameplay/19-end-turn.png" alt="The End Turn confirmation dialog in RetroLOTR, asking to finish the current turn" loading="lazy">
+        <img src="images/gameplay/19-end-turn.png" alt="The End Turn confirmation dialog in Runeboard, asking to finish the current turn" loading="lazy">
         <p class="image-caption">"End turn?" — Finish Turn or Cancel</p>
       </div>
     </section>
@@ -168,7 +177,7 @@
 
     <section class="features section" id="morgul">
       <div class="feature-image-wrap">
-        <img src="images/gameplay/18-gandalf-at-morgul.png" alt="Gandalf the White standing at Minas Morgul alongside Gorbag's Orcs, Boromir, and Ioreth, with the enemy hex outlined in red" loading="lazy">
+        <img src="images/gameplay/20-card-bloom.png" alt="Gandalf the White standing at Minas Morgul alongside Gorbag's Orcs, Boromir, and Ioreth, with the enemy hex outlined in red" loading="lazy">
         <p class="image-caption">Gandalf the White, deep in enemy territory</p>
       </div>
       <div class="feature-copy">
@@ -184,19 +193,44 @@
 
     <section class="features section" id="autoplay">
       <div class="feature-copy">
-        <p class="eyebrow">Let the world play itself</p>
-        <h2>Watch Mode.</h2>
+        <p class="eyebrow">The world is (artificially) intelligent</p>
+        <h2>AI</h2>
+        Check <a href="https://medium.com/@jjmcarrascosa/field-notes-dev-diary-on-video-games-ai-and-some-generative-ai-9d435055ae3f?postPublishedType=repub">this article</a> explaining all the AI techniques used in detail.
         <ol class="feature-list">
-          <li><span>01</span><div><h3>Toggle it on</h3><p>Press <strong>Ctrl+Shift+Tab</strong> at any point in a campaign to hand control to Autoplay and sit back as your power, and every rival, takes its turns.</p></div></li>
-          <li><span>02</span><div><h3>Watch history unfold</h3><p>Armies march, encounters resolve, and trophy scores climb turn after turn — a hands-free way to see how a campaign plays out.</p></div></li>
-          <li><span>03</span><div><h3>Take back the reins</h3><p>Press <strong>Ctrl+Shift+Tab</strong> again — the same shortcut exits Watch Mode, and an "Autoplay disabled" banner confirms you're back in control.</p></div></li>
+          <li><span>01</span><div><h3>Utility AI</h3><p>All the nations have score calculation utilities that measure danger, opportunities, growth, stagnation.</p></div></li>
+          <li><span>02</span><div><h3>Blackboards</h3><p>Store the situation of the world, register and remember nation and character missions</p></div></li>
+          <li><span>03</span><div><h3>Hierarchical Task Network</h3><p>Plans tasks for Characters, dividing them into specific possible behaviours</p></div></li>
+          <li><span>04</span><div><h3>Behaviour / State trees</h3><p>Execute the behaviours depending on the Utility AI scores and feasibility</p></div></li>
+          <li><span>05</span><div><h3>Neural Network</h3><p>A Multilayer Perceptron (MLP) trained on supervised best strategies, used also to consult best strategies</p></div></li>
         </ol>
       </div>
       <div class="feature-image-wrap">
-        <img src="images/gameplay/07-watch-mode.png" alt="RetroLOTR Watch Mode automatically playing out a campaign turn, with trophy scores rising and new territory revealed" loading="lazy">
+        <img src="images/gameplay/07-watch-mode.png" alt="Runeboard Watch Mode automatically playing out a campaign turn, with trophy scores rising and new territory revealed" loading="lazy">
         <p class="image-caption">Watch Mode · the campaign plays itself</p>
       </div>
     </section>
+      <div class="gallery-grid">
+        <figure class="gallery-wide">
+          <img src="images/gameplay/33-utility-ai.webp" alt="Utility AI" loading="lazy">
+          <figcaption><span>01</span> Utility AI scores literally everything that can be quantified</figcaption>
+        </figure>
+        <figure>
+          <img src="images/gameplay/32-blackboard.webp" alt="Blackboards" loading="lazy">
+          <figcaption><span>02</span> Blackboards register information, events, missions, scores</figcaption>
+        </figure>
+        <figure>
+          <img src="images/gameplay/31-blackboards.webp" alt="Each character has a blackboard" loading="lazy">
+          <figcaption><span>03</span> Each character has its own blackboard</figcaption>
+        </figure>
+        <figure>
+          <img src="images/gameplay/30-htn.webp" alt="Hierarchical Task Network" loading="lazy">
+          <figcaption><span>04</span> Utility AI scores, stored in Blackboards, are evaluated. Tasks are planned, executed by (State) Behaviour Trees.</figcaption>
+        </figure>
+        <figure>
+          <img src="images/gameplay/29-mlp.webp" alt="Reinforcement Learning" loading="lazy">
+          <figcaption><span>05</span> A Neural Network was trained with supervised feedback on the incorrect decisions, to provide a separate opinion</figcaption>
+        </figure>
+      </div>
 
     <section class="gallery section" id="gallery">
       <div class="gallery-heading">
@@ -208,44 +242,83 @@
       </div>
       <div class="gallery-grid">
         <figure class="gallery-wide">
-          <img src="https://raw.githubusercontent.com/josejuanmartinez/RetroLOTR/main/output/dev-diary-game-screenshots/retrolotr-moria-ambush.png" alt="A dark encounter near Moria on the RetroLOTR campaign map" loading="lazy">
-          <figcaption><span>01</span> Shadows beneath the mountains</figcaption>
+          <img src="images/gameplay/00-load.png" alt="Encounter the Balrog, travel to Havens of Umbar, Wear Narya" loading="lazy">
+          <figcaption><span>01</span> Encounter the Balrog, travel to Havens of Umbar, Wear Narya</figcaption>
         </figure>
         <figure>
-          <img src="https://raw.githubusercontent.com/josejuanmartinez/RetroLOTR/main/output/dev-diary-game-screenshots/retrolotr-white-city-siege.png" alt="The White City under siege in RetroLOTR" loading="lazy">
-          <figcaption><span>02</span> The siege of the White City</figcaption>
+          <img src="images/gameplay/21-combat.png" alt="See animated combat" loading="lazy">
+          <figcaption><span>02</span> See animated combat</figcaption>
         </figure>
         <figure>
-          <img src="https://raw.githubusercontent.com/josejuanmartinez/RetroLOTR/main/output/dev-diary-game-screenshots/retrolotr-rohan-field-battle.png" alt="Mounted forces clashing on the fields of Rohan" loading="lazy">
-          <figcaption><span>03</span> Riders on the field</figcaption>
+          <img src="images/gameplay/12-environmental-card.png" alt="Face environmental dangers played by your opponents..." loading="lazy">
+          <figcaption><span>03</span> Face environmental dangers played by your opponents</figcaption>
         </figure>
         <figure>
-          <img src="images/gameplay/06-event-card.png" alt="The illustrated event card Secrets From A Lost Tome resolving during a RetroLOTR campaign" loading="lazy">
-          <figcaption><span>04</span> Secrets from a lost tome</figcaption>
+          <img src="images/gameplay/06-event-card.png" alt="Find powerful artifacts" loading="lazy">
+          <figcaption><span>04</span> Find powerful artifacts and encounters hidden at hexes</figcaption>
         </figure>
         <figure>
-          <img src="images/gameplay/08-autoplay-disabled.png" alt="RetroLOTR campaign map after exiting Watch Mode, with the Autoplay disabled banner showing" loading="lazy">
-          <figcaption><span>05</span> Back in command</figcaption>
+          <img src="images/gameplay/11-army-card.png" alt="Hire armies" loading="lazy">
+          <figcaption><span>05</span> Hire custon troops tailored to your nation's deck</figcaption>
         </figure>
         <figure class="gallery-wide">
-          <img src="images/gameplay/03-leader-carousel.png" alt="The RetroLOTR leader-selection carousel with the chosen character card at the front" loading="lazy">
-          <figcaption><span>06</span> Choose your leader</figcaption>
+          <img src="images/gameplay/03-leader-carousel.png" alt=" Leaders can have different personalities (Avatars)" loading="lazy">
+          <figcaption><span>06</span> Leaders can have different personalities (Avatars)</figcaption>
         </figure>
         <figure>
-          <img src="images/gameplay/15-tutorial-cards.png" alt="The RetroLOTR How to Play tutorial showing example Attack, Block, and Find Artifact cards" loading="lazy">
+          <img src="images/gameplay/15-tutorial-cards.png" alt="The Runeboard How to Play tutorial showing example Attack, Block, and Find Artifact cards" loading="lazy">
           <figcaption><span>07</span> How to play: Attack, Block, Find Artifact</figcaption>
         </figure>
         <figure>
-          <img src="images/gameplay/17-friend-or-foe.png" alt="The RetroLOTR tutorial explaining that spotted enemies are outlined in red and spotted neutrals in grey" loading="lazy">
+          <img src="images/gameplay/17-friend-or-foe.png" alt="The Runeboard tutorial explaining that spotted enemies are outlined in red and spotted neutrals in grey" loading="lazy">
           <figcaption><span>08</span> Friend or foe, spotted or not</figcaption>
         </figure>
         <figure>
-          <img src="images/gameplay/13-resource-price.png" alt="Clicking the Steel resource icon in RetroLOTR to reveal its Build and Sell prices" loading="lazy">
+          <img src="images/gameplay/13-resource-price.png" alt="Clicking the Steel resource icon in Runeboard to reveal its Build and Sell prices" loading="lazy">
           <figcaption><span>09</span> What does Steel cost today?</figcaption>
         </figure>
         <figure>
-          <img src="images/gameplay/16-tutorial-movement.png" alt="The RetroLOTR Movement tutorial showing the arrow keys and W A S D used to move across hexes" loading="lazy">
+          <img src="images/gameplay/16-tutorial-movement.png" alt="The Runeboard Movement tutorial showing the arrow keys and W A S D used to move across hexes" loading="lazy">
           <figcaption><span>10</span> Movement, key by key</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="features section" id="art">
+      <div class="feature-image-wrap">
+        <img src="images/gameplay/34-lora-result.png" alt="Final results on the trained LoRA" loading="lazy">
+        <p class="image-caption"><i>[Retro] Three dwarven explorers walk over the Green Hills...</i></p>
+      </div>
+      <div class="feature-copy">
+        <p class="eyebrow">Into harm's way</p>
+        <h2>How do I achieve this unique art style?</h2>
+        <ol class="feature-list">
+          <li><span>01</span><div><h3>I scanned old black&white illustrations</h3><p>from old RPG books I had at home</p></div></li>
+          <li><span>02</span><div><h3>I redraw and painted</h3><p> some of them to have a unique retro old feeling.</p></div></li>
+          <li><span>03</span><div><h3>I painted 25 of them manually</h3><p>Using old color schemas and techniques from the 80s.</p></div></li>
+          <li><span>04</span><div><h3>I trained a LoRA</h3><p>on an open source, open weight Qwen Image model.</p></div></li>
+          <li><span>05</span><div><h3>I queried that model</h3><p>trained on my own art to create cards for the game.</p></div></li>
+        </ol>
+      <div class="gallery-grid">
+        <figure class="gallery-wide">
+          <img src="images/gameplay/35-lora-bw.png" alt="Black and White scanned and hand made drawings" loading="lazy">
+          <figcaption><span>01</span> Black and White scanned and hand made drawings</figcaption>
+        </figure>
+        <figure>
+          <img src="images/gameplay/36-lora-painted.png" alt="Painted drawings with retro, colourful sets" loading="lazy">
+          <figcaption><span>02</span> Painted drawings with retro, colourful sets</figcaption>
+        </figure>
+        <figure>
+          <img src="images/gameplay/37-lora-painted-2.png" alt="Painted drawings with retro, colourful sets" loading="lazy">
+          <figcaption><span>03</span> Painted drawings with retro, colourful sets</figcaption>
+        </figure>
+      </div>
+      <hr>
+        For the hexes, I built assets from Artists in the <a href="https://assetstore.unity.com/packages/2d/environments/hex-medieval-fantasy-locations-59271">Unity Store</a> and repainted them myself.
+      
+        <figure>
+          <img src="images/gameplay/38-hex.webp" alt="Built assets modified and re-painted manually" loading="lazy">
+          <figcaption><span>01</span> Built assets modified and re-painted manually</figcaption>
         </figure>
       </div>
     </section>
@@ -253,16 +326,17 @@
     <section class="final-cta">
       <div class="final-ornament" aria-hidden="true">✦</div>
       <p class="eyebrow">The road goes ever on</p>
-      <h2>Follow the making<br>of RetroLOTR.</h2>
+      <h2>Follow the making<br>of Runeboard.</h2>
       <p>Explore the project, watch the campaign grow, and follow development on GitHub.</p>
-      <a class="button button-primary" href="https://github.com/josejuanmartinez/RetroLOTR">Visit the repository</a>
+      <a class="button button-primary" href="https://github.com/josejuanmartinez/Runeboard">Visit the repository</a>
     </section>
+
   </main>
 
   <footer>
-    <div class="brand"><span class="brand-mark" aria-hidden="true">R</span><span>RetroLOTR</span></div>
+    <div class="brand"><span class="brand-mark" aria-hidden="true">R</span><span>Runeboard</span></div>
     <p>An independent, non-commercial fan project inspired by classic fantasy strategy games.</p>
-    <p>© <span id="year">2026</span> RetroLOTR</p>
+    <p>© <span id="year">2026</span> Runeboard</p>
   </footer>
 
   <script src="script.js"></script>
