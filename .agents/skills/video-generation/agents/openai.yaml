@@ -1,4 +1,0 @@
-interface:
-  display_name: "Video Generation"
-  short_description: "Generate styled FLUX 3 text-to-video clips"
-  default_prompt: "Use $video-generation and the official Black Forest Labs API to create a FLUX 3 text-to-video clip in RetroLOTR's vintage hand-painted fantasy-animation style."
