@@ -193,15 +193,20 @@ public static class CharacterSpritesheets
     {
         EnsureLoading();
         if (HasAny(characterName)) { raceOrName = characterName; return true; }
+
+        // Manifests register incrementally as each one finishes loading, not all at once — so
+        // mid-load, a less-specific tier's sheet (variantBaseName/race/fallback) can already be
+        // registered while this character's own name sheet simply hasn't arrived yet. Committing
+        // to one of those in that window would lock in the wrong look (e.g. Galadriel briefly, and
+        // in a slow-loading build sometimes permanently, rendering as generic "Elf" because that
+        // sheet happened to finish loading first) instead of waiting for its own match — nothing
+        // re-resolves an already-"showing" UIAnimatedCharacter once it commits. Only trust these
+        // once loading is fully done and nothing more specific can still show up.
+        if (!IsLoaded) { raceOrName = null; return false; }
+
         if (HasAny(variantBaseName)) { raceOrName = variantBaseName; return true; }
         if (HasAny(race.ToString())) { raceOrName = race.ToString(); return true; }
-        // Manifests register incrementally as each one finishes loading, not all at once — so
-        // mid-load, the fallback's sheet can already be registered while this character's own
-        // name/race sheet simply hasn't arrived yet. Committing to fallback in that window would
-        // visibly show the wrong character (e.g. every character briefly rendering as "Gandalf"
-        // if that's what fallback happens to be set to) instead of waiting the extra moment for
-        // its own match. Only trust fallback once loading is fully done and nothing better exists.
-        if (IsLoaded && HasAny(fallback)) { raceOrName = fallback; return true; }
+        if (HasAny(fallback)) { raceOrName = fallback; return true; }
         raceOrName = null;
         return false;
     }

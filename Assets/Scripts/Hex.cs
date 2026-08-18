@@ -43,6 +43,7 @@ public class Hex : MonoBehaviour
 
     [Header("PC Name")]
     public TextMeshPro pcName;
+    private SpriteRendererFitToTMP pcTextBandFit;
 
     [Header("Reveal")]
     [SerializeField] private float revealDuration = 1f;
@@ -415,9 +416,16 @@ public class Hex : MonoBehaviour
         HexPcTextHover hover = pcTextRoot.GetComponentInChildren<HexPcTextHover>(true);
         if (hover != null) hover.hex = this;   // serialized ref could not cross the prefab split
 
+        // Fit() only auto-runs every frame in the Editor (its Update() is #if UNITY_EDITOR); in a
+        // build nothing re-fits the Band when the label text changes, so it must be called
+        // explicitly whenever pcName.text is set (see HideHexLabel/RefreshHexLabel) or the Band
+        // sprite is left showing its last size/visibility after the text that sized it is gone.
+        pcTextBandFit = pcTextRoot.Find("Band")?.GetComponent<SpriteRendererFitToTMP>();
+
         // Starts hidden; each caller applies the state it needs right after.
         // Band (the hover target) is deliberately left active — see comment above.
         SetActiveFast(pcName.gameObject, false);
+        pcTextBandFit?.Fit();
         return true;
     }
 
@@ -710,6 +718,7 @@ public class Hex : MonoBehaviour
         {
             pcName.text = string.Empty;
             SetActiveFast(pcName.gameObject, false);
+            pcTextBandFit?.Fit();
         }
     }
 
@@ -779,6 +788,7 @@ public class Hex : MonoBehaviour
         pcName.text = builder.ToString();
         pcName.color = shouldShowPc && pc.owner != null ? pc.owner.nationColor : Color.white;
         SetActiveFast(pcName.gameObject, true);
+        pcTextBandFit?.Fit();
     }
 
     public void RedrawCharacters(bool refreshHoverText = true)
