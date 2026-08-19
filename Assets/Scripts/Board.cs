@@ -692,7 +692,7 @@ public class Board : MonoBehaviour
 
     public List<Hex> GetHexes()
     {
-        return hexes.Values.ToList();
+        return hexes != null ? hexes.Values.ToList() : new List<Hex>();
     }
 
     public void Move(Character character, Vector2Int targetHexCoordinates)

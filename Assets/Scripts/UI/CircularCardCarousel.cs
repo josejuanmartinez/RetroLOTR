@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class CircularCardCarousel : MonoBehaviour
@@ -13,6 +14,23 @@ public class CircularCardCarousel : MonoBehaviour
         public float rotationZ;
         public int siblingIndex;
         public bool visible;
+        public int offset;
+    }
+
+    private class CarouselHoverRelay : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+    {
+        public CircularCardCarousel owner;
+        public GameObject item;
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            owner?.HandleItemHoverEnter(item);
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            owner?.HandleItemHoverExit(item);
+        }
     }
 
     [Header("References")]
@@ -51,6 +69,8 @@ public class CircularCardCarousel : MonoBehaviour
     [Header("Input")]
     [SerializeField] private bool useMouseWheel = true;
     [SerializeField] private bool requirePointerOverAreaForWheel = true;
+    [SerializeField] private bool useHoverToNavigate = true;
+    [SerializeField] private float hoverNavigateInterval = 2f;
 
     [Header("Events")]
     [SerializeField] private UnityEvent<int> onSelectionChanged;
@@ -59,6 +79,8 @@ public class CircularCardCarousel : MonoBehaviour
     private Canvas parentCanvas;
     private readonly Dictionary<GameObject, CarouselVisualState> targetStates = new();
     private readonly Dictionary<GameObject, CanvasGroup> canvasGroups = new();
+    private GameObject hoveredItem;
+    private float hoverNavigateTimer;
 
     private void Awake()
     {
@@ -101,6 +123,7 @@ public class CircularCardCarousel : MonoBehaviour
     private void Update()
     {
         AnimateItems();
+        UpdateHoverNavigation();
 
         if (!useMouseWheel || items.Count <= 1)
         {
@@ -120,6 +143,56 @@ public class CircularCardCarousel : MonoBehaviour
         else if (wheelDelta < 0f)
         {
             ShowNext();
+        }
+    }
+
+    private void UpdateHoverNavigation()
+    {
+        if (!useHoverToNavigate || hoveredItem == null || items.Count <= 1)
+        {
+            return;
+        }
+
+        hoverNavigateTimer += Time.deltaTime;
+        if (hoverNavigateTimer < hoverNavigateInterval)
+        {
+            return;
+        }
+
+        hoverNavigateTimer = 0f;
+
+        if (!targetStates.TryGetValue(hoveredItem, out CarouselVisualState state) || state.offset == 0)
+        {
+            hoveredItem = null;
+            return;
+        }
+
+        if (state.offset < 0)
+        {
+            ShowPrevious();
+        }
+        else
+        {
+            ShowNext();
+        }
+    }
+
+    private void HandleItemHoverEnter(GameObject item)
+    {
+        if (!useHoverToNavigate || item == null || items.Count == 0 || item == items[currentIndex])
+        {
+            return;
+        }
+
+        hoveredItem = item;
+        hoverNavigateTimer = 0f;
+    }
+
+    private void HandleItemHoverExit(GameObject item)
+    {
+        if (hoveredItem == item)
+        {
+            hoveredItem = null;
         }
     }
 
@@ -170,22 +243,23 @@ public class CircularCardCarousel : MonoBehaviour
         }
 
         GameObject currentItem = items[currentIndex];
-        SetupItem(currentItem, GetPositionForOffset(0), selectedScale, 3, GetAlphaForOffset(0), GetRotationForOffset(0));
+        SetupItem(currentItem, GetPositionForOffset(0), selectedScale, 3, GetAlphaForOffset(0), GetRotationForOffset(0), 0);
         EnsureShineEffects();
+        EnsureHoverRelays();
 
         for (int offset = 1; offset <= 3; offset++)
         {
             int previousIndex = WrapIndex(currentIndex - offset);
             if (visibleIndices.Contains(previousIndex))
             {
-                SetupItem(items[previousIndex], GetPositionForOffset(-offset), GetScaleForOffset(offset), 3 - offset, GetAlphaForOffset(offset), GetRotationForOffset(-offset));
+                SetupItem(items[previousIndex], GetPositionForOffset(-offset), GetScaleForOffset(offset), 3 - offset, GetAlphaForOffset(offset), GetRotationForOffset(-offset), -offset);
                 visibleIndices.Remove(previousIndex);
             }
 
             int nextIndex = WrapIndex(currentIndex + offset);
             if (visibleIndices.Contains(nextIndex))
             {
-                SetupItem(items[nextIndex], GetPositionForOffset(offset), GetScaleForOffset(offset), 3 + offset, GetAlphaForOffset(offset), GetRotationForOffset(offset));
+                SetupItem(items[nextIndex], GetPositionForOffset(offset), GetScaleForOffset(offset), 3 + offset, GetAlphaForOffset(offset), GetRotationForOffset(offset), offset);
                 visibleIndices.Remove(nextIndex);
             }
         }
@@ -235,6 +309,7 @@ public class CircularCardCarousel : MonoBehaviour
     {
         items.Clear();
         currentIndex = 0;
+        hoveredItem = null;
         Refresh();
     }
 
@@ -343,7 +418,7 @@ public class CircularCardCarousel : MonoBehaviour
         }
     }
 
-    private void SetupItem(GameObject item, Vector2 anchoredPosition, Vector3 scale, int siblingIndex, float alpha, float rotationZ)
+    private void SetupItem(GameObject item, Vector2 anchoredPosition, Vector3 scale, int siblingIndex, float alpha, float rotationZ, int offset)
     {
         if (item == null)
         {
@@ -357,8 +432,30 @@ public class CircularCardCarousel : MonoBehaviour
             alpha = alpha,
             rotationZ = rotationZ,
             siblingIndex = siblingIndex,
-            visible = true
+            visible = true,
+            offset = offset
         };
+    }
+
+    private void EnsureHoverRelays()
+    {
+        for (int i = 0; i < items.Count; i++)
+        {
+            GameObject item = items[i];
+            if (item == null)
+            {
+                continue;
+            }
+
+            CarouselHoverRelay relay = item.GetComponent<CarouselHoverRelay>();
+            if (relay == null)
+            {
+                relay = item.AddComponent<CarouselHoverRelay>();
+            }
+
+            relay.owner = this;
+            relay.item = item;
+        }
     }
 
     private void AnimateItems()

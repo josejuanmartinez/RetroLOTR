@@ -54,6 +54,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     [SerializeField] private Color requirementsMessageColor = Color.red;
     [SerializeField] private bool showRequirementWarnings = true;
     [SerializeField] private bool showCloseIcon = true;
+    [Tooltip("If false, the card's description text appears instantly instead of being typed out.")]
+    [SerializeField] private bool typewriterEffect = true;
     [Tooltip("True on TokenCard instances that only carry the compact token visual: hovering unfolds the card into CardCenterPreview instead of flipping the (absent) RealCard subtree in place.")]
     [SerializeField] private bool isTokenOnlyPresentation;
 
@@ -70,6 +72,11 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private Graphic rootHitGraphic;
     public bool SuppressHoverEffects { get; set; }
     public bool UseCardArtFolderOnly { get; set; }
+    public bool TypewriterEffect
+    {
+        get => typewriterEffect;
+        set => typewriterEffect = value;
+    }
     public bool ShowRequirementWarnings
     {
         get => showRequirementWarnings;
@@ -308,24 +315,42 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             AssignEncounterTargetHexIfNeeded(data);
             if (!data.encounterRevealed)
                 SetupEncounterHiddenVisuals(data);
+            else
+                ClearEncounterHiddenVisualsInstant();
+        }
+        else
+        {
+            // This Card instance may have previously shown an unrevealed encounter card (e.g. a
+            // recycled slot like the startup loading screen's rotating cards) — its "?" overlay
+            // is only ever removed by the animated reveal flow, so a non-encounter card reused
+            // into the same instance must clear it here instead of leaving it stuck on top.
+            ClearEncounterHiddenVisualsInstant();
         }
 
         UpdateInteractableState();
 
         if (!data.hasShownHandAnimation && descriptionText != null && !string.IsNullOrEmpty(baseDescription))
         {
-            string quoteBlock = data.GetQuoteBlock();
-            if (!string.IsNullOrWhiteSpace(quoteBlock) && baseDescription.Contains(quoteBlock))
+            if (!TypewriterEffect)
             {
-                int quoteStart = baseDescription.LastIndexOf(quoteBlock, StringComparison.Ordinal);
-                string immediateText = baseDescription.Substring(0, quoteStart).TrimEnd();
-                descriptionText.text = immediateText;
-                descriptionTypewriterCoroutine = StartCoroutine(HandDrawTypewriterCoroutine("\n\n" + quoteBlock, data, append: true));
+                descriptionText.text = baseDescription;
+                data.hasShownHandAnimation = true;
             }
             else
             {
-                descriptionText.text = string.Empty;
-                descriptionTypewriterCoroutine = StartCoroutine(HandDrawTypewriterCoroutine(baseDescription, data));
+                string quoteBlock = data.GetQuoteBlock();
+                if (!string.IsNullOrWhiteSpace(quoteBlock) && baseDescription.Contains(quoteBlock))
+                {
+                    int quoteStart = baseDescription.LastIndexOf(quoteBlock, StringComparison.Ordinal);
+                    string immediateText = baseDescription.Substring(0, quoteStart).TrimEnd();
+                    descriptionText.text = immediateText;
+                    descriptionTypewriterCoroutine = StartCoroutine(HandDrawTypewriterCoroutine("\n\n" + quoteBlock, data, append: true));
+                }
+                else
+                {
+                    descriptionText.text = string.Empty;
+                    descriptionTypewriterCoroutine = StartCoroutine(HandDrawTypewriterCoroutine(baseDescription, data));
+                }
             }
         }
     }
@@ -467,6 +492,22 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (board != null && board.selectedCharacter != null) return board.selectedCharacter;
         SelectedCharacterIcon icon = FindFirstObjectByType<SelectedCharacterIcon>();
         return icon != null ? icon.CurrentCharacter : null;
+    }
+
+    private void ClearEncounterHiddenVisualsInstant()
+    {
+        if (encounterArtOverlay != null)
+        {
+            Destroy(encounterArtOverlay.gameObject);
+            encounterArtOverlay = null;
+            encounterQuestionMark = null;
+        }
+        if (encounterTokenOverlay != null)
+        {
+            Destroy(encounterTokenOverlay.gameObject);
+            encounterTokenOverlay = null;
+            encounterTokenQuestionMark = null;
+        }
     }
 
     private void SetupEncounterHiddenVisuals(CardData data)
@@ -1828,7 +1869,14 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (titleText != null) titleText.text = FormatCardTitle(cardData.name);
 
         string realDescription = GetActionDescription(cardData);
-        yield return StartCoroutine(TypewriterEffectCoroutine(descriptionText, realDescription));
+        if (TypewriterEffect)
+        {
+            yield return StartCoroutine(TypewriterEffectCoroutine(descriptionText, realDescription));
+        }
+        else if (descriptionText != null)
+        {
+            descriptionText.text = realDescription;
+        }
         baseDescription = realDescription;
 
         tcs.SetResult(true);

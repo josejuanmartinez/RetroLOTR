@@ -192,7 +192,7 @@ public static class CharacterSpritesheets
     public static bool TryResolveRaceOrName(string characterName, string variantBaseName, RacesEnum race, string fallback, out string raceOrName)
     {
         EnsureLoading();
-        if (HasAny(characterName)) { raceOrName = characterName; return true; }
+        if (TryMatch(characterName, out raceOrName)) return true;
 
         // Manifests register incrementally as each one finishes loading, not all at once — so
         // mid-load, a less-specific tier's sheet (variantBaseName/race/fallback) can already be
@@ -204,9 +204,21 @@ public static class CharacterSpritesheets
         // once loading is fully done and nothing more specific can still show up.
         if (!IsLoaded) { raceOrName = null; return false; }
 
-        if (HasAny(variantBaseName)) { raceOrName = variantBaseName; return true; }
-        if (HasAny(race.ToString())) { raceOrName = race.ToString(); return true; }
-        if (HasAny(fallback)) { raceOrName = fallback; return true; }
+        if (TryMatch(variantBaseName, out raceOrName)) return true;
+        if (TryMatch(race.ToString(), out raceOrName)) return true;
+        if (TryMatch(fallback, out raceOrName)) return true;
+        raceOrName = null;
+        return false;
+    }
+
+    // Baked folder names never contain spaces (e.g. "TomBombadil"), but a Character's given name
+    // can (e.g. "Tom Bombadil") — strip spaces before matching so those still resolve to their
+    // own art instead of falling through to the race tier, and return the stripped form so later
+    // GetManifest/GetSprite lookups (which use it verbatim) line up with the folder name too.
+    private static bool TryMatch(string candidate, out string raceOrName)
+    {
+        string stripped = candidate?.Replace(" ", "");
+        if (HasAny(stripped)) { raceOrName = stripped; return true; }
         raceOrName = null;
         return false;
     }

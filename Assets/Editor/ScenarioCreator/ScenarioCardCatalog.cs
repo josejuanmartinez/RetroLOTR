@@ -194,7 +194,9 @@ namespace RetroLOTR.Scenarios.EditorTools
             string key = characterName.Trim();
             if (_characterIdleCache.TryGetValue(key, out Sprite cached)) return cached;
 
-            Sprite sprite = LoadIdleSprite(key);
+            // Baked spritesheet folders are named after the character with spaces stripped (e.g.
+            // "TomBombadil" for "Tom Bombadil") — match CharacterSpritesheets' own normalization.
+            Sprite sprite = LoadIdleSprite(key.Replace(" ", ""));
             if (sprite == null)
             {
                 RacesEnum race = GetCard(key)?.race ?? RacesEnum.Common;

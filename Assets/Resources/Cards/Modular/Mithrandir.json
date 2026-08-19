@@ -1,4 +1,4 @@
-﻿{
+{
     "deckId":  "mithrandir",
     "nation":  "Gandalf",
     "alignment":  0,
@@ -3426,7 +3426,7 @@
                       "cardId":  881,
                       "name":  "The Hidden Script",
                       "quote":  "What was forgotten is not always lost; sometimes it merely waits for the right reader.",
-                      "actionEffect":  "Reveal 1 hidden artifact site and draw 1 card.",
+                      "actionEffect":  "Reveal 1 hidden artifact site.",
                       "type":  "Event",
                       "tags":  [
                                    "script",
@@ -4164,7 +4164,7 @@
                       "cardId":  892,
                       "name":  "Counsel By Firelight",
                       "quote":  "In the hush before the road resumes, the right counsel may cast aside folly and place a truer course in the hand.",
-                      "actionEffect":  "Discard 1 non-encounter card from your hand, then draw 2 cards.",
+                      "actionEffect":  "Finds a quieter path: the character becomes Hidden for 2 turns.",
                       "type":  "Event",
                       "tags":  [
                                    "counsel",
@@ -6681,7 +6681,7 @@
                       "cardId":  1049,
                       "name":  "Counsel to Elrond",
                       "quote":  "In the House of Elrond, even deep wounds remember how to close.",
-                      "actionEffect":  "Target allied character in this hex is fully healed. If more than 50 health was restored, draw 1 card. Gain Hope \u003csprite name=\"hope\"\u003e (2 turns).",
+                      "actionEffect":  "Target allied character in this hex is fully healed. Gain Hope \u003csprite name=\"hope\"\u003e (2 turns).",
                       "type":  "Event",
                       "tags":  [
 

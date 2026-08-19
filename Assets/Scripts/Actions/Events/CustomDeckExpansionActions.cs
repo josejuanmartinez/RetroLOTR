@@ -1248,44 +1248,18 @@ public class CounselByFirelightAction : EventAction
         effect = (character) =>
         {
             if (originalEffect != null && !originalEffect(character)) return false;
-            if (character == null) return false;
+            if (character == null || character.GetOwner() == null) return false;
 
-            Game game = Game.Instance;
-            DeckManager deckManager = DeckManager.Instance;
-            if (game == null || deckManager == null || game.player == null) return false;
-            if (character.GetOwner() != game.player || !deckManager.HasDeckFor(game.player)) return false;
+            character.Hide(2);
 
-            var hand = deckManager.GetHand(game.player);
-            int maxHand = deckManager.GetHandSize();
-            CardData discardTarget = hand.FirstOrDefault(card => card != null && !card.IsEncounterCard() && !string.Equals(card.name, "Counsel By Firelight", StringComparison.OrdinalIgnoreCase));
-            if (discardTarget == null) return false;
-
-            if (!deckManager.TryDiscardCard(game.player, discardTarget.name, out _)) return false;
-
-            int roomAfterDiscard = Math.Max(0, maxHand - deckManager.GetHand(game.player).Count);
-            int drawsAllowed = Math.Min(2, roomAfterDiscard);
-            int drawn = 0;
-            if (drawsAllowed >= 1 && deckManager.TryDrawCard(game.player, out _)) drawn++;
-            if (drawsAllowed >= 2 && deckManager.TryDrawCard(game.player, out _)) drawn++;
-
-            if (drawn == 0) return false;
-
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Counsel by Firelight discards 1 card and draws {drawn}.", Color.magenta);
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Counsel by Firelight finds a quieter path: {character.characterName} is Hidden (2).", Color.magenta);
             return true;
         };
 
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            Game game = Game.Instance;
-            DeckManager deckManager = DeckManager.Instance;
-            if (character == null || game == null || deckManager == null || game.player == null) return false;
-            if (character.GetOwner() != game.player || !deckManager.HasDeckFor(game.player)) return false;
-
-            var hand = deckManager.GetHand(game.player);
-            bool hasDiscardTarget = hand.Any(card => card != null && !card.IsEncounterCard() && !string.Equals(card.name, "Counsel By Firelight", StringComparison.OrdinalIgnoreCase));
-            int roomAfterDiscard = Math.Max(0, deckManager.GetHandSize() - (hand.Count - 1));
-            return hasDiscardTarget && roomAfterDiscard > 0;
+            return character != null && character.GetOwner() != null && !character.IsHidden();
         };
 
         asyncEffect = async (character) =>
@@ -2111,6 +2085,12 @@ public class VoiceOfAuthority : EventAction
 
 public class CounselOfTheWise : EventAction
 {
+    private static readonly ProducesEnum[] ResourceOptions =
+    {
+        ProducesEnum.gold, ProducesEnum.timber, ProducesEnum.iron, ProducesEnum.leather, ProducesEnum.mounts
+    };
+    private const int ResourceAmount = 3;
+
     public override void Initialize(Character c, Func<Character, bool> condition = null, Func<Character, bool> effect = null, Func<Character, System.Threading.Tasks.Task<bool>> asyncEffect = null)
     {
         var originalEffect = effect;
@@ -2120,34 +2100,21 @@ public class CounselOfTheWise : EventAction
         effect = (character) =>
         {
             if (originalEffect != null && !originalEffect(character)) return false;
-            if (character == null) return false;
+            Leader owner = character?.GetOwner();
+            if (owner == null) return false;
 
-            Game game = Game.Instance;
-            DeckManager deckManager = DeckManager.Instance;
-            if (game == null || deckManager == null || game.player == null) return false;
-            if (character.GetOwner() != game.player || !deckManager.HasDeckFor(game.player) || deckManager.GetHand(game.player).Count >= deckManager.GetHandSize()) return false;
+            List<ProducesEnum> sampled = ResourceOptions.OrderBy(_ => UnityEngine.Random.value).Take(3).ToList();
+            ProducesEnum chosen = sampled.OrderBy(r => owner.GetResourceAmount(r)).First();
 
-            List<CardData> topCards = deckManager.GetDrawPile(game.player).Take(3).Where(card => card != null).ToList();
-            if (topCards.Count == 0) return false;
-
-            CardData chosen = topCards[UnityEngine.Random.Range(0, topCards.Count)];
-            if (chosen == null) return false;
-            if (!deckManager.TryAddCardToHand(game.player, chosen)) return false;
-
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Counsel of the Wise draws {chosen.name} from the top of the deck.", Color.white);
+            owner.AddResource(chosen, ResourceAmount);
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"Counsel of the Wise foresees scarcity: +{ResourceAmount} {chosen}.", Color.white);
             return true;
         };
 
         condition = (character) =>
         {
             if (originalCondition != null && !originalCondition(character)) return false;
-            Game game = Game.Instance;
-            DeckManager deckManager = DeckManager.Instance;
-            return character != null && game != null && deckManager != null && game.player != null
-                && character.GetOwner() == game.player
-                && deckManager.HasDeckFor(game.player)
-                && deckManager.GetHand(game.player).Count < deckManager.GetHandSize()
-                && deckManager.GetDrawPile(game.player).Take(3).Any(card => card != null);
+            return character?.GetOwner() != null;
         };
 
         asyncEffect = async (character) =>

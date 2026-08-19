@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEditor;
@@ -9,8 +10,10 @@ using UnityEngine.UI;
 public static class StartupLoadingScreenPrefabGenerator
 {
     private const string SourcePrefabPath = "Assets/GameObjects/LeaderSelection.prefab";
+    private const string CardPrefabPath = "Assets/GameObjects/Reusable/Card.prefab";
     private const string PrefabPath = "Assets/GameObjects/StartupLoadingScreen.prefab";
     private const string ScenePath = "Assets/Scenes/InGame.unity";
+    private const int CardSlotCount = 3;
 
     [InitializeOnLoadMethod]
     private static void GenerateOnce()
@@ -28,6 +31,26 @@ public static class StartupLoadingScreenPrefabGenerator
 
     [MenuItem("Tools/RetroLOTR/Rebuild Startup Loading Screen Prefab")]
     public static void Generate()
+    {
+        // Destroying the previous StartupLoadingScreen instance below while it (or its
+        // components) is selected in the Inspector makes the Inspector redraw against
+        // half-destroyed objects, throwing MissingReferenceException. Clear the selection
+        // for the duration to avoid it.
+        Object previousSelection = Selection.activeObject;
+        Selection.activeObject = null;
+        try
+        {
+            GenerateInternal();
+        }
+        finally
+        {
+            // previousSelection may itself have been the object destroyed inside GenerateInternal —
+            // Unity's overloaded null-check catches that case, so only restore if it's still alive.
+            if (previousSelection != null) Selection.activeObject = previousSelection;
+        }
+    }
+
+    private static void GenerateInternal()
     {
         GameObject source = AssetDatabase.LoadAssetAtPath<GameObject>(SourcePrefabPath);
         Slider sourceSlider = source != null ? source.GetComponentInChildren<Slider>(true) : null;
@@ -61,19 +84,43 @@ public static class StartupLoadingScreenPrefabGenerator
         veilRect.offsetMax = Vector2.zero;
         veil.GetComponent<Image>().color = new Color(0.015f, 0.02f, 0.035f, 0.96f);
 
-        GameObject cardArt = new("Card Art", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-        cardArt.layer = 5;
-        cardArt.transform.SetParent(root.transform, false);
-        RectTransform cardArtRect = cardArt.GetComponent<RectTransform>();
-        cardArtRect.localScale = Vector3.one;
-        cardArtRect.anchorMin = new Vector2(0.5f, 0.5f);
-        cardArtRect.anchorMax = new Vector2(0.5f, 0.5f);
-        cardArtRect.anchoredPosition = new Vector2(0f, 260f);
-        cardArtRect.sizeDelta = new Vector2(260f, 360f);
-        Image cardArtImage = cardArt.GetComponent<Image>();
-        cardArtImage.preserveAspect = true;
-        cardArtImage.raycastTarget = false;
-        cardArtImage.enabled = false; // RotateCardArt enables it once the first sprite loads
+        GameObject cardPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(CardPrefabPath);
+        if (cardPrefab == null)
+            throw new System.InvalidOperationException($"{CardPrefabPath} was not found.");
+
+        GameObject cardsRow = new("Cards", typeof(RectTransform), typeof(HorizontalLayoutGroup), typeof(Canvas));
+        cardsRow.layer = 5;
+        cardsRow.transform.SetParent(root.transform, false);
+        RectTransform cardsRowRect = cardsRow.GetComponent<RectTransform>();
+        cardsRowRect.localScale = Vector3.one;
+        cardsRowRect.anchorMin = new Vector2(0.5f, 0.5f);
+        cardsRowRect.anchorMax = new Vector2(0.5f, 0.5f);
+        cardsRowRect.anchoredPosition = new Vector2(0f, 260f);
+        cardsRowRect.sizeDelta = new Vector2(1200f, 400f);
+        HorizontalLayoutGroup cardsLayout = cardsRow.GetComponent<HorizontalLayoutGroup>();
+        cardsLayout.childAlignment = TextAnchor.MiddleCenter;
+        cardsLayout.childControlWidth = false;
+        cardsLayout.childControlHeight = false;
+        cardsLayout.childScaleWidth = false;
+        cardsLayout.childScaleHeight = false;
+        Canvas cardsRowCanvas = cardsRow.GetComponent<Canvas>();
+        cardsRowCanvas.overrideSorting = true;
+        cardsRowCanvas.sortingOrder = short.MaxValue;
+
+        List<CardDataProvider> cardProviders = new();
+        for (int i = 0; i < CardSlotCount; i++)
+        {
+            GameObject cardInstance = (GameObject)PrefabUtility.InstantiatePrefab(cardPrefab, cardsRow.transform);
+            cardInstance.name = $"Card {i + 1}";
+            CardDataProvider provider = cardInstance.AddComponent<CardDataProvider>();
+            provider.cardName = "Gandalf";
+            provider.startAsToken = false;
+            provider.suppressHoverEffects = true;
+            provider.showRequirementWarnings = false;
+            provider.showCloseIcon = false;
+            cardInstance.AddComponent<CardShineEffect>();
+            cardProviders.Add(provider);
+        }
 
         GameObject widget = Object.Instantiate(sourceSlider.transform.parent.gameObject, root.transform, false);
         widget.name = "Progress Widget";
@@ -97,11 +144,37 @@ public static class StartupLoadingScreenPrefabGenerator
         if (status != null) status.text = "> Preparing the Runeboard <";
         foreach (TextMeshProUGUI label in labels) label.raycastTarget = false;
 
+        TextMeshProUGUI templateLabel = status != null ? status : title;
+        GameObject pressAnyKey = templateLabel != null
+            ? Object.Instantiate(templateLabel.gameObject, root.transform, false)
+            : new GameObject("PressAnyKey", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
+        pressAnyKey.name = "PressAnyKey";
+        pressAnyKey.transform.SetParent(root.transform, false);
+        RectTransform pressAnyKeyRect = pressAnyKey.GetComponent<RectTransform>();
+        pressAnyKeyRect.localScale = Vector3.one;
+        pressAnyKeyRect.anchorMin = new Vector2(1f, 0f);
+        pressAnyKeyRect.anchorMax = new Vector2(1f, 0f);
+        pressAnyKeyRect.pivot = new Vector2(1f, 0f);
+        pressAnyKeyRect.anchoredPosition = new Vector2(-34.21338f, 0f);
+        pressAnyKeyRect.sizeDelta = new Vector2(928.5166f, 50f);
+        TextMeshProUGUI pressAnyKeyLabel = pressAnyKey.GetComponent<TextMeshProUGUI>();
+        pressAnyKeyLabel.text = "Click any key to continue";
+        pressAnyKeyLabel.alignment = TextAlignmentOptions.BottomRight;
+        pressAnyKeyLabel.raycastTarget = false;
+        pressAnyKey.SetActive(false); // StartupLoadingScreen reveals this once assets are ready
+
         SerializedObject controller = new(root.GetComponent<StartupLoadingScreen>());
         controller.FindProperty("canvasGroup").objectReferenceValue = root.GetComponent<CanvasGroup>();
         controller.FindProperty("progressBar").objectReferenceValue = slider;
         controller.FindProperty("statusText").objectReferenceValue = status != null ? status : title;
-        controller.FindProperty("cardImage").objectReferenceValue = cardArtImage;
+        SerializedProperty cardProvidersProp = controller.FindProperty("cardProviders");
+        cardProvidersProp.ClearArray();
+        for (int i = 0; i < cardProviders.Count; i++)
+        {
+            cardProvidersProp.InsertArrayElementAtIndex(i);
+            cardProvidersProp.GetArrayElementAtIndex(i).objectReferenceValue = cardProviders[i];
+        }
+        controller.FindProperty("continuePromptText").objectReferenceValue = pressAnyKeyLabel;
         controller.ApplyModifiedPropertiesWithoutUndo();
         root.GetComponent<RectTransform>().localScale = Vector3.one;
 
@@ -121,6 +194,60 @@ public static class StartupLoadingScreenPrefabGenerator
         EditorSceneManager.SaveScene(scene);
         AssetDatabase.SaveAssets();
         Debug.Log($"Created {PrefabPath} from the existing LeaderSelection Progress widget and added it to {ScenePath}.");
+    }
+
+    // Non-destructive: wires whatever "Cards" (CardDataProvider slots) and "PressAnyKey" text
+    // already exist under the prefab root into the StartupLoadingScreen component, without
+    // touching the rest of the hierarchy. Use this after hand-editing the prefab in the Editor,
+    // instead of Generate() (which rebuilds — and would discard — that hand-editing).
+    [MenuItem("Tools/RetroLOTR/Wire Startup Loading Screen Cards")]
+    public static void WireExistingCards()
+    {
+        // Selecting the same prefab asset in the Inspector while LoadPrefabContents/
+        // UnloadPrefabContents runs makes the Inspector redraw against objects mid-swap,
+        // throwing MissingReferenceException. Clear the selection for the duration to avoid it.
+        Object previousSelection = Selection.activeObject;
+        Selection.activeObject = null;
+
+        GameObject root = PrefabUtility.LoadPrefabContents(PrefabPath);
+        try
+        {
+            StartupLoadingScreen screen = root.GetComponent<StartupLoadingScreen>();
+            if (screen == null)
+                throw new System.InvalidOperationException($"{PrefabPath} has no StartupLoadingScreen component.");
+
+            Transform cardsParent = root.transform.Find("Cards");
+            if (cardsParent == null)
+                throw new System.InvalidOperationException("Could not find a 'Cards' child under the prefab root.");
+            CardDataProvider[] providers = cardsParent.GetComponentsInChildren<CardDataProvider>(true);
+            if (providers.Length == 0)
+                throw new System.InvalidOperationException("'Cards' has no CardDataProvider components under it.");
+
+            Transform pressAnyKey = root.transform.Find("PressAnyKey");
+            TextMeshProUGUI continuePrompt = pressAnyKey != null ? pressAnyKey.GetComponent<TextMeshProUGUI>() : null;
+
+            SerializedObject controller = new(screen);
+            SerializedProperty cardProvidersProp = controller.FindProperty("cardProviders");
+            cardProvidersProp.ClearArray();
+            for (int i = 0; i < providers.Length; i++)
+            {
+                cardProvidersProp.InsertArrayElementAtIndex(i);
+                cardProvidersProp.GetArrayElementAtIndex(i).objectReferenceValue = providers[i];
+            }
+            if (continuePrompt != null)
+            {
+                controller.FindProperty("continuePromptText").objectReferenceValue = continuePrompt;
+            }
+            controller.ApplyModifiedPropertiesWithoutUndo();
+
+            PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
+            Debug.Log($"Wired {providers.Length} card slot(s){(continuePrompt != null ? " and the PressAnyKey prompt" : " (no PressAnyKey text found)")} into {PrefabPath}.");
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(root);
+            if (previousSelection != null) Selection.activeObject = previousSelection;
+        }
     }
 
     private static T FindInScene<T>(Scene scene) where T : Component

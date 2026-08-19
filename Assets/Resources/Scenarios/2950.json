@@ -1,5 +1,5 @@
 {
-    "version": 12,
+    "version": 14,
     "scenarioName": "2950",
     "description": "Middle-earth enjoyed an uneasy peace while Sauron secretly rebuilt his strength in Mordor. Though few recognized the danger, the stage was being set for the War of the Ring",
     "displayTitle": "The untold war of the Ring, circa 2950",
@@ -47677,6 +47677,2456 @@
             "row": 25,
             "col": 30,
             "objectName": "Ring of Orthanc"
+        }
+    ],
+    "zoneOfControl": [
+        {
+            "row": 15,
+            "col": 31,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 15,
+            "col": 30,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 14,
+            "col": 31,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 14,
+            "col": 30,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 14,
+            "col": 29,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 14,
+            "col": 28,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 15,
+            "col": 28,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 16,
+            "col": 28,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 15,
+            "col": 27,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 16,
+            "col": 27,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 17,
+            "col": 26,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 15,
+            "col": 29,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 16,
+            "col": 29,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 25,
+            "col": 36,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 25,
+            "col": 37,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 25,
+            "col": 37,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 24,
+            "col": 37,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 24,
+            "col": 36,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 26,
+            "col": 36,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 26,
+            "col": 37,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 25,
+            "col": 35,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 13,
+            "col": 7,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 12,
+            "col": 8,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 12,
+            "col": 7,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 13,
+            "col": 6,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 14,
+            "col": 7,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 14,
+            "col": 8,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 13,
+            "col": 8,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 16,
+            "col": 11,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 16,
+            "col": 10,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 16,
+            "col": 9,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 17,
+            "col": 9,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 17,
+            "col": 10,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 15,
+            "col": 10,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 15,
+            "col": 9,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 14,
+            "col": 9,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 15,
+            "col": 8,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 14,
+            "col": 20,
+            "leaderName": "Gandalf",
+            "variantId": "stormcrow"
+        },
+        {
+            "row": 14,
+            "col": 19,
+            "leaderName": "Gandalf",
+            "variantId": "stormcrow"
+        },
+        {
+            "row": 15,
+            "col": 19,
+            "leaderName": "Gandalf",
+            "variantId": "stormcrow"
+        },
+        {
+            "row": 15,
+            "col": 18,
+            "leaderName": "Gandalf",
+            "variantId": "stormcrow"
+        },
+        {
+            "row": 16,
+            "col": 19,
+            "leaderName": "Gandalf",
+            "variantId": "stormcrow"
+        },
+        {
+            "row": 16,
+            "col": 20,
+            "leaderName": "Gandalf",
+            "variantId": "stormcrow"
+        },
+        {
+            "row": 15,
+            "col": 20,
+            "leaderName": "Gandalf",
+            "variantId": "stormcrow"
+        },
+        {
+            "row": 12,
+            "col": 39,
+            "leaderName": "Gandalf",
+            "variantId": "stormcrow"
+        },
+        {
+            "row": 13,
+            "col": 38,
+            "leaderName": "Gandalf",
+            "variantId": "stormcrow"
+        },
+        {
+            "row": 13,
+            "col": 39,
+            "leaderName": "Gandalf",
+            "variantId": "stormcrow"
+        },
+        {
+            "row": 12,
+            "col": 38,
+            "leaderName": "Gandalf",
+            "variantId": "stormcrow"
+        },
+        {
+            "row": 11,
+            "col": 38,
+            "leaderName": "Gandalf",
+            "variantId": "stormcrow"
+        },
+        {
+            "row": 11,
+            "col": 39,
+            "leaderName": "Gandalf",
+            "variantId": "stormcrow"
+        },
+        {
+            "row": 12,
+            "col": 40,
+            "leaderName": "Gandalf",
+            "variantId": "stormcrow"
+        },
+        {
+            "row": 36,
+            "col": 32,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 37,
+            "col": 31,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 37,
+            "col": 31,
+            "leaderName": "Saruman",
+            "variantId": "saruman_the_white"
+        },
+        {
+            "row": 37,
+            "col": 30,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 37,
+            "col": 30,
+            "leaderName": "Saruman",
+            "variantId": "saruman_the_white"
+        },
+        {
+            "row": 38,
+            "col": 31,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 38,
+            "col": 32,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 37,
+            "col": 32,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 36,
+            "col": 31,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 36,
+            "col": 31,
+            "leaderName": "Saruman",
+            "variantId": "saruman_the_white"
+        },
+        {
+            "row": 16,
+            "col": 15,
+            "leaderName": "Gandalf",
+            "variantId": "disturber_of_the_peace"
+        },
+        {
+            "row": 16,
+            "col": 14,
+            "leaderName": "Gandalf",
+            "variantId": "disturber_of_the_peace"
+        },
+        {
+            "row": 15,
+            "col": 13,
+            "leaderName": "Gandalf",
+            "variantId": "disturber_of_the_peace"
+        },
+        {
+            "row": 17,
+            "col": 13,
+            "leaderName": "Gandalf",
+            "variantId": "disturber_of_the_peace"
+        },
+        {
+            "row": 17,
+            "col": 13,
+            "leaderName": "Saruman",
+            "variantId": "sharkey"
+        },
+        {
+            "row": 17,
+            "col": 12,
+            "leaderName": "Gandalf",
+            "variantId": "disturber_of_the_peace"
+        },
+        {
+            "row": 17,
+            "col": 12,
+            "leaderName": "Saruman",
+            "variantId": "sharkey"
+        },
+        {
+            "row": 17,
+            "col": 11,
+            "leaderName": "Gandalf",
+            "variantId": "disturber_of_the_peace"
+        },
+        {
+            "row": 16,
+            "col": 13,
+            "leaderName": "Gandalf",
+            "variantId": "disturber_of_the_peace"
+        },
+        {
+            "row": 18,
+            "col": 14,
+            "leaderName": "Gandalf",
+            "variantId": "disturber_of_the_peace"
+        },
+        {
+            "row": 18,
+            "col": 14,
+            "leaderName": "Saruman",
+            "variantId": "sharkey"
+        },
+        {
+            "row": 18,
+            "col": 13,
+            "leaderName": "Gandalf",
+            "variantId": "disturber_of_the_peace"
+        },
+        {
+            "row": 18,
+            "col": 13,
+            "leaderName": "Saruman",
+            "variantId": "sharkey"
+        },
+        {
+            "row": 18,
+            "col": 15,
+            "leaderName": "Gandalf",
+            "variantId": "disturber_of_the_peace"
+        },
+        {
+            "row": 18,
+            "col": 15,
+            "leaderName": "Saruman",
+            "variantId": "sharkey"
+        },
+        {
+            "row": 17,
+            "col": 14,
+            "leaderName": "Gandalf",
+            "variantId": "disturber_of_the_peace"
+        },
+        {
+            "row": 17,
+            "col": 14,
+            "leaderName": "Saruman",
+            "variantId": "sharkey"
+        },
+        {
+            "row": 17,
+            "col": 15,
+            "leaderName": "Gandalf",
+            "variantId": "disturber_of_the_peace"
+        },
+        {
+            "row": 17,
+            "col": 15,
+            "leaderName": "Saruman",
+            "variantId": "sharkey"
+        },
+        {
+            "row": 15,
+            "col": 15,
+            "leaderName": "Gandalf",
+            "variantId": "disturber_of_the_peace"
+        },
+        {
+            "row": 15,
+            "col": 16,
+            "leaderName": "Gandalf",
+            "variantId": "disturber_of_the_peace"
+        },
+        {
+            "row": 16,
+            "col": 16,
+            "leaderName": "Gandalf",
+            "variantId": "disturber_of_the_peace"
+        },
+        {
+            "row": 17,
+            "col": 16,
+            "leaderName": "Gandalf",
+            "variantId": "disturber_of_the_peace"
+        },
+        {
+            "row": 16,
+            "col": 17,
+            "leaderName": "Gandalf",
+            "variantId": "disturber_of_the_peace"
+        },
+        {
+            "row": 17,
+            "col": 17,
+            "leaderName": "Gandalf",
+            "variantId": "disturber_of_the_peace"
+        },
+        {
+            "row": 18,
+            "col": 17,
+            "leaderName": "Gandalf",
+            "variantId": "disturber_of_the_peace"
+        },
+        {
+            "row": 18,
+            "col": 18,
+            "leaderName": "Gandalf",
+            "variantId": "disturber_of_the_peace"
+        },
+        {
+            "row": 19,
+            "col": 17,
+            "leaderName": "Gandalf",
+            "variantId": "disturber_of_the_peace"
+        },
+        {
+            "row": 19,
+            "col": 18,
+            "leaderName": "Gandalf",
+            "variantId": "disturber_of_the_peace"
+        },
+        {
+            "row": 18,
+            "col": 16,
+            "leaderName": "Gandalf",
+            "variantId": "disturber_of_the_peace"
+        },
+        {
+            "row": 17,
+            "col": 19,
+            "leaderName": "Gandalf",
+            "variantId": "disturber_of_the_peace"
+        },
+        {
+            "row": 5,
+            "col": 6,
+            "leaderName": "Gandalf",
+            "variantId": "tharkun"
+        },
+        {
+            "row": 4,
+            "col": 7,
+            "leaderName": "Gandalf",
+            "variantId": "tharkun"
+        },
+        {
+            "row": 5,
+            "col": 5,
+            "leaderName": "Gandalf",
+            "variantId": "tharkun"
+        },
+        {
+            "row": 6,
+            "col": 6,
+            "leaderName": "Gandalf",
+            "variantId": "tharkun"
+        },
+        {
+            "row": 6,
+            "col": 7,
+            "leaderName": "Gandalf",
+            "variantId": "tharkun"
+        },
+        {
+            "row": 5,
+            "col": 7,
+            "leaderName": "Gandalf",
+            "variantId": "tharkun"
+        },
+        {
+            "row": 4,
+            "col": 6,
+            "leaderName": "Gandalf",
+            "variantId": "tharkun"
+        },
+        {
+            "row": 9,
+            "col": 6,
+            "leaderName": "Gandalf",
+            "variantId": "tharkun"
+        },
+        {
+            "row": 9,
+            "col": 5,
+            "leaderName": "Gandalf",
+            "variantId": "tharkun"
+        },
+        {
+            "row": 10,
+            "col": 6,
+            "leaderName": "Gandalf",
+            "variantId": "tharkun"
+        },
+        {
+            "row": 10,
+            "col": 7,
+            "leaderName": "Gandalf",
+            "variantId": "tharkun"
+        },
+        {
+            "row": 9,
+            "col": 7,
+            "leaderName": "Gandalf",
+            "variantId": "tharkun"
+        },
+        {
+            "row": 8,
+            "col": 7,
+            "leaderName": "Gandalf",
+            "variantId": "tharkun"
+        },
+        {
+            "row": 8,
+            "col": 6,
+            "leaderName": "Gandalf",
+            "variantId": "tharkun"
+        },
+        {
+            "row": 18,
+            "col": 8,
+            "leaderName": "Gandalf",
+            "variantId": "tharkun"
+        },
+        {
+            "row": 19,
+            "col": 7,
+            "leaderName": "Gandalf",
+            "variantId": "tharkun"
+        },
+        {
+            "row": 20,
+            "col": 7,
+            "leaderName": "Gandalf",
+            "variantId": "tharkun"
+        },
+        {
+            "row": 20,
+            "col": 8,
+            "leaderName": "Gandalf",
+            "variantId": "tharkun"
+        },
+        {
+            "row": 18,
+            "col": 7,
+            "leaderName": "Gandalf",
+            "variantId": "tharkun"
+        },
+        {
+            "row": 19,
+            "col": 6,
+            "leaderName": "Gandalf",
+            "variantId": "tharkun"
+        },
+        {
+            "row": 19,
+            "col": 8,
+            "leaderName": "Gandalf",
+            "variantId": "tharkun"
+        },
+        {
+            "row": 16,
+            "col": 7,
+            "leaderName": "Gandalf",
+            "variantId": "tharkun"
+        },
+        {
+            "row": 17,
+            "col": 7,
+            "leaderName": "Gandalf",
+            "variantId": "tharkun"
+        },
+        {
+            "row": 17,
+            "col": 6,
+            "leaderName": "Gandalf",
+            "variantId": "tharkun"
+        },
+        {
+            "row": 41,
+            "col": 46,
+            "leaderName": "Sauron",
+            "variantId": "the_dark_eye"
+        },
+        {
+            "row": 44,
+            "col": 42,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 42,
+            "col": 43,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 43,
+            "col": 42,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 43,
+            "col": 42,
+            "leaderName": "Sauron",
+            "variantId": "the_dark_eye"
+        },
+        {
+            "row": 42,
+            "col": 47,
+            "leaderName": "Sauron",
+            "variantId": "the_dark_eye"
+        },
+        {
+            "row": 42,
+            "col": 44,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 44,
+            "col": 43,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 43,
+            "col": 43,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 43,
+            "col": 43,
+            "leaderName": "Sauron",
+            "variantId": "the_dark_eye"
+        },
+        {
+            "row": 44,
+            "col": 44,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 43,
+            "col": 44,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 43,
+            "col": 44,
+            "leaderName": "Sauron",
+            "variantId": "the_dark_eye"
+        },
+        {
+            "row": 44,
+            "col": 45,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 43,
+            "col": 45,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 43,
+            "col": 45,
+            "leaderName": "Sauron",
+            "variantId": "the_dark_eye"
+        },
+        {
+            "row": 42,
+            "col": 45,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 43,
+            "col": 41,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 43,
+            "col": 41,
+            "leaderName": "Sauron",
+            "variantId": "the_dark_eye"
+        },
+        {
+            "row": 42,
+            "col": 42,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 47,
+            "col": 39,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 47,
+            "col": 38,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 46,
+            "col": 39,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 46,
+            "col": 40,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 47,
+            "col": 40,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 48,
+            "col": 40,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 48,
+            "col": 39,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 33,
+            "col": 29,
+            "leaderName": "Saruman",
+            "variantId": ""
+        },
+        {
+            "row": 32,
+            "col": 29,
+            "leaderName": "Saruman",
+            "variantId": ""
+        },
+        {
+            "row": 32,
+            "col": 28,
+            "leaderName": "Saruman",
+            "variantId": ""
+        },
+        {
+            "row": 33,
+            "col": 28,
+            "leaderName": "Saruman",
+            "variantId": ""
+        },
+        {
+            "row": 33,
+            "col": 27,
+            "leaderName": "Saruman",
+            "variantId": ""
+        },
+        {
+            "row": 34,
+            "col": 28,
+            "leaderName": "Saruman",
+            "variantId": ""
+        },
+        {
+            "row": 34,
+            "col": 27,
+            "leaderName": "Saruman",
+            "variantId": ""
+        },
+        {
+            "row": 34,
+            "col": 29,
+            "leaderName": "Saruman",
+            "variantId": ""
+        },
+        {
+            "row": 32,
+            "col": 27,
+            "leaderName": "Saruman",
+            "variantId": ""
+        },
+        {
+            "row": 33,
+            "col": 26,
+            "leaderName": "Saruman",
+            "variantId": ""
+        },
+        {
+            "row": 34,
+            "col": 26,
+            "leaderName": "Saruman",
+            "variantId": ""
+        },
+        {
+            "row": 22,
+            "col": 17,
+            "leaderName": "Saruman",
+            "variantId": "sharkey"
+        },
+        {
+            "row": 22,
+            "col": 16,
+            "leaderName": "Saruman",
+            "variantId": "sharkey"
+        },
+        {
+            "row": 23,
+            "col": 16,
+            "leaderName": "Saruman",
+            "variantId": "sharkey"
+        },
+        {
+            "row": 23,
+            "col": 17,
+            "leaderName": "Saruman",
+            "variantId": "sharkey"
+        },
+        {
+            "row": 21,
+            "col": 17,
+            "leaderName": "Saruman",
+            "variantId": "sharkey"
+        },
+        {
+            "row": 21,
+            "col": 16,
+            "leaderName": "Saruman",
+            "variantId": "sharkey"
+        },
+        {
+            "row": 22,
+            "col": 18,
+            "leaderName": "Saruman",
+            "variantId": "sharkey"
+        },
+        {
+            "row": 24,
+            "col": 21,
+            "leaderName": "Saruman",
+            "variantId": "sharkey"
+        },
+        {
+            "row": 24,
+            "col": 20,
+            "leaderName": "Saruman",
+            "variantId": "sharkey"
+        },
+        {
+            "row": 25,
+            "col": 20,
+            "leaderName": "Saruman",
+            "variantId": "sharkey"
+        },
+        {
+            "row": 25,
+            "col": 21,
+            "leaderName": "Saruman",
+            "variantId": "sharkey"
+        },
+        {
+            "row": 23,
+            "col": 21,
+            "leaderName": "Saruman",
+            "variantId": "sharkey"
+        },
+        {
+            "row": 23,
+            "col": 20,
+            "leaderName": "Saruman",
+            "variantId": "sharkey"
+        },
+        {
+            "row": 24,
+            "col": 22,
+            "leaderName": "Saruman",
+            "variantId": "sharkey"
+        },
+        {
+            "row": 35,
+            "col": 25,
+            "leaderName": "Saruman",
+            "variantId": "saruman_the_white"
+        },
+        {
+            "row": 35,
+            "col": 26,
+            "leaderName": "Saruman",
+            "variantId": "saruman_the_white"
+        },
+        {
+            "row": 36,
+            "col": 27,
+            "leaderName": "Saruman",
+            "variantId": "saruman_the_white"
+        },
+        {
+            "row": 35,
+            "col": 27,
+            "leaderName": "Saruman",
+            "variantId": "saruman_the_white"
+        },
+        {
+            "row": 35,
+            "col": 29,
+            "leaderName": "Saruman",
+            "variantId": "saruman_the_white"
+        },
+        {
+            "row": 36,
+            "col": 29,
+            "leaderName": "Saruman",
+            "variantId": "saruman_the_white"
+        },
+        {
+            "row": 36,
+            "col": 30,
+            "leaderName": "Saruman",
+            "variantId": "saruman_the_white"
+        },
+        {
+            "row": 35,
+            "col": 28,
+            "leaderName": "Saruman",
+            "variantId": "saruman_the_white"
+        },
+        {
+            "row": 36,
+            "col": 26,
+            "leaderName": "Saruman",
+            "variantId": "saruman_the_white"
+        },
+        {
+            "row": 28,
+            "col": 24,
+            "leaderName": "Saruman",
+            "variantId": "the_white_hand"
+        },
+        {
+            "row": 29,
+            "col": 23,
+            "leaderName": "Saruman",
+            "variantId": "the_white_hand"
+        },
+        {
+            "row": 29,
+            "col": 24,
+            "leaderName": "Saruman",
+            "variantId": "the_white_hand"
+        },
+        {
+            "row": 28,
+            "col": 25,
+            "leaderName": "Saruman",
+            "variantId": "the_white_hand"
+        },
+        {
+            "row": 28,
+            "col": 23,
+            "leaderName": "Saruman",
+            "variantId": "the_white_hand"
+        },
+        {
+            "row": 27,
+            "col": 23,
+            "leaderName": "Saruman",
+            "variantId": "the_white_hand"
+        },
+        {
+            "row": 27,
+            "col": 24,
+            "leaderName": "Saruman",
+            "variantId": "the_white_hand"
+        },
+        {
+            "row": 11,
+            "col": 28,
+            "leaderName": "Saruman",
+            "variantId": "of_many_colours"
+        },
+        {
+            "row": 11,
+            "col": 27,
+            "leaderName": "Saruman",
+            "variantId": "of_many_colours"
+        },
+        {
+            "row": 12,
+            "col": 28,
+            "leaderName": "Saruman",
+            "variantId": "of_many_colours"
+        },
+        {
+            "row": 13,
+            "col": 27,
+            "leaderName": "Saruman",
+            "variantId": "of_many_colours"
+        },
+        {
+            "row": 13,
+            "col": 28,
+            "leaderName": "Saruman",
+            "variantId": "of_many_colours"
+        },
+        {
+            "row": 12,
+            "col": 27,
+            "leaderName": "Saruman",
+            "variantId": "of_many_colours"
+        },
+        {
+            "row": 12,
+            "col": 29,
+            "leaderName": "Saruman",
+            "variantId": "of_many_colours"
+        },
+        {
+            "row": 69,
+            "col": 63,
+            "leaderName": "Saruman",
+            "variantId": "of_many_colours"
+        },
+        {
+            "row": 67,
+            "col": 64,
+            "leaderName": "Saruman",
+            "variantId": "of_many_colours"
+        },
+        {
+            "row": 68,
+            "col": 64,
+            "leaderName": "Saruman",
+            "variantId": "of_many_colours"
+        },
+        {
+            "row": 67,
+            "col": 63,
+            "leaderName": "Saruman",
+            "variantId": "of_many_colours"
+        },
+        {
+            "row": 69,
+            "col": 64,
+            "leaderName": "Saruman",
+            "variantId": "of_many_colours"
+        },
+        {
+            "row": 68,
+            "col": 63,
+            "leaderName": "Saruman",
+            "variantId": "of_many_colours"
+        },
+        {
+            "row": 13,
+            "col": 57,
+            "leaderName": "Saruman",
+            "variantId": "of_many_colours"
+        },
+        {
+            "row": 12,
+            "col": 57,
+            "leaderName": "Saruman",
+            "variantId": "of_many_colours"
+        },
+        {
+            "row": 13,
+            "col": 56,
+            "leaderName": "Saruman",
+            "variantId": "of_many_colours"
+        },
+        {
+            "row": 14,
+            "col": 56,
+            "leaderName": "Saruman",
+            "variantId": "of_many_colours"
+        },
+        {
+            "row": 14,
+            "col": 57,
+            "leaderName": "Saruman",
+            "variantId": "of_many_colours"
+        },
+        {
+            "row": 13,
+            "col": 55,
+            "leaderName": "Saruman",
+            "variantId": "of_many_colours"
+        },
+        {
+            "row": 12,
+            "col": 56,
+            "leaderName": "Saruman",
+            "variantId": "of_many_colours"
+        },
+        {
+            "row": 34,
+            "col": 31,
+            "leaderName": "Saruman",
+            "variantId": "the_white_hand"
+        },
+        {
+            "row": 34,
+            "col": 32,
+            "leaderName": "Saruman",
+            "variantId": "the_white_hand"
+        },
+        {
+            "row": 33,
+            "col": 32,
+            "leaderName": "Saruman",
+            "variantId": "the_white_hand"
+        },
+        {
+            "row": 33,
+            "col": 31,
+            "leaderName": "Saruman",
+            "variantId": "the_white_hand"
+        },
+        {
+            "row": 34,
+            "col": 30,
+            "leaderName": "Saruman",
+            "variantId": "the_white_hand"
+        },
+        {
+            "row": 33,
+            "col": 30,
+            "leaderName": "Saruman",
+            "variantId": "the_white_hand"
+        },
+        {
+            "row": 34,
+            "col": 25,
+            "leaderName": "Saruman",
+            "variantId": "the_white_hand"
+        },
+        {
+            "row": 33,
+            "col": 25,
+            "leaderName": "Saruman",
+            "variantId": "the_white_hand"
+        },
+        {
+            "row": 31,
+            "col": 27,
+            "leaderName": "Saruman",
+            "variantId": "the_white_hand"
+        },
+        {
+            "row": 31,
+            "col": 26,
+            "leaderName": "Saruman",
+            "variantId": "the_white_hand"
+        },
+        {
+            "row": 32,
+            "col": 26,
+            "leaderName": "Saruman",
+            "variantId": "the_white_hand"
+        },
+        {
+            "row": 32,
+            "col": 25,
+            "leaderName": "Saruman",
+            "variantId": "the_white_hand"
+        },
+        {
+            "row": 32,
+            "col": 24,
+            "leaderName": "Saruman",
+            "variantId": "the_white_hand"
+        },
+        {
+            "row": 32,
+            "col": 23,
+            "leaderName": "Saruman",
+            "variantId": "the_white_hand"
+        },
+        {
+            "row": 33,
+            "col": 23,
+            "leaderName": "Saruman",
+            "variantId": "the_white_hand"
+        },
+        {
+            "row": 32,
+            "col": 14,
+            "leaderName": "Saruman",
+            "variantId": ""
+        },
+        {
+            "row": 39,
+            "col": 51,
+            "leaderName": "Sauron",
+            "variantId": ""
+        },
+        {
+            "row": 40,
+            "col": 52,
+            "leaderName": "Sauron",
+            "variantId": ""
+        },
+        {
+            "row": 33,
+            "col": 24,
+            "leaderName": "Saruman",
+            "variantId": "the_white_hand"
+        },
+        {
+            "row": 39,
+            "col": 50,
+            "leaderName": "Sauron",
+            "variantId": ""
+        },
+        {
+            "row": 40,
+            "col": 51,
+            "leaderName": "Sauron",
+            "variantId": ""
+        },
+        {
+            "row": 41,
+            "col": 50,
+            "leaderName": "Sauron",
+            "variantId": ""
+        },
+        {
+            "row": 41,
+            "col": 51,
+            "leaderName": "Sauron",
+            "variantId": ""
+        },
+        {
+            "row": 40,
+            "col": 50,
+            "leaderName": "Sauron",
+            "variantId": ""
+        },
+        {
+            "row": 39,
+            "col": 49,
+            "leaderName": "Sauron",
+            "variantId": ""
+        },
+        {
+            "row": 41,
+            "col": 49,
+            "leaderName": "Sauron",
+            "variantId": ""
+        },
+        {
+            "row": 40,
+            "col": 49,
+            "leaderName": "Sauron",
+            "variantId": ""
+        },
+        {
+            "row": 39,
+            "col": 48,
+            "leaderName": "Sauron",
+            "variantId": ""
+        },
+        {
+            "row": 40,
+            "col": 48,
+            "leaderName": "Sauron",
+            "variantId": ""
+        },
+        {
+            "row": 41,
+            "col": 48,
+            "leaderName": "Sauron",
+            "variantId": ""
+        },
+        {
+            "row": 42,
+            "col": 49,
+            "leaderName": "Sauron",
+            "variantId": ""
+        },
+        {
+            "row": 42,
+            "col": 50,
+            "leaderName": "Sauron",
+            "variantId": ""
+        },
+        {
+            "row": 42,
+            "col": 51,
+            "leaderName": "Sauron",
+            "variantId": ""
+        },
+        {
+            "row": 42,
+            "col": 52,
+            "leaderName": "Sauron",
+            "variantId": ""
+        },
+        {
+            "row": 41,
+            "col": 52,
+            "leaderName": "Sauron",
+            "variantId": ""
+        },
+        {
+            "row": 40,
+            "col": 53,
+            "leaderName": "Sauron",
+            "variantId": ""
+        },
+        {
+            "row": 39,
+            "col": 52,
+            "leaderName": "Sauron",
+            "variantId": ""
+        },
+        {
+            "row": 37,
+            "col": 45,
+            "leaderName": "Sauron",
+            "variantId": "the_dark_eye"
+        },
+        {
+            "row": 38,
+            "col": 46,
+            "leaderName": "Sauron",
+            "variantId": "the_dark_eye"
+        },
+        {
+            "row": 38,
+            "col": 47,
+            "leaderName": "Sauron",
+            "variantId": "the_dark_eye"
+        },
+        {
+            "row": 39,
+            "col": 46,
+            "leaderName": "Sauron",
+            "variantId": "the_dark_eye"
+        },
+        {
+            "row": 39,
+            "col": 47,
+            "leaderName": "Sauron",
+            "variantId": "the_dark_eye"
+        },
+        {
+            "row": 40,
+            "col": 47,
+            "leaderName": "Sauron",
+            "variantId": "the_dark_eye"
+        },
+        {
+            "row": 43,
+            "col": 46,
+            "leaderName": "Sauron",
+            "variantId": "the_dark_eye"
+        },
+        {
+            "row": 43,
+            "col": 47,
+            "leaderName": "Sauron",
+            "variantId": "the_dark_eye"
+        },
+        {
+            "row": 42,
+            "col": 48,
+            "leaderName": "Sauron",
+            "variantId": "the_dark_eye"
+        },
+        {
+            "row": 41,
+            "col": 47,
+            "leaderName": "Sauron",
+            "variantId": "the_dark_eye"
+        },
+        {
+            "row": 68,
+            "col": 25,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 68,
+            "col": 24,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 69,
+            "col": 24,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 69,
+            "col": 25,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 68,
+            "col": 26,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 67,
+            "col": 25,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 67,
+            "col": 24,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 60,
+            "col": 31,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 60,
+            "col": 30,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 60,
+            "col": 29,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 61,
+            "col": 29,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 61,
+            "col": 30,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 59,
+            "col": 30,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 59,
+            "col": 29,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 63,
+            "col": 62,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 63,
+            "col": 61,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 64,
+            "col": 62,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 64,
+            "col": 61,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 65,
+            "col": 61,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 65,
+            "col": 62,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 64,
+            "col": 63,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 48,
+            "col": 34,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 48,
+            "col": 33,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 48,
+            "col": 35,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 26,
+            "col": 41,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 25,
+            "col": 41,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 27,
+            "col": 40,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 27,
+            "col": 41,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 26,
+            "col": 42,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 26,
+            "col": 40,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 25,
+            "col": 40,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 22,
+            "col": 33,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 22,
+            "col": 32,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 23,
+            "col": 32,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 23,
+            "col": 31,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 24,
+            "col": 32,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 24,
+            "col": 33,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 23,
+            "col": 33,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 11,
+            "col": 33,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 11,
+            "col": 32,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 12,
+            "col": 32,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 12,
+            "col": 33,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 10,
+            "col": 33,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 10,
+            "col": 32,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 11,
+            "col": 31,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 24,
+            "col": 41,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 25,
+            "col": 39,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 24,
+            "col": 40,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 23,
+            "col": 40,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 22,
+            "col": 40,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 22,
+            "col": 40,
+            "leaderName": "Gandalf",
+            "variantId": "stormcrow"
+        },
+        {
+            "row": 23,
+            "col": 39,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 24,
+            "col": 39,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 25,
+            "col": 38,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 24,
+            "col": 38,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 26,
+            "col": 38,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 26,
+            "col": 39,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 27,
+            "col": 39,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 27,
+            "col": 38,
+            "leaderName": "Sauron",
+            "variantId": "the_necromancer"
+        },
+        {
+            "row": 21,
+            "col": 61,
+            "leaderName": "Sauron",
+            "variantId": "shadow_of_the_east"
+        },
+        {
+            "row": 20,
+            "col": 62,
+            "leaderName": "Sauron",
+            "variantId": "shadow_of_the_east"
+        },
+        {
+            "row": 20,
+            "col": 61,
+            "leaderName": "Sauron",
+            "variantId": "shadow_of_the_east"
+        },
+        {
+            "row": 21,
+            "col": 60,
+            "leaderName": "Sauron",
+            "variantId": "shadow_of_the_east"
+        },
+        {
+            "row": 22,
+            "col": 61,
+            "leaderName": "Sauron",
+            "variantId": "shadow_of_the_east"
+        },
+        {
+            "row": 22,
+            "col": 62,
+            "leaderName": "Sauron",
+            "variantId": "shadow_of_the_east"
+        },
+        {
+            "row": 21,
+            "col": 62,
+            "leaderName": "Sauron",
+            "variantId": "shadow_of_the_east"
+        },
+        {
+            "row": 16,
+            "col": 58,
+            "leaderName": "Sauron",
+            "variantId": "shadow_of_the_east"
+        },
+        {
+            "row": 17,
+            "col": 58,
+            "leaderName": "Sauron",
+            "variantId": "shadow_of_the_east"
+        },
+        {
+            "row": 18,
+            "col": 59,
+            "leaderName": "Sauron",
+            "variantId": "shadow_of_the_east"
+        },
+        {
+            "row": 19,
+            "col": 59,
+            "leaderName": "Sauron",
+            "variantId": "shadow_of_the_east"
+        },
+        {
+            "row": 20,
+            "col": 60,
+            "leaderName": "Sauron",
+            "variantId": "shadow_of_the_east"
+        },
+        {
+            "row": 20,
+            "col": 59,
+            "leaderName": "Sauron",
+            "variantId": "shadow_of_the_east"
+        },
+        {
+            "row": 20,
+            "col": 58,
+            "leaderName": "Sauron",
+            "variantId": "shadow_of_the_east"
+        },
+        {
+            "row": 21,
+            "col": 59,
+            "leaderName": "Sauron",
+            "variantId": "shadow_of_the_east"
+        },
+        {
+            "row": 22,
+            "col": 60,
+            "leaderName": "Sauron",
+            "variantId": "shadow_of_the_east"
+        },
+        {
+            "row": 19,
+            "col": 58,
+            "leaderName": "Sauron",
+            "variantId": "shadow_of_the_east"
+        },
+        {
+            "row": 23,
+            "col": 61,
+            "leaderName": "Sauron",
+            "variantId": "shadow_of_the_east"
+        },
+        {
+            "row": 23,
+            "col": 60,
+            "leaderName": "Sauron",
+            "variantId": "shadow_of_the_east"
+        },
+        {
+            "row": 24,
+            "col": 61,
+            "leaderName": "Sauron",
+            "variantId": "shadow_of_the_east"
+        },
+        {
+            "row": 24,
+            "col": 60,
+            "leaderName": "Sauron",
+            "variantId": "shadow_of_the_east"
+        },
+        {
+            "row": 22,
+            "col": 63,
+            "leaderName": "Sauron",
+            "variantId": "shadow_of_the_east"
+        },
+        {
+            "row": 23,
+            "col": 62,
+            "leaderName": "Sauron",
+            "variantId": "shadow_of_the_east"
+        },
+        {
+            "row": 23,
+            "col": 63,
+            "leaderName": "Sauron",
+            "variantId": "shadow_of_the_east"
+        },
+        {
+            "row": 3,
+            "col": 24,
+            "leaderName": "Sauron",
+            "variantId": "the_iron_crown"
+        },
+        {
+            "row": 3,
+            "col": 23,
+            "leaderName": "Sauron",
+            "variantId": "the_iron_crown"
+        },
+        {
+            "row": 4,
+            "col": 23,
+            "leaderName": "Sauron",
+            "variantId": "the_iron_crown"
+        },
+        {
+            "row": 4,
+            "col": 24,
+            "leaderName": "Sauron",
+            "variantId": "the_iron_crown"
+        },
+        {
+            "row": 2,
+            "col": 24,
+            "leaderName": "Sauron",
+            "variantId": "the_iron_crown"
+        },
+        {
+            "row": 2,
+            "col": 23,
+            "leaderName": "Sauron",
+            "variantId": "the_iron_crown"
+        },
+        {
+            "row": 3,
+            "col": 22,
+            "leaderName": "Sauron",
+            "variantId": "the_iron_crown"
+        },
+        {
+            "row": 7,
+            "col": 26,
+            "leaderName": "Sauron",
+            "variantId": "the_iron_crown"
+        },
+        {
+            "row": 8,
+            "col": 26,
+            "leaderName": "Sauron",
+            "variantId": "the_iron_crown"
+        },
+        {
+            "row": 9,
+            "col": 25,
+            "leaderName": "Sauron",
+            "variantId": "the_iron_crown"
+        },
+        {
+            "row": 9,
+            "col": 26,
+            "leaderName": "Sauron",
+            "variantId": "the_iron_crown"
+        },
+        {
+            "row": 8,
+            "col": 27,
+            "leaderName": "Sauron",
+            "variantId": "the_iron_crown"
+        },
+        {
+            "row": 7,
+            "col": 25,
+            "leaderName": "Sauron",
+            "variantId": "the_iron_crown"
+        },
+        {
+            "row": 8,
+            "col": 25,
+            "leaderName": "Sauron",
+            "variantId": "the_iron_crown"
+        },
+        {
+            "row": 7,
+            "col": 24,
+            "leaderName": "Sauron",
+            "variantId": "the_iron_crown"
+        },
+        {
+            "row": 6,
+            "col": 24,
+            "leaderName": "Sauron",
+            "variantId": "the_iron_crown"
+        },
+        {
+            "row": 5,
+            "col": 24,
+            "leaderName": "Sauron",
+            "variantId": "the_iron_crown"
+        },
+        {
+            "row": 5,
+            "col": 23,
+            "leaderName": "Sauron",
+            "variantId": "the_iron_crown"
+        },
+        {
+            "row": 6,
+            "col": 23,
+            "leaderName": "Sauron",
+            "variantId": "the_iron_crown"
+        },
+        {
+            "row": 6,
+            "col": 25,
+            "leaderName": "Sauron",
+            "variantId": "the_iron_crown"
+        },
+        {
+            "row": 5,
+            "col": 25,
+            "leaderName": "Sauron",
+            "variantId": "the_iron_crown"
+        },
+        {
+            "row": 8,
+            "col": 24,
+            "leaderName": "Sauron",
+            "variantId": "the_iron_crown"
+        },
+        {
+            "row": 5,
+            "col": 22,
+            "leaderName": "Sauron",
+            "variantId": "the_iron_crown"
+        },
+        {
+            "row": 10,
+            "col": 27,
+            "leaderName": "Sauron",
+            "variantId": "the_iron_crown"
+        },
+        {
+            "row": 10,
+            "col": 26,
+            "leaderName": "Sauron",
+            "variantId": "the_iron_crown"
+        },
+        {
+            "row": 16,
+            "col": 31,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf"
+        },
+        {
+            "row": 7,
+            "col": 6,
+            "leaderName": "Gandalf",
+            "variantId": "tharkun"
+        },
+        {
+            "row": 6,
+            "col": 5,
+            "leaderName": "Gandalf",
+            "variantId": "disturber_of_the_peace"
+        },
+        {
+            "row": 7,
+            "col": 5,
+            "leaderName": "Gandalf",
+            "variantId": "tharkun"
+        },
+        {
+            "row": 7,
+            "col": 4,
+            "leaderName": "Gandalf",
+            "variantId": "disturber_of_the_peace"
+        },
+        {
+            "row": 8,
+            "col": 5,
+            "leaderName": "Gandalf",
+            "variantId": "disturber_of_the_peace"
+        },
+        {
+            "row": 21,
+            "col": 39,
+            "leaderName": "Gandalf",
+            "variantId": "stormcrow"
+        },
+        {
+            "row": 21,
+            "col": 40,
+            "leaderName": "Gandalf",
+            "variantId": "stormcrow"
+        },
+        {
+            "row": 22,
+            "col": 39,
+            "leaderName": "Gandalf",
+            "variantId": "stormcrow"
+        },
+        {
+            "row": 20,
+            "col": 41,
+            "leaderName": "Gandalf",
+            "variantId": "stormcrow"
+        },
+        {
+            "row": 19,
+            "col": 41,
+            "leaderName": "Gandalf",
+            "variantId": "stormcrow"
+        },
+        {
+            "row": 19,
+            "col": 40,
+            "leaderName": "Gandalf",
+            "variantId": "stormcrow"
+        },
+        {
+            "row": 20,
+            "col": 40,
+            "leaderName": "Gandalf",
+            "variantId": "stormcrow"
+        },
+        {
+            "row": 19,
+            "col": 39,
+            "leaderName": "Gandalf",
+            "variantId": "stormcrow"
+        },
+        {
+            "row": 23,
+            "col": 38,
+            "leaderName": "Gandalf",
+            "variantId": "stormcrow"
+        },
+        {
+            "row": 22,
+            "col": 38,
+            "leaderName": "Gandalf",
+            "variantId": "stormcrow"
+        },
+        {
+            "row": 21,
+            "col": 38,
+            "leaderName": "Gandalf",
+            "variantId": "stormcrow"
+        },
+        {
+            "row": 20,
+            "col": 39,
+            "leaderName": "Gandalf",
+            "variantId": "stormcrow"
+        },
+        {
+            "row": 45,
+            "col": 41,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 46,
+            "col": 41,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 45,
+            "col": 42,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 46,
+            "col": 43,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 46,
+            "col": 42,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 47,
+            "col": 41,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 45,
+            "col": 43,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 44,
+            "col": 41,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 45,
+            "col": 40,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 40,
+            "col": 42,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 41,
+            "col": 42,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 48,
+            "col": 12,
+            "leaderName": "Gandalf",
+            "variantId": "gandalf_the_white"
+        },
+        {
+            "row": 61,
+            "col": 28,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 62,
+            "col": 29,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 62,
+            "col": 30,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 62,
+            "col": 28,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 63,
+            "col": 28,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 63,
+            "col": 27,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 64,
+            "col": 28,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 64,
+            "col": 27,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 65,
+            "col": 26,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 66,
+            "col": 26,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 67,
+            "col": 26,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 66,
+            "col": 27,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 66,
+            "col": 28,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 65,
+            "col": 28,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 64,
+            "col": 29,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 63,
+            "col": 29,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 65,
+            "col": 25,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 66,
+            "col": 25,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
+        },
+        {
+            "row": 65,
+            "col": 27,
+            "leaderName": "Sauron",
+            "variantId": "the_deceiver"
         }
     ]
 }
