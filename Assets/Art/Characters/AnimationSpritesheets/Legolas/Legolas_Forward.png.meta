@@ -1,0 +1,5122 @@
+fileFormatVersion: 2
+guid: ed0018a216a894f4da17fcdcb19dda67
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 5095911580535017796
+    second: Legolas_Forward_0
+  - first:
+      213: 6542681897396811494
+    second: Legolas_Forward_1
+  - first:
+      213: 2592015958153983932
+    second: Legolas_Forward_2
+  - first:
+      213: -1609286562672705353
+    second: Legolas_Forward_3
+  - first:
+      213: -524261208656799505
+    second: Legolas_Forward_4
+  - first:
+      213: -3141778442525212093
+    second: Legolas_Forward_5
+  - first:
+      213: 764669125227699315
+    second: Legolas_Forward_6
+  - first:
+      213: 2651551518164934118
+    second: Legolas_Forward_7
+  - first:
+      213: 7881559577390277111
+    second: Legolas_Forward_8
+  - first:
+      213: -5794147909845422540
+    second: Legolas_Forward_9
+  - first:
+      213: -5346098244558313745
+    second: Legolas_Forward_10
+  - first:
+      213: 3361999962793539781
+    second: Legolas_Forward_11
+  - first:
+      213: 4040854244350504134
+    second: Legolas_Forward_12
+  - first:
+      213: 2848393698346442552
+    second: Legolas_Forward_13
+  - first:
+      213: -3905667541821531587
+    second: Legolas_Forward_14
+  - first:
+      213: -8647128402467344653
+    second: Legolas_Forward_15
+  - first:
+      213: 5431423760448503025
+    second: Legolas_Forward_16
+  - first:
+      213: -8079138922900137622
+    second: Legolas_Forward_17
+  - first:
+      213: -6980035470433064863
+    second: Legolas_Forward_18
+  - first:
+      213: -3270332127705022202
+    second: Legolas_Forward_19
+  - first:
+      213: 3446534267368301180
+    second: Legolas_Forward_20
+  - first:
+      213: 3043018012587519415
+    second: Legolas_Forward_21
+  - first:
+      213: 2600349564014261901
+    second: Legolas_Forward_22
+  - first:
+      213: -2394948063449739203
+    second: Legolas_Forward_23
+  - first:
+      213: -7592315297632003139
+    second: Legolas_Forward_24
+  - first:
+      213: 401566773623587528
+    second: Legolas_Forward_25
+  - first:
+      213: 3720359485621083840
+    second: Legolas_Forward_26
+  - first:
+      213: -2058103129913791863
+    second: Legolas_Forward_27
+  - first:
+      213: 6269781961422698197
+    second: Legolas_Forward_28
+  - first:
+      213: -1303224167768992164
+    second: Legolas_Forward_29
+  - first:
+      213: 9029596823755198633
+    second: Legolas_Forward_30
+  - first:
+      213: -5646748248794411638
+    second: Legolas_Forward_31
+  - first:
+      213: -2473204785064286403
+    second: Legolas_Forward_32
+  - first:
+      213: -8741010525021178705
+    second: Legolas_Forward_33
+  - first:
+      213: -6207362784308121118
+    second: Legolas_Forward_34
+  - first:
+      213: -3267367009867526742
+    second: Legolas_Forward_35
+  - first:
+      213: 3727612227978041577
+    second: Legolas_Forward_36
+  - first:
+      213: -6983452557053096647
+    second: Legolas_Forward_37
+  - first:
+      213: -4932186451857312170
+    second: Legolas_Forward_38
+  - first:
+      213: 920919367150412001
+    second: Legolas_Forward_39
+  - first:
+      213: 7259098859906903775
+    second: Legolas_Forward_40
+  - first:
+      213: 552726662515540804
+    second: Legolas_Forward_41
+  - first:
+      213: 7693414309399926757
+    second: Legolas_Forward_42
+  - first:
+      213: -1869385586711483238
+    second: Legolas_Forward_43
+  - first:
+      213: -8222673824772763465
+    second: Legolas_Forward_44
+  - first:
+      213: 1300123374401386994
+    second: Legolas_Forward_45
+  - first:
+      213: -8574441019399720960
+    second: Legolas_Forward_46
+  - first:
+      213: 726043287478237411
+    second: Legolas_Forward_47
+  - first:
+      213: 7023097122874835958
+    second: Legolas_Forward_48
+  - first:
+      213: 109525310201734763
+    second: Legolas_Forward_49
+  - first:
+      213: 4064626949383237613
+    second: Legolas_Forward_50
+  - first:
+      213: -7169919073654457443
+    second: Legolas_Forward_51
+  - first:
+      213: 7404080011020941050
+    second: Legolas_Forward_52
+  - first:
+      213: -2170120740788168338
+    second: Legolas_Forward_53
+  - first:
+      213: 7198842130786993859
+    second: Legolas_Forward_54
+  - first:
+      213: -4607491823584731086
+    second: Legolas_Forward_55
+  - first:
+      213: 1480722158119627739
+    second: Legolas_Forward_56
+  - first:
+      213: -109289114032796309
+    second: Legolas_Forward_57
+  - first:
+      213: -2586973101389804778
+    second: Legolas_Forward_58
+  - first:
+      213: 2072426701394850144
+    second: Legolas_Forward_59
+  - first:
+      213: -6807204598121616800
+    second: Legolas_Forward_60
+  - first:
+      213: 3303110995673068140
+    second: Legolas_Forward_61
+  - first:
+      213: 996651023566800647
+    second: Legolas_Forward_62
+  - first:
+      213: 8106178165277812267
+    second: Legolas_Forward_63
+  - first:
+      213: -5308512185770396768
+    second: Legolas_Forward_64
+  - first:
+      213: -1475224597077532301
+    second: Legolas_Forward_65
+  - first:
+      213: -6603948397587532615
+    second: Legolas_Forward_66
+  - first:
+      213: -568123175562868544
+    second: Legolas_Forward_67
+  - first:
+      213: -318718831585064549
+    second: Legolas_Forward_68
+  - first:
+      213: 5389184703448412870
+    second: Legolas_Forward_69
+  - first:
+      213: 5037740325011930788
+    second: Legolas_Forward_70
+  - first:
+      213: -2560773669700084766
+    second: Legolas_Forward_71
+  - first:
+      213: -3173576612269624279
+    second: Legolas_Forward_72
+  - first:
+      213: -1109182211616091613
+    second: Legolas_Forward_73
+  - first:
+      213: -196552604569227702
+    second: Legolas_Forward_74
+  - first:
+      213: 2930296754857234799
+    second: Legolas_Forward_75
+  - first:
+      213: 2564607665157570676
+    second: Legolas_Forward_76
+  - first:
+      213: -4737175830505665027
+    second: Legolas_Forward_77
+  - first:
+      213: 6942022824938754348
+    second: Legolas_Forward_78
+  - first:
+      213: 8505791875615792035
+    second: Legolas_Forward_79
+  - first:
+      213: -580452988933093410
+    second: Legolas_Forward_80
+  - first:
+      213: -290908909610852054
+    second: Legolas_Forward_81
+  - first:
+      213: 7973825258876218376
+    second: Legolas_Forward_82
+  - first:
+      213: -5862001813846941405
+    second: Legolas_Forward_83
+  - first:
+      213: 18166840604169114
+    second: Legolas_Forward_84
+  - first:
+      213: -3293349114374408633
+    second: Legolas_Forward_85
+  - first:
+      213: 2904169527915547869
+    second: Legolas_Forward_86
+  - first:
+      213: -2598216183788505626
+    second: Legolas_Forward_87
+  - first:
+      213: 3747336215496228512
+    second: Legolas_Forward_88
+  - first:
+      213: 5335603204053966266
+    second: Legolas_Forward_89
+  - first:
+      213: 3029474060384045639
+    second: Legolas_Forward_90
+  - first:
+      213: 1035412327231882894
+    second: Legolas_Forward_91
+  - first:
+      213: 8795094727774267095
+    second: Legolas_Forward_92
+  - first:
+      213: 5469582226933875958
+    second: Legolas_Forward_93
+  - first:
+      213: -5127834130698677912
+    second: Legolas_Forward_94
+  - first:
+      213: -6528857439745318914
+    second: Legolas_Forward_95
+  - first:
+      213: 6583482793401494011
+    second: Legolas_Forward_96
+  - first:
+      213: 4148685327953424495
+    second: Legolas_Forward_97
+  - first:
+      213: 4892091556923386211
+    second: Legolas_Forward_98
+  - first:
+      213: -1009910113610734359
+    second: Legolas_Forward_99
+  - first:
+      213: 3640538525903158387
+    second: Legolas_Forward_100
+  - first:
+      213: 983643820216185629
+    second: Legolas_Forward_101
+  - first:
+      213: -3650184039986694978
+    second: Legolas_Forward_102
+  - first:
+      213: 3862658742590648336
+    second: Legolas_Forward_103
+  - first:
+      213: 6498426508801555000
+    second: Legolas_Forward_104
+  - first:
+      213: 8168274899648091855
+    second: Legolas_Forward_105
+  - first:
+      213: -5732009633964218853
+    second: Legolas_Forward_106
+  - first:
+      213: -3230042821958377126
+    second: Legolas_Forward_107
+  - first:
+      213: -2566069912939268353
+    second: Legolas_Forward_108
+  - first:
+      213: -5785940713701759399
+    second: Legolas_Forward_109
+  - first:
+      213: -8240964476405347176
+    second: Legolas_Forward_110
+  - first:
+      213: 4978765845905454833
+    second: Legolas_Forward_111
+  - first:
+      213: -6513007188726666195
+    second: Legolas_Forward_112
+  - first:
+      213: 8930434130782489801
+    second: Legolas_Forward_113
+  - first:
+      213: 4361912254926154025
+    second: Legolas_Forward_114
+  - first:
+      213: 6259140442476543867
+    second: Legolas_Forward_115
+  - first:
+      213: -8460996790220337207
+    second: Legolas_Forward_116
+  - first:
+      213: -6867447959516649951
+    second: Legolas_Forward_117
+  - first:
+      213: -8975048102705870323
+    second: Legolas_Forward_118
+  - first:
+      213: -7902916732103453907
+    second: Legolas_Forward_119
+  - first:
+      213: -9212391844858331265
+    second: Legolas_Forward_120
+  - first:
+      213: -5936002343562711646
+    second: Legolas_Forward_121
+  - first:
+      213: 6979551710374226268
+    second: Legolas_Forward_122
+  - first:
+      213: 2271461414993356505
+    second: Legolas_Forward_123
+  - first:
+      213: 5228805126694491181
+    second: Legolas_Forward_124
+  - first:
+      213: 3414479079522581959
+    second: Legolas_Forward_125
+  - first:
+      213: -4250199723893394282
+    second: Legolas_Forward_126
+  - first:
+      213: 3752276796912446046
+    second: Legolas_Forward_127
+  - first:
+      213: 3640910506250089814
+    second: Legolas_Forward_128
+  - first:
+      213: 7402823898513698545
+    second: Legolas_Forward_129
+  - first:
+      213: -133543563218183425
+    second: Legolas_Forward_130
+  - first:
+      213: -3348435439671886562
+    second: Legolas_Forward_131
+  - first:
+      213: 7240005712478399010
+    second: Legolas_Forward_132
+  - first:
+      213: -4965154858298582074
+    second: Legolas_Forward_133
+  - first:
+      213: 1955015842992610359
+    second: Legolas_Forward_134
+  - first:
+      213: 6901763488908323319
+    second: Legolas_Forward_135
+  - first:
+      213: 7436735158771534325
+    second: Legolas_Forward_136
+  - first:
+      213: -970470371283452910
+    second: Legolas_Forward_137
+  - first:
+      213: -3125585798467651085
+    second: Legolas_Forward_138
+  - first:
+      213: 1932245511823222601
+    second: Legolas_Forward_139
+  - first:
+      213: 4763739434599440035
+    second: Legolas_Forward_140
+  - first:
+      213: -1939479122451980439
+    second: Legolas_Forward_141
+  - first:
+      213: 1074408408153821181
+    second: Legolas_Forward_142
+  - first:
+      213: 1323588108487959378
+    second: Legolas_Forward_143
+  - first:
+      213: 6874510489277517577
+    second: Legolas_Forward_144
+  - first:
+      213: 3131360308593351070
+    second: Legolas_Forward_145
+  - first:
+      213: -8982163113070436128
+    second: Legolas_Forward_146
+  - first:
+      213: 1183002442955387390
+    second: Legolas_Forward_147
+  - first:
+      213: 2246224016451873658
+    second: Legolas_Forward_148
+  - first:
+      213: 314166456690870877
+    second: Legolas_Forward_149
+  - first:
+      213: -2889839416805032447
+    second: Legolas_Forward_150
+  - first:
+      213: -8990235627807979277
+    second: Legolas_Forward_151
+  - first:
+      213: -485172268841421267
+    second: Legolas_Forward_152
+  - first:
+      213: 1690903922495756642
+    second: Legolas_Forward_153
+  - first:
+      213: -6968718102162037490
+    second: Legolas_Forward_154
+  - first:
+      213: -3351175931954765474
+    second: Legolas_Forward_155
+  - first:
+      213: -2606376871565680572
+    second: Legolas_Forward_156
+  - first:
+      213: -8487853379695961618
+    second: Legolas_Forward_157
+  - first:
+      213: 1766812566429869274
+    second: Legolas_Forward_158
+  - first:
+      213: 8610578832050361889
+    second: Legolas_Forward_159
+  - first:
+      213: -4674138048013040656
+    second: Legolas_Forward_160
+  - first:
+      213: -3611348256992353551
+    second: Legolas_Forward_161
+  - first:
+      213: 6998763130682991578
+    second: Legolas_Forward_162
+  - first:
+      213: 5074950081674613855
+    second: Legolas_Forward_163
+  - first:
+      213: 7247128926156232862
+    second: Legolas_Forward_164
+  - first:
+      213: -9183740892054326490
+    second: Legolas_Forward_165
+  - first:
+      213: 5742384349263986573
+    second: Legolas_Forward_166
+  - first:
+      213: -2772192476735569351
+    second: Legolas_Forward_167
+  - first:
+      213: -3769135356519401820
+    second: Legolas_Forward_168
+  - first:
+      213: 6031406002053154179
+    second: Legolas_Forward_169
+  - first:
+      213: 6742611240094875964
+    second: Legolas_Forward_170
+  - first:
+      213: -3728036814175063725
+    second: Legolas_Forward_171
+  - first:
+      213: 5227151513581365822
+    second: Legolas_Forward_172
+  - first:
+      213: -1805359489750455774
+    second: Legolas_Forward_173
+  - first:
+      213: -6590592053047315908
+    second: Legolas_Forward_174
+  - first:
+      213: -7830595209628480794
+    second: Legolas_Forward_175
+  - first:
+      213: 6144982990338055900
+    second: Legolas_Forward_176
+  - first:
+      213: 5494982896398468448
+    second: Legolas_Forward_177
+  - first:
+      213: 7753461033295715267
+    second: Legolas_Forward_178
+  - first:
+      213: -6677387310573718207
+    second: Legolas_Forward_179
+  - first:
+      213: -8341739684497989004
+    second: Legolas_Forward_180
+  - first:
+      213: 5410390854267527940
+    second: Legolas_Forward_181
+  - first:
+      213: -768079863947876931
+    second: Legolas_Forward_182
+  - first:
+      213: -5757118674881389623
+    second: Legolas_Forward_183
+  - first:
+      213: -1707349204588114034
+    second: Legolas_Forward_184
+  - first:
+      213: -6331124539316304469
+    second: Legolas_Forward_185
+  - first:
+      213: -3960942718293223414
+    second: Legolas_Forward_186
+  - first:
+      213: 1470302096904701162
+    second: Legolas_Forward_187
+  - first:
+      213: -6046385600335788299
+    second: Legolas_Forward_188
+  - first:
+      213: 7866449681193757766
+    second: Legolas_Forward_189
+  - first:
+      213: 1733708318330177630
+    second: Legolas_Forward_190
+  - first:
+      213: 3152910327030080503
+    second: Legolas_Forward_191
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 8192
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Legolas_Forward_Crouch_Idle_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9642c2c28cafe7c468b4a6d6268eeb03
+      internalID: -373521519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Crouch_Idle_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 418ea77dcf4467044b687e636dd0301a
+      internalID: 1924832490
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Crouch_Idle_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9e97708cde945af47948b5afd5977232
+      internalID: 1039971422
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Crouch_Idle_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: be96d1acd833413469fa565ef84e2535
+      internalID: -1736561549
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Crouch_Idle_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 031ab456df725254299f1cffe4cf1279
+      internalID: 1991028273
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Crouch_Idle_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c2ca3fa5bb99b914b9951b3cefd45257
+      internalID: 990961982
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Crouch_Idle_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e72c8adbbcb5c3642befcfc072a8f54e
+      internalID: -1234463976
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Crouch_Idle_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9e67ff865d3d9de42ab6c6f71ca2cb7b
+      internalID: -229807237
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Crouch_Idle_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 062d32f66719ca14694686b852b894c5
+      internalID: 1615881293
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Crouch_Idle_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 69294640bba24b74b99a2226c0e9697a
+      internalID: -247495234
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Crouch_Idle_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b9681d5cfbc37f043b2c6f1d356027d6
+      internalID: 122328164
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Crouch_Idle_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 01f76b5e43f0d2d4ea5ea44873a24526
+      internalID: 1175266245
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Crouch_Idle_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6da39ef1a5401ed47b4b70e1b08c92b3
+      internalID: -1314746964
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Crouch_Idle_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 270a24d119caa9340a9460e3708153d3
+      internalID: 1707302964
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Crouch_Idle_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: edb18dc1819797c4b9508788f641856b
+      internalID: 1886994006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Crouch_Idle_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b19f7b4063bdd65449fd57cf809c633d
+      internalID: 409781573
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Action_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 944df2b9972636747af7457fe158ddf1
+      internalID: -1607773023
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Action_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e5a5e6159c538b345b39a7d628e052c0
+      internalID: 555607548
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Action_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 77e69c0879cfed247a5b964bf08037d5
+      internalID: 227390144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Action_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a5061a77596ac69468acb1c86373d367
+      internalID: -1384267249
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Action_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d10b3133c4b092d46a3785f6eea02eae
+      internalID: -781969083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Action_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 571afdf082f70054cbffb02cb94789fc
+      internalID: 1579294334
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Action_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 71b2385d401791b48aeb71db75222564
+      internalID: -1287217000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Action_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ed789b989e7833e4c8ca23cd7a2ab6c1
+      internalID: -535353596
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Action_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 47edaf2ef4ca50746a97d67b09ea88a2
+      internalID: 706164197
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Action_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8bd029f4309282c4a8d2e8f916a94bce
+      internalID: -1576142224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Action_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a5c91d902eddbda48812ec020015c3c1
+      internalID: -1795637800
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Action_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 36182d83e134d5f4b975459171d79efb
+      internalID: -1142218671
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Action_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c3aa9d60fc9a7b44f9ee4a0669662381
+      internalID: 1098128398
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Action_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ed8608e81eb6165478d731f844fb7618
+      internalID: -1032862968
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Action_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b3327e26931e95a48a70e2cd9a9f2d54
+      internalID: 1536853831
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Action_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b85a39855e83b9542b7766a55677916b
+      internalID: 855346933
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Magic_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2fa1a78a3a7ad9545b3a8911230d214c
+      internalID: 699389778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Magic_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9aa87a7035a4aa64881a05d677826ca2
+      internalID: 1882451001
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Magic_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0cc9256ebc86e514aa0b899d52dd4423
+      internalID: 1186483396
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Magic_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c1c66a1ec2227054d8c7115c69a0260d
+      internalID: 369573759
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Magic_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 49d63ccbbbca7f747817229b2c7c80b0
+      internalID: 1349014886
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Magic_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: db337828190b3f84b822cd2f68fa8696
+      internalID: -57845247
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Magic_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 16dc8829a22edc24da312e7d1e284847
+      internalID: 696253663
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Magic_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d411278fe96380d40b00edc5846d20a1
+      internalID: 1371967671
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Magic_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 15671a9092a09b346a11624db1a088de
+      internalID: -127483775
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Magic_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 12ecc8e2f48847a449e09fa344a09c64
+      internalID: 102098642
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Magic_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 691ae623772b0e3428cc3fe7b7256340
+      internalID: 2079524624
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Magic_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3ad7c94b0f95ae34eb4d4f3b4fb6cf43
+      internalID: 857356037
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Magic_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8cbb11845fd4c584889833a945486477
+      internalID: -949222743
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Magic_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eae2abb478c24e347acd25955b21186d
+      internalID: -1622304953
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Magic_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 984bb159f05c7e449a08a13a75b3fe0a
+      internalID: 2018899208
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Magic_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c7633bc39de98fe42b4817ec5901957b
+      internalID: 137392978
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_standing_idle_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 76b3e6f89591f38438b29d88142fc278
+      internalID: -445276572
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_standing_idle_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 08e67457665400643807cedd9e83fccc
+      internalID: -11308512
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_standing_idle_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 280fa0bee71790847adc4beb9f7d50b8
+      internalID: -979249938
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_standing_idle_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1ab62b74463091348a444c2d6473a038
+      internalID: -1981378113
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_standing_idle_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 786e6456af4210c4e8451678bd08bd91
+      internalID: 1686147740
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_standing_idle_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 564dcf3eb92533b4899846e8ce619404
+      internalID: 11604110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_standing_idle_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a288e555651d6c142bbbf5a352a195d8
+      internalID: 811249531
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_standing_idle_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bbad4c853487ed04394c02f59a2f3af3
+      internalID: -682648390
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_standing_idle_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: da100517be2862a41829d697a4273df0
+      internalID: -857424971
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_standing_idle_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dde2b1fd4dcca514abb902ebf5a35f00
+      internalID: -1444428344
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_standing_idle_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a2002c772addca441aa6dd92f5a19d56
+      internalID: 666972530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_standing_idle_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5897e6904da57f9469181be1eb78ce6c
+      internalID: -382358043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_standing_idle_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 30121c358bca76b47ae67c1c91aef2dd
+      internalID: 1587894333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_standing_idle_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 760f44d237dbb9646a708ab6e57ce6d6
+      internalID: 299266152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_standing_idle_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c84bc0e989dd36e40a50d60cf8da688e
+      internalID: 1904433547
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_standing_idle_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2392198d30786394f921d893a3728adc
+      internalID: 461570776
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_idle_look_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 21b7c9501a4f4df49b2401850ca11226
+      internalID: -221478978
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_idle_look_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a5c42d41e6773144fb4d6631af8bc8f7
+      internalID: -633736019
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_idle_look_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7f137a328756f92439be436449db95d3
+      internalID: -466049440
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_idle_look_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a46510d1e3f143f45adc964a7f885b5a
+      internalID: -606429662
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_idle_look_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 373e0e1594baeb145a460a35da7d191a
+      internalID: 2095797738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_idle_look_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3929889a576f59b4282eb982f52e217a
+      internalID: 1217045863
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_idle_look_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ba819d32e910d9042864e59cc9e302ab
+      internalID: 72135151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_idle_look_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 860eba19b38c48b428b1d271629df5e8
+      internalID: 1665159031
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_idle_look_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 19fea66ccb3920142a489adc164a6d1d
+      internalID: 150871906
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_idle_look_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9cb71567a183e7b42aeddd0b0120f0a0
+      internalID: -1492760483
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_idle_look_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 29548b920a2d745439c57dbb40c05787
+      internalID: -1409897959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_idle_look_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5499557a5d1e26c4e91427dcb6befbd4
+      internalID: -1320602375
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_idle_look_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b4b665b310d0ed34ebfe98c22ef1d9e3
+      internalID: -1868807350
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_idle_look_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b734048f8e2dc1e46aac0b071eb9ac00
+      internalID: 43486600
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_idle_look_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 696ad507e31f11045ae52cc425f21348
+      internalID: 175716371
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_idle_look_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a3167499cb054874f8ef42a654544089
+      internalID: -2104834336
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Death_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 07b7b41200999fc459b4a59df32da0f1
+      internalID: -703099746
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Death_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d4247ddfde419d04f8efb97a07b53494
+      internalID: 669100303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Death_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f6beaf2c48f4f2f4b9784df5bb56c09a
+      internalID: -1750432677
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Death_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2fb35988d80665044971828b96b607c8
+      internalID: -754846934
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Death_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0bd6ef8b6d6e51d47acc30f02b7d27b7
+      internalID: -1578432121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Death_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d12c09f553eeb4449b7d4d6cad75435a
+      internalID: -852767237
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Death_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 593aa916f46a991458cc0a0d5040aa9e
+      internalID: -432104222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Death_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fc814cef02ac6c144a3a0f7a5cd12f74
+      internalID: -2032473150
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Death_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 342333795dbf37e4fb984b22ca833647
+      internalID: 1128388765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Death_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 25c468a5e63d829449e2b13b36385338
+      internalID: -1807758077
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Death_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 676566c8b9e575a42bfa1d2ad61b79fe
+      internalID: 2066967322
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Death_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f32234e280a63b4c9955371c2adc5cb
+      internalID: 346222502
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Death_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 531591f4ea0a7f740a40b114fc85e722
+      internalID: 2138271960
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Death_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e4551afd86151434ab058ed5bca3a2f3
+      internalID: 969066055
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Death_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eeda93e97e347da43a5ee2932a3fc901
+      internalID: -1306799580
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Death_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 85d73057ef359b345a54b6ca1317495d
+      internalID: 1044996318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Hit_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0e720bf1ddccf2044a802aab08ec106f
+      internalID: 1353897625
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Hit_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b8b62db3225f3974982110652d848b66
+      internalID: 1177775634
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Hit_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d22ad0e6a63de3b43a76178d27bb32df
+      internalID: 532010342
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Hit_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3c508d341c29e194dbadfbd51ddc2e6c
+      internalID: -1259435290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Hit_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 01104a4cf6110a0409e4da3fa1829235
+      internalID: -1317978403
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Hit_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c2e508e152e0b8c4d8891cc30140feb7
+      internalID: 515919288
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Hit_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f4db2a60440f5b049a6a5c9864aea6ef
+      internalID: -847729460
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Hit_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f196c28cc235c204983c987b17c0dacf
+      internalID: -1715689085
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Hit_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7e7e5a0be4ac9a948ae2c4593bdb6bd4
+      internalID: -1222840522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Hit_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5877c17009979144b92476bf427a8b39
+      internalID: 767531754
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Hit_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4e4efedf969446f489a2ff5d122a0666
+      internalID: 1527444332
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Hit_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 843110f0604db574e8063c7aebd82caa
+      internalID: 56958662
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Hit_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9d185f0c09c332243ab6c3dc8244df44
+      internalID: 694337442
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Hit_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 303dab9b9e591044aa0dc51543d108ba
+      internalID: 1147636120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Hit_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 874bbfddea7b79e48ae53b9599cd9c1b
+      internalID: -734807801
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Hit_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2bf1b7d79f296134999434d991f82adf
+      internalID: 25614319
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Standing_Walk_Forward_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6d1ee7bed1b025345886a92758e42402
+      internalID: -1234605569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Standing_Walk_Forward_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5a44f5beb54b0e049b429ab4f86e2786
+      internalID: 1038101312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Standing_Walk_Forward_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 70ef702a6c1363540a8b1766b66698bc
+      internalID: -831082130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Standing_Walk_Forward_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4ec49b22e0848de4a8727f9bffb4ece7
+      internalID: -1073878137
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Standing_Walk_Forward_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9d653de02a0dad748a033de9b9dcc7b8
+      internalID: -1571783508
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Standing_Walk_Forward_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 99ad5f6990224dd4f96e9e19c20663a9
+      internalID: 85192651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Standing_Walk_Forward_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f4cec892ec26a7a47b2b49345e8f4629
+      internalID: 1622996387
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Standing_Walk_Forward_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b0a2f7ccb2444524182859445b0e918e
+      internalID: 1687495524
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Standing_Walk_Forward_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fb0dea6f18e121843aa9b7fcb1f72ba1
+      internalID: 1245331726
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Standing_Walk_Forward_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: be0e0f34e51be8a489227361b3c6b7c3
+      internalID: -1962703206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Standing_Walk_Forward_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f7e0239798953cd40b0b56b9f637b433
+      internalID: 217947893
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Standing_Walk_Forward_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bb9f3a794cd011143aec20308a3d865e
+      internalID: 1511111300
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Standing_Walk_Forward_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7a9463eb869a0994a8d61e37aea429d6
+      internalID: -274514125
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Standing_Walk_Forward_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e5c3faa1c5a3b8343af1ac1158689f58
+      internalID: -1764774984
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Standing_Walk_Forward_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6fc686e3e40a3914a882eb35a3e1d5c9
+      internalID: 324608136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Standing_Walk_Forward_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 12b385c9fb5aac84ca5318664bf1dc96
+      internalID: -1884580678
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Right_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0ea65ce221285704182b02d41c29d1f3
+      internalID: -759954546
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Right_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6f1d1b7ddf5ffec45b6b490dfb61d661
+      internalID: 1260080341
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Right_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e868e3233b020584fa8caaa11124165b
+      internalID: -362943737
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Right_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4cfc848704f011340ad660c6f76dee9a
+      internalID: 1826706379
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Right_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7ecb53537213e1e459769473a95bdc9b
+      internalID: 1810679487
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Right_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e8694dd22ff8fa040b230060254f388b
+      internalID: 1254401830
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Right_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 39d24dc56ad2322419f3c5958ccc4081
+      internalID: 882970452
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Right_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f8acfed6524a895418a51ece9c334654
+      internalID: -1883398614
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Right_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 440b8968ce8394943af3222db7c68ade
+      internalID: -1015510876
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Right_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b1ef3191d70ead445b5b97c6c6f2e3fb
+      internalID: -737369169
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Right_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6cb75723d26186f4cbdea1182e7e7aa5
+      internalID: -855447587
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Right_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 06a605d36c9d4894fb4b2bd22171b889
+      internalID: 698254735
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Right_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 701568fc0e2041f41aa0dae19d486c7b
+      internalID: 670929567
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Right_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5b583937ed659274ebbc6d0a8a5867e5
+      internalID: 1942110929
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Right_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 764e1502851559643bc4297d603fdbb0
+      internalID: 2051393058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Right_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 362fef8149f62d947bc9ee085b878ee3
+      internalID: -1356631435
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Left_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f2e566a34c66abc4c881f5b140eca805
+      internalID: 1954915599
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Left_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3392c4ca9921b6d47993fabf951996f9
+      internalID: 1389236724
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Left_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d4cd4a6c312b1b84e98cdc5afc241e33
+      internalID: 783152755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Left_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 545b388f8ecec4345a2ffe62cac63eae
+      internalID: 1970147228
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Left_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 822210eef1263d54f9238964dca7b4ea
+      internalID: -901803671
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Left_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 129e08b5bcf0e4b4da893e8affdcaeeb
+      internalID: 1702408792
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Left_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 38bf4778b69d39f4994064b4df0213a6
+      internalID: -786967556
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Left_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5b32e097d0065d1429d0a5e2a0acdab2
+      internalID: -979499124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Left_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8abb49d743610cd4c90f777db7402c50
+      internalID: 710576299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Left_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d6d238a07fbc735459269c9a6b752ed2
+      internalID: -634381855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Left_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f81cf9c2158d6ae4d9ba3c9695ad8043
+      internalID: -424673198
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Left_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d8c27fea346f2af4a97dab93f2564f80
+      internalID: 174970423
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Left_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6262c69370455d9448167bc88f5cb79c
+      internalID: 1839058405
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Left_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cd28a85553b5cd949b81349d53998746
+      internalID: 413889401
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Left_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f2ba4c67e5e6f3c46b06fb9c65614ded
+      internalID: -475461835
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Turn_Left_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 422a1eab189e32145b0699c81d39f5a7
+      internalID: -199743035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Block_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 904a3222a51583f4fa943aa9b63848cc
+      internalID: -685016777
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Block_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c18c86c58db2c4847b7f99990f99be75
+      internalID: 1083195911
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Block_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d7b8ce3ffa942c34d89d04bebda452c5
+      internalID: 999925388
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Block_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cc0c0cd0a6e94dc479c4ae1a038f995a
+      internalID: -1982057307
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Block_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 288bf39c4561b0243ab8224fe4585997
+      internalID: -1538174433
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Block_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 45988777fbc898a43b3df0125e58c9a3
+      internalID: -1038253575
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Block_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b8d933403f7b13045b16ffe9d6a3763f
+      internalID: -745771448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Block_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 86dd84ea8beb0ca42898c3945468c126
+      internalID: 502769487
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Block_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d39dcb388392fc74c9cf8ee72c62d9b3
+      internalID: 1151647807
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Block_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2820fc4b3a0b4a040a47634a66a5ac03
+      internalID: 1134734055
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Block_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8c222a9428cd4b345acb0e479762456e
+      internalID: -1410638942
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Block_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 303f9f01d03b0894e8fd7c914c16bf68
+      internalID: 997258744
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Block_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 93d20611d23c1de44abea22d6419dcb8
+      internalID: 640138714
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Block_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6c922a28c35d8ae48873f3ced72d3670
+      internalID: -686517657
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Block_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8afdb8dfd9ca5cd43840acced6f483c0
+      internalID: -1677986425
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Block_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aaf5777686e684348887ef76f14a0b7a
+      internalID: 2037104221
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Attack_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 39d0ff16fcf3a5844875125b71d5752b
+      internalID: 2097536443
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Attack_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6ba0d9a7296a7564b93035f84f3d49a2
+      internalID: -1594458993
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Attack_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 38d41c9adecc446419f088060eae3a0d
+      internalID: 1157916631
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Attack_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d319d08f7a5fc644fa4a25d0e04166fa
+      internalID: 671255163
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Attack_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ff8c561a255244e448c96792ae7808bd
+      internalID: -449648385
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Attack_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 037bb42f8802a21489c5fe2036abbbca
+      internalID: -607571101
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Attack_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 815d57a25224b6d48972fd9c5815da0f
+      internalID: -979373848
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Attack_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ed625a7d1c5ffb445ac5dd8146247001
+      internalID: 1711042434
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Attack_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: af57e84cfd1f9be4ca713912e874b039
+      internalID: 1754242927
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Attack_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6598700b58f579244a24ac3dd6e8af6f
+      internalID: 936695570
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Attack_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aafccf828c80ab5448c377a1362019ab
+      internalID: -62128947
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Attack_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: da7f21c851f1e6648b416eb17d402c73
+      internalID: 1259249107
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Attack_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8d512f537cfd24a4db0dfabc46c65ec1
+      internalID: 971112146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Attack_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1619307bb38e97f4fa930bd68d37f6e6
+      internalID: 742284645
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Attack_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e62fa07b1589f0d42a917c92af7e4f34
+      internalID: -855143777
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Legolas_Forward_Attack_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7ddec42cf15596240812a50c0f94d4bc
+      internalID: 1053725668
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 80fdf285ad15eb647b4b84355815ce7f
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Legolas_Forward_Action_00: -1607773023
+      Legolas_Forward_Action_01: 555607548
+      Legolas_Forward_Action_02: 227390144
+      Legolas_Forward_Action_03: -1384267249
+      Legolas_Forward_Action_04: -781969083
+      Legolas_Forward_Action_05: 1579294334
+      Legolas_Forward_Action_06: -1287217000
+      Legolas_Forward_Action_07: -535353596
+      Legolas_Forward_Action_08: 706164197
+      Legolas_Forward_Action_09: -1576142224
+      Legolas_Forward_Action_10: -1795637800
+      Legolas_Forward_Action_11: -1142218671
+      Legolas_Forward_Action_12: 1098128398
+      Legolas_Forward_Action_13: -1032862968
+      Legolas_Forward_Action_14: 1536853831
+      Legolas_Forward_Action_15: 855346933
+      Legolas_Forward_Attack_00: 2097536443
+      Legolas_Forward_Attack_01: -1594458993
+      Legolas_Forward_Attack_02: 1157916631
+      Legolas_Forward_Attack_03: 671255163
+      Legolas_Forward_Attack_04: -449648385
+      Legolas_Forward_Attack_05: -607571101
+      Legolas_Forward_Attack_06: -979373848
+      Legolas_Forward_Attack_07: 1711042434
+      Legolas_Forward_Attack_08: 1754242927
+      Legolas_Forward_Attack_09: 936695570
+      Legolas_Forward_Attack_10: -62128947
+      Legolas_Forward_Attack_11: 1259249107
+      Legolas_Forward_Attack_12: 971112146
+      Legolas_Forward_Attack_13: 742284645
+      Legolas_Forward_Attack_14: -855143777
+      Legolas_Forward_Attack_15: 1053725668
+      Legolas_Forward_Block_00: -685016777
+      Legolas_Forward_Block_01: 1083195911
+      Legolas_Forward_Block_02: 999925388
+      Legolas_Forward_Block_03: -1982057307
+      Legolas_Forward_Block_04: -1538174433
+      Legolas_Forward_Block_05: -1038253575
+      Legolas_Forward_Block_06: -745771448
+      Legolas_Forward_Block_07: 502769487
+      Legolas_Forward_Block_08: 1151647807
+      Legolas_Forward_Block_09: 1134734055
+      Legolas_Forward_Block_10: -1410638942
+      Legolas_Forward_Block_11: 997258744
+      Legolas_Forward_Block_12: 640138714
+      Legolas_Forward_Block_13: -686517657
+      Legolas_Forward_Block_14: -1677986425
+      Legolas_Forward_Block_15: 2037104221
+      Legolas_Forward_Crouch_Idle_00: -373521519
+      Legolas_Forward_Crouch_Idle_01: 1924832490
+      Legolas_Forward_Crouch_Idle_02: 1039971422
+      Legolas_Forward_Crouch_Idle_03: -1736561549
+      Legolas_Forward_Crouch_Idle_04: 1991028273
+      Legolas_Forward_Crouch_Idle_05: 990961982
+      Legolas_Forward_Crouch_Idle_06: -1234463976
+      Legolas_Forward_Crouch_Idle_07: -229807237
+      Legolas_Forward_Crouch_Idle_08: 1615881293
+      Legolas_Forward_Crouch_Idle_09: -247495234
+      Legolas_Forward_Crouch_Idle_10: 122328164
+      Legolas_Forward_Crouch_Idle_11: 1175266245
+      Legolas_Forward_Crouch_Idle_12: -1314746964
+      Legolas_Forward_Crouch_Idle_13: 1707302964
+      Legolas_Forward_Crouch_Idle_14: 1886994006
+      Legolas_Forward_Crouch_Idle_15: 409781573
+      Legolas_Forward_Death_00: -703099746
+      Legolas_Forward_Death_01: 669100303
+      Legolas_Forward_Death_02: -1750432677
+      Legolas_Forward_Death_03: -754846934
+      Legolas_Forward_Death_04: -1578432121
+      Legolas_Forward_Death_05: -852767237
+      Legolas_Forward_Death_06: -432104222
+      Legolas_Forward_Death_07: -2032473150
+      Legolas_Forward_Death_08: 1128388765
+      Legolas_Forward_Death_09: -1807758077
+      Legolas_Forward_Death_10: 2066967322
+      Legolas_Forward_Death_11: 346222502
+      Legolas_Forward_Death_12: 2138271960
+      Legolas_Forward_Death_13: 969066055
+      Legolas_Forward_Death_14: -1306799580
+      Legolas_Forward_Death_15: 1044996318
+      Legolas_Forward_Hit_00: 1353897625
+      Legolas_Forward_Hit_01: 1177775634
+      Legolas_Forward_Hit_02: 532010342
+      Legolas_Forward_Hit_03: -1259435290
+      Legolas_Forward_Hit_04: -1317978403
+      Legolas_Forward_Hit_05: 515919288
+      Legolas_Forward_Hit_06: -847729460
+      Legolas_Forward_Hit_07: -1715689085
+      Legolas_Forward_Hit_08: -1222840522
+      Legolas_Forward_Hit_09: 767531754
+      Legolas_Forward_Hit_10: 1527444332
+      Legolas_Forward_Hit_11: 56958662
+      Legolas_Forward_Hit_12: 694337442
+      Legolas_Forward_Hit_13: 1147636120
+      Legolas_Forward_Hit_14: -734807801
+      Legolas_Forward_Hit_15: 25614319
+      Legolas_Forward_Magic_00: 699389778
+      Legolas_Forward_Magic_01: 1882451001
+      Legolas_Forward_Magic_02: 1186483396
+      Legolas_Forward_Magic_03: 369573759
+      Legolas_Forward_Magic_04: 1349014886
+      Legolas_Forward_Magic_05: -57845247
+      Legolas_Forward_Magic_06: 696253663
+      Legolas_Forward_Magic_07: 1371967671
+      Legolas_Forward_Magic_08: -127483775
+      Legolas_Forward_Magic_09: 102098642
+      Legolas_Forward_Magic_10: 2079524624
+      Legolas_Forward_Magic_11: 857356037
+      Legolas_Forward_Magic_12: -949222743
+      Legolas_Forward_Magic_13: -1622304953
+      Legolas_Forward_Magic_14: 2018899208
+      Legolas_Forward_Magic_15: 137392978
+      Legolas_Forward_Standing_Walk_Forward_00: -1234605569
+      Legolas_Forward_Standing_Walk_Forward_01: 1038101312
+      Legolas_Forward_Standing_Walk_Forward_02: -831082130
+      Legolas_Forward_Standing_Walk_Forward_03: -1073878137
+      Legolas_Forward_Standing_Walk_Forward_04: -1571783508
+      Legolas_Forward_Standing_Walk_Forward_05: 85192651
+      Legolas_Forward_Standing_Walk_Forward_06: 1622996387
+      Legolas_Forward_Standing_Walk_Forward_07: 1687495524
+      Legolas_Forward_Standing_Walk_Forward_08: 1245331726
+      Legolas_Forward_Standing_Walk_Forward_09: -1962703206
+      Legolas_Forward_Standing_Walk_Forward_10: 217947893
+      Legolas_Forward_Standing_Walk_Forward_11: 1511111300
+      Legolas_Forward_Standing_Walk_Forward_12: -274514125
+      Legolas_Forward_Standing_Walk_Forward_13: -1764774984
+      Legolas_Forward_Standing_Walk_Forward_14: 324608136
+      Legolas_Forward_Standing_Walk_Forward_15: -1884580678
+      Legolas_Forward_Turn_Left_00: 1954915599
+      Legolas_Forward_Turn_Left_01: 1389236724
+      Legolas_Forward_Turn_Left_02: 783152755
+      Legolas_Forward_Turn_Left_03: 1970147228
+      Legolas_Forward_Turn_Left_04: -901803671
+      Legolas_Forward_Turn_Left_05: 1702408792
+      Legolas_Forward_Turn_Left_06: -786967556
+      Legolas_Forward_Turn_Left_07: -979499124
+      Legolas_Forward_Turn_Left_08: 710576299
+      Legolas_Forward_Turn_Left_09: -634381855
+      Legolas_Forward_Turn_Left_10: -424673198
+      Legolas_Forward_Turn_Left_11: 174970423
+      Legolas_Forward_Turn_Left_12: 1839058405
+      Legolas_Forward_Turn_Left_13: 413889401
+      Legolas_Forward_Turn_Left_14: -475461835
+      Legolas_Forward_Turn_Left_15: -199743035
+      Legolas_Forward_Turn_Right_00: -759954546
+      Legolas_Forward_Turn_Right_01: 1260080341
+      Legolas_Forward_Turn_Right_02: -362943737
+      Legolas_Forward_Turn_Right_03: 1826706379
+      Legolas_Forward_Turn_Right_04: 1810679487
+      Legolas_Forward_Turn_Right_05: 1254401830
+      Legolas_Forward_Turn_Right_06: 882970452
+      Legolas_Forward_Turn_Right_07: -1883398614
+      Legolas_Forward_Turn_Right_08: -1015510876
+      Legolas_Forward_Turn_Right_09: -737369169
+      Legolas_Forward_Turn_Right_10: -855447587
+      Legolas_Forward_Turn_Right_11: 698254735
+      Legolas_Forward_Turn_Right_12: 670929567
+      Legolas_Forward_Turn_Right_13: 1942110929
+      Legolas_Forward_Turn_Right_14: 2051393058
+      Legolas_Forward_Turn_Right_15: -1356631435
+      Legolas_Forward_idle_look_00: -221478978
+      Legolas_Forward_idle_look_01: -633736019
+      Legolas_Forward_idle_look_02: -466049440
+      Legolas_Forward_idle_look_03: -606429662
+      Legolas_Forward_idle_look_04: 2095797738
+      Legolas_Forward_idle_look_05: 1217045863
+      Legolas_Forward_idle_look_06: 72135151
+      Legolas_Forward_idle_look_07: 1665159031
+      Legolas_Forward_idle_look_08: 150871906
+      Legolas_Forward_idle_look_09: -1492760483
+      Legolas_Forward_idle_look_10: -1409897959
+      Legolas_Forward_idle_look_11: -1320602375
+      Legolas_Forward_idle_look_12: -1868807350
+      Legolas_Forward_idle_look_13: 43486600
+      Legolas_Forward_idle_look_14: 175716371
+      Legolas_Forward_idle_look_15: -2104834336
+      Legolas_Forward_standing_idle_00: -445276572
+      Legolas_Forward_standing_idle_01: -11308512
+      Legolas_Forward_standing_idle_02: -979249938
+      Legolas_Forward_standing_idle_03: -1981378113
+      Legolas_Forward_standing_idle_04: 1686147740
+      Legolas_Forward_standing_idle_05: 11604110
+      Legolas_Forward_standing_idle_06: 811249531
+      Legolas_Forward_standing_idle_07: -682648390
+      Legolas_Forward_standing_idle_08: -857424971
+      Legolas_Forward_standing_idle_09: -1444428344
+      Legolas_Forward_standing_idle_10: 666972530
+      Legolas_Forward_standing_idle_11: -382358043
+      Legolas_Forward_standing_idle_12: 1587894333
+      Legolas_Forward_standing_idle_13: 299266152
+      Legolas_Forward_standing_idle_14: 1904433547
+      Legolas_Forward_standing_idle_15: 461570776
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

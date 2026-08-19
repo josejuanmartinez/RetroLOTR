@@ -1,0 +1,5122 @@
+fileFormatVersion: 2
+guid: 95ca9381d2d6c304ba21c5312ecdd774
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 7433853292118396070
+    second: Gimli_Forward_0
+  - first:
+      213: 7369309420156485667
+    second: Gimli_Forward_1
+  - first:
+      213: -7536845167962242783
+    second: Gimli_Forward_2
+  - first:
+      213: 5299503165865615644
+    second: Gimli_Forward_3
+  - first:
+      213: -775742249752106923
+    second: Gimli_Forward_4
+  - first:
+      213: 4183381938609884127
+    second: Gimli_Forward_5
+  - first:
+      213: 56982103818969711
+    second: Gimli_Forward_6
+  - first:
+      213: 2264893881156296439
+    second: Gimli_Forward_7
+  - first:
+      213: -3038089028745235800
+    second: Gimli_Forward_8
+  - first:
+      213: -3928536699896313318
+    second: Gimli_Forward_9
+  - first:
+      213: 2604823706735736251
+    second: Gimli_Forward_10
+  - first:
+      213: 4081084869602274358
+    second: Gimli_Forward_11
+  - first:
+      213: 8082637933612981009
+    second: Gimli_Forward_12
+  - first:
+      213: -8927406391395367256
+    second: Gimli_Forward_13
+  - first:
+      213: -7196423857822204318
+    second: Gimli_Forward_14
+  - first:
+      213: 2006769474495460878
+    second: Gimli_Forward_15
+  - first:
+      213: -6953952111123287941
+    second: Gimli_Forward_16
+  - first:
+      213: 3429104932628657898
+    second: Gimli_Forward_17
+  - first:
+      213: -5880982319537948881
+    second: Gimli_Forward_18
+  - first:
+      213: 4108813100011358582
+    second: Gimli_Forward_19
+  - first:
+      213: 4876934163085874145
+    second: Gimli_Forward_20
+  - first:
+      213: 1378353006211892612
+    second: Gimli_Forward_21
+  - first:
+      213: -7238163203469121646
+    second: Gimli_Forward_22
+  - first:
+      213: -8239516206210184538
+    second: Gimli_Forward_23
+  - first:
+      213: -460672028914665510
+    second: Gimli_Forward_24
+  - first:
+      213: 2393697399590235183
+    second: Gimli_Forward_25
+  - first:
+      213: -104778864484150364
+    second: Gimli_Forward_26
+  - first:
+      213: -213054145383186523
+    second: Gimli_Forward_27
+  - first:
+      213: 1390894849507965381
+    second: Gimli_Forward_28
+  - first:
+      213: 7115285307921026936
+    second: Gimli_Forward_29
+  - first:
+      213: 5823614413365581488
+    second: Gimli_Forward_30
+  - first:
+      213: 6234765466596701159
+    second: Gimli_Forward_31
+  - first:
+      213: 35782280438409464
+    second: Gimli_Forward_32
+  - first:
+      213: 502348729249350217
+    second: Gimli_Forward_33
+  - first:
+      213: -5717572603273081741
+    second: Gimli_Forward_34
+  - first:
+      213: -7627994600717181130
+    second: Gimli_Forward_35
+  - first:
+      213: 2848495034181274816
+    second: Gimli_Forward_36
+  - first:
+      213: -7068417858134766137
+    second: Gimli_Forward_37
+  - first:
+      213: -1130809841885069581
+    second: Gimli_Forward_38
+  - first:
+      213: 7511417043179533606
+    second: Gimli_Forward_39
+  - first:
+      213: 2505175961834414335
+    second: Gimli_Forward_40
+  - first:
+      213: 4303964348159694161
+    second: Gimli_Forward_41
+  - first:
+      213: -998950194715287715
+    second: Gimli_Forward_42
+  - first:
+      213: -4500253220538439314
+    second: Gimli_Forward_43
+  - first:
+      213: -22820991057352856
+    second: Gimli_Forward_44
+  - first:
+      213: -4078062134308384921
+    second: Gimli_Forward_45
+  - first:
+      213: -3613528636221220788
+    second: Gimli_Forward_46
+  - first:
+      213: -895854167441127606
+    second: Gimli_Forward_47
+  - first:
+      213: 6739668576795960956
+    second: Gimli_Forward_48
+  - first:
+      213: 2025997157831181618
+    second: Gimli_Forward_49
+  - first:
+      213: -6491745221077381852
+    second: Gimli_Forward_50
+  - first:
+      213: -8198980327496495793
+    second: Gimli_Forward_51
+  - first:
+      213: 2092671948060004055
+    second: Gimli_Forward_52
+  - first:
+      213: -2123223554733611440
+    second: Gimli_Forward_53
+  - first:
+      213: 6602042134296393730
+    second: Gimli_Forward_54
+  - first:
+      213: 1851563973187994560
+    second: Gimli_Forward_55
+  - first:
+      213: 6500087636521893089
+    second: Gimli_Forward_56
+  - first:
+      213: -8050587065027734388
+    second: Gimli_Forward_57
+  - first:
+      213: -6774850521038208235
+    second: Gimli_Forward_58
+  - first:
+      213: 2619614326827645416
+    second: Gimli_Forward_59
+  - first:
+      213: 6318124630996540773
+    second: Gimli_Forward_60
+  - first:
+      213: 4777712980615695703
+    second: Gimli_Forward_61
+  - first:
+      213: -3708558143885232861
+    second: Gimli_Forward_62
+  - first:
+      213: -4932295471522647363
+    second: Gimli_Forward_63
+  - first:
+      213: 5576619762240915591
+    second: Gimli_Forward_64
+  - first:
+      213: 3123222262323636199
+    second: Gimli_Forward_65
+  - first:
+      213: 585023572413627673
+    second: Gimli_Forward_66
+  - first:
+      213: -7370893990553338814
+    second: Gimli_Forward_67
+  - first:
+      213: -8592565761475506661
+    second: Gimli_Forward_68
+  - first:
+      213: -7214844336866146663
+    second: Gimli_Forward_69
+  - first:
+      213: -8425810652986719893
+    second: Gimli_Forward_70
+  - first:
+      213: -4313629188770049564
+    second: Gimli_Forward_71
+  - first:
+      213: 465776391644573073
+    second: Gimli_Forward_72
+  - first:
+      213: -2804477091053940883
+    second: Gimli_Forward_73
+  - first:
+      213: 784915018030509969
+    second: Gimli_Forward_74
+  - first:
+      213: -5281232119728986492
+    second: Gimli_Forward_75
+  - first:
+      213: 7557755922697941302
+    second: Gimli_Forward_76
+  - first:
+      213: 4882893621151262936
+    second: Gimli_Forward_77
+  - first:
+      213: 2719069394613944986
+    second: Gimli_Forward_78
+  - first:
+      213: -4701706810556825263
+    second: Gimli_Forward_79
+  - first:
+      213: -1734381654165616226
+    second: Gimli_Forward_80
+  - first:
+      213: -9039404109100143302
+    second: Gimli_Forward_81
+  - first:
+      213: 3854369964044636500
+    second: Gimli_Forward_82
+  - first:
+      213: -1050534751291599140
+    second: Gimli_Forward_83
+  - first:
+      213: -8639727552140693018
+    second: Gimli_Forward_84
+  - first:
+      213: -1381155258936202038
+    second: Gimli_Forward_85
+  - first:
+      213: 7325145505014670195
+    second: Gimli_Forward_86
+  - first:
+      213: 7910217826634188342
+    second: Gimli_Forward_87
+  - first:
+      213: -4577316961436843856
+    second: Gimli_Forward_88
+  - first:
+      213: -4679458605372242049
+    second: Gimli_Forward_89
+  - first:
+      213: 2789346239629111360
+    second: Gimli_Forward_90
+  - first:
+      213: -1294716034403123464
+    second: Gimli_Forward_91
+  - first:
+      213: -430450162027056600
+    second: Gimli_Forward_92
+  - first:
+      213: -5451521663970836011
+    second: Gimli_Forward_93
+  - first:
+      213: 5885939240248214948
+    second: Gimli_Forward_94
+  - first:
+      213: -4177392682368387155
+    second: Gimli_Forward_95
+  - first:
+      213: -5542713401713839650
+    second: Gimli_Forward_96
+  - first:
+      213: 5457695795103788162
+    second: Gimli_Forward_97
+  - first:
+      213: -113205229980505516
+    second: Gimli_Forward_98
+  - first:
+      213: 5497544411438159731
+    second: Gimli_Forward_99
+  - first:
+      213: -130478949312350075
+    second: Gimli_Forward_100
+  - first:
+      213: 830666892289222809
+    second: Gimli_Forward_101
+  - first:
+      213: 3306742203722865023
+    second: Gimli_Forward_102
+  - first:
+      213: 1454804424726876023
+    second: Gimli_Forward_103
+  - first:
+      213: 649295286897087562
+    second: Gimli_Forward_104
+  - first:
+      213: -4402607558001030296
+    second: Gimli_Forward_105
+  - first:
+      213: -1498476194703787642
+    second: Gimli_Forward_106
+  - first:
+      213: -6980205841105198090
+    second: Gimli_Forward_107
+  - first:
+      213: 426362233897937919
+    second: Gimli_Forward_108
+  - first:
+      213: -7179950406829591919
+    second: Gimli_Forward_109
+  - first:
+      213: 8494958969925209943
+    second: Gimli_Forward_110
+  - first:
+      213: 8822225406088953210
+    second: Gimli_Forward_111
+  - first:
+      213: -4800009401403291776
+    second: Gimli_Forward_112
+  - first:
+      213: -1841803649897731935
+    second: Gimli_Forward_113
+  - first:
+      213: -2707252211564903640
+    second: Gimli_Forward_114
+  - first:
+      213: 2413521802455834311
+    second: Gimli_Forward_115
+  - first:
+      213: -234110393768923120
+    second: Gimli_Forward_116
+  - first:
+      213: -4728975057619041267
+    second: Gimli_Forward_117
+  - first:
+      213: -1707605328923626396
+    second: Gimli_Forward_118
+  - first:
+      213: 7268791494253854779
+    second: Gimli_Forward_119
+  - first:
+      213: 3174305823422626567
+    second: Gimli_Forward_120
+  - first:
+      213: -7794819723589881209
+    second: Gimli_Forward_121
+  - first:
+      213: 7904590673560610977
+    second: Gimli_Forward_122
+  - first:
+      213: 3342896950004967205
+    second: Gimli_Forward_123
+  - first:
+      213: 6071449768628964907
+    second: Gimli_Forward_124
+  - first:
+      213: 2292156498324770435
+    second: Gimli_Forward_125
+  - first:
+      213: -187069838099733275
+    second: Gimli_Forward_126
+  - first:
+      213: -3703647937857475966
+    second: Gimli_Forward_127
+  - first:
+      213: -7042445259228651417
+    second: Gimli_Forward_128
+  - first:
+      213: 6049986440981046158
+    second: Gimli_Forward_129
+  - first:
+      213: 6970096297045704663
+    second: Gimli_Forward_130
+  - first:
+      213: 8343384340569374203
+    second: Gimli_Forward_131
+  - first:
+      213: 313780849749137134
+    second: Gimli_Forward_132
+  - first:
+      213: -6795615430858419848
+    second: Gimli_Forward_133
+  - first:
+      213: -258470102297913583
+    second: Gimli_Forward_134
+  - first:
+      213: 6148909301246586854
+    second: Gimli_Forward_135
+  - first:
+      213: 7434647811565379922
+    second: Gimli_Forward_136
+  - first:
+      213: 3988970559336918998
+    second: Gimli_Forward_137
+  - first:
+      213: 8442725763282291152
+    second: Gimli_Forward_138
+  - first:
+      213: -6858318373440407346
+    second: Gimli_Forward_139
+  - first:
+      213: 8382930870352028254
+    second: Gimli_Forward_140
+  - first:
+      213: 4435527543510831320
+    second: Gimli_Forward_141
+  - first:
+      213: -5856236313561611616
+    second: Gimli_Forward_142
+  - first:
+      213: 4026455894695153091
+    second: Gimli_Forward_143
+  - first:
+      213: -4085115853496950238
+    second: Gimli_Forward_144
+  - first:
+      213: 6274819535389038633
+    second: Gimli_Forward_145
+  - first:
+      213: -3110637370799889163
+    second: Gimli_Forward_146
+  - first:
+      213: -2867142852306546845
+    second: Gimli_Forward_147
+  - first:
+      213: -1465376115265548692
+    second: Gimli_Forward_148
+  - first:
+      213: -1901991927594594701
+    second: Gimli_Forward_149
+  - first:
+      213: 462932749887849740
+    second: Gimli_Forward_150
+  - first:
+      213: 2623273200093063020
+    second: Gimli_Forward_151
+  - first:
+      213: -4014446439475183986
+    second: Gimli_Forward_152
+  - first:
+      213: 7907391754705277265
+    second: Gimli_Forward_153
+  - first:
+      213: -4503861938527392947
+    second: Gimli_Forward_154
+  - first:
+      213: 886006062166257168
+    second: Gimli_Forward_155
+  - first:
+      213: -1641220259015132890
+    second: Gimli_Forward_156
+  - first:
+      213: 8149814170268821347
+    second: Gimli_Forward_157
+  - first:
+      213: 9212350869579520176
+    second: Gimli_Forward_158
+  - first:
+      213: -468806453280719148
+    second: Gimli_Forward_159
+  - first:
+      213: 7974622035182117792
+    second: Gimli_Forward_160
+  - first:
+      213: -6396937158191394339
+    second: Gimli_Forward_161
+  - first:
+      213: 4627516060845440968
+    second: Gimli_Forward_162
+  - first:
+      213: -1229857169448446677
+    second: Gimli_Forward_163
+  - first:
+      213: -7218110956697548191
+    second: Gimli_Forward_164
+  - first:
+      213: 7832939313571444961
+    second: Gimli_Forward_165
+  - first:
+      213: 4074399913211119879
+    second: Gimli_Forward_166
+  - first:
+      213: -8057470925514865951
+    second: Gimli_Forward_167
+  - first:
+      213: -2713062893080742652
+    second: Gimli_Forward_168
+  - first:
+      213: 6580439388585170950
+    second: Gimli_Forward_169
+  - first:
+      213: -8792170288745346048
+    second: Gimli_Forward_170
+  - first:
+      213: -5434260393930094476
+    second: Gimli_Forward_171
+  - first:
+      213: 6335789120375003589
+    second: Gimli_Forward_172
+  - first:
+      213: 6909146814658081904
+    second: Gimli_Forward_173
+  - first:
+      213: 9052038675273088317
+    second: Gimli_Forward_174
+  - first:
+      213: -3709374887755224121
+    second: Gimli_Forward_175
+  - first:
+      213: -5923959088540424206
+    second: Gimli_Forward_176
+  - first:
+      213: -8966118130905328669
+    second: Gimli_Forward_177
+  - first:
+      213: -4432288305699253212
+    second: Gimli_Forward_178
+  - first:
+      213: -8654843447139713287
+    second: Gimli_Forward_179
+  - first:
+      213: 3323168423884404009
+    second: Gimli_Forward_180
+  - first:
+      213: -7042724906647640580
+    second: Gimli_Forward_181
+  - first:
+      213: -2730824979729690984
+    second: Gimli_Forward_182
+  - first:
+      213: -1523567590569009414
+    second: Gimli_Forward_183
+  - first:
+      213: -4035307042597766672
+    second: Gimli_Forward_184
+  - first:
+      213: 4424765766874456241
+    second: Gimli_Forward_185
+  - first:
+      213: 5944462094788197763
+    second: Gimli_Forward_186
+  - first:
+      213: -7528383960046980136
+    second: Gimli_Forward_187
+  - first:
+      213: -8797997199140812873
+    second: Gimli_Forward_188
+  - first:
+      213: -4479716293371795611
+    second: Gimli_Forward_189
+  - first:
+      213: 8722018252081398318
+    second: Gimli_Forward_190
+  - first:
+      213: 5434451646084584997
+    second: Gimli_Forward_191
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 8192
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Gimli_Forward_Crouch_Idle_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: afe145bc3e2d2ff4dad81842e586a7a8
+      internalID: -556642514
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Crouch_Idle_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 16ef411cfa9fc0846ae498d35e637dd1
+      internalID: 1681928617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Crouch_Idle_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 67027015f5e6b104f94dac13fa5e66eb
+      internalID: 2036198181
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Crouch_Idle_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 827fca0cbff0cc448b54982d5ad8b461
+      internalID: 869473926
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Crouch_Idle_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 94d0815be55dce446bc9158bae44f9a4
+      internalID: 113699567
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Crouch_Idle_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0d3876263ce56f4499a9785b45d802f5
+      internalID: 1043228930
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Crouch_Idle_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d7ab1362f7105ea458f3993262e1454f
+      internalID: -112685495
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Crouch_Idle_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f39112c8e7395ad469e0836aab3befb9
+      internalID: -1416849591
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Crouch_Idle_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7a324c7bbda025545b4f1152b03c81a0
+      internalID: 1304616858
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Crouch_Idle_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bc86e0a0eecf6c2468ba8247fbe681aa
+      internalID: 505675152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Crouch_Idle_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d970b024d74e398499f241b425ca0639
+      internalID: -1742386405
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Crouch_Idle_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d6b3eca39fc410944bbce72c0b7b2a69
+      internalID: 320013316
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Crouch_Idle_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 524c6b975d1c9e344a94ee3a7cf8b992
+      internalID: -470034617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Crouch_Idle_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cf8ed8b77c3c9f9418c0395a2f627b83
+      internalID: 1704606916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Crouch_Idle_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c7121c12d8588f042a5b3a28b1170710
+      internalID: -695602760
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Crouch_Idle_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e39c66a9df446dc48903c3e9e8f5688c
+      internalID: -321546923
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Action_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e1c77def52972dc4ab608262bc6e9c4a
+      internalID: 886260754
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Action_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5ec507fab19d39a4ea8e1e3b438cde72
+      internalID: 2058987928
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Action_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1d54b0a32ae56d143a0f2aa20b25bdaf
+      internalID: -746145568
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Action_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 85396d8906d6ad34ea7e677eb42a9ef2
+      internalID: 516625109
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Action_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 45a4c3f80267f0c478c6d968a59c81a7
+      internalID: -2032021075
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Action_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d6ab186a57f76b5409ae8da728a1e030
+      internalID: 821977518
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Action_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8de3a87c33a72ba4f890a0523b50e1e9
+      internalID: -1711698445
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Action_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 40eb5f1f6629559489d26a450ecbe33b
+      internalID: 838942954
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Action_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 896820ab8684b5343a5e0b9b0f099d1a
+      internalID: 299250151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Action_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 00630cc7f0a716347b5192dba261f574
+      internalID: -583526834
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Action_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1033a479427609d4d979906a27d6aee9
+      internalID: -945814118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Action_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a130a8b4546a4b646b979fcef43ed126
+      internalID: 1837423286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Action_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d48d662e75ebfcc4588429eef0f441cc
+      internalID: 1902863048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Action_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e49225932dddb2d4abf2ad6aba70061c
+      internalID: -975604419
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Action_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d0dd62e087b572240b3d6582d613c598
+      internalID: -8889180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Action_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4550edbfef578554b9aacfd3b4701668
+      internalID: 529156638
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Magic_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0278975b990516e4a95096ad4bfeb2b3
+      internalID: -625641529
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Magic_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1e7941c55e8b09943ab7da47b5d8aa5d
+      internalID: -402873452
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Magic_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8340ce68fbd19b349966733af52122ec
+      internalID: 1500701413
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Magic_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6dc19b55ea7788548be079f923a6711d
+      internalID: 1344731482
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Magic_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c70f7b63d1013a241bc7cb46d3a57489
+      internalID: -1434473727
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Magic_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d4e9f39c41acd764bb767f882a9f453c
+      internalID: 325844824
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Magic_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dab8f2cd4a5057f46b14efcffd570d57
+      internalID: 762015852
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Magic_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8c0689766b132b64993c73485f64611c
+      internalID: 1344981862
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Magic_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8b17283a02cad0341920cede282c4e7f
+      internalID: -298908425
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Magic_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 85630f9b56b1230479fe1c608f7087ff
+      internalID: 1650568046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Magic_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 675dbc94b6685f847b0a6ccf74917387
+      internalID: -1728357335
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Magic_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 88b7e7974d4705e44aa1d34447d5b80a
+      internalID: 2054833660
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Magic_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f1b99461fdb11bc4b9061c7faf57ede9
+      internalID: -1242160799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Magic_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9b5ddde0498f5d34c825b0ae9197769c
+      internalID: 1309180772
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Magic_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a4ef08460870d7b4dab1e54c84565b4a
+      internalID: -1601577917
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Magic_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dba2d0acc9e2dec4d8b5087596a23946
+      internalID: -1934754251
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_standing_idle_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9ddc91fe01a0c1d4fa48f8bc7a4c2a9d
+      internalID: 1015323649
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_standing_idle_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eb37571fcf3a89a4aa2c7c3ede358c34
+      internalID: -609444299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_standing_idle_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5eff1cef1f01eb44e9b333c84aa9d725
+      internalID: 1303354898
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_standing_idle_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5fad2c655c3adac489e020d5abfd7046
+      internalID: -1249756490
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_standing_idle_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7abea94a719b82b4db3cec5426afdae1
+      internalID: -529778513
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_standing_idle_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a5d98f081a544ef4794cbc4d48dac714
+      internalID: -956230908
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_standing_idle_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4368a57dc92a84f4c99192a6680f3563
+      internalID: -279815950
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_standing_idle_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 30d51d17092e5e44197a546c5784d6fe
+      internalID: -40411801
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_standing_idle_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1c5e3c9d4f0a13342abef087a76aaefd
+      internalID: -819557023
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_standing_idle_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a12c8fdcc6d8f624f88da990a9650ee4
+      internalID: -1606937713
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_standing_idle_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bdca419f089260c4298b18d1330a695d
+      internalID: 74225214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_standing_idle_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4cd3db4359464874ebbf172307f04747
+      internalID: -1325313209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_standing_idle_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7cc4fba8d9ee47c48af537aad6af3f1c
+      internalID: 745385667
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_standing_idle_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bdddfdff2783b6141937c53ebf469d1f
+      internalID: 819093955
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_standing_idle_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 40e9997016bcd9842a5d219dcb896189
+      internalID: -974972437
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_standing_idle_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 03342501becfa294383d06c3ddf823f2
+      internalID: -1564714767
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_idle_look_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b6eafce633919654195a51d7bb1df00f
+      internalID: 97506978
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_idle_look_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f7c5526c566366e4aa65c0850c16fa50
+      internalID: -593260188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_idle_look_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fc3c1b567a3353d46b7494344c14105a
+      internalID: 1881010622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_idle_look_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 31d1e69a6bffa7842be1322385e6dfcd
+      internalID: -1315963093
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_idle_look_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b328d9c56898eff4e8db40275035fe4e
+      internalID: -972606678
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_idle_look_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f5fe633c9bd4d0a48b93965f96cead98
+      internalID: -601835525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_idle_look_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fb294b08694555f42a858b108cfbce4b
+      internalID: -203520209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_idle_look_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4242aa02aeaebb04188009f680122d30
+      internalID: -1490279693
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_idle_look_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2412281b28abdeb468f551747fa049e6
+      internalID: 411125137
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_idle_look_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c9f3048f76c4bce47957b7e4f8fdc186
+      internalID: 619042999
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_idle_look_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 97006e0d4716a57449a1c31edd46f2ce
+      internalID: 1126880424
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_idle_look_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4a68d9ad5308aa448935c61dd85efa10
+      internalID: 138300796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_idle_look_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0e12ca198041fa5458a2fec9a52f7af9
+      internalID: -1392391501
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_idle_look_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9daa45ea3c64c89458767bf34148ca94
+      internalID: 1593022491
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_idle_look_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 00c7ad5678c37774c9e6a99363ba83ff
+      internalID: -465797971
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_idle_look_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4cb32861b048c8d42889d444ca913456
+      internalID: 1392230161
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Death_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 912b2e6c9434c6b4e933b18294e70736
+      internalID: -1749872941
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Death_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 40ab0ef2c152233498c16266b48aac6d
+      internalID: -1527242938
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Death_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 87c5f9fad7e1ae849bd56230b8aafe04
+      internalID: 951242931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Death_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b0f94d72f7d19cb448f3dcc332e8c96c
+      internalID: 597104519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Death_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6773f241429c57443b605b353f33360f
+      internalID: 1162638942
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Death_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4e9829c028cbc7643a90f3908a7476fb
+      internalID: -1265071695
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Death_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 27f6390250b214843ba775616438b859
+      internalID: -1053666122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Death_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f0f0d465d38e5f944b412494885121a7
+      internalID: -553722078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Death_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 94c7cc33abe0e524f8b8fcacdb64cb44
+      internalID: -402477471
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Death_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8478b37d3be7d3446a7dd0a964e4dd7f
+      internalID: 1650836451
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Death_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6542ef48407ff544f935d22f96522683
+      internalID: 648657728
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Death_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1c405f2ddc00d9f48a7a55856fe36b02
+      internalID: -1313809666
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Death_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f25cc21d8ebfe74cb4b7473ed461d36
+      internalID: -98383733
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Death_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 83eaab5777bde8448a98ca971ed9be94
+      internalID: 1113369646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Death_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1d01b4931d9606f459139b86bd4201ed
+      internalID: 735457134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Death_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 751620bc66d046f43b096fc228e7b039
+      internalID: 1407141584
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Hit_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6a4684d002bc27248a95091e824771a6
+      internalID: 136558830
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Hit_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fa172e611c911994e9240e7b15029645
+      internalID: -2096294907
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Hit_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ed11539a0dcda1a4786d1abf3323b051
+      internalID: 164440054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Hit_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2f06929c83ad68049bdfe59589b2916e
+      internalID: 522726863
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Hit_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5ae68f7685298704ebc4aaf9ffeb1bb7
+      internalID: 1896382688
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Hit_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 45945e56d93f21d4bbcd84ab80ae86ab
+      internalID: 1916236334
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Hit_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5e08b52670a4ea741ba67af677652fb0
+      internalID: 1792844324
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Hit_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1274f9d9357dd5d4b8e74a0c61245c27
+      internalID: 1511731103
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Hit_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6adcfa854cee6cb4b8b6cb9f6bc0cf29
+      internalID: -1541520605
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Hit_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8e91efd6f00f7b849a48b30b5de4f419
+      internalID: -718360737
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Hit_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c5a410c192d0e3048b7f1f4d07d0d8c1
+      internalID: 1955512149
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Hit_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3ae342bf97800e646b1a4c630bd029f0
+      internalID: -892968864
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Hit_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1f3c393ea27f5074c8fc80c471870b77
+      internalID: 680532204
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Hit_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 46bbbb653c0c6af45bcb61717fe4f0f2
+      internalID: -1453813327
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Hit_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1678c9c7fd99730498e4361255a20068
+      internalID: -1414029454
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Hit_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8c95db36c0e87dc4f9640d0bc3ac959a
+      internalID: 1494777971
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Standing_Walk_Forward_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c26e138481296f2478d487656779bae1
+      internalID: 978290113
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Standing_Walk_Forward_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ef42b610a74a68948ad6d9849d05d4d8
+      internalID: -1459717971
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Standing_Walk_Forward_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 45da74d2819a6e94da76109ea017e2d7
+      internalID: 220779911
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Standing_Walk_Forward_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 439c52218f3490643a709f5305044ce1
+      internalID: 2069476883
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Standing_Walk_Forward_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c91e06be6c0888b4b9cd7d84d3c60605
+      internalID: 1371066840
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Standing_Walk_Forward_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7e592aa205926414487a22410c3b7f29
+      internalID: -318328273
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Standing_Walk_Forward_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 59c75767825daab44bec69289d50ecee
+      internalID: -1140299324
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Standing_Walk_Forward_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 689d790e75b5e0f43bfcf88bfe760c95
+      internalID: 257267601
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Standing_Walk_Forward_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 63d6f56e20836984baa1ecbe311c8e28
+      internalID: -1772174232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Standing_Walk_Forward_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 668c7dbd50dee9244a4de04de702ddc5
+      internalID: 161829489
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Standing_Walk_Forward_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 95440f890a0489747b5420ad60e1b78b
+      internalID: 1927478104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Standing_Walk_Forward_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9866bb206acc9d04bade623ee3bcd07e
+      internalID: -581186862
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Standing_Walk_Forward_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7915ef643413d2b409e92bc3959ce96f
+      internalID: -282996063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Standing_Walk_Forward_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6f774fb96265ec9429877656c709ab41
+      internalID: -1427326818
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Standing_Walk_Forward_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: affb494bfedcace44b40bc36e231f009
+      internalID: 234699399
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Standing_Walk_Forward_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b669f72372941ca4aa0defe155ba04a9
+      internalID: 904772303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Right_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e166e36204e669a4bac741f9abfce3d9
+      internalID: 2039907163
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Right_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1039a501b3a2cf745bd3544e5b17b873
+      internalID: -1394373318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Right_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d0197606a3f501742aff7063bc1ee678
+      internalID: 1981548442
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Right_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 138c68e9d6f95174180e85df050588c7
+      internalID: -19164339
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Right_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d6bd79e2b720c0046a2b353ed974a247
+      internalID: 1850024161
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Right_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 55f3413932eb1a3419c3f7bfb21a3790
+      internalID: 2065267636
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Right_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a9c40efa3508e3a4aa42986ba522f683
+      internalID: 2138569377
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Right_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5192dc4a4292dba4e9d06eea11f470b4
+      internalID: 529494770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Right_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 944257decc2a1dc47af73263f3c47883
+      internalID: 509538213
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Right_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9c6b0c1f6be72c34d8d1147beaa43e1e
+      internalID: 849591692
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Right_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9ce525f80d34d274fb6e31360eef88c1
+      internalID: -132023194
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Right_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3f03c423f9dbac4498d7a400ff1e0dc2
+      internalID: 782839250
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Right_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 68c09f555006b5b43b14409d0f4d66c3
+      internalID: 1742798012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Right_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d1dc54eadc043264db5b44cd3e907fc6
+      internalID: 1409196838
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Right_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1ce9e25ebb459604e99c468816cf464f
+      internalID: -1949746687
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Right_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9c1c1e8501553d94a96addfe6150bc88
+      internalID: -830982743
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Left_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e1c7099df9bd8df4185c5e863298aa2c
+      internalID: -272888233
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Left_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ba2de35bcc418594fb192873a2d2338e
+      internalID: -1250987406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Left_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5098b3eff68b4eb4eb5d90869ba46ce0
+      internalID: 754724849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Left_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a1639ee739525244ca2c7d84fc46c3c8
+      internalID: 1576798242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Left_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9cb35d359df289248a7f75cc17637367
+      internalID: -1722347083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Left_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f89645decb09eb48a8b3df2c5366d3e
+      internalID: 97431774
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Left_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c77226490a280c24bb872eab58825dd9
+      internalID: -1641826146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Left_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 659cdc474a1269e45abec07a9d035ad7
+      internalID: -702306190
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Left_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b23505e59849afa4abf030f06bdec58e
+      internalID: -830295054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Left_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 01e7ecaa1e4375f4d9f273f2f4411965
+      internalID: -1446356305
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Left_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 67f1ea1204dc57749b541b34e8af539c
+      internalID: 1122417053
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Left_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ee3f84819cd9dcd44bd3d0ba268df921
+      internalID: 242094809
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Left_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 22416d1632299de4eb40e84b14cce8d2
+      internalID: -1215440770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Left_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 848a70927d5052e4b821370684ebc657
+      internalID: -1134716848
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Left_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e23bc50e7b616e34a83fa5436c59d505
+      internalID: 31244157
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Turn_Left_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b882e184b407d744dbb71139c540732e
+      internalID: 1456128617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Block_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cb80281e6d140214c8c68f9c3a9c889a
+      internalID: 100471333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Block_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cb266ae1b8bcb34479c27d598e70738e
+      internalID: 1116171828
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Block_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f67be874992ecf4884718a4fd876c6c
+      internalID: -1213675897
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Block_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 38b938619b275b74cb611fba804baeee
+      internalID: -202609798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Block_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ca8729bb39dcf7d428324ebfc0bd4957
+      internalID: 503473505
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Block_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aa05a34e1810d7449a40c0b5bbb3a07e
+      internalID: -965231955
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Block_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 517d339d1aad0e344bdd0eca77cddf6c
+      internalID: 428211587
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Block_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0f05e7db4835f7c4cb9c4e6284137ed4
+      internalID: -1269036048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Block_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4957913a278cd6a4ebe66eab52f68aa7
+      internalID: 454221285
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Block_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1e03d6f54c6ce89489a1aab0ed2217c7
+      internalID: 1016304119
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Block_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 36a5d04ea1868fd4999efae2b23fa000
+      internalID: 29131083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Block_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f4c93cd1d1b3c24cb12b7cd139726da
+      internalID: -466931944
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Block_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2375e4f630e821840a60ff8cf846bfb2
+      internalID: 999697118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Block_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4b15577f72d74b24ca46e29ce8f0a798
+      internalID: 555009409
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Block_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 63240b13280f72c4d9eb28f96b9b1c99
+      internalID: -2130685589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Block_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 65286ef55454e434fbe05c547a59f7c4
+      internalID: -196423609
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Attack_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4e3d34dcd99dfe54a9cbec9712f03c3f
+      internalID: -733752062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Attack_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0c694407b0e2d3746aa8f58ef57d3a31
+      internalID: -2009418614
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Attack_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 575f774037a850044b16beed2776ff93
+      internalID: -843271004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Attack_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 84ba3e91fedd89a41baf346e5b2ac9af
+      internalID: -920926185
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Attack_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5a9244376c9403e46863e7221bbed80c
+      internalID: 1671300328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Attack_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 074404bfb617a36478123e1358e6a8a0
+      internalID: -1422519875
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Attack_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6525fd9127588104e8066c3b70ef0eea
+      internalID: 208378893
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Attack_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cbf66cbc6bb4a0748a1f60d378d63d9f
+      internalID: -1190228203
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Attack_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3a518e097d4bdda4f873e3c53caf5254
+      internalID: 1533587344
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Attack_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5ac664e78081e9d4e9d6c40309be006a
+      internalID: -1937090465
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Attack_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 24894ec8134f2064d8915dc9e493ae0c
+      internalID: 913286324
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Attack_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c1d4f0b017026164e80ae71032079023
+      internalID: -575367000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Attack_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1ae6868c2bd2ab647b0ed5e4fbdd7fa3
+      internalID: 1377295851
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Attack_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aade59adf85fead46a6d08f4ab36a414
+      internalID: -336298087
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Attack_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fc5102c7dd08a73409117b0450388caf
+      internalID: 1707459035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gimli_Forward_Attack_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3d9437892f356bf43b6f7305a14fee6c
+      internalID: -938593392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 3e6fb6f5b362ba141b4290574fcfbf10
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Gimli_Forward_Action_00: 886260754
+      Gimli_Forward_Action_01: 2058987928
+      Gimli_Forward_Action_02: -746145568
+      Gimli_Forward_Action_03: 516625109
+      Gimli_Forward_Action_04: -2032021075
+      Gimli_Forward_Action_05: 821977518
+      Gimli_Forward_Action_06: -1711698445
+      Gimli_Forward_Action_07: 838942954
+      Gimli_Forward_Action_08: 299250151
+      Gimli_Forward_Action_09: -583526834
+      Gimli_Forward_Action_10: -945814118
+      Gimli_Forward_Action_11: 1837423286
+      Gimli_Forward_Action_12: 1902863048
+      Gimli_Forward_Action_13: -975604419
+      Gimli_Forward_Action_14: -8889180
+      Gimli_Forward_Action_15: 529156638
+      Gimli_Forward_Attack_00: -733752062
+      Gimli_Forward_Attack_01: -2009418614
+      Gimli_Forward_Attack_02: -843271004
+      Gimli_Forward_Attack_03: -920926185
+      Gimli_Forward_Attack_04: 1671300328
+      Gimli_Forward_Attack_05: -1422519875
+      Gimli_Forward_Attack_06: 208378893
+      Gimli_Forward_Attack_07: -1190228203
+      Gimli_Forward_Attack_08: 1533587344
+      Gimli_Forward_Attack_09: -1937090465
+      Gimli_Forward_Attack_10: 913286324
+      Gimli_Forward_Attack_11: -575367000
+      Gimli_Forward_Attack_12: 1377295851
+      Gimli_Forward_Attack_13: -336298087
+      Gimli_Forward_Attack_14: 1707459035
+      Gimli_Forward_Attack_15: -938593392
+      Gimli_Forward_Block_00: 100471333
+      Gimli_Forward_Block_01: 1116171828
+      Gimli_Forward_Block_02: -1213675897
+      Gimli_Forward_Block_03: -202609798
+      Gimli_Forward_Block_04: 503473505
+      Gimli_Forward_Block_05: -965231955
+      Gimli_Forward_Block_06: 428211587
+      Gimli_Forward_Block_07: -1269036048
+      Gimli_Forward_Block_08: 454221285
+      Gimli_Forward_Block_09: 1016304119
+      Gimli_Forward_Block_10: 29131083
+      Gimli_Forward_Block_11: -466931944
+      Gimli_Forward_Block_12: 999697118
+      Gimli_Forward_Block_13: 555009409
+      Gimli_Forward_Block_14: -2130685589
+      Gimli_Forward_Block_15: -196423609
+      Gimli_Forward_Crouch_Idle_00: -556642514
+      Gimli_Forward_Crouch_Idle_01: 1681928617
+      Gimli_Forward_Crouch_Idle_02: 2036198181
+      Gimli_Forward_Crouch_Idle_03: 869473926
+      Gimli_Forward_Crouch_Idle_04: 113699567
+      Gimli_Forward_Crouch_Idle_05: 1043228930
+      Gimli_Forward_Crouch_Idle_06: -112685495
+      Gimli_Forward_Crouch_Idle_07: -1416849591
+      Gimli_Forward_Crouch_Idle_08: 1304616858
+      Gimli_Forward_Crouch_Idle_09: 505675152
+      Gimli_Forward_Crouch_Idle_10: -1742386405
+      Gimli_Forward_Crouch_Idle_11: 320013316
+      Gimli_Forward_Crouch_Idle_12: -470034617
+      Gimli_Forward_Crouch_Idle_13: 1704606916
+      Gimli_Forward_Crouch_Idle_14: -695602760
+      Gimli_Forward_Crouch_Idle_15: -321546923
+      Gimli_Forward_Death_00: -1749872941
+      Gimli_Forward_Death_01: -1527242938
+      Gimli_Forward_Death_02: 951242931
+      Gimli_Forward_Death_03: 597104519
+      Gimli_Forward_Death_04: 1162638942
+      Gimli_Forward_Death_05: -1265071695
+      Gimli_Forward_Death_06: -1053666122
+      Gimli_Forward_Death_07: -553722078
+      Gimli_Forward_Death_08: -402477471
+      Gimli_Forward_Death_09: 1650836451
+      Gimli_Forward_Death_10: 648657728
+      Gimli_Forward_Death_11: -1313809666
+      Gimli_Forward_Death_12: -98383733
+      Gimli_Forward_Death_13: 1113369646
+      Gimli_Forward_Death_14: 735457134
+      Gimli_Forward_Death_15: 1407141584
+      Gimli_Forward_Hit_00: 136558830
+      Gimli_Forward_Hit_01: -2096294907
+      Gimli_Forward_Hit_02: 164440054
+      Gimli_Forward_Hit_03: 522726863
+      Gimli_Forward_Hit_04: 1896382688
+      Gimli_Forward_Hit_05: 1916236334
+      Gimli_Forward_Hit_06: 1792844324
+      Gimli_Forward_Hit_07: 1511731103
+      Gimli_Forward_Hit_08: -1541520605
+      Gimli_Forward_Hit_09: -718360737
+      Gimli_Forward_Hit_10: 1955512149
+      Gimli_Forward_Hit_11: -892968864
+      Gimli_Forward_Hit_12: 680532204
+      Gimli_Forward_Hit_13: -1453813327
+      Gimli_Forward_Hit_14: -1414029454
+      Gimli_Forward_Hit_15: 1494777971
+      Gimli_Forward_Magic_00: -625641529
+      Gimli_Forward_Magic_01: -402873452
+      Gimli_Forward_Magic_02: 1500701413
+      Gimli_Forward_Magic_03: 1344731482
+      Gimli_Forward_Magic_04: -1434473727
+      Gimli_Forward_Magic_05: 325844824
+      Gimli_Forward_Magic_06: 762015852
+      Gimli_Forward_Magic_07: 1344981862
+      Gimli_Forward_Magic_08: -298908425
+      Gimli_Forward_Magic_09: 1650568046
+      Gimli_Forward_Magic_10: -1728357335
+      Gimli_Forward_Magic_11: 2054833660
+      Gimli_Forward_Magic_12: -1242160799
+      Gimli_Forward_Magic_13: 1309180772
+      Gimli_Forward_Magic_14: -1601577917
+      Gimli_Forward_Magic_15: -1934754251
+      Gimli_Forward_Standing_Walk_Forward_00: 978290113
+      Gimli_Forward_Standing_Walk_Forward_01: -1459717971
+      Gimli_Forward_Standing_Walk_Forward_02: 220779911
+      Gimli_Forward_Standing_Walk_Forward_03: 2069476883
+      Gimli_Forward_Standing_Walk_Forward_04: 1371066840
+      Gimli_Forward_Standing_Walk_Forward_05: -318328273
+      Gimli_Forward_Standing_Walk_Forward_06: -1140299324
+      Gimli_Forward_Standing_Walk_Forward_07: 257267601
+      Gimli_Forward_Standing_Walk_Forward_08: -1772174232
+      Gimli_Forward_Standing_Walk_Forward_09: 161829489
+      Gimli_Forward_Standing_Walk_Forward_10: 1927478104
+      Gimli_Forward_Standing_Walk_Forward_11: -581186862
+      Gimli_Forward_Standing_Walk_Forward_12: -282996063
+      Gimli_Forward_Standing_Walk_Forward_13: -1427326818
+      Gimli_Forward_Standing_Walk_Forward_14: 234699399
+      Gimli_Forward_Standing_Walk_Forward_15: 904772303
+      Gimli_Forward_Turn_Left_00: -272888233
+      Gimli_Forward_Turn_Left_01: -1250987406
+      Gimli_Forward_Turn_Left_02: 754724849
+      Gimli_Forward_Turn_Left_03: 1576798242
+      Gimli_Forward_Turn_Left_04: -1722347083
+      Gimli_Forward_Turn_Left_05: 97431774
+      Gimli_Forward_Turn_Left_06: -1641826146
+      Gimli_Forward_Turn_Left_07: -702306190
+      Gimli_Forward_Turn_Left_08: -830295054
+      Gimli_Forward_Turn_Left_09: -1446356305
+      Gimli_Forward_Turn_Left_10: 1122417053
+      Gimli_Forward_Turn_Left_11: 242094809
+      Gimli_Forward_Turn_Left_12: -1215440770
+      Gimli_Forward_Turn_Left_13: -1134716848
+      Gimli_Forward_Turn_Left_14: 31244157
+      Gimli_Forward_Turn_Left_15: 1456128617
+      Gimli_Forward_Turn_Right_00: 2039907163
+      Gimli_Forward_Turn_Right_01: -1394373318
+      Gimli_Forward_Turn_Right_02: 1981548442
+      Gimli_Forward_Turn_Right_03: -19164339
+      Gimli_Forward_Turn_Right_04: 1850024161
+      Gimli_Forward_Turn_Right_05: 2065267636
+      Gimli_Forward_Turn_Right_06: 2138569377
+      Gimli_Forward_Turn_Right_07: 529494770
+      Gimli_Forward_Turn_Right_08: 509538213
+      Gimli_Forward_Turn_Right_09: 849591692
+      Gimli_Forward_Turn_Right_10: -132023194
+      Gimli_Forward_Turn_Right_11: 782839250
+      Gimli_Forward_Turn_Right_12: 1742798012
+      Gimli_Forward_Turn_Right_13: 1409196838
+      Gimli_Forward_Turn_Right_14: -1949746687
+      Gimli_Forward_Turn_Right_15: -830982743
+      Gimli_Forward_idle_look_00: 97506978
+      Gimli_Forward_idle_look_01: -593260188
+      Gimli_Forward_idle_look_02: 1881010622
+      Gimli_Forward_idle_look_03: -1315963093
+      Gimli_Forward_idle_look_04: -972606678
+      Gimli_Forward_idle_look_05: -601835525
+      Gimli_Forward_idle_look_06: -203520209
+      Gimli_Forward_idle_look_07: -1490279693
+      Gimli_Forward_idle_look_08: 411125137
+      Gimli_Forward_idle_look_09: 619042999
+      Gimli_Forward_idle_look_10: 1126880424
+      Gimli_Forward_idle_look_11: 138300796
+      Gimli_Forward_idle_look_12: -1392391501
+      Gimli_Forward_idle_look_13: 1593022491
+      Gimli_Forward_idle_look_14: -465797971
+      Gimli_Forward_idle_look_15: 1392230161
+      Gimli_Forward_standing_idle_00: 1015323649
+      Gimli_Forward_standing_idle_01: -609444299
+      Gimli_Forward_standing_idle_02: 1303354898
+      Gimli_Forward_standing_idle_03: -1249756490
+      Gimli_Forward_standing_idle_04: -529778513
+      Gimli_Forward_standing_idle_05: -956230908
+      Gimli_Forward_standing_idle_06: -279815950
+      Gimli_Forward_standing_idle_07: -40411801
+      Gimli_Forward_standing_idle_08: -819557023
+      Gimli_Forward_standing_idle_09: -1606937713
+      Gimli_Forward_standing_idle_10: 74225214
+      Gimli_Forward_standing_idle_11: -1325313209
+      Gimli_Forward_standing_idle_12: 745385667
+      Gimli_Forward_standing_idle_13: 819093955
+      Gimli_Forward_standing_idle_14: -974972437
+      Gimli_Forward_standing_idle_15: -1564714767
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

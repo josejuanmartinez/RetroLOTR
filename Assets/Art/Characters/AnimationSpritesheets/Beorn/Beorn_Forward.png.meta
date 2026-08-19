@@ -1,0 +1,5122 @@
+fileFormatVersion: 2
+guid: 6cd80faace230764ba8c8906d36d8911
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -5238141550315610541
+    second: Beorn_Forward_0
+  - first:
+      213: 3918315234225458943
+    second: Beorn_Forward_1
+  - first:
+      213: -9080973573519590229
+    second: Beorn_Forward_2
+  - first:
+      213: -5878499869445541976
+    second: Beorn_Forward_3
+  - first:
+      213: -4741602566337307979
+    second: Beorn_Forward_4
+  - first:
+      213: -879650029292141642
+    second: Beorn_Forward_5
+  - first:
+      213: -1144236520660147180
+    second: Beorn_Forward_6
+  - first:
+      213: 7687888479142372797
+    second: Beorn_Forward_7
+  - first:
+      213: -2226526601726279741
+    second: Beorn_Forward_8
+  - first:
+      213: 4111347290608231413
+    second: Beorn_Forward_9
+  - first:
+      213: 2712681965641543800
+    second: Beorn_Forward_10
+  - first:
+      213: 4214521745826094831
+    second: Beorn_Forward_11
+  - first:
+      213: -3443222835089693946
+    second: Beorn_Forward_12
+  - first:
+      213: 6098980206856365562
+    second: Beorn_Forward_13
+  - first:
+      213: 4549657024291022726
+    second: Beorn_Forward_14
+  - first:
+      213: -5984991352077327930
+    second: Beorn_Forward_15
+  - first:
+      213: 2143477842432969995
+    second: Beorn_Forward_16
+  - first:
+      213: 6667054031342907048
+    second: Beorn_Forward_17
+  - first:
+      213: -1208466469614083608
+    second: Beorn_Forward_18
+  - first:
+      213: -1587010572476590531
+    second: Beorn_Forward_19
+  - first:
+      213: -5219153362765481026
+    second: Beorn_Forward_20
+  - first:
+      213: 6886161510828434551
+    second: Beorn_Forward_21
+  - first:
+      213: 859553784409034091
+    second: Beorn_Forward_22
+  - first:
+      213: 1659263262410501982
+    second: Beorn_Forward_23
+  - first:
+      213: -6591535604765906267
+    second: Beorn_Forward_24
+  - first:
+      213: -4454770248194594540
+    second: Beorn_Forward_25
+  - first:
+      213: 783948670203288066
+    second: Beorn_Forward_26
+  - first:
+      213: -885616515014937657
+    second: Beorn_Forward_27
+  - first:
+      213: 8071855657011635503
+    second: Beorn_Forward_28
+  - first:
+      213: 4029456273357040110
+    second: Beorn_Forward_29
+  - first:
+      213: 1964588928209314506
+    second: Beorn_Forward_30
+  - first:
+      213: -1705413822584778157
+    second: Beorn_Forward_31
+  - first:
+      213: -7566493539271894590
+    second: Beorn_Forward_32
+  - first:
+      213: 5984930253233702372
+    second: Beorn_Forward_33
+  - first:
+      213: 1094023999706330334
+    second: Beorn_Forward_34
+  - first:
+      213: -6614624985155425358
+    second: Beorn_Forward_35
+  - first:
+      213: 4714319362358587552
+    second: Beorn_Forward_36
+  - first:
+      213: 40286378962201905
+    second: Beorn_Forward_37
+  - first:
+      213: -5620095583472342752
+    second: Beorn_Forward_38
+  - first:
+      213: -6499012926269655675
+    second: Beorn_Forward_39
+  - first:
+      213: -7496413010695009389
+    second: Beorn_Forward_40
+  - first:
+      213: 2523969634008162041
+    second: Beorn_Forward_41
+  - first:
+      213: -2977656055609248918
+    second: Beorn_Forward_42
+  - first:
+      213: 8171719219989279055
+    second: Beorn_Forward_43
+  - first:
+      213: -456409291587169733
+    second: Beorn_Forward_44
+  - first:
+      213: -5181300230047167090
+    second: Beorn_Forward_45
+  - first:
+      213: -6651089789699708801
+    second: Beorn_Forward_46
+  - first:
+      213: -3800881404777184055
+    second: Beorn_Forward_47
+  - first:
+      213: 5612763394699379966
+    second: Beorn_Forward_48
+  - first:
+      213: -8345736064809014127
+    second: Beorn_Forward_49
+  - first:
+      213: 7292645065309997729
+    second: Beorn_Forward_50
+  - first:
+      213: 3743451730852740090
+    second: Beorn_Forward_51
+  - first:
+      213: 6618238177448963529
+    second: Beorn_Forward_52
+  - first:
+      213: 4615303186862218738
+    second: Beorn_Forward_53
+  - first:
+      213: 6076428685179847417
+    second: Beorn_Forward_54
+  - first:
+      213: 6980592318870926139
+    second: Beorn_Forward_55
+  - first:
+      213: 6044618934817170282
+    second: Beorn_Forward_56
+  - first:
+      213: -7058796315637054746
+    second: Beorn_Forward_57
+  - first:
+      213: -2623409422794737278
+    second: Beorn_Forward_58
+  - first:
+      213: -2962461089801844436
+    second: Beorn_Forward_59
+  - first:
+      213: -4490451798799639086
+    second: Beorn_Forward_60
+  - first:
+      213: -290196038250364418
+    second: Beorn_Forward_61
+  - first:
+      213: 4287163183000853831
+    second: Beorn_Forward_62
+  - first:
+      213: 1241985235040775469
+    second: Beorn_Forward_63
+  - first:
+      213: -7599892931354110539
+    second: Beorn_Forward_64
+  - first:
+      213: -4969366537143285414
+    second: Beorn_Forward_65
+  - first:
+      213: 3072156586760181185
+    second: Beorn_Forward_66
+  - first:
+      213: -6560730597276315602
+    second: Beorn_Forward_67
+  - first:
+      213: -6451508101125500866
+    second: Beorn_Forward_68
+  - first:
+      213: 5608372948319838950
+    second: Beorn_Forward_69
+  - first:
+      213: -6526757338753191040
+    second: Beorn_Forward_70
+  - first:
+      213: -4865292735208764892
+    second: Beorn_Forward_71
+  - first:
+      213: -1591926888149512942
+    second: Beorn_Forward_72
+  - first:
+      213: -4261833540646782779
+    second: Beorn_Forward_73
+  - first:
+      213: 4711123407592916464
+    second: Beorn_Forward_74
+  - first:
+      213: 4896559551943861087
+    second: Beorn_Forward_75
+  - first:
+      213: -6010981363000505591
+    second: Beorn_Forward_76
+  - first:
+      213: -2820360144998047706
+    second: Beorn_Forward_77
+  - first:
+      213: 4515258513079723371
+    second: Beorn_Forward_78
+  - first:
+      213: 4239773748330997452
+    second: Beorn_Forward_79
+  - first:
+      213: -8120057237482967609
+    second: Beorn_Forward_80
+  - first:
+      213: -8699513554133863263
+    second: Beorn_Forward_81
+  - first:
+      213: -3868196054455213051
+    second: Beorn_Forward_82
+  - first:
+      213: 3501800374737332325
+    second: Beorn_Forward_83
+  - first:
+      213: -1333178401416738802
+    second: Beorn_Forward_84
+  - first:
+      213: -4117946364900981964
+    second: Beorn_Forward_85
+  - first:
+      213: -1254247682062994932
+    second: Beorn_Forward_86
+  - first:
+      213: 3769600939217150635
+    second: Beorn_Forward_87
+  - first:
+      213: 3949683868024785377
+    second: Beorn_Forward_88
+  - first:
+      213: 5542118337421501178
+    second: Beorn_Forward_89
+  - first:
+      213: 7237133006382101019
+    second: Beorn_Forward_90
+  - first:
+      213: -7569417676335588560
+    second: Beorn_Forward_91
+  - first:
+      213: -4396241467027303026
+    second: Beorn_Forward_92
+  - first:
+      213: -3238431870002013539
+    second: Beorn_Forward_93
+  - first:
+      213: -900285279755705293
+    second: Beorn_Forward_94
+  - first:
+      213: 571991587193624899
+    second: Beorn_Forward_95
+  - first:
+      213: 3661929310467606256
+    second: Beorn_Forward_96
+  - first:
+      213: 2261741491838545195
+    second: Beorn_Forward_97
+  - first:
+      213: 1774622861418246781
+    second: Beorn_Forward_98
+  - first:
+      213: 1468960164048938864
+    second: Beorn_Forward_99
+  - first:
+      213: 3162588987098190419
+    second: Beorn_Forward_100
+  - first:
+      213: 4468929215658659271
+    second: Beorn_Forward_101
+  - first:
+      213: -5596687437302100731
+    second: Beorn_Forward_102
+  - first:
+      213: 3697251878842820606
+    second: Beorn_Forward_103
+  - first:
+      213: 848009112753842857
+    second: Beorn_Forward_104
+  - first:
+      213: 3432158917935492138
+    second: Beorn_Forward_105
+  - first:
+      213: -561763396415180620
+    second: Beorn_Forward_106
+  - first:
+      213: -1635637542579585297
+    second: Beorn_Forward_107
+  - first:
+      213: -689107632901785372
+    second: Beorn_Forward_108
+  - first:
+      213: -6064408845535171449
+    second: Beorn_Forward_109
+  - first:
+      213: -1927232739204701160
+    second: Beorn_Forward_110
+  - first:
+      213: 153685345791922269
+    second: Beorn_Forward_111
+  - first:
+      213: -3088669098252502019
+    second: Beorn_Forward_112
+  - first:
+      213: -7826001260441351476
+    second: Beorn_Forward_113
+  - first:
+      213: 1542479598397097527
+    second: Beorn_Forward_114
+  - first:
+      213: 4425033443507057292
+    second: Beorn_Forward_115
+  - first:
+      213: 61400601258187644
+    second: Beorn_Forward_116
+  - first:
+      213: -3054320132948137863
+    second: Beorn_Forward_117
+  - first:
+      213: 5886381677086486019
+    second: Beorn_Forward_118
+  - first:
+      213: 24246104405177518
+    second: Beorn_Forward_119
+  - first:
+      213: 5966163875920677877
+    second: Beorn_Forward_120
+  - first:
+      213: -274662745598335735
+    second: Beorn_Forward_121
+  - first:
+      213: -6014487478995600418
+    second: Beorn_Forward_122
+  - first:
+      213: 1041583534999875293
+    second: Beorn_Forward_123
+  - first:
+      213: -2414827852499240685
+    second: Beorn_Forward_124
+  - first:
+      213: 4977350617044516837
+    second: Beorn_Forward_125
+  - first:
+      213: 3954124367577470480
+    second: Beorn_Forward_126
+  - first:
+      213: -7117795218500642697
+    second: Beorn_Forward_127
+  - first:
+      213: -6516000541363042361
+    second: Beorn_Forward_128
+  - first:
+      213: 4864309445197260452
+    second: Beorn_Forward_129
+  - first:
+      213: -1749034157432377979
+    second: Beorn_Forward_130
+  - first:
+      213: 1226694187153341694
+    second: Beorn_Forward_131
+  - first:
+      213: -7424074870093996893
+    second: Beorn_Forward_132
+  - first:
+      213: 7934386422712224055
+    second: Beorn_Forward_133
+  - first:
+      213: -5568639665204440906
+    second: Beorn_Forward_134
+  - first:
+      213: 900344688237336362
+    second: Beorn_Forward_135
+  - first:
+      213: 8276139286648071763
+    second: Beorn_Forward_136
+  - first:
+      213: -723280434396713295
+    second: Beorn_Forward_137
+  - first:
+      213: -7033173491778982592
+    second: Beorn_Forward_138
+  - first:
+      213: 5528352639066883776
+    second: Beorn_Forward_139
+  - first:
+      213: -3682643932798161213
+    second: Beorn_Forward_140
+  - first:
+      213: -6143505510775949058
+    second: Beorn_Forward_141
+  - first:
+      213: -1307201743517859601
+    second: Beorn_Forward_142
+  - first:
+      213: -3135119874569103530
+    second: Beorn_Forward_143
+  - first:
+      213: 6094334661196867582
+    second: Beorn_Forward_144
+  - first:
+      213: 3746532234029372908
+    second: Beorn_Forward_145
+  - first:
+      213: 7903922618969822847
+    second: Beorn_Forward_146
+  - first:
+      213: -2476040568403742682
+    second: Beorn_Forward_147
+  - first:
+      213: 7712221923622947283
+    second: Beorn_Forward_148
+  - first:
+      213: 1962825358202580915
+    second: Beorn_Forward_149
+  - first:
+      213: -1733703560237938248
+    second: Beorn_Forward_150
+  - first:
+      213: -8349141951087414966
+    second: Beorn_Forward_151
+  - first:
+      213: -4237562059767445009
+    second: Beorn_Forward_152
+  - first:
+      213: 1006668393183192646
+    second: Beorn_Forward_153
+  - first:
+      213: 722564605925412659
+    second: Beorn_Forward_154
+  - first:
+      213: -2336636285660480160
+    second: Beorn_Forward_155
+  - first:
+      213: -3986391360720926678
+    second: Beorn_Forward_156
+  - first:
+      213: -3516031811516313579
+    second: Beorn_Forward_157
+  - first:
+      213: -6218463107853080322
+    second: Beorn_Forward_158
+  - first:
+      213: -5656278901001055352
+    second: Beorn_Forward_159
+  - first:
+      213: 4636056729068108268
+    second: Beorn_Forward_160
+  - first:
+      213: -3294094915048497617
+    second: Beorn_Forward_161
+  - first:
+      213: -3444620131872485682
+    second: Beorn_Forward_162
+  - first:
+      213: 7358771819041175620
+    second: Beorn_Forward_163
+  - first:
+      213: 1660975775609609694
+    second: Beorn_Forward_164
+  - first:
+      213: -8931559618560677263
+    second: Beorn_Forward_165
+  - first:
+      213: -6014568700624016223
+    second: Beorn_Forward_166
+  - first:
+      213: 5932189069580281483
+    second: Beorn_Forward_167
+  - first:
+      213: 1444484807776565362
+    second: Beorn_Forward_168
+  - first:
+      213: 8249274027484405158
+    second: Beorn_Forward_169
+  - first:
+      213: 3695819982388699048
+    second: Beorn_Forward_170
+  - first:
+      213: 8770695153634767003
+    second: Beorn_Forward_171
+  - first:
+      213: -2426252591262595300
+    second: Beorn_Forward_172
+  - first:
+      213: 7913220342836199745
+    second: Beorn_Forward_173
+  - first:
+      213: 5972372795897036056
+    second: Beorn_Forward_174
+  - first:
+      213: 5106156447451371719
+    second: Beorn_Forward_175
+  - first:
+      213: 4902749439924834677
+    second: Beorn_Forward_176
+  - first:
+      213: 1356796101105685559
+    second: Beorn_Forward_177
+  - first:
+      213: 1744192682494046973
+    second: Beorn_Forward_178
+  - first:
+      213: -624526902687957830
+    second: Beorn_Forward_179
+  - first:
+      213: 4768703944070066265
+    second: Beorn_Forward_180
+  - first:
+      213: -832836516264590995
+    second: Beorn_Forward_181
+  - first:
+      213: -8156843572200364663
+    second: Beorn_Forward_182
+  - first:
+      213: 8914381495892066677
+    second: Beorn_Forward_183
+  - first:
+      213: -7901422275237288531
+    second: Beorn_Forward_184
+  - first:
+      213: 1237977496622288457
+    second: Beorn_Forward_185
+  - first:
+      213: 8937138098112046646
+    second: Beorn_Forward_186
+  - first:
+      213: -224742535539409604
+    second: Beorn_Forward_187
+  - first:
+      213: 4800099476883250814
+    second: Beorn_Forward_188
+  - first:
+      213: -6247558813140653293
+    second: Beorn_Forward_189
+  - first:
+      213: -5014906115262194841
+    second: Beorn_Forward_190
+  - first:
+      213: 5536041388850245095
+    second: Beorn_Forward_191
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 8192
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Beorn_Forward_Crouch_Idle_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bc36fd69006caac47b319ba46dfccf7a
+      internalID: -1084058126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Crouch_Idle_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 089fe831a0215f4409ad89a462173f24
+      internalID: -1904705972
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Crouch_Idle_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e5565bcedbcbecb4095a1e59b754bed1
+      internalID: 1081974936
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Crouch_Idle_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 61da6fb4cdb9a4948850b0d84b1a7e6b
+      internalID: 1012344222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Crouch_Idle_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 83dc9e39166e67043a0c591cc1bc169e
+      internalID: -1615513454
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Crouch_Idle_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a09017d51da73284a9698a78cd9a2850
+      internalID: -67740651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Crouch_Idle_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c29593bf0a387454a96743a5cabc30d8
+      internalID: -471172014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Crouch_Idle_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ccec30e9c3032d94aa65c8508050feca
+      internalID: 1655345098
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Crouch_Idle_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1df3b74fb814f5643a6485c091f6dc7a
+      internalID: -2116595328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Crouch_Idle_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5e265be9eeb18124f9756c4053bdd2b7
+      internalID: 1906602713
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Crouch_Idle_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bac498d27afb75b44ae28585db0576ad
+      internalID: 802449249
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Crouch_Idle_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 81a43b644708fde479ca8bd9912e8837
+      internalID: -1199013290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Crouch_Idle_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 77b89a31bc37df74f93450b7c8de6c3a
+      internalID: 1274552415
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Crouch_Idle_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a8be2ffb09aeed849984eaf0d4476e0c
+      internalID: -1786587750
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Crouch_Idle_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b3ca794bd368ff3449903e0af1feea2f
+      internalID: 726396521
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Crouch_Idle_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 5632
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 93e1e43e536dd8b499fa9907cab67e1b
+      internalID: 1328171225
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Action_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7d49ae6aa30285845a1bab2958f5c9b1
+      internalID: -1077953955
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Action_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2fc6028922e100d4bbce0644b2ece33e
+      internalID: 544360700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Action_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 44165b61d2d591b41b57e214c721c850
+      internalID: -1592491688
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Action_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 65f269ff826bee24889c05a4d3aef3ce
+      internalID: -546042429
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Action_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2fb4badd466e0eb40a88bac2ea00b9a8
+      internalID: -352804656
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Action_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 13c7ce1776cb88749a677352aba1b2de
+      internalID: -170510587
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Action_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f2ac246a28bf44d4ba3e232dce587740
+      internalID: 103032546
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Action_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d2c545b8a78fd2c41b73b116d3223a01
+      internalID: -570363437
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Action_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b44c15e771bb65b45980a6e8990b451f
+      internalID: -1104311792
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Action_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 25885a63f387b8642849163e85d15d77
+      internalID: 1799882031
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Action_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1cab0cb2b3fe5cf4da032859a9bfb7df
+      internalID: 261589805
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Action_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fa7e0ccd1bfe5d946bce48dbd738cce1
+      internalID: 938536465
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Action_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a70f972b524270b4c825560a57b85fcd
+      internalID: 1648080142
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Action_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c91dc41197d233c4daac213d8c0fa041
+      internalID: 1064519492
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Action_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1e2f32cf9a0add541842cfab68ebcf11
+      internalID: 1772407927
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Action_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 5120
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5258427ac4511ab409e8ea4ead8d8aa5
+      internalID: -199827233
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Magic_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f81b1fb04df6bc4e834b56b8fb2dc31
+      internalID: -427189398
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Magic_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cfe93d79ceceddc4d9b70703aba10e58
+      internalID: 1102436899
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Magic_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3d5b7a0fb00a07d49a1538a58ac4a137
+      internalID: -235208887
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Magic_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9babbc58743f069458ac2a92fcabfe23
+      internalID: -403215620
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Magic_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d1b96f58647e3a84ab7527dd84c005f4
+      internalID: -1429166275
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Magic_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a6640c0fd840f244189905c61c3bef68
+      internalID: 88603259
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Magic_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7f050afbfb086824fbee89f96e0d15bd
+      internalID: -1049967431
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Magic_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6f2b5bddca7aa4f46a0b17fc08d01bdc
+      internalID: 378007068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Magic_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0f8e92b7a7e148c408b034a124996f08
+      internalID: -1360627688
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Magic_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ed5ce7648b68ab741b59923def792343
+      internalID: 85863445
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Magic_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 751076d1ef113934bb51e626d706fa9d
+      internalID: -801422241
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Magic_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5907d44af08e32543ae0b1019ada65b8
+      internalID: 71676360
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Magic_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 79b3c97604091fe49afe7c2ec45aafa2
+      internalID: 1403218114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Magic_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c59adefc62539cb4289a8c2ecfcc2e5f
+      internalID: -781667460
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Magic_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 34d20f38ea512a94a928c2664883c093
+      internalID: -241817625
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Magic_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 4608
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d950a501b4aa0a44eafe12878ce3e60c
+      internalID: 1384414492
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_standing_idle_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cccceed2c01418542bce817929f9999b
+      internalID: 1508776872
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_standing_idle_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a5c87e71edae31b4cb523d84121de7f2
+      internalID: 1860960961
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_standing_idle_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 03473438640191a4daf1183d90da903b
+      internalID: -1219172738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_standing_idle_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5f583558af05f1545a8c5c466f1244d2
+      internalID: -1401640620
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_standing_idle_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9ce5ce1894a49d24facb1d1c58060e1b
+      internalID: 1008026114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_standing_idle_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4511152f451456640b49dbb2a2c0c5eb
+      internalID: -204694838
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_standing_idle_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8bdd8d148d14fe5499631967dc312925
+      internalID: -1644047864
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_standing_idle_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 81a3923a0592c424f85e97a0a0abfa34
+      internalID: 324293777
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_standing_idle_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ad25debee70fdc144ac3e48b45c47d60
+      internalID: 73698732
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_standing_idle_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 09b6594135965694da182fa12b15a90d
+      internalID: -1273813968
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_standing_idle_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d5051dedafc215244a1f78d200bd90dd
+      internalID: 1148057191
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_standing_idle_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5e9399f06ecdf914ca102fff5d44e7a2
+      internalID: -891945314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_standing_idle_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0cca5ec7dcb03b04b8c520694e775a14
+      internalID: -241135906
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_standing_idle_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0dc77c805fff0d04ab1f4f2e95ae602d
+      internalID: -1007166586
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_standing_idle_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 289b2aca602eaf14091934bf0c29852a
+      internalID: -357695860
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_standing_idle_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 4096
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 31ef437486542224a9d871cd65deaf3e
+      internalID: -1315437021
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_idle_look_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dc0974d3c9997e045b5235fa8ed2edd9
+      internalID: 959788572
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_idle_look_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bfb064b131413704183f2c68721a2d7f
+      internalID: 98292030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_idle_look_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 82f2992944ffc984cb061c1f951c3f26
+      internalID: 2072572601
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_idle_look_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0cd3a99fa1e52ce42ae634fd882511f4
+      internalID: -672959880
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_idle_look_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bbbcaea1a6a7e7e4cba438c3710a5522
+      internalID: -183078050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_idle_look_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 684bc91cc715bf04da63d8efbe6d6010
+      internalID: 461818896
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_idle_look_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 921991a3503af5c43a74deb9233872f2
+      internalID: 795593445
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_idle_look_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cfda0d38e36b7c14eb458d116ca8f531
+      internalID: 532916386
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_idle_look_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f7bd2869523f3384eb8a3da400f046a6
+      internalID: -428497696
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_idle_look_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1ced093271a9cd940807c05b48a89aa5
+      internalID: 861575022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_idle_look_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a2c09a7229ad0dc459f46a4511708cb1
+      internalID: 103217072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_idle_look_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 725c3962e4857bf4e9fb0f4f5770e0d0
+      internalID: -1199215594
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_idle_look_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 932c051ef087fd644859002f3d7d7fa5
+      internalID: -470487939
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_idle_look_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1fc3493f9f28b0843a6b637ef35e44fe
+      internalID: 624582228
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_idle_look_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e09809b51f3b1754cbb95ee29c39b831
+      internalID: 658979122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_idle_look_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 3584
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cd04e52699f22c84cb378e38c8653448
+      internalID: 1380741029
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Death_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b6e7b7764f221f845917dd36f04a68e1
+      internalID: -595340851
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Death_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 266d824f724428746b047b5253cd2081
+      internalID: 1795904118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Death_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: caa0d5d354eef4a4c80db4c6fc6be339
+      internalID: 1157199066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Death_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 88eafbede4cbb3f458095c5ab9afaab9
+      internalID: 414812148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Death_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 70cf7e96ad55dde4d9fa3582a1468d06
+      internalID: -2126702646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Death_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6a82096c42171794b8eb172f4a83e1a0
+      internalID: -1972359791
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Death_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fdc11aecf98695b46ba37f57e98d7d38
+      internalID: 1448837372
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Death_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a2e2f85d06fdf0240b00fd11b591807e
+      internalID: -1775945287
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Death_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 23e9c2f6fadb679499e1fc4f162ada12
+      internalID: -1848918023
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Death_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a68b0f3cf47b5894cac2af0e832c0f24
+      internalID: -658819431
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Death_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3804379c07b3e57479a376de60a40495
+      internalID: 1889097290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Death_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9d3020bfa9fa39d428689aa96dc67dcc
+      internalID: 782653963
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Death_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 363ea605a4b776b43a3c9a978f0e8ffd
+      internalID: 669279546
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Death_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0b32b90fc168ca0488da4e9584bdff67
+      internalID: 931919276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Death_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 082bdaf904a26334a806851920c26b85
+      internalID: -1368957504
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Death_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 3072
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f928ffdc1aedb8347911d762e2ec3a75
+      internalID: 1214421207
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Hit_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 41b3017e024145e409bf7234ab5ae2d3
+      internalID: -1955731762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Hit_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ceccdbfe466334c43b8c059315684e6f
+      internalID: -55236258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Hit_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 022fadbacb695734b91e6eb8c602e2ae
+      internalID: -149917593
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Hit_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 29c44532f6c118e45949c0aa8f479f2e
+      internalID: 1404151740
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Hit_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1ccab8bb7f21a1d48ac6af79c1e2f0c6
+      internalID: -1383004914
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Hit_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fe340dbc793d04544888fbed26dbe902
+      internalID: 1638082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Hit_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7bb2acbca47e70040820df0f3e357a52
+      internalID: 528122442
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Hit_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8663f347fe2f43c4f9f52e7011ac8731
+      internalID: -1756015355
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Hit_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bd42b2c31b3368b43ad14ef6106fefbe
+      internalID: 1507667952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Hit_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 865eeb6741d2e7d4db204bf4b43e85c0
+      internalID: -1572220394
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Hit_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 718f3a84c49d5b74499113832ac7f90b
+      internalID: 1123666113
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Hit_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a8f3eebb1ad3e694dbefeee31de84c46
+      internalID: -359297565
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Hit_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dbe36c7f9061d234a99d3153d0ea3647
+      internalID: 1889268943
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Hit_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 814b00c9dd4965948825e8aae4003ec7
+      internalID: -1521746853
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Hit_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aa7ff5f3d89c709439241ce60976d63f
+      internalID: 297003296
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Hit_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 2560
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6332f8e9ae50ae245a0fd34f7ccb3cd7
+      internalID: 1222164778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Standing_Walk_Forward_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d317a649175f7434fb33dac3969c16f5
+      internalID: -1661605918
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Standing_Walk_Forward_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 96d507e105ac8a54c9486cf4a7e4331d
+      internalID: 2017654723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Standing_Walk_Forward_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e4969c713bcbb8a449d2f8d96aaec236
+      internalID: -1745993033
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Standing_Walk_Forward_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 67763770ccbaf03478102ced18b31619
+      internalID: 1123606952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Standing_Walk_Forward_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0236c377327e2014db29d894516cab41
+      internalID: -1269904185
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Standing_Walk_Forward_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ff01ef6393ea79540a1e20c508c78701
+      internalID: -1194111622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Standing_Walk_Forward_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5b430d7b77fd8194e9d44f36554a5592
+      internalID: -1348776443
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Standing_Walk_Forward_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 58fcb84ef92e8744ebb9175055962869
+      internalID: 1779600845
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Standing_Walk_Forward_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 348989de25352bc438ef6d8eafb314a1
+      internalID: -1826032528
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Standing_Walk_Forward_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 697fe1e2a8e2ccd4087412b581ecbc3b
+      internalID: 1255313836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Standing_Walk_Forward_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 675819ec9294e5c4e964285123d80e65
+      internalID: 1913430467
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Standing_Walk_Forward_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 94dfbc1de4c207f4aa4eb53a1ef35490
+      internalID: -1281935504
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Standing_Walk_Forward_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d19e59c3988e8b348becb594ba978396
+      internalID: -782528061
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Standing_Walk_Forward_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 692cea4bf207ad64bb5be61a304eab3b
+      internalID: -1311658995
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Standing_Walk_Forward_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8b99a78f857767d44a3323b03f4a116c
+      internalID: 1607048359
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Standing_Walk_Forward_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 2048
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4682e36da6727c44292c010ab4e409d7
+      internalID: -312580817
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Right_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d6077fbbc89c32842b3d5fd3ef5cba9f
+      internalID: 1190241321
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Right_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9d9ef9755c0dbc0418c1e6e2b80a9516
+      internalID: 795472838
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Right_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4782f23b05687e34b99868fa32e4dba0
+      internalID: 930464528
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Right_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 46ab1b4e8bc42fe48894beac740d2bc3
+      internalID: -221935901
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Right_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 56e823f393d517f4fbb85dc7b0a65134
+      internalID: -1048112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Right_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ee4694fd38115b44a883149b91d0a0a6
+      internalID: -1232426426
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Right_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0e2f5a09dea14dc439f605b12ff11216
+      internalID: -1408021504
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Right_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 588948b9a2b532d44ace30a0ea448653
+      internalID: -326812959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Right_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cd9fb49bddb25c94e8ce6e7520c7f0ad
+      internalID: 1139362069
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Right_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a0a8aeabed2674243a5e5b0ae23c8ceb
+      internalID: -1399270291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Right_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1137e4929f72daf4783f20434d7cfcaf
+      internalID: -1545703965
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Right_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ebd9a3d03fa118b4a9d3f3222031636c
+      internalID: 1006013005
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Right_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eacdd93f8a673b74994fbc7196b2eaf3
+      internalID: -585122278
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Right_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b5360c42a595828418877e7e45725345
+      internalID: 1045210580
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Right_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ddedc3260619ea64c8ea76a70dcd52c8
+      internalID: -1303272411
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Right_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 1536
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bcfcd931f48b3184bafd7d81e38ef3e9
+      internalID: -1779379567
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Left_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bee80b25333014042bc682754697155d
+      internalID: 66871522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Left_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4d94bc52b4113424fb769d3e6ae8e755
+      internalID: -1723766550
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Left_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d7b168164e8425f42a0355b65941494f
+      internalID: 1457614314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Left_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b0ca649b98390974ba5eeede6d0780a9
+      internalID: 1438268535
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Left_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 54e8bceb98881de47ae0a3cde6165f06
+      internalID: 1555967725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Left_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 03b1b8e8257481f4ab4e4e752bf56385
+      internalID: -454555214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Left_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6feb01551e76ba0409333cc3404819be
+      internalID: -1718252125
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Left_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fd510eb32bf03df408362bf2a8357aa3
+      internalID: 844783619
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Left_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 07dc11cfe4b24c946a764e8335f51330
+      internalID: 496745235
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Left_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 06eae2cce0ef5ed479d8e369c36b22c2
+      internalID: -511617487
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Left_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d7d14e62af8c4c441b574fcce72dbac7
+      internalID: 321862656
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Left_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 20918cb6e214e3e48bd31113509007e9
+      internalID: 987875945
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Left_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b617cd063020d71408c6d999fedf9094
+      internalID: 871141539
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Left_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b8d36faaddc17ee428ea3e24a9a442ce
+      internalID: -2104320238
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Left_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f22e0659aa7a03f44b9391dbad05f513
+      internalID: -883284009
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Turn_Left_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fd3a9ff6dc9ed0842a90057a764d415d
+      internalID: -1473196621
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Block_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2289e91ecf707314094860a5b6713c85
+      internalID: 891066093
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Block_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3297d51a762e8bf4484a1e063e600ff9
+      internalID: 1970194231
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Block_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f04aa185db28e644eaed9c8e846f963e
+      internalID: 258775520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Block_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fb1ed24f82b949242a11e0a8da0e3e76
+      internalID: -927901836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Block_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0e90be01059bb254fb1957ed3c0d91b4
+      internalID: -1786763328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Block_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b4451b6a574453447a8600dd7c2ed4ea
+      internalID: -1587474922
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Block_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f17a032721a06ed4db6192332b858e00
+      internalID: 629701314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Block_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2a0d31813cdd34f48ae2f19c4c742ec9
+      internalID: -762964115
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Block_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 864ebbcbd0528ac429e627bbb084cf0e
+      internalID: -2048066308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Block_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 361e7d5d867511445a17eac738790e04
+      internalID: -125994803
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Block_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 98f8d9a6e6d04764ba634b86eae4fc75
+      internalID: -1148923318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Block_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c51828d5f86a0b34da7ab7493d6f7a31
+      internalID: -1889647567
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Block_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8682d2a7c7ab8164c8c8eb646419bd1b
+      internalID: 493952078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Block_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 71de79a39e8928c458c2069f54eb5001
+      internalID: -1198196330
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Block_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 081e8c8c4850a5045b10a65583f20639
+      internalID: 984016437
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Block_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 512
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 85860c990f0dc534692825ff8eb172e9
+      internalID: 1114425486
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Attack_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c302e2b65eef4f4498c44520a1eccbf3
+      internalID: 1262079798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Attack_01
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e7e839626aa23304ab78edb4bb7a0167
+      internalID: 393502601
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Attack_02
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f92871b20abab75458529bbce7fa596f
+      internalID: 241237524
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Attack_03
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 03b72a31e270b614ba5547e7ea32dc58
+      internalID: 1347268775
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Attack_04
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 24c846c82b46d5142b1ff8e20053a351
+      internalID: -488807374
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Attack_05
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0e26013bea234d748afd12d343d4bfd8
+      internalID: -1727400846
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Attack_06
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e2cf155a9088fcd4484406eaec58172a
+      internalID: -1195438427
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Attack_07
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 729eddac7a995a04ea1df3352a43d58d
+      internalID: -1345425096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Attack_08
+      rect:
+        serializedVersion: 2
+        x: 4096
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 31b329db2cebb7e479cf40f24ddc7ee5
+      internalID: -1392681670
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Attack_09
+      rect:
+        serializedVersion: 2
+        x: 4608
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a1cd4110ac06d61439302b8601f68d10
+      internalID: 1126969791
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Attack_10
+      rect:
+        serializedVersion: 2
+        x: 5120
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5675552cd51c29c4e9f706a13a3d53d8
+      internalID: 621002121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Attack_11
+      rect:
+        serializedVersion: 2
+        x: 5632
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3ca735ab344329b40b2b40e6dd469019
+      internalID: 554972361
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Attack_12
+      rect:
+        serializedVersion: 2
+        x: 6144
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ea99083f5806dc14f9be46c5ebb04258
+      internalID: 1237196982
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Attack_13
+      rect:
+        serializedVersion: 2
+        x: 6656
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2ff44d3bf9c8ded4a98a43aba81e8bff
+      internalID: 1208122181
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Attack_14
+      rect:
+        serializedVersion: 2
+        x: 7168
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 913004490f87d424f92e42fa4eea8e89
+      internalID: 228021298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Beorn_Forward_Attack_15
+      rect:
+        serializedVersion: 2
+        x: 7680
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 218412ec816cce1429203fcceda216a6
+      internalID: 847014438
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 77e6af64508719e489e2b52aebae0a29
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Beorn_Forward_Action_00: -1077953955
+      Beorn_Forward_Action_01: 544360700
+      Beorn_Forward_Action_02: -1592491688
+      Beorn_Forward_Action_03: -546042429
+      Beorn_Forward_Action_04: -352804656
+      Beorn_Forward_Action_05: -170510587
+      Beorn_Forward_Action_06: 103032546
+      Beorn_Forward_Action_07: -570363437
+      Beorn_Forward_Action_08: -1104311792
+      Beorn_Forward_Action_09: 1799882031
+      Beorn_Forward_Action_10: 261589805
+      Beorn_Forward_Action_11: 938536465
+      Beorn_Forward_Action_12: 1648080142
+      Beorn_Forward_Action_13: 1064519492
+      Beorn_Forward_Action_14: 1772407927
+      Beorn_Forward_Action_15: -199827233
+      Beorn_Forward_Attack_00: 1262079798
+      Beorn_Forward_Attack_01: 393502601
+      Beorn_Forward_Attack_02: 241237524
+      Beorn_Forward_Attack_03: 1347268775
+      Beorn_Forward_Attack_04: -488807374
+      Beorn_Forward_Attack_05: -1727400846
+      Beorn_Forward_Attack_06: -1195438427
+      Beorn_Forward_Attack_07: -1345425096
+      Beorn_Forward_Attack_08: -1392681670
+      Beorn_Forward_Attack_09: 1126969791
+      Beorn_Forward_Attack_10: 621002121
+      Beorn_Forward_Attack_11: 554972361
+      Beorn_Forward_Attack_12: 1237196982
+      Beorn_Forward_Attack_13: 1208122181
+      Beorn_Forward_Attack_14: 228021298
+      Beorn_Forward_Attack_15: 847014438
+      Beorn_Forward_Block_00: 891066093
+      Beorn_Forward_Block_01: 1970194231
+      Beorn_Forward_Block_02: 258775520
+      Beorn_Forward_Block_03: -927901836
+      Beorn_Forward_Block_04: -1786763328
+      Beorn_Forward_Block_05: -1587474922
+      Beorn_Forward_Block_06: 629701314
+      Beorn_Forward_Block_07: -762964115
+      Beorn_Forward_Block_08: -2048066308
+      Beorn_Forward_Block_09: -125994803
+      Beorn_Forward_Block_10: -1148923318
+      Beorn_Forward_Block_11: -1889647567
+      Beorn_Forward_Block_12: 493952078
+      Beorn_Forward_Block_13: -1198196330
+      Beorn_Forward_Block_14: 984016437
+      Beorn_Forward_Block_15: 1114425486
+      Beorn_Forward_Crouch_Idle_00: -1084058126
+      Beorn_Forward_Crouch_Idle_01: -1904705972
+      Beorn_Forward_Crouch_Idle_02: 1081974936
+      Beorn_Forward_Crouch_Idle_03: 1012344222
+      Beorn_Forward_Crouch_Idle_04: -1615513454
+      Beorn_Forward_Crouch_Idle_05: -67740651
+      Beorn_Forward_Crouch_Idle_06: -471172014
+      Beorn_Forward_Crouch_Idle_07: 1655345098
+      Beorn_Forward_Crouch_Idle_08: -2116595328
+      Beorn_Forward_Crouch_Idle_09: 1906602713
+      Beorn_Forward_Crouch_Idle_10: 802449249
+      Beorn_Forward_Crouch_Idle_11: -1199013290
+      Beorn_Forward_Crouch_Idle_12: 1274552415
+      Beorn_Forward_Crouch_Idle_13: -1786587750
+      Beorn_Forward_Crouch_Idle_14: 726396521
+      Beorn_Forward_Crouch_Idle_15: 1328171225
+      Beorn_Forward_Death_00: -595340851
+      Beorn_Forward_Death_01: 1795904118
+      Beorn_Forward_Death_02: 1157199066
+      Beorn_Forward_Death_03: 414812148
+      Beorn_Forward_Death_04: -2126702646
+      Beorn_Forward_Death_05: -1972359791
+      Beorn_Forward_Death_06: 1448837372
+      Beorn_Forward_Death_07: -1775945287
+      Beorn_Forward_Death_08: -1848918023
+      Beorn_Forward_Death_09: -658819431
+      Beorn_Forward_Death_10: 1889097290
+      Beorn_Forward_Death_11: 782653963
+      Beorn_Forward_Death_12: 669279546
+      Beorn_Forward_Death_13: 931919276
+      Beorn_Forward_Death_14: -1368957504
+      Beorn_Forward_Death_15: 1214421207
+      Beorn_Forward_Hit_00: -1955731762
+      Beorn_Forward_Hit_01: -55236258
+      Beorn_Forward_Hit_02: -149917593
+      Beorn_Forward_Hit_03: 1404151740
+      Beorn_Forward_Hit_04: -1383004914
+      Beorn_Forward_Hit_05: 1638082
+      Beorn_Forward_Hit_06: 528122442
+      Beorn_Forward_Hit_07: -1756015355
+      Beorn_Forward_Hit_08: 1507667952
+      Beorn_Forward_Hit_09: -1572220394
+      Beorn_Forward_Hit_10: 1123666113
+      Beorn_Forward_Hit_11: -359297565
+      Beorn_Forward_Hit_12: 1889268943
+      Beorn_Forward_Hit_13: -1521746853
+      Beorn_Forward_Hit_14: 297003296
+      Beorn_Forward_Hit_15: 1222164778
+      Beorn_Forward_Magic_00: -427189398
+      Beorn_Forward_Magic_01: 1102436899
+      Beorn_Forward_Magic_02: -235208887
+      Beorn_Forward_Magic_03: -403215620
+      Beorn_Forward_Magic_04: -1429166275
+      Beorn_Forward_Magic_05: 88603259
+      Beorn_Forward_Magic_06: -1049967431
+      Beorn_Forward_Magic_07: 378007068
+      Beorn_Forward_Magic_08: -1360627688
+      Beorn_Forward_Magic_09: 85863445
+      Beorn_Forward_Magic_10: -801422241
+      Beorn_Forward_Magic_11: 71676360
+      Beorn_Forward_Magic_12: 1403218114
+      Beorn_Forward_Magic_13: -781667460
+      Beorn_Forward_Magic_14: -241817625
+      Beorn_Forward_Magic_15: 1384414492
+      Beorn_Forward_Standing_Walk_Forward_00: -1661605918
+      Beorn_Forward_Standing_Walk_Forward_01: 2017654723
+      Beorn_Forward_Standing_Walk_Forward_02: -1745993033
+      Beorn_Forward_Standing_Walk_Forward_03: 1123606952
+      Beorn_Forward_Standing_Walk_Forward_04: -1269904185
+      Beorn_Forward_Standing_Walk_Forward_05: -1194111622
+      Beorn_Forward_Standing_Walk_Forward_06: -1348776443
+      Beorn_Forward_Standing_Walk_Forward_07: 1779600845
+      Beorn_Forward_Standing_Walk_Forward_08: -1826032528
+      Beorn_Forward_Standing_Walk_Forward_09: 1255313836
+      Beorn_Forward_Standing_Walk_Forward_10: 1913430467
+      Beorn_Forward_Standing_Walk_Forward_11: -1281935504
+      Beorn_Forward_Standing_Walk_Forward_12: -782528061
+      Beorn_Forward_Standing_Walk_Forward_13: -1311658995
+      Beorn_Forward_Standing_Walk_Forward_14: 1607048359
+      Beorn_Forward_Standing_Walk_Forward_15: -312580817
+      Beorn_Forward_Turn_Left_00: 66871522
+      Beorn_Forward_Turn_Left_01: -1723766550
+      Beorn_Forward_Turn_Left_02: 1457614314
+      Beorn_Forward_Turn_Left_03: 1438268535
+      Beorn_Forward_Turn_Left_04: 1555967725
+      Beorn_Forward_Turn_Left_05: -454555214
+      Beorn_Forward_Turn_Left_06: -1718252125
+      Beorn_Forward_Turn_Left_07: 844783619
+      Beorn_Forward_Turn_Left_08: 496745235
+      Beorn_Forward_Turn_Left_09: -511617487
+      Beorn_Forward_Turn_Left_10: 321862656
+      Beorn_Forward_Turn_Left_11: 987875945
+      Beorn_Forward_Turn_Left_12: 871141539
+      Beorn_Forward_Turn_Left_13: -2104320238
+      Beorn_Forward_Turn_Left_14: -883284009
+      Beorn_Forward_Turn_Left_15: -1473196621
+      Beorn_Forward_Turn_Right_00: 1190241321
+      Beorn_Forward_Turn_Right_01: 795472838
+      Beorn_Forward_Turn_Right_02: 930464528
+      Beorn_Forward_Turn_Right_03: -221935901
+      Beorn_Forward_Turn_Right_04: -1048112
+      Beorn_Forward_Turn_Right_05: -1232426426
+      Beorn_Forward_Turn_Right_06: -1408021504
+      Beorn_Forward_Turn_Right_07: -326812959
+      Beorn_Forward_Turn_Right_08: 1139362069
+      Beorn_Forward_Turn_Right_09: -1399270291
+      Beorn_Forward_Turn_Right_10: -1545703965
+      Beorn_Forward_Turn_Right_11: 1006013005
+      Beorn_Forward_Turn_Right_12: -585122278
+      Beorn_Forward_Turn_Right_13: 1045210580
+      Beorn_Forward_Turn_Right_14: -1303272411
+      Beorn_Forward_Turn_Right_15: -1779379567
+      Beorn_Forward_idle_look_00: 959788572
+      Beorn_Forward_idle_look_01: 98292030
+      Beorn_Forward_idle_look_02: 2072572601
+      Beorn_Forward_idle_look_03: -672959880
+      Beorn_Forward_idle_look_04: -183078050
+      Beorn_Forward_idle_look_05: 461818896
+      Beorn_Forward_idle_look_06: 795593445
+      Beorn_Forward_idle_look_07: 532916386
+      Beorn_Forward_idle_look_08: -428497696
+      Beorn_Forward_idle_look_09: 861575022
+      Beorn_Forward_idle_look_10: 103217072
+      Beorn_Forward_idle_look_11: -1199215594
+      Beorn_Forward_idle_look_12: -470487939
+      Beorn_Forward_idle_look_13: 624582228
+      Beorn_Forward_idle_look_14: 658979122
+      Beorn_Forward_idle_look_15: 1380741029
+      Beorn_Forward_standing_idle_00: 1508776872
+      Beorn_Forward_standing_idle_01: 1860960961
+      Beorn_Forward_standing_idle_02: -1219172738
+      Beorn_Forward_standing_idle_03: -1401640620
+      Beorn_Forward_standing_idle_04: 1008026114
+      Beorn_Forward_standing_idle_05: -204694838
+      Beorn_Forward_standing_idle_06: -1644047864
+      Beorn_Forward_standing_idle_07: 324293777
+      Beorn_Forward_standing_idle_08: 73698732
+      Beorn_Forward_standing_idle_09: -1273813968
+      Beorn_Forward_standing_idle_10: 1148057191
+      Beorn_Forward_standing_idle_11: -891945314
+      Beorn_Forward_standing_idle_12: -241135906
+      Beorn_Forward_standing_idle_13: -1007166586
+      Beorn_Forward_standing_idle_14: -357695860
+      Beorn_Forward_standing_idle_15: -1315437021
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
