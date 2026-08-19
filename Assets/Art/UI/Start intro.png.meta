@@ -1,13 +1,10 @@
 fileFormatVersion: 2
-guid: fa90e339606c622419d3a3fda9161117
+guid: 240a023552c1abd48b4ebe0a118fc62b
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1776824115542173745
-    second: Lag-orod_0
-  - first:
-      213: -553185791099204295
-    second: Lag-orod_1
+      213: -8862962495600000838
+    second: Start intro_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -49,12 +46,12 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 750
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -116,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Lag-orod_0
+      name: Start intro_0
       rect:
         serializedVersion: 2
-        x: 116
-        y: 322
-        width: 741
-        height: 973
+        x: 0
+        y: 0
+        width: 1674
+        height: 940
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -131,30 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1382d3b7e1c88a810800000000000000
-      internalID: 1776824115542173745
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Lag-orod_1
-      rect:
-        serializedVersion: 2
-        x: 491
-        y: 275
-        width: 25
-        height: 19
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 93d0db23470b258f0800000000000000
-      internalID: -553185791099204295
+      spriteID: ab00728719e600580800000000000000
+      internalID: -8862962495600000838
       vertices: []
       indices: 
       edges: []
@@ -163,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -173,8 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Lag-orod_0: 1776824115542173745
-      Lag-orod_1: -553185791099204295
+      Start intro_0: -8862962495600000838
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

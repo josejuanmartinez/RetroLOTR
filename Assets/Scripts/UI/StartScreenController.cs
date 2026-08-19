@@ -8,10 +8,9 @@ public sealed class StartScreenController : MonoBehaviour
 {
     [Header("Authored Start Screen")]
     [SerializeField] private GameObject root;
-    [SerializeField] private Button startButton;
-    [SerializeField] private Button quitButton;
-    [SerializeField] private Button skinButton;
-    [SerializeField] private MenuBackgroundRotator backdrop;
+    [SerializeField] public Button startButton;
+    [SerializeField] public Button quitButton;
+    [SerializeField] public Button skinButton;
     [SerializeField] private TextMeshProUGUI skinValue;
 
     private CampaignSelectionManager campaignSelection;
@@ -30,20 +29,17 @@ public sealed class StartScreenController : MonoBehaviour
     {
         if (wired) return;
         if (root == null) root = gameObject;
-        if (startButton != null) startButton.onClick.AddListener(StartCampaign);
-        if (quitButton != null) quitButton.onClick.AddListener(Quit);
-        if (skinButton != null) skinButton.onClick.AddListener(ToggleSkin);
         wired = true;
     }
 
-    private void StartCampaign()
+    public void StartCampaign()
     {
         Sounds.Instance?.PlayUiClick();
         root.SetActive(false);
         campaignSelection.gameObject.SetActive(true);
     }
 
-    private void ToggleSkin()
+    public void ToggleSkin()
     {
         SkinManager manager = FindFirstObjectByType<SkinManager>();
         ApplySkin(manager != null && manager.CurrentSkin == Skins.Default ? Skins.Bakshi : Skins.Default);
@@ -53,50 +49,13 @@ public sealed class StartScreenController : MonoBehaviour
     private void ApplySkin(Skins skin)
     {
         FindFirstObjectByType<SkinManager>()?.ChangeSkin(skin);
-        backdrop?.SetSkin(skin);
-        if (skinValue != null) skinValue.text = $"<sprite name=\"Skin\"> Skin: {skin}";
+        if (skinValue != null) skinValue.text = $"Skin: {skin}";
     }
 
-    private static void Quit()
+    public static void Quit()
     {
         Sounds.Instance?.PlayUiExit();
         Application.Quit();
     }
 
-    internal static RectTransform CreatePanel(string name, Transform parent, Vector2 anchorMin, Vector2 anchorMax, Vector2 offsetMin, Vector2 offsetMax, Color color)
-    {
-        GameObject go = new(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-        go.transform.SetParent(parent, false);
-        RectTransform rect = go.GetComponent<RectTransform>();
-        rect.anchorMin = anchorMin; rect.anchorMax = anchorMax; rect.offsetMin = offsetMin; rect.offsetMax = offsetMax;
-        go.GetComponent<Image>().color = color;
-        return rect;
-    }
-
-
-    internal static Button CreateButton(string text, Transform parent, UnityEngine.Events.UnityAction action, float height = 58f)
-    {
-        GameObject go = new(text, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button), typeof(LayoutElement));
-        go.transform.SetParent(parent, false);
-        go.GetComponent<Image>().color = new Color(0.20f, 0.16f, 0.10f, 0.94f);
-        go.GetComponent<LayoutElement>().preferredHeight = height;
-        Button button = go.GetComponent<Button>();
-        ColorBlock colors = button.colors; colors.normalColor = Color.white; colors.highlightedColor = new Color(1f, 0.82f, 0.4f); colors.pressedColor = new Color(0.62f, 0.44f, 0.18f); button.colors = colors;
-        button.onClick.AddListener(action);
-        CreateLabel(text, go.transform as RectTransform, 22, FontStyles.Bold, 0);
-        return button;
-    }
-
-    internal static TextMeshProUGUI CreateLabel(string text, RectTransform parent, float size, FontStyles style, float preferredHeight)
-    {
-        GameObject go = new("Label", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
-        go.transform.SetParent(parent, false);
-        TextMeshProUGUI label = go.GetComponent<TextMeshProUGUI>();
-        label.font = TMP_Settings.defaultFontAsset;
-        label.text = text; label.fontSize = size; label.fontStyle = style; label.alignment = TextAlignmentOptions.Center; label.color = new Color(0.96f, 0.88f, 0.67f);
-        RectTransform rect = go.GetComponent<RectTransform>();
-        rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one; rect.offsetMin = rect.offsetMax = Vector2.zero;
-        if (preferredHeight > 0f) go.AddComponent<LayoutElement>().preferredHeight = preferredHeight;
-        return label;
-    }
 }

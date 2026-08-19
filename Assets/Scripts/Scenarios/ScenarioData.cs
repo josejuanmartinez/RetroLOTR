@@ -64,7 +64,20 @@ namespace RetroLOTR.Scenarios
         // leaders no longer get automatic starting items (Game.GrantStartingArtifacts was
         // removed); every scenario character, leader or companion, is assigned objects explicitly
         // here instead. Empty list = holds nothing, same as before.
-        public const int CurrentVersion = 12;
+        // v13 added ScenarioData.zoneOfControl: sparse per-hex nation ownership (row/col/leaderName)
+        // for hexes revealed to that nation from the very start of the game, regardless of unit
+        // presence, and never re-hidden. Resolved against the named leader once scenario leader
+        // identity is final (see NationSpawner.ApplyScenarioZoneOfControl), applied via the same
+        // Hex.EnsurePersistentScouting mechanism already used for a nation's own founded PCs. Empty
+        // list = no scenario-authored ZoC (fully backward compatible).
+        // v14 added ScenarioZoneOfControlCell.variantId: a playable leader's ZoC is now per-variant
+        // rather than shared across every variant of that leader — a cell only applies when its
+        // variantId matches the variant actually selected/surviving for that leader this game
+        // ("" = Base flavor specifically). Missing on older files deserializes to "" (Base), which
+        // is only correct for scenarios that never authored more than one variant's worth of ZoC
+        // for the same leader; those with genuinely shared, variant-agnostic ZoC should re-paint it
+        // once per variant in the Scenario Creator.
+        public const int CurrentVersion = 14;
 
         public int version = CurrentVersion;
         public string scenarioName = "New Scenario";
@@ -100,6 +113,10 @@ namespace RetroLOTR.Scenarios
         /// only objects the author deliberately placed appear here.</summary>
         public List<ScenarioObject> objects = new();
 
+        /// <summary>Sparse per-hex Zone of Control ownership: hexes revealed to the named nation
+        /// from game start onward, regardless of unit presence (see v13 notes above).</summary>
+        public List<ScenarioZoneOfControlCell> zoneOfControl = new();
+
         public int Index(int row, int col) => row * width + col;
 
         public bool InBounds(int row, int col) => row >= 0 && row < height && col >= 0 && col < width;
@@ -126,6 +143,20 @@ namespace RetroLOTR.Scenarios
         public int row;
         public int col;
         public string spriteName;
+    }
+
+    [Serializable]
+    public class ScenarioZoneOfControlCell
+    {
+        public int row;
+        public int col;
+        public string leaderName;
+
+        /// <summary>Which of leaderName's authored variants this cell was painted for ("" = the
+        /// Base flavor specifically, not "any variant"). Only ever non-empty for a playable leader;
+        /// see NationSpawner.ApplyScenarioZoneOfControl for how this is matched against the variant
+        /// actually selected/surviving for that leader this game.</summary>
+        public string variantId = "";
     }
 
     /// <summary>Pins one hidden object (matched by name against the Object-card catalog) to a

@@ -61,6 +61,20 @@ public static class StartupLoadingScreenPrefabGenerator
         veilRect.offsetMax = Vector2.zero;
         veil.GetComponent<Image>().color = new Color(0.015f, 0.02f, 0.035f, 0.96f);
 
+        GameObject cardArt = new("Card Art", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        cardArt.layer = 5;
+        cardArt.transform.SetParent(root.transform, false);
+        RectTransform cardArtRect = cardArt.GetComponent<RectTransform>();
+        cardArtRect.localScale = Vector3.one;
+        cardArtRect.anchorMin = new Vector2(0.5f, 0.5f);
+        cardArtRect.anchorMax = new Vector2(0.5f, 0.5f);
+        cardArtRect.anchoredPosition = new Vector2(0f, 260f);
+        cardArtRect.sizeDelta = new Vector2(260f, 360f);
+        Image cardArtImage = cardArt.GetComponent<Image>();
+        cardArtImage.preserveAspect = true;
+        cardArtImage.raycastTarget = false;
+        cardArtImage.enabled = false; // RotateCardArt enables it once the first sprite loads
+
         GameObject widget = Object.Instantiate(sourceSlider.transform.parent.gameObject, root.transform, false);
         widget.name = "Progress Widget";
         widget.SetActive(true);
@@ -87,6 +101,7 @@ public static class StartupLoadingScreenPrefabGenerator
         controller.FindProperty("canvasGroup").objectReferenceValue = root.GetComponent<CanvasGroup>();
         controller.FindProperty("progressBar").objectReferenceValue = slider;
         controller.FindProperty("statusText").objectReferenceValue = status != null ? status : title;
+        controller.FindProperty("cardImage").objectReferenceValue = cardArtImage;
         controller.ApplyModifiedPropertiesWithoutUndo();
         root.GetComponent<RectTransform>().localScale = Vector3.one;
 

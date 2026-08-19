@@ -25,6 +25,11 @@ public class Illustrations : SearcherByName
     private Dictionary<string, Sprite> illustrationsByName = new();
     private Dictionary<string, Sprite> cardArtByName = new();
     private Dictionary<string, Sprite> characterArtByName = new();
+    // Flat, dedup-free list of every card-art sprite as it finishes loading, so a random pick
+    // (see GetRandomCardArt) doesn't have to dedupe cardArtByName's multiple lookup-key aliases
+    // for the same sprite, and grows progressively during startup instead of only being usable
+    // once loading fully completes.
+    private readonly List<Sprite> cardArtSprites = new();
     // Deck-back art (Assets/Art/Decks) is keyed separately from the general illustrations
     // dictionary: nation/variant names like "Gandalf" or "Sharkey" are already claimed by
     // character portrait cards there, so a shared dictionary would silently hand back the
@@ -85,6 +90,7 @@ public class Illustrations : SearcherByName
             cardArtByName = new Dictionary<string, Sprite>();
             characterArtByName = new Dictionary<string, Sprite>();
             deckArtByName = new Dictionary<string, Sprite>();
+            cardArtSprites.Clear();
             // Complete in a degraded state so a failed Addressables label cannot leave the
             // full-screen startup blocker up forever. The error remains explicit in the log.
             isLoaded = true;
@@ -96,6 +102,7 @@ public class Illustrations : SearcherByName
         cardArtByName = new Dictionary<string, Sprite>();
         characterArtByName = new Dictionary<string, Sprite>();
         deckArtByName = new Dictionary<string, Sprite>();
+        cardArtSprites.Clear();
         pendingLocationLoads = 0;
         locationScanFinished = true;
         int queuedCount = 0;
@@ -127,6 +134,7 @@ public class Illustrations : SearcherByName
             if (isCardArt)
             {
                 RegisterSpriteLookupKeys(handle.Result, cardArtByName);
+                cardArtSprites.Add(handle.Result);
             }
             if (isCharacterArt)
             {
@@ -244,6 +252,16 @@ public class Illustrations : SearcherByName
             if (cardArtByName.TryGetValue(key, out sprite)) return true;
         }
         return false;
+    }
+
+    // Picks any one card-art sprite that has finished loading so far. Meant for decorative,
+    // non-lookup use (e.g. the startup loading screen's card rotation) — the pool grows as more
+    // art streams in, so it stays meaningful even before IsLoaded is true. Returns null until at
+    // least one card-art sprite has completed loading.
+    public Sprite GetRandomCardArt()
+    {
+        if (cardArtSprites.Count == 0) return null;
+        return cardArtSprites[UnityEngine.Random.Range(0, cardArtSprites.Count)];
     }
 
     public Sprite GetCharacterArtByName(string name, bool logMissing = true)

@@ -10,7 +10,9 @@ public sealed class StartupLoadingScreen : MonoBehaviour
     [SerializeField] private CanvasGroup canvasGroup;
     [SerializeField] private Slider progressBar;
     [SerializeField] private TextMeshProUGUI statusText;
+    [SerializeField] private Image cardImage;
     [SerializeField] private float fadeSeconds = 0.25f;
+    [SerializeField] private float cardRotationSeconds = 1.2f;
 
     private Illustrations illustrations;
 
@@ -23,6 +25,8 @@ public sealed class StartupLoadingScreen : MonoBehaviour
 
         // Ensure this canvas is actually presented before synchronous deck parsing begins.
         yield return null;
+
+        Coroutine cardRotation = cardImage != null ? StartCoroutine(RotateCardArt()) : null;
 
         float waitStartedAt = Time.realtimeSinceStartup;
         while (!StartupReady() && Time.realtimeSinceStartup - waitStartedAt < 30f)
@@ -37,12 +41,36 @@ public sealed class StartupLoadingScreen : MonoBehaviour
             yield return null;
         }
 
+        if (cardRotation != null) StopCoroutine(cardRotation);
+
         if (progressBar != null) progressBar.value = 1f;
         SetStatus("Done!");
         yield return FadeOut();
         SetVisible(false);
         gameObject.SetActive(false);
         Debug.Log("StartupLoadingScreen: startup complete; menu input unblocked.");
+    }
+
+    // Cycles the loading screen's card art through whatever art has finished loading so far.
+    // Only reads sprites Illustrations has already loaded (GetRandomCardArt never triggers a new
+    // load), so this can't add work during DeckManager's synchronous catalog parse — that block
+    // freezes the whole main thread regardless, and this coroutine simply doesn't get to run
+    // until it's over. Once Illustrations starts streaming sprites in (which does yield every
+    // frame), swapping a UI Image's sprite reference is effectively free.
+    private IEnumerator RotateCardArt()
+    {
+        Sprite lastSprite = null;
+        while (true)
+        {
+            Sprite candidate = illustrations != null ? illustrations.GetRandomCardArt() : null;
+            if (candidate != null && candidate != lastSprite)
+            {
+                cardImage.sprite = candidate;
+                cardImage.enabled = true;
+                lastSprite = candidate;
+            }
+            yield return new WaitForSeconds(cardRotationSeconds);
+        }
     }
 
     private bool StartupReady()

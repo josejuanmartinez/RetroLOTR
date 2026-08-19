@@ -15,7 +15,16 @@ namespace RetroLOTR.Scenarios.EditorTools
     /// </summary>
     public class ScenarioCreatorWindow : EditorWindow
     {
-        private enum Tool { Paint, Region, Magnifier }
+        private enum Tool { Paint, Region, ZoneOfControl, Magnifier }
+
+        // One nation's Zone-of-Control claim on a hex. A hex can carry several of these at once
+        // (see the zoc field below) — each is applied independently at runtime, so overlapping
+        // claims from different nations are fully supported, not a last-write-wins overwrite.
+        private class ZocOwner
+        {
+            public string leaderName;
+            public string variantId = "";
+        }
 
         private const string SaveFolder = "Assets/Resources/Scenarios";
         private const string ResourceFolder = "Scenarios";
@@ -30,6 +39,7 @@ namespace RetroLOTR.Scenarios.EditorTools
         private TerrainEnum[] terrain;
         private string[] regions;
         private string[] spriteNames; // per-hex chosen tile variation ("" = terrain default)
+        private readonly Dictionary<int, List<ZocOwner>> zoc = new(); // per-hex nations with ZoC there (absent/empty = none)
         private readonly Dictionary<int, ScenarioPC> pcs = new();
         private readonly Dictionary<int, List<ScenarioCharacter>> characters = new();
         private readonly Dictionary<int, List<ScenarioObject>> objects = new();
@@ -41,6 +51,9 @@ namespace RetroLOTR.Scenarios.EditorTools
         private string paintRegion = "";      // empty = leave region unchanged while terrain-painting
         private string paintSpriteName = "";  // chosen tile variation for the terrain brush ("" = default)
         private string regionBrushRegion = ""; // region applied by the region-only brush
+        private string zocBrushLeader = "";    // nation applied by the Zone of Control brush
+        private string zocBrushVariantId = ""; // that nation's variant applied by the brush ("" = Base)
+        private bool zocBrushRemove;           // when true, paints remove zocBrushLeader's claim instead of adding it
         private int selectedIndex = -1;
         private Vector2 paintScroll;
 
@@ -132,6 +145,7 @@ namespace RetroLOTR.Scenarios.EditorTools
             terrain = new TerrainEnum[width * height];
             regions = new string[width * height];
             spriteNames = new string[width * height];
+            zoc.Clear();
             for (int i = 0; i < terrain.Length; i++) terrain[i] = TerrainEnum.deepWater;
             pcs.Clear();
             characters.Clear();
@@ -237,7 +251,7 @@ namespace RetroLOTR.Scenarios.EditorTools
 
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Tool", EditorStyles.boldLabel);
-            tool = (Tool)GUILayout.Toolbar((int)tool, new[] { "Terrain", "Region", "Magnifier" });
+            tool = (Tool)GUILayout.Toolbar((int)tool, new[] { "Terrain", "Region", "Zone of Control", "Magnifier" });
 
             if (tool == Tool.Paint)
             {
@@ -253,6 +267,55 @@ namespace RetroLOTR.Scenarios.EditorTools
                     string.IsNullOrEmpty(regionBrushRegion)
                         ? "Pick a region, then paint over any hexes to set ONLY their region (terrain unchanged)."
                         : $"Paints region '{regionBrushRegion}' onto existing hexes; terrain is left untouched.",
+                    MessageType.Info);
+            }
+            else if (tool == Tool.ZoneOfControl)
+            {
+                EditorGUILayout.Space();
+                EditorGUILayout.LabelField("Zone of Control Brush", EditorStyles.boldLabel);
+                brushSize = EditorGUILayout.IntSlider("Size", brushSize, 1, 6);
+                string previousZocBrushLeader = zocBrushLeader;
+                SearchableField("Nation", zocBrushLeader, ScenarioCardCatalog.AllLeaders(), v => zocBrushLeader = v);
+                if (zocBrushLeader != previousZocBrushLeader) zocBrushVariantId = ""; // variants differ per leader; reset
+
+                IReadOnlyList<LeaderVariantConfig> zocBrushVariants = string.IsNullOrWhiteSpace(zocBrushLeader)
+                    ? null
+                    : ScenarioCardCatalog.GetPlayableLeaderVariants(zocBrushLeader);
+                if (zocBrushVariants != null && zocBrushVariants.Count > 0)
+                {
+                    string[] labels = new string[zocBrushVariants.Count + 1];
+                    labels[0] = "Base (no variant)";
+                    int selected = 0;
+                    for (int i = 0; i < zocBrushVariants.Count; i++)
+                    {
+                        LeaderVariantConfig v = zocBrushVariants[i];
+                        string display = string.IsNullOrWhiteSpace(v.displayName) ? v.variantId : v.displayName;
+                        labels[i + 1] = $"{display}  ({v.variantId})";
+                        if (!string.IsNullOrEmpty(zocBrushVariantId) &&
+                            string.Equals(v.variantId, zocBrushVariantId, StringComparison.OrdinalIgnoreCase))
+                            selected = i + 1;
+                    }
+                    int chosen = EditorGUILayout.Popup("Variant", selected, labels);
+                    zocBrushVariantId = chosen <= 0 ? "" : zocBrushVariants[chosen - 1].variantId;
+                }
+                else
+                {
+                    zocBrushVariantId = "";
+                }
+
+                using (new EditorGUI.DisabledScope(string.IsNullOrEmpty(zocBrushLeader)))
+                    zocBrushRemove = EditorGUILayout.ToggleLeft("Remove this nation's claim instead of adding it", zocBrushRemove);
+
+                string variantSuffix = zocBrushVariants != null && zocBrushVariants.Count > 0
+                    ? $" ({(string.IsNullOrEmpty(zocBrushVariantId) ? "Base flavor" : $"variant '{zocBrushVariantId}'")} only — applied only if that's the exact variant selected/surviving this game)"
+                    : "";
+
+                EditorGUILayout.HelpBox(
+                    string.IsNullOrEmpty(zocBrushLeader)
+                        ? "Pick a nation, then paint hexes that nation can always see from the start of the game. Painting with no nation selected clears every claim on a hex."
+                        : zocBrushRemove
+                            ? $"Removes {zocBrushLeader}'s claim{variantSuffix} from painted hexes, leaving any other nations' claims on them untouched."
+                            : $"Adds Zone of Control for {zocBrushLeader}{variantSuffix} to painted hexes — revealed to them from turn 1, never fog again. A hex can carry claims from several nations at once; this only adds to that hex's list, it never replaces another nation's claim.",
                     MessageType.Info);
             }
             else
@@ -604,6 +667,12 @@ namespace RetroLOTR.Scenarios.EditorTools
                 return;
             }
 
+            if (tool == Tool.ZoneOfControl)
+            {
+                DrawZoneOfControlHex(draw, stepX, stepY, t, zoc.TryGetValue(idx, out List<ZocOwner> owners) ? owners : null);
+                return;
+            }
+
             Sprite sprite = GetCellTerrainSprite(idx);
 
             Material previewMaterial = GetPreviewMaterial(previewStyle);
@@ -840,6 +909,58 @@ namespace RetroLOTR.Scenarios.EditorTools
             }
         }
 
+        // Same placeholder-fill approach as DrawRegionHex, tinted with a blend of every claiming
+        // nation+variant's deterministic color and labeled with all of their initials (joined by
+        // "/"), so authors can tell ZoC apart from regions, one variant's ZoC apart from a sibling
+        // variant's, and at a glance whether a hex is claimed by more than one nation.
+        private static void DrawZoneOfControlHex(Rect draw, float stepX, float stepY, TerrainEnum terrainType, List<ZocOwner> owners)
+        {
+            Vector2 center = draw.center;
+            float halfW = stepX * 0.5f;
+            float halfH = stepY * (2f / 3f);
+            Vector3[] hex = BuildHexPoints(center, stepX, stepY);
+
+            Handles.BeginGUI();
+            Handles.color = TerrainFallbackColor(terrainType);
+            Handles.DrawAAConvexPolygon(hex);
+
+            bool hasOwners = owners != null && owners.Count > 0;
+            if (hasOwners)
+            {
+                Color tint = Color.clear;
+                foreach (ZocOwner o in owners) tint += ZoneColor(o.leaderName + "|" + (o.variantId ?? ""));
+                tint /= owners.Count;
+                tint.a = 0.6f;
+                Handles.color = tint;
+                Handles.DrawAAConvexPolygon(hex);
+            }
+
+            Handles.color = new Color(0f, 0f, 0f, 0.35f);
+            Handles.DrawPolyLine(hex[0], hex[1], hex[2], hex[3], hex[4], hex[5], hex[0]);
+            Handles.EndGUI();
+
+            if (hasOwners)
+            {
+                string letters = string.Join("/", owners.Select(o =>
+                {
+                    string s = RegionInitials(o.leaderName);
+                    if (!string.IsNullOrEmpty(o.variantId)) s += "*" + RegionInitials(o.variantId);
+                    return s;
+                }));
+                var style = new GUIStyle(EditorStyles.boldLabel)
+                {
+                    alignment = TextAnchor.MiddleCenter,
+                    fontSize = Mathf.Clamp(Mathf.RoundToInt(halfH * 0.7f / Mathf.Max(1f, letters.Length * 0.55f)), 8, 22),
+                    normal = { textColor = Color.black }
+                };
+                var labelRect = new Rect(center.x - halfW, center.y - halfH, halfW * 2f, halfH * 2f);
+
+                var shadowStyle = new GUIStyle(style) { normal = { textColor = new Color(1f, 1f, 1f, 0.85f) } };
+                GUI.Label(new Rect(labelRect.x + 1, labelRect.y + 1, labelRect.width, labelRect.height), letters, shadowStyle);
+                GUI.Label(labelRect, letters, style);
+            }
+        }
+
         // Takes one letter per capitalized word in a PascalCase region name (e.g. "TheNorthDowns"
         // -> "TND") instead of just the first letter, since many region names share the same
         // leading word ("The...") and would otherwise all show the same disambiguating letter.
@@ -897,7 +1018,7 @@ namespace RetroLOTR.Scenarios.EditorTools
 
             if (!PickHex(content, e.mousePosition, cellW, cellH, out int row, out int col)) return;
 
-            if (tool == Tool.Paint || tool == Tool.Region)
+            if (tool == Tool.Paint || tool == Tool.Region || tool == Tool.ZoneOfControl)
             {
                 ApplyBrush(row, col);
                 e.Use();
@@ -942,6 +1063,27 @@ namespace RetroLOTR.Scenarios.EditorTools
                             continue;
                         }
                         regions[idx] = targetRegion;
+                        continue;
+                    }
+
+                    if (tool == Tool.ZoneOfControl)
+                    {
+                        // Zone of Control brush: a hex can carry claims from several nations at
+                        // once, so painting a nation ADDS its claim (replacing any existing claim
+                        // by that same nation, e.g. to change its variant) rather than replacing the
+                        // whole hex. Painting with no nation selected clears every claim on the hex;
+                        // the Remove toggle instead deletes just the selected nation's own claim,
+                        // leaving any others untouched. Never touches terrain or region.
+                        if (string.IsNullOrEmpty(zocBrushLeader))
+                        {
+                            zoc.Remove(idx);
+                            continue;
+                        }
+
+                        if (!zoc.TryGetValue(idx, out List<ZocOwner> owners)) zoc[idx] = owners = new List<ZocOwner>();
+                        owners.RemoveAll(o => string.Equals(o.leaderName, zocBrushLeader, StringComparison.OrdinalIgnoreCase));
+                        if (!zocBrushRemove) owners.Add(new ZocOwner { leaderName = zocBrushLeader, variantId = zocBrushVariantId ?? "" });
+                        if (owners.Count == 0) zoc.Remove(idx);
                         continue;
                     }
 
@@ -1599,6 +1741,20 @@ namespace RetroLOTR.Scenarios.EditorTools
                 if (string.IsNullOrEmpty(spriteNames[i])) continue;
                 data.terrainSprites.Add(new ScenarioSpriteCell { row = i / width, col = i % width, spriteName = spriteNames[i] });
             }
+
+            foreach (KeyValuePair<int, List<ZocOwner>> kvp in zoc)
+            {
+                if (kvp.Value == null) continue;
+                foreach (ZocOwner owner in kvp.Value)
+                {
+                    if (owner == null || string.IsNullOrEmpty(owner.leaderName)) continue;
+                    data.zoneOfControl.Add(new ScenarioZoneOfControlCell
+                    {
+                        row = kvp.Key / width, col = kvp.Key % width,
+                        leaderName = owner.leaderName, variantId = owner.variantId ?? ""
+                    });
+                }
+            }
             return data;
         }
 
@@ -1613,6 +1769,7 @@ namespace RetroLOTR.Scenarios.EditorTools
             terrain = new TerrainEnum[width * height];
             regions = new string[width * height];
             spriteNames = new string[width * height];
+            zoc.Clear();
             for (int i = 0; i < terrain.Length; i++)
                 terrain[i] = (i < data.terrain.Length) ? (TerrainEnum)data.terrain[i] : TerrainEnum.deepWater;
 
@@ -1626,6 +1783,14 @@ namespace RetroLOTR.Scenarios.EditorTools
 
             foreach (ScenarioSpriteCell cell in data.terrainSprites ?? new List<ScenarioSpriteCell>())
                 if (InBounds(cell.row, cell.col)) spriteNames[Index(cell.row, cell.col)] = cell.spriteName;
+
+            foreach (ScenarioZoneOfControlCell cell in data.zoneOfControl ?? new List<ScenarioZoneOfControlCell>())
+                if (InBounds(cell.row, cell.col) && !string.IsNullOrWhiteSpace(cell.leaderName))
+                {
+                    int zocIdx = Index(cell.row, cell.col);
+                    if (!zoc.TryGetValue(zocIdx, out List<ZocOwner> owners)) zoc[zocIdx] = owners = new List<ZocOwner>();
+                    owners.Add(new ZocOwner { leaderName = cell.leaderName, variantId = cell.variantId ?? "" });
+                }
 
             foreach (ScenarioPC p in data.pcs ?? new List<ScenarioPC>())
                 if (InBounds(p.row, p.col)) pcs[Index(p.row, p.col)] = p;
@@ -1748,6 +1913,20 @@ namespace RetroLOTR.Scenarios.EditorTools
             UnityEngine.Random.State prev = UnityEngine.Random.state;
             UnityEngine.Random.InitState(hash);
             Color c = Color.HSVToRGB(UnityEngine.Random.value, 0.6f, 0.95f);
+            UnityEngine.Random.state = prev;
+            return c;
+        }
+
+        // Deterministic per-nation color, keyed by leader name. There is no canonical nation color
+        // at authoring time — Leader.nationColor is only assigned at runtime by spawn order — so
+        // this mirrors RegionColor's hash trick instead, offset from it (+1) so a leader name that
+        // happens to collide with a region name doesn't render identically.
+        private static Color ZoneColor(string leaderName)
+        {
+            int hash = leaderName.GetHashCode() + 1;
+            UnityEngine.Random.State prev = UnityEngine.Random.state;
+            UnityEngine.Random.InitState(hash);
+            Color c = Color.HSVToRGB(UnityEngine.Random.value, 0.75f, 0.95f);
             UnityEngine.Random.state = prev;
             return c;
         }

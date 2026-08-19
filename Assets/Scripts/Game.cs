@@ -204,6 +204,9 @@ public class Game : MonoBehaviour
         // Same timing: resolve independent spawnCondition characters/armies (any leader + variant,
         // not necessarily an ownership relationship).
         board.nationSpawner?.ReconcileScenarioSpawnConditions();
+        // Same timing again: scenario Zone of Control hexes need the final leader instance to
+        // mark as permanently revealed, so this must come after the reconciliation above.
+        board.nationSpawner?.ApplyScenarioZoneOfControl(board.ActiveScenario);
         FindFirstObjectByType<Initialize>()?.UndoInitialState();
         PauseMenuController.PrepareForGameplay();
 

@@ -537,32 +537,9 @@ public class NationSpawner : MonoBehaviour
     // looked up by characterName) ended up with the required variant selected. An empty
     // requiredVariantId means that leader's Base flavor. A leader that can't be found — typo, or
     // a Non-Playable Leader, which has no variants — never satisfies a named condition.
-    //
-    // Deliberately searches Game.player/competitors rather than scanning every PlayableLeader in
-    // the scene (as this used to via FindObjectsByType). Game.StartGame calls
-    // PruneUnselectedLeaderVariants — which Destroy()s the losing variant siblings of any leader
-    // authored at several hexes — and then, synchronously in the same frame, calls
-    // ReconcileScenarioSpawnConditions (which reaches here). Unity defers Destroy() to end of
-    // frame, so a scene-wide scan can still find, and non-deterministically prefer, an
-    // already-pruned sibling authored with a different variant — silently and intermittently
-    // reporting the wrong variant (or none) for a leader that's actually still in play.
-    // player/competitors don't have this problem: PruneUnselectedLeaderVariants removes a losing
-    // sibling from competitors before destroying it, so only real survivors ever appear here.
     private bool SpawnConditionMet(string requiredLeaderName, string requiredVariantId)
     {
-        Game game = Game.Instance;
-        if (game == null) return false;
-
-        IEnumerable<PlayableLeader> candidates = game.competitors != null
-            ? new[] { game.player }.Concat(game.competitors)
-            : new[] { game.player };
-
-        foreach (PlayableLeader leader in candidates)
-        {
-            if (leader == null || !string.Equals(leader.characterName, requiredLeaderName, StringComparison.OrdinalIgnoreCase)) continue;
-            return string.Equals(ResolveSelectedVariantId(leader), requiredVariantId ?? "", StringComparison.OrdinalIgnoreCase);
-        }
-        return false;
+        return ResolvePlayableLeaderInstance(requiredLeaderName, requiredVariantId) != null;
     }
 
     // Mirrors Game.ResolveBannerSprite's subdeckId -> variant lookup: returns the variantId of the
@@ -578,6 +555,38 @@ public class NationSpawner : MonoBehaviour
             ((!string.IsNullOrWhiteSpace(v.variantId) && string.Equals(v.variantId, subdeckId, StringComparison.OrdinalIgnoreCase)) ||
              (!string.IsNullOrWhiteSpace(v.subdeckId) && string.Equals(v.subdeckId, subdeckId, StringComparison.OrdinalIgnoreCase))));
         return variant?.variantId ?? "";
+    }
+
+    // Shared by SpawnConditionMet and ApplyScenarioZoneOfControl: finds the live playable-leader
+    // instance (the human or an AI competitor currently in the game, looked up by characterName)
+    // whose currently selected variant equals variantId ("" = Base), or null if no leader by that
+    // name is in this game at all, or it's in with a different variant.
+    //
+    // Deliberately searches Game.player/competitors rather than scanning every PlayableLeader in
+    // the scene (as this used to via FindObjectsByType). Game.StartGame calls
+    // PruneUnselectedLeaderVariants — which Destroy()s the losing variant siblings of any leader
+    // authored at several hexes — and then, synchronously in the same frame, calls
+    // ReconcileScenarioSpawnConditions/ApplyScenarioZoneOfControl (which reach here). Unity defers
+    // Destroy() to end of frame, so a scene-wide scan can still find, and non-deterministically
+    // prefer, an already-pruned sibling authored with a different variant — silently and
+    // intermittently reporting the wrong variant (or none) for a leader that's actually still in
+    // play. player/competitors don't have this problem: PruneUnselectedLeaderVariants removes a
+    // losing sibling from competitors before destroying it, so only real survivors ever appear here.
+    private PlayableLeader ResolvePlayableLeaderInstance(string characterName, string variantId)
+    {
+        Game game = Game.Instance;
+        if (game == null) return null;
+
+        IEnumerable<PlayableLeader> candidates = game.competitors != null
+            ? new[] { game.player }.Concat(game.competitors)
+            : new[] { game.player };
+
+        foreach (PlayableLeader leader in candidates)
+        {
+            if (leader == null || !string.Equals(leader.characterName, characterName, StringComparison.OrdinalIgnoreCase)) continue;
+            if (string.Equals(ResolveSelectedVariantId(leader), variantId ?? "", StringComparison.OrdinalIgnoreCase)) return leader;
+        }
+        return null;
     }
 
     // Resolves the Non-Playable Leader an unresolved PC/character should fall back to on an
@@ -984,6 +993,44 @@ public class NationSpawner : MonoBehaviour
                 neighbor.SetLandRegion(region);
                 frontier.Enqueue(next);
             }
+        }
+    }
+
+    // Marks each scenario-authored Zone of Control hex as permanently revealed to its owning
+    // nation, via the same mechanism that already keeps a nation's own founded PC hexes visible
+    // forever (see Hex.EnsurePersistentScouting). Unlike ApplyScenarioRegions this never spreads —
+    // ZoC is exactly the painted set, nothing more. Must run after scenario leader identity is
+    // final (see ReconcileScenarioSpawnConditions) so a playable leader's ZoC resolves against the
+    // variant that actually survived selection, not just whichever sibling happens to be spawned.
+    public void ApplyScenarioZoneOfControl(ScenarioData scenario)
+    {
+        if (board?.hexes == null || scenario == null) return;
+
+        foreach (ScenarioZoneOfControlCell cell in scenario.zoneOfControl ?? new List<ScenarioZoneOfControlCell>())
+        {
+            if (cell == null || string.IsNullOrWhiteSpace(cell.leaderName)) continue;
+            if (!board.hexes.TryGetValue(new Vector2Int(cell.row, cell.col), out Hex hex) || hex == null) continue;
+
+            Leader leader;
+            (LeaderBiomeConfig playableBiome, _) = FindLeaderBiome(cell.leaderName);
+            if (playableBiome != null)
+            {
+                // A playable leader's authored variant siblings all register under the same key in
+                // scenarioLeadersByName ("last one wins" — see the comment at that assignment in
+                // step 1), which isn't necessarily the sibling that actually survived
+                // PruneUnselectedLeaderVariants. Resolve straight against game.player/competitors
+                // instead (same lookup SpawnConditionMet uses) so a cell painted for one variant
+                // never leaks onto a different one — or a losing, about-to-be-destroyed sibling.
+                leader = ResolvePlayableLeaderInstance(cell.leaderName, cell.variantId);
+            }
+            else
+            {
+                // Non-playable leaders have no variant siblings to disambiguate.
+                scenarioLeadersByName.TryGetValue(cell.leaderName, out leader);
+            }
+            if (leader == null) continue;
+
+            hex.EnsurePersistentScouting(leader);
         }
     }
 

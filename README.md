@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/images/gameplay/01-title.png" alt="Runeboard title screen" width="720">
+<img src="docs/images/hero/frame-02.png" alt="Runeboard title screen" width="720">
 
 # Runeboard
 
