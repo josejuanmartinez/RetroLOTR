@@ -41,8 +41,12 @@ public class AskRansom : AgentAction
                     "Ok",
                     "Cancel",
                     options,
+                    null,
                     false,
-                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(actor) : null);
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(actor) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    SelectionDialog.CharacterIconNames(captives));
                 if (string.IsNullOrWhiteSpace(selected)) return false;
                 target = captives.FirstOrDefault(x => selected.StartsWith(x.characterName, StringComparison.Ordinal));
             }
@@ -66,13 +70,18 @@ public class AskRansom : AgentAction
             else
             {
                 List<string> responseOptions = new() { $"Pay {ransomCost} gold", "Refuse ransom" };
+                List<string> responseIcons = new() { actionName, !string.IsNullOrWhiteSpace(target.illustrationName) ? target.illustrationName : target.characterName };
                 string answer = await SelectionDialog.Ask(
                     $"{actor.characterName} demands {ransomCost} gold to release {target.characterName}.",
                     "Choose",
                     "Decline",
                     responseOptions,
+                    null,
                     false,
-                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(target) : null);
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(target) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    responseIcons);
                 accepts = string.Equals(answer, responseOptions[0], StringComparison.Ordinal);
             }
 

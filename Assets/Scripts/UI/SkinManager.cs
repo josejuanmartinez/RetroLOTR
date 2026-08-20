@@ -4,7 +4,8 @@ using UnityEngine.Video;
 public enum Skins
 {
     Bakshi,
-    Default
+    Default,
+    Naive
 }
 
 public class SkinManager : MonoBehaviour
@@ -12,11 +13,13 @@ public class SkinManager : MonoBehaviour
     [SerializeField] private Camera skinCamera;
     [SerializeField] private MaterialManager materialManagerPrefab;
     [SerializeField] private FontManager fontManagerPrefab;
+    [SerializeField] private HexMaterialSkin hexMaterialSkinPrefab;
 
     private Videos videos;
     private Renderer2DManager render2dManager;
     private MaterialManager materialManager;
     private FontManager fontManager;
+    private HexMaterialSkin hexMaterialSkin;
     private Skins currentSkin = Skins.Default;
 
     public Skins CurrentSkin => currentSkin;
@@ -32,6 +35,10 @@ public class SkinManager : MonoBehaviour
         fontManager = FindFirstObjectByType<FontManager>();
         if (fontManager == null && fontManagerPrefab != null)
             fontManager = Instantiate(fontManagerPrefab);
+
+        hexMaterialSkin = FindFirstObjectByType<HexMaterialSkin>();
+        if (hexMaterialSkin == null && hexMaterialSkinPrefab != null)
+            hexMaterialSkin = Instantiate(hexMaterialSkinPrefab);
     }
     
     public void ChangeSkin(Skins skin)
@@ -41,27 +48,37 @@ public class SkinManager : MonoBehaviour
         int rendererIndex = render2dManager.GetRendererIndexByName(rendererName);
         if (rendererIndex < 0)
         {
-            Debug.LogError($"SkinManager: renderer '{rendererName}' is not registered.");
-            return;
+            // Not fatal to the rest of the skin: materials/fonts/hex skin still apply below, just
+            // with whatever URP 2D renderer was already active (e.g. while a skin's dedicated
+            // Renderer2D asset hasn't been authored yet).
+            Debug.LogWarning($"SkinManager: renderer '{rendererName}' is not registered; keeping the current renderer.");
+        }
+        else
+        {
+            Camera targetCamera = skinCamera != null ? skinCamera : Camera.main;
+            UniversalAdditionalCameraData cameraData = targetCamera.GetUniversalAdditionalCameraData();
+            cameraData.SetRenderer(rendererIndex);
         }
 
-        Camera targetCamera = skinCamera != null ? skinCamera : Camera.main;
-        UniversalAdditionalCameraData cameraData = targetCamera.GetUniversalAdditionalCameraData();
-        cameraData.SetRenderer(rendererIndex);
+        materialManager.ApplySkin(skin);
 
-        materialManager.ApplySkin(GetSkinSuffix(skin));
+        fontManager.ApplyFont(fontManager.GetFontForSkin(skin));
 
-        fontManager.ApplyFont(fontManager.GetFontByName(skin.ToString()));
+        hexMaterialSkin.ApplySkin(skin);
     }
 
     public VideoClip GetIntroVideo()
     {
-        switch(currentSkin) {
-            case Skins.Bakshi:
-                return videos.introBakshi;
-            default:
-                return videos.intro;
-        }
+        return videos.GetClipForSkin(currentSkin);
+    }
+
+    // Cycles Default -> Bakshi -> Naive -> Default ... in enum declaration order, so UI toggle
+    // buttons reach every skin without hardcoding the set.
+    public Skins GetNextSkin()
+    {
+        Skins[] values = (Skins[])System.Enum.GetValues(typeof(Skins));
+        int index = System.Array.IndexOf(values, currentSkin);
+        return values[(index + 1) % values.Length];
     }
 
     private static string GetSkinSuffix(Skins skin)

@@ -2,11 +2,18 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 
+[System.Serializable]
+public class SkinFont
+{
+    public Skins skin;
+    public TMP_FontAsset font;
+}
+
 public class FontManager : SearcherByName
 {
     public static FontManager Instance { get; private set; }
 
-    [SerializeField] private TMP_FontAsset[] fonts;
+    [SerializeField] private SkinFont[] skinFonts;
     private TMP_FontAsset currentFont;
 
     private void Awake()
@@ -19,10 +26,9 @@ public class FontManager : SearcherByName
         if (Instance == this) Instance = null;
     }
 
-    public TMP_FontAsset GetFontByName(string name)
+    public TMP_FontAsset GetFontForSkin(Skins skin)
     {
-        return fonts.FirstOrDefault(font =>
-            font != null && Normalize(font.name) == Normalize(name));
+        return skinFonts.FirstOrDefault(entry => entry.skin == skin)?.font;
     }
 
     public TMP_FontAsset GetCurrentFont()
@@ -44,7 +50,7 @@ public class FontManager : SearcherByName
         TMP_Settings.defaultFontAsset = font;
         foreach (TMP_Text text in FindObjectsByType<TMP_Text>(FindObjectsInactive.Include, FindObjectsSortMode.None))
         {
-            if (text.font == null || fonts.Contains(text.font))
+            if (text.font == null || skinFonts.Any(entry => entry.font == text.font))
                 text.font = font;
         }
     }

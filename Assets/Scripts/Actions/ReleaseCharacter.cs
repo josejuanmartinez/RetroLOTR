@@ -37,8 +37,12 @@ public class ReleaseCharacter : AgentAction
                     "Ok",
                     "Cancel",
                     captives.Select(x => x.characterName).ToList(),
+                    null,
                     false,
-                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(actor) : null);
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(actor) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    SelectionDialog.CharacterIconNames(captives));
                 if (string.IsNullOrWhiteSpace(selected)) return false;
                 target = captives.FirstOrDefault(x => x.characterName == selected);
             }

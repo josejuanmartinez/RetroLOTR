@@ -44,6 +44,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fe821032a224fb095c234498974051e, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::MaterialManager
-  materials:
-  - {fileID: 2100000, guid: af11c651ddad49c885d103d7dd471bcd, type: 2}
-  - {fileID: 2100000, guid: c8aab81d5713ab841b4cd15ed5c92e52, type: 2}
+  skinMaterials:
+  - skin: 0
+    material: {fileID: 2100000, guid: af11c651ddad49c885d103d7dd471bcd, type: 2}
+    animatedMaterial: {fileID: 2100000, guid: c8aab81d5713ab841b4cd15ed5c92e52, type: 2}
+  - skin: 1
+    material: {fileID: 0}
+    animatedMaterial: {fileID: 0}

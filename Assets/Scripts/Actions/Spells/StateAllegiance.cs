@@ -69,7 +69,8 @@ public class StateAllegiance : EmmissaryAction
                 isAI,
                 portrait,
                 EventIconType.Encounter,
-                nonPlayableLeader.characterName);
+                nonPlayableLeader.characterName,
+                displayOptions);
             if (!string.Equals(answer, question.answer, StringComparison.OrdinalIgnoreCase))
             {
                 MessageDisplayNoUI.ShowMessage(character.hex, character, $"{nonPlayableLeader.characterName} is not convinced.", Color.red);

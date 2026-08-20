@@ -57,31 +57,12 @@ public class SelectionDialog : MonoBehaviour
     }
 
     /// <summary>
-    /// Opens a confirmation dialog with a custom message and button labels.
+    /// Opens a confirmation dialog. Portrait, dialogTitle and optionIcons are mandatory: every
+    /// dialog must show a character/card portrait, a title, and a real icon per option (never
+    /// null) - see GetCharacterIllustration/CharacterIconNames/CardIconNames for how callers
+    /// resolve those from existing character/card art instead of leaving them blank.
     /// </summary>
-    public static Task<string> Ask(string message, string yesString, string noString, List<string> options, bool isAI, Sprite portrait = null, string dialogTitle = null)
-    {
-        if (Instance == null)
-        {
-            Debug.LogError("Selection dialog  was called before its instance was created.");
-            return Task.FromResult(string.Empty);
-        }
-
-        return Instance.Show(message, yesString, noString, options, null, isAI, portrait, EventIconType.MultiChoice, dialogTitle, forceImmediate: false);
-    }
-
-    public static Task<string> Ask(string message, string yesString, string noString, List<string> options, bool isAI, Sprite portrait, EventIconType iconType, string dialogTitle = null)
-    {
-        if (Instance == null)
-        {
-            Debug.LogError("Selection dialog  was called before its instance was created.");
-            return Task.FromResult(string.Empty);
-        }
-
-        return Instance.Show(message, yesString, noString, options, null, isAI, portrait, iconType, dialogTitle, forceImmediate: false);
-    }
-
-    public static Task<string> Ask(string message, string yesString, string noString, List<string> options, List<string> optionDescriptions, bool isAI, Sprite portrait, EventIconType iconType, string dialogTitle = null, List<string> optionIcons = null)
+    public static Task<string> Ask(string message, string yesString, string noString, List<string> options, List<string> optionDescriptions, bool isAI, Sprite portrait, EventIconType iconType, string dialogTitle, List<string> optionIcons)
     {
         if (Instance == null)
         {
@@ -92,7 +73,7 @@ public class SelectionDialog : MonoBehaviour
         return Instance.Show(message, yesString, noString, options, optionDescriptions, isAI, portrait, iconType, dialogTitle, optionIcons, forceImmediate: false);
     }
 
-    public static Task<string> AskImmediate(string message, string yesString, string noString, List<string> options, List<string> optionDescriptions, bool isAI, Sprite portrait, EventIconType iconType, string dialogTitle = null, List<string> optionIcons = null)
+    public static Task<string> AskImmediate(string message, string yesString, string noString, List<string> options, List<string> optionDescriptions, bool isAI, Sprite portrait, EventIconType iconType, string dialogTitle, List<string> optionIcons)
     {
         if (Instance == null)
         {
@@ -103,7 +84,39 @@ public class SelectionDialog : MonoBehaviour
         return Instance.Show(message, yesString, noString, options, optionDescriptions, isAI, portrait, iconType, dialogTitle, optionIcons, forceImmediate: true);
     }
 
-    private Task<string> Show(string message, string yesString, string noString, List<string> options, List<string> optionDescriptions, bool isAI, Sprite portrait, EventIconType iconType, string dialogTitle = null, List<string> optionIcons = null, bool forceImmediate = false)
+    // Resolves each character's own shipped portrait art (illustrationName, falling back to
+    // characterName - the same resolution GetCharacterIllustration uses) into an option-icon
+    // list, so a character-selection dialog shows each candidate's real portrait as its icon
+    // instead of leaving optionIcons null.
+    public static List<string> CharacterIconNames(IEnumerable<Character> characters)
+    {
+        List<string> names = new();
+        if (characters == null) return names;
+        foreach (Character character in characters)
+        {
+            names.Add(character != null
+                ? (!string.IsNullOrWhiteSpace(character.illustrationName) ? character.illustrationName : character.characterName)
+                : null);
+        }
+        return names;
+    }
+
+    // Same as CharacterIconNames but for card-backed options (artifacts/objects/etc.), using
+    // each card's own shipped art (spriteName, falling back to its name).
+    public static List<string> CardIconNames(IEnumerable<CardData> cards)
+    {
+        List<string> names = new();
+        if (cards == null) return names;
+        foreach (CardData card in cards)
+        {
+            names.Add(card != null
+                ? (!string.IsNullOrWhiteSpace(card.spriteName) ? card.spriteName : card.name)
+                : null);
+        }
+        return names;
+    }
+
+    private Task<string> Show(string message, string yesString, string noString, List<string> options, List<string> optionDescriptions, bool isAI, Sprite portrait, EventIconType iconType, string dialogTitle, List<string> optionIcons, bool forceImmediate = false)
     {
         BindUiReferences();
         WireUiListeners();
@@ -113,7 +126,20 @@ public class SelectionDialog : MonoBehaviour
             // Show a single dummy option that just dismisses the dialog.
             options = new List<string> { "Close" };
             optionDescriptions = null;
-            optionIcons = null;
+            optionIcons = new List<string> { "Close" };
+        }
+
+        if (string.IsNullOrWhiteSpace(dialogTitle))
+        {
+            Debug.LogError($"SelectionDialog.Show called without a dialogTitle for message '{message}'.");
+        }
+        if (portrait == null)
+        {
+            Debug.LogError($"SelectionDialog.Show called without a portrait for message '{message}'.");
+        }
+        if (optionIcons == null || optionIcons.Count != options.Count)
+        {
+            Debug.LogError($"SelectionDialog.Show called with mismatched optionIcons for message '{message}'.");
         }
 
         var request = new DialogRequest

@@ -162,7 +162,7 @@ public sealed class PauseMenuController : MonoBehaviour
     {
         SkinManager manager = FindFirstObjectByType<SkinManager>();
         if (manager == null) return;
-        manager.ChangeSkin(manager.CurrentSkin == Skins.Default ? Skins.Bakshi : Skins.Default);
+        manager.ChangeSkin(manager.GetNextSkin());
         backdrop?.SetSkin(manager.CurrentSkin);
         Sounds.Instance?.PlayUiClick();
     }

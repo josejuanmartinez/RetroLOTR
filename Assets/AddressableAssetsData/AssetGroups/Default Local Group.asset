@@ -27,12 +27,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 00222a427ea425e4a83b2dcdd542b168
-    m_Address: Assets/Art/Hexes/Tiles/neutral_25.png
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0028e5ea9729d474c881abfe35b944dd
     m_Address: Assets/Art/3D/fbx/Weapons/Sword/Sword.mat
     m_ReadOnly: 0
@@ -587,6 +581,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 076dfe4a5d5090b48930b5d5329e076a
     m_Address: Assets/Art/Characters/Animations/Balrog_Forward_Magic.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 077d5052ce9c5c548b0d5ac9fcb3f7a2
+    m_Address: Assets/Art/Characters/AnimationSpritesheets/Giordia/Giordia_Right.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -2045,6 +2045,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 19f41e0c27727944a8d6e7dffef2efd6
     m_Address: Assets/Art/Hexes/PCs/Caras Galadhon.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1a095de7c3173f84cb8d0bc7eb30feca
+    m_Address: Assets/Art/Characters/AnimationSpritesheets/Giordia/Giordia_Left.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -4917,12 +4923,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 3e232f1e07fb84948bd4bfb1172d2548
-    m_Address: Assets/Art/Hexes/Tiles/Malborn High.png
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3e2664de346b59543b7de798f10d42d7
     m_Address: Assets/Art/Characters/AnimationSpritesheets/Southron/Southron_Back.atlas.json
     m_ReadOnly: 0
@@ -6225,6 +6225,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4d659b2ea18a181418f25c90936b7f37
+    m_Address: Assets/Art/Characters/AnimationSpritesheets/Giordia/Giordia_Left.atlas.json
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4d66f3e0b57a4b1c8f4d0c73d2f71f8d
     m_Address: Assets/Art/Materials/CharacterOutline.mat
     m_ReadOnly: 0
@@ -7492,6 +7498,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5d87606c8f1eaf841ade73705cbf54e5
     m_Address: Assets/Art/Characters/Animations/Common_Forward_Turn_Left.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5de7808495606424e9c7c846495aa8fc
+    m_Address: Assets/Art/Characters/AnimationSpritesheets/Giordia/Giordia_Forward.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -10742,6 +10754,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 83e638e3a5e765e4a952db248453fd30
+    m_Address: Assets/Art/Characters/AnimationSpritesheets/Giordia/Giordia_Back.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 83e6f3c9b821c1444b32a68ccc7292a7
     m_Address: Assets/Art/Characters/Animations/Elf_Forward_Block.anim
     m_ReadOnly: 0
@@ -11248,12 +11266,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8b53d4a20138aee429ba8d94f2f2e21e
     m_Address: Assets/Art/Cards/Encounters/TheSwanHerderOfUmbar.jpg
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - default
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8b6a05884aae8124f96d6eb7d0b48c21
-    m_Address: Assets/Art/Hexes/Tiles/neutral_24.png
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -14291,6 +14303,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: aee4a8acd4c9e98429cdb49e11474523
+    m_Address: Assets/Art/Characters/AnimationSpritesheets/Giordia/Giordia_Forward.atlas.json
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: af05c047798e4cf47989ac64aa2c29a2
     m_Address: Assets/Art/Hexes/Roads/hexRoad-000101-00.png
     m_ReadOnly: 0
@@ -14731,6 +14749,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b4f24f0b86ed6464fa5629ad6180783f
     m_Address: Assets/Art/Characters/Animations/Dwarf_Right_Action.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b4f30be712c6d024e8c030d16d31e640
+    m_Address: Assets/Art/Characters/AnimationSpritesheets/Giordia/Giordia_Back.atlas.json
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -19626,6 +19650,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f04e66d9c904b4f498ceb67e28743e7d
     m_Address: Assets/Art/Characters/Animations/Orc_Left_Death.anim
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f05508523baab6b438f564834b747443
+    m_Address: Assets/Art/Characters/AnimationSpritesheets/Giordia/Giordia_Right.atlas.json
     m_ReadOnly: 0
     m_SerializedLabels:
     - default

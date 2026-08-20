@@ -34,7 +34,17 @@ public class UndoubleCharacter : AgentAction
             Character doubled = null;
             if (!isAI)
             {
-                string targetCharacter = await SelectionDialog.Ask("Select doubled character", "Ok", "Cancel", doubledChars.Select(x => x.characterName).ToList(), isAI, SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null);
+                string targetCharacter = await SelectionDialog.Ask(
+                    "Select doubled character",
+                    "Ok",
+                    "Cancel",
+                    doubledChars.Select(x => x.characterName).ToList(),
+                    null,
+                    isAI,
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    SelectionDialog.CharacterIconNames(doubledChars));
                 if (string.IsNullOrEmpty(targetCharacter)) return false;
                 doubled = doubledChars.Find(x => x.characterName == targetCharacter);
             }

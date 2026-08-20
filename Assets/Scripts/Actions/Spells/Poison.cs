@@ -38,8 +38,12 @@ public class Poison : DarkSpell
                     "Ok",
                     "Cancel",
                     enemies.Select(x => x.characterName).ToList(),
+                    null,
                     isAI,
-                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(caster) : null);
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(caster) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    SelectionDialog.CharacterIconNames(enemies));
                 if (string.IsNullOrEmpty(targetCharacter)) return false;
                 target = enemies.Find(x => x.characterName == targetCharacter);
             }

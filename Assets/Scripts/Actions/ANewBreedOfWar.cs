@@ -42,8 +42,12 @@ public class ANewBreedOfWar : CommanderAction
                     "Ok",
                     "Cancel",
                     armies.Select(x => x.characterName).ToList(),
+                    null,
                     isAI,
-                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null);
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    SelectionDialog.CharacterIconNames(armies));
                 if (string.IsNullOrWhiteSpace(selected)) return false;
                 targetCommander = armies.Find(x => x.characterName == selected);
             }

@@ -87,8 +87,12 @@ public class Horses : CharacterAction
                     "Ok",
                     "Cancel",
                     alliedChars.Select(x => x.characterName).ToList(),
+                    null,
                     false,
-                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null);
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    SelectionDialog.CharacterIconNames(alliedChars));
                 if (string.IsNullOrWhiteSpace(selected)) return false;
                 destination = alliedChars.FirstOrDefault(x => x.characterName == selected);
             }

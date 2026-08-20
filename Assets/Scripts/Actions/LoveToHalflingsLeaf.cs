@@ -57,8 +57,12 @@ public class LoveToHalflingsLeaf : CharacterAction
                     "Ok",
                     "Cancel",
                     targets.Select(x => x.characterName).ToList(),
+                    null,
                     false,
-                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null);
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    SelectionDialog.CharacterIconNames(targets));
 
                 if (string.IsNullOrWhiteSpace(selected)) return false;
                 target = targets.FirstOrDefault(x => x.characterName == selected);

@@ -49,8 +49,12 @@ public class AndurilReforged : CommanderAction
                     "Ok",
                     "Cancel",
                     allies.Select(x => x.characterName).ToList(),
+                    null,
                     isAI,
-                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null);
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    SelectionDialog.CharacterIconNames(allies));
                 if (string.IsNullOrWhiteSpace(selected)) return false;
                 target = allies.Find(x => x.characterName == selected);
             }

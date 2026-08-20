@@ -258,7 +258,7 @@ public class AIWidgetWindow : EditorWindow
     private static readonly string[] NodeTypeLabels = { "CompoundTask", "Method", "PrimitiveTask" };
     private static readonly string[] InvertLabels = { "IS TRUE", "IS FALSE" };
 
-    [MenuItem("Tools/RetroLOTR/AI Widget")]
+    [MenuItem("Tools/Runeboard/AI Widget")]
     public static void Open()
     {
         GetWindow<AIWidgetWindow>("AI Widget");

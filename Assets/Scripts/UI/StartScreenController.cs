@@ -3,7 +3,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>First screen on a fresh scene. Campaign selection is shown only after Start.</summary>
+/// <summary>First screen on a fresh scene. "Select campaign" toggles the campaign selection
+/// screen on top of it without ever closing this one — it only closes once a scenario is
+/// actually chosen (Board calls Hide() at that point).</summary>
 public sealed class StartScreenController : MonoBehaviour
 {
     [Header("Authored Start Screen")]
@@ -35,14 +37,20 @@ public sealed class StartScreenController : MonoBehaviour
     public void StartCampaign()
     {
         Sounds.Instance?.PlayUiClick();
+        campaignSelection.gameObject.SetActive(!campaignSelection.gameObject.activeSelf);
+    }
+
+    // Called once a scenario has been chosen; campaignSelection has already hidden itself by then.
+    public void Hide()
+    {
         root.SetActive(false);
-        campaignSelection.gameObject.SetActive(true);
     }
 
     public void ToggleSkin()
     {
         SkinManager manager = FindFirstObjectByType<SkinManager>();
-        ApplySkin(manager != null && manager.CurrentSkin == Skins.Default ? Skins.Bakshi : Skins.Default);
+        if (manager == null) return;
+        ApplySkin(manager.GetNextSkin());
         Sounds.Instance?.PlayUiClick();
     }
 

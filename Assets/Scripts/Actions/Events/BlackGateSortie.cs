@@ -76,8 +76,12 @@ public class BlackGateSortie : EventAction
                     "Ok",
                     "Cancel",
                     commanders.Select(x => x.characterName).ToList(),
+                    null,
                     false,
-                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null);
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    SelectionDialog.CharacterIconNames(commanders));
                 if (string.IsNullOrWhiteSpace(selected)) return false;
                 target = commanders.FirstOrDefault(x => x.characterName == selected);
             }

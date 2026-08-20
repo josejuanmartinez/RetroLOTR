@@ -54,8 +54,12 @@ public class HelmOfArnor : CharacterAction
                     "Ok",
                     "Cancel",
                     allies.Select(x => x.characterName).ToList(),
+                    null,
                     false,
-                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null);
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    SelectionDialog.CharacterIconNames(allies));
 
                 if (string.IsNullOrWhiteSpace(selected)) return false;
                 target = allies.FirstOrDefault(x => x.characterName == selected);
@@ -75,8 +79,12 @@ public class HelmOfArnor : CharacterAction
                     "Ok",
                     "Cancel",
                     new List<string> { "Strengthened", "Fortified" },
+                    null,
                     false,
-                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null);
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    new List<string> { "strengthened", "fortified" });
 
                 if (string.IsNullOrWhiteSpace(choice)) return false;
             }

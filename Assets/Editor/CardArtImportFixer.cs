@@ -18,27 +18,4 @@ public class CardArtImportFixer : AssetPostprocessor
         importer.textureType = TextureImporterType.Sprite;
         importer.spriteImportMode = SpriteImportMode.Single;
     }
-
-    [MenuItem("Tools/RetroLOTR/Fix Card Art Sprite Import (Assets-Art-Cards)")]
-    public static void FixExistingCardArtImportSettings()
-    {
-        string[] guids = AssetDatabase.FindAssets("t:Texture2D", new[] { "Assets/Art/Cards" });
-        int fixedCount = 0;
-        foreach (string guid in guids)
-        {
-            string path = AssetDatabase.GUIDToAssetPath(guid);
-            if (AssetImporter.GetAtPath(path) is not TextureImporter importer) continue;
-
-            bool needsFix = importer.textureType != TextureImporterType.Sprite
-                            || importer.spriteImportMode != SpriteImportMode.Single;
-            if (!needsFix) continue;
-
-            importer.textureType = TextureImporterType.Sprite;
-            importer.spriteImportMode = SpriteImportMode.Single;
-            importer.SaveAndReimport();
-            fixedCount++;
-        }
-
-        Debug.Log($"Card art sprite import fix complete. Corrected {fixedCount} of {guids.Length} scanned textures under Assets/Art/Cards.");
-    }
 }

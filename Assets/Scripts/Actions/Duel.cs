@@ -33,7 +33,17 @@ public class Duel : CharacterAction
             Character target = null;
             if (!isAI)
             {
-                string targetName = await SelectionDialog.Ask("Select enemy character", "Ok", "Cancel", enemies.Select(x => x.characterName).ToList(), isAI, SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null);
+                string targetName = await SelectionDialog.Ask(
+                    "Select enemy character",
+                    "Ok",
+                    "Cancel",
+                    enemies.Select(x => x.characterName).ToList(),
+                    null,
+                    isAI,
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    SelectionDialog.CharacterIconNames(enemies));
                 if (string.IsNullOrWhiteSpace(targetName)) return false;
                 target = enemies.Find(x => x.characterName == targetName);
             }

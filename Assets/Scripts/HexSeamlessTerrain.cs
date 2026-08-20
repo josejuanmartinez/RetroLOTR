@@ -20,6 +20,8 @@ public class HexSeamlessTerrain : MonoBehaviour
 
     private static HexSeamlessTerrain instance;
     private static Material material;
+    private static Material skinTerrainSource;
+    private static Material skinGridSource;
     private static Board cachedBoard;
     private static MaterialPropertyBlock mpb;
     private static readonly HashSet<Hex> dirty = new();
@@ -75,16 +77,42 @@ public class HexSeamlessTerrain : MonoBehaviour
         material.SetFloat(GridOnId, enabled ? 1f : 0f);
     }
 
+    /// <summary>
+    /// Per-skin override for which material renders hex terrain (e.g. HexSeamlessBlendGame vs. a
+    /// different skin's material) and which asset drives the grid look (e.g. HexNeonGrid). Pass
+    /// null for either to fall back to Board.hexSeamlessBlendMaterial / Board.hexGridMaterial.
+    /// Rebuilds every existing hex so the change is visible immediately.
+    /// </summary>
+    public static void SetSkinMaterials(Material terrainSource, Material gridSource)
+    {
+        skinTerrainSource = terrainSource;
+        skinGridSource = gridSource;
+
+        if (material != null)
+        {
+            Destroy(material);
+            material = null;
+        }
+
+        EnsureInstance();
+        if (!EnsureMaterial()) return;
+        ApplyGridLookOverrides();
+
+        Board board = GetBoard();
+        if (board == null || board.hexes == null) return;
+        foreach (Hex hex in board.hexes.Values) MarkDirty(hex);
+    }
+
     // Grid look (color/intensity/width/glow/hue) is authored on its own dedicated asset
-    // (Board.hexGridMaterial) rather than hexSeamlessBlendMaterial, so tuning it never means
-    // touching the terrain-blend asset. Re-read every frame (see LateUpdate) rather than only on
-    // toggle, so live edits to that asset's Inspector values (a common way to tune it while
-    // watching the board) show up immediately instead of needing the grid re-toggled or Play
-    // mode restarted.
+    // (Board.hexGridMaterial, or a per-skin override — see SetSkinMaterials) rather than
+    // hexSeamlessBlendMaterial, so tuning it never means touching the terrain-blend asset. Re-read
+    // every frame (see LateUpdate) rather than only on toggle, so live edits to that asset's
+    // Inspector values (a common way to tune it while watching the board) show up immediately
+    // instead of needing the grid re-toggled or Play mode restarted.
     private static void ApplyGridLookOverrides()
     {
         Board board = GetBoard();
-        Material gridLook = board != null ? board.hexGridMaterial : null;
+        Material gridLook = skinGridSource != null ? skinGridSource : (board != null ? board.hexGridMaterial : null);
         if (gridLook == null) return;
 
         material.SetColor(GridColorId, gridLook.GetColor(GridColorId));
@@ -111,7 +139,8 @@ public class HexSeamlessTerrain : MonoBehaviour
     {
         if (material != null) return true;
         Board board = GetBoard();
-        Material source = board != null ? board.hexSeamlessBlendMaterial : null;
+        Material source = skinTerrainSource != null ? skinTerrainSource
+            : (board != null ? board.hexSeamlessBlendMaterial : null);
         if (source == null)
         {
             Debug.LogError("HexSeamlessTerrain: Board.hexSeamlessBlendMaterial is not assigned.");

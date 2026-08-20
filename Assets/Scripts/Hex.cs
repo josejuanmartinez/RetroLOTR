@@ -1960,11 +1960,21 @@ public class Hex : MonoBehaviour
             Sprite sprite = null;
             if (illustrations != null)
             {
-                Leader knownAsLeader = known as Leader;
-                LeaderBiomeConfig knownBiome = knownAsLeader != null ? knownAsLeader.GetBiome() : null;
-                string spriteName = knownBiome?.characterSprite;
-                if (!string.IsNullOrEmpty(spriteName))
-                    sprite = illustrations.GetIllustrationByName(spriteName, false);
+                // A leader variant (e.g. "Strider") often has no static illustration of its own
+                // and previously fell straight through to knownBiome.characterSprite/race,
+                // skipping the base leader's art entirely — GetIllustrationByName(Character)
+                // already tries illustrationName, characterName, then SpriteVariantBaseName in
+                // that order, so try it first.
+                sprite = illustrations.GetIllustrationByName(known);
+
+                if (sprite == null)
+                {
+                    Leader knownAsLeader = known as Leader;
+                    LeaderBiomeConfig knownBiome = knownAsLeader != null ? knownAsLeader.GetBiome() : null;
+                    string spriteName = knownBiome?.characterSprite;
+                    if (!string.IsNullOrEmpty(spriteName))
+                        sprite = illustrations.GetIllustrationByName(spriteName, false);
+                }
                 if (sprite == null)
                     sprite = illustrations.GetIllustrationByName(known.race.ToString(), false);
             }

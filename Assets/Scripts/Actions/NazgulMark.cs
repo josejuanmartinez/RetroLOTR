@@ -38,8 +38,12 @@ public class NazgulMark : CharacterAction
                     "Ok",
                     "Cancel",
                     enemies.Select(x => x.characterName).ToList(),
+                    null,
                     isAI,
-                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null);
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    SelectionDialog.CharacterIconNames(enemies));
 
                 if (string.IsNullOrWhiteSpace(targetName)) return false;
                 target = enemies.Find(x => x.characterName == targetName);

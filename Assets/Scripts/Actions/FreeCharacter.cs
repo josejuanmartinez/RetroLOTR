@@ -39,8 +39,12 @@ public class FreeCharacter : AgentAction
                     "Ok",
                     "Cancel",
                     options,
+                    null,
                     false,
-                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(actor) : null);
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(actor) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    SelectionDialog.CharacterIconNames(captives));
                 if (string.IsNullOrWhiteSpace(selected)) return false;
                 target = captives.FirstOrDefault(x => selected.StartsWith(x.characterName, StringComparison.Ordinal));
             }

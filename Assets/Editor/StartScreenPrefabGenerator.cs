@@ -38,7 +38,8 @@ public static class StartScreenPrefabGenerator
         Generate();
     }
 
-    [MenuItem("Tools/RetroLOTR/Rebuild Start Screen Prefab")]
+    // No longer exposed as a menu item — it self-heals via GenerateOnceInOpenEditor above, and a
+    // deliberate rebuild is a one-off script run, not a permanent menu entry.
     public static void Generate()
     {
         ConfigureMenuBackgroundImporters();

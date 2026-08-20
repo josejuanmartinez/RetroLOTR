@@ -59,8 +59,12 @@ public class TheGreyCompany : CharacterAction
                     "Ok",
                     "Cancel",
                     targets.Select(x => x.characterName).ToList(),
+                    null,
                     false,
-                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null);
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    SelectionDialog.CharacterIconNames(targets));
                 if (string.IsNullOrWhiteSpace(commanderName)) return false;
                 commanderTarget = targets.FirstOrDefault(x => x.characterName == commanderName);
                 if (commanderTarget == null) return false;
@@ -78,8 +82,12 @@ public class TheGreyCompany : CharacterAction
                     "Ok",
                     "Skip",
                     remainingForAgent.Select(x => x.characterName).ToList(),
+                    null,
                     false,
-                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null);
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    SelectionDialog.CharacterIconNames(remainingForAgent));
                 agentTarget = string.IsNullOrWhiteSpace(agentName) ? null : remainingForAgent.FirstOrDefault(x => x.characterName == agentName);
 
                 List<Character> remainingForEmmissary = remainingForAgent.Where(x => x != agentTarget).ToList();
@@ -94,8 +102,12 @@ public class TheGreyCompany : CharacterAction
                         "Ok",
                         "Skip",
                         remainingForEmmissary.Select(x => x.characterName).ToList(),
+                        null,
                         false,
-                        SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null);
+                        SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null,
+                        EventIconType.MultiChoice,
+                        actionName,
+                        SelectionDialog.CharacterIconNames(remainingForEmmissary));
                     emmissaryTarget = string.IsNullOrWhiteSpace(emmissaryName) ? null : remainingForEmmissary.FirstOrDefault(x => x.characterName == emmissaryName);
                 }
             }

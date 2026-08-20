@@ -32,7 +32,7 @@ public sealed class MenuBackgroundRotator : MonoBehaviour
 
     public void SetSkin(Skins skin)
     {
-        string folder = skin == Skins.Bakshi ? "Bakshi" : "Default";
+        string folder = skin.ToString();
         sprites = Resources.LoadAll<Sprite>($"MenuBackgrounds/{folder}");
         index = 0;
         if (sprites == null || sprites.Length == 0) return;

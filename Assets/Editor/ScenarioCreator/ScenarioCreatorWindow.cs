@@ -81,21 +81,129 @@ namespace RetroLOTR.Scenarios.EditorTools
         private const float TileOverdraw = 1.10f;
 
         // ---- Hex preview shaders ---------------------------------------------------------------
-        private enum HexPreviewStyle { None, SeamlessBlend }
-        private HexPreviewStyle previewStyle = HexPreviewStyle.SeamlessBlend;
         private bool neonGrid = true;
-        private readonly Dictionary<HexPreviewStyle, Material> previewMaterials = new();
+        private Skins previewSkin = Skins.Default;
 
         private const string PreviewShaderMaterialFolder = "Assets/Editor/ScenarioCreator/Shaders";
 
-        private Material GetPreviewMaterial(HexPreviewStyle style)
-        {
-            if (style == HexPreviewStyle.None) return null;
-            if (previewMaterials.TryGetValue(style, out Material cached) && cached != null) return cached;
+        // Single source of truth for per-skin hex materials, shared with the runtime (SkinManager >
+        // HexMaterialSkin > HexSeamlessTerrain). Read straight off the prefab asset — no Play mode
+        // needed — so the scenario preview's grid can match what the selected skin renders in-game.
+        private const string HexMaterialSkinPrefabPath = "Assets/GameObjects/HexMaterialSkin.prefab";
 
-            Material mat = AssetDatabase.LoadAssetAtPath<Material>($"{PreviewShaderMaterialFolder}/HexSeamlessBlend.mat");
-            previewMaterials[style] = mat;
-            return mat;
+        private Color defaultGridColor;
+        private float defaultGridIntensity, defaultGridWidth, defaultGridGlowWidth, defaultGridHueScale;
+        private bool capturedGridDefaults;
+
+        // Ad-hoc override for testing a specific grid material asset (e.g. a newly authored one)
+        // without wiring it into HexMaterialSkin.prefab first. Index 0 = "(From Skin)", i.e. defer
+        // to the previewSkin dropdown as usual.
+        private const string HexSeamlessBlendShaderGuid = "a078b2ce59974454aa4fc01b9135abe4";
+        private Material[] gridMaterialOptions;
+        private string[] gridMaterialOptionNames;
+        private int gridMaterialOptionIndex;
+
+        private void RefreshGridMaterialOptions()
+        {
+            List<Material> found = new();
+            foreach (string guid in AssetDatabase.FindAssets("t:Material"))
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                if (path.StartsWith(PreviewShaderMaterialFolder)) continue; // skip the editor's own preview material
+                Material mat = AssetDatabase.LoadAssetAtPath<Material>(path);
+                if (mat == null || mat.shader == null) continue;
+                if (AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(mat.shader)) != HexSeamlessBlendShaderGuid) continue;
+                found.Add(mat);
+            }
+            found.Sort((a, b) => string.Compare(a.name, b.name, StringComparison.OrdinalIgnoreCase));
+
+            string previousSelection = gridMaterialOptionIndex > 0 && gridMaterialOptions != null &&
+                gridMaterialOptionIndex - 1 < gridMaterialOptions.Length
+                ? gridMaterialOptions[gridMaterialOptionIndex - 1]?.name : null;
+
+            gridMaterialOptions = found.ToArray();
+            gridMaterialOptionNames = new[] { "(From Skin)" }.Concat(gridMaterialOptions.Select(m => m.name)).ToArray();
+            gridMaterialOptionIndex = previousSelection != null
+                ? Mathf.Max(0, Array.IndexOf(gridMaterialOptionNames, previousSelection))
+                : 0;
+        }
+
+        // The actual runtime-cloned material currently backing the preview, and the source asset it
+        // was cloned from (either the selected skin's terrainMaterial, or the fixed editor fallback).
+        private Material activePreviewMaterial;
+        private Material activePreviewMaterialSource;
+
+        // Everything now goes through HexMaterialSkin (SkinManager > HexMaterialSkin >
+        // HexSeamlessTerrain at runtime): the selected skin's terrainMaterial is the preview base,
+        // falling back to the editor-authored HexSeamlessBlend.mat when the skin has none configured
+        // yet. Always clones into a runtime-only Material — never mutate the shipped skin asset by
+        // calling SetFloat/SetColor directly on it, same rule HexSeamlessTerrain.EnsureMaterial()
+        // follows at runtime.
+        private Material GetPreviewMaterial()
+        {
+            HexMaterialSkin skinAsset = AssetDatabase.LoadAssetAtPath<HexMaterialSkin>(HexMaterialSkinPrefabPath);
+            Material source = skinAsset != null ? skinAsset.GetEntry(previewSkin)?.terrainMaterial : null;
+            if (source == null)
+                source = AssetDatabase.LoadAssetAtPath<Material>($"{PreviewShaderMaterialFolder}/HexSeamlessBlend.mat");
+            if (source == null) return null;
+
+            if (activePreviewMaterial == null || activePreviewMaterialSource != source)
+            {
+                if (activePreviewMaterial != null) DestroyImmediate(activePreviewMaterial);
+                activePreviewMaterial = new Material(source);
+                activePreviewMaterialSource = source;
+                capturedGridDefaults = false;
+
+                // Editor-only necessity, not a skin choice: the GUI draws with GL.sRGBWrite off, so
+                // the shader must gamma-correct its own output here (see HexSeamlessBlend.shader's
+                // _GammaOut comment) regardless of what the source skin material ships with — game
+                // materials keep it at 0 since the camera pipeline does that conversion instead.
+                activePreviewMaterial.SetFloat(GammaOutId, 1f);
+            }
+
+            if (!capturedGridDefaults)
+            {
+                defaultGridColor = activePreviewMaterial.GetColor(GridColorId);
+                defaultGridIntensity = activePreviewMaterial.GetFloat(GridIntensityId);
+                defaultGridWidth = activePreviewMaterial.GetFloat(GridWidthId);
+                defaultGridGlowWidth = activePreviewMaterial.GetFloat(GridGlowWidthId);
+                defaultGridHueScale = activePreviewMaterial.GetFloat(GridHueScaleId);
+                capturedGridDefaults = true;
+            }
+            return activePreviewMaterial;
+        }
+
+        // Mirrors HexSeamlessTerrain.ApplyGridLookOverrides: copies just the grid-look properties
+        // (never the terrain-blend tuning, which stays the editor-authored values) from the
+        // selected skin's gridMaterial onto the preview material. Falls back to this asset's own
+        // authored defaults (captured in GetPreviewMaterial) when the skin has no override, e.g.
+        // HexMaterialSkin.prefab doesn't exist yet or has no entry for previewSkin.
+        private void ApplyGridSkinOverride(Material mat)
+        {
+            if (mat == null) return;
+            Material gridLook;
+            if (gridMaterialOptionIndex > 0 && gridMaterialOptions != null && gridMaterialOptionIndex - 1 < gridMaterialOptions.Length)
+            {
+                gridLook = gridMaterialOptions[gridMaterialOptionIndex - 1];
+            }
+            else
+            {
+                HexMaterialSkin skinAsset = AssetDatabase.LoadAssetAtPath<HexMaterialSkin>(HexMaterialSkinPrefabPath);
+                gridLook = skinAsset != null ? skinAsset.GetEntry(previewSkin)?.gridMaterial : null;
+            }
+
+            if (gridLook == null && !capturedGridDefaults) return;
+            Color color = gridLook != null ? gridLook.GetColor(GridColorId) : defaultGridColor;
+            float intensity = gridLook != null ? gridLook.GetFloat(GridIntensityId) : defaultGridIntensity;
+            float width = gridLook != null ? gridLook.GetFloat(GridWidthId) : defaultGridWidth;
+            float glowWidth = gridLook != null ? gridLook.GetFloat(GridGlowWidthId) : defaultGridGlowWidth;
+            float hueScale = gridLook != null ? gridLook.GetFloat(GridHueScaleId) : defaultGridHueScale;
+
+            mat.SetColor(GridColorId, color);
+            mat.SetFloat(GridIntensityId, intensity);
+            mat.SetFloat(GridWidthId, width);
+            mat.SetFloat(GridGlowWidthId, glowWidth);
+            mat.SetFloat(GridHueScaleId, hueScale);
         }
 
         // Odd-r offset hex neighbor lookup matching TileRect's packing (odd rows shifted +0.5*stepX).
@@ -121,7 +229,7 @@ namespace RetroLOTR.Scenarios.EditorTools
             return true;
         }
 
-        [MenuItem("Tools/RetroLOTR/Scenario Creator")]
+        [MenuItem("Tools/Runeboard/Scenario Creator")]
         public static void Open()
         {
             ScenarioCreatorWindow window = GetWindow<ScenarioCreatorWindow>("Scenario Creator");
@@ -163,12 +271,17 @@ namespace RetroLOTR.Scenarios.EditorTools
         {
             ScenarioCardCatalog.Invalidate();
             cardRenderer?.ClearCache();
+            RefreshGridMaterialOptions();
         }
 
         private void OnDisable()
         {
             cardRenderer?.Dispose();
             cardRenderer = null;
+
+            if (activePreviewMaterial != null) DestroyImmediate(activePreviewMaterial);
+            activePreviewMaterial = null;
+            activePreviewMaterialSource = null;
         }
 
         // -------------------------------------------------------------------------------------
@@ -206,9 +319,12 @@ namespace RetroLOTR.Scenarios.EditorTools
                 Repaint();
             }
             GUILayout.FlexibleSpace();
-            GUILayout.Label("Shader", GUILayout.Width(44));
-            previewStyle = (HexPreviewStyle)EditorGUILayout.EnumPopup(previewStyle, EditorStyles.toolbarPopup, GUILayout.Width(120));
             neonGrid = GUILayout.Toggle(neonGrid, "Grid", EditorStyles.toolbarButton, GUILayout.Width(40));
+            GUILayout.Label("Skin", GUILayout.Width(30));
+            previewSkin = (Skins)EditorGUILayout.EnumPopup(previewSkin, EditorStyles.toolbarPopup, GUILayout.Width(80));
+            if (gridMaterialOptionNames == null) RefreshGridMaterialOptions();
+            GUILayout.Label("Grid Mat", GUILayout.Width(52));
+            gridMaterialOptionIndex = EditorGUILayout.Popup(gridMaterialOptionIndex, gridMaterialOptionNames, EditorStyles.toolbarPopup, GUILayout.Width(130));
             GUILayout.Label($"{width} x {height}", EditorStyles.toolbarButton);
             GUILayout.Label("Zoom", GUILayout.Width(34));
             zoom = GUILayout.HorizontalSlider(zoom, 0.4f, 5f, GUILayout.Width(90));
@@ -557,6 +673,12 @@ namespace RetroLOTR.Scenarios.EditorTools
         private static readonly int AspectYId = Shader.PropertyToID("_AspectY");
         private static readonly int GridOnId = Shader.PropertyToID("_GridOn");
         private static readonly int CellCenterId = Shader.PropertyToID("_CellCenter");
+        private static readonly int GridColorId = Shader.PropertyToID("_GridColor");
+        private static readonly int GridIntensityId = Shader.PropertyToID("_GridIntensity");
+        private static readonly int GridWidthId = Shader.PropertyToID("_GridWidth");
+        private static readonly int GridGlowWidthId = Shader.PropertyToID("_GridGlowWidth");
+        private static readonly int GridHueScaleId = Shader.PropertyToID("_GridHueScale");
+        private static readonly int GammaOutId = Shader.PropertyToID("_GammaOut");
 
         // Cell spacing in the shader's tile-local units, cached by ApplySeamlessBlendGeometry so
         // ApplyNeighborBlendProperties can hand each cell its map-space center (for the grid hue).
@@ -675,8 +797,8 @@ namespace RetroLOTR.Scenarios.EditorTools
 
             Sprite sprite = GetCellTerrainSprite(idx);
 
-            Material previewMaterial = GetPreviewMaterial(previewStyle);
-            if (previewMaterial != null && previewStyle == HexPreviewStyle.SeamlessBlend)
+            Material previewMaterial = GetPreviewMaterial();
+            if (previewMaterial != null)
                 ApplyNeighborBlendProperties(previewMaterial, row, col);
 
             if (sprite != null && sprite.texture != null) DrawSpriteClipped(draw, clip, sprite, previewMaterial);
@@ -695,12 +817,12 @@ namespace RetroLOTR.Scenarios.EditorTools
         // depend on the view, so they are pushed once per repaint instead of per hex.
         private void ApplySeamlessBlendGeometry(float drawW, float drawH, float stepX, float stepY)
         {
-            if (previewStyle != HexPreviewStyle.SeamlessBlend) return;
-            Material mat = GetPreviewMaterial(previewStyle);
+            Material mat = GetPreviewMaterial();
             if (mat == null) return;
 
             mat.SetFloat(AspectYId, drawH / drawW);
             mat.SetFloat(GridOnId, neonGrid ? 1f : 0f);
+            ApplyGridSkinOverride(mat);
 
             float colX = blendColX = stepX / drawW; // one column of horizontal spacing, in drawn-tile-width units
             float rowY = blendRowY = stepY / drawW; // one row of vertical spacing, same units (y-up)

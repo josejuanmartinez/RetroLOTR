@@ -11,8 +11,7 @@ using UnityEngine.EventSystems;
 /// (Pointer events only fire in Play mode and require an EventSystem + GraphicRaycaster.)
 ///
 /// <see cref="calendarWidget"/> must be a scene instance of CalendarWidgetPanel.prefab,
-/// placed disabled under the UI canvas and wired up in the Inspector (see
-/// Assets/Editor/CalendarWidgetPrefabTools.cs for a tool that builds and wires it).
+/// placed disabled under the UI canvas and wired up in the Inspector.
 /// </summary>
 public class DateManager : MonoBehaviour
 {
@@ -33,7 +32,7 @@ public class DateManager : MonoBehaviour
     {
         if (calendarWidget == null)
         {
-            Debug.LogWarning("DateManager: 'calendarWidget' is not assigned. Wire it to a disabled scene instance of CalendarWidgetPanel.prefab (see Assets/Editor/CalendarWidgetPrefabTools.cs).");
+            Debug.LogWarning("DateManager: 'calendarWidget' is not assigned. Wire it to a disabled scene instance of CalendarWidgetPanel.prefab.");
         }
         EnsureDateInteractions();
         DateEventManager.GetOrCreate(); // drives scripted environment cards + date events

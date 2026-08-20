@@ -36,8 +36,12 @@ public class TheLureOfTheSenses : CharacterAction
                     "Ok",
                     "Cancel",
                     enemies.Select(x => x.characterName).ToList(),
+                    null,
                     false,
-                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null);
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    SelectionDialog.CharacterIconNames(enemies));
 
                 if (string.IsNullOrWhiteSpace(selected)) return false;
                 target = enemies.FirstOrDefault(x => x.characterName == selected);

@@ -65,8 +65,12 @@ public class BearerOfNenya : CharacterAction
                     "Ok",
                     "Cancel",
                     options,
+                    null,
                     false,
-                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null);
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    options);
 
                 if (string.IsNullOrWhiteSpace(selected)) return false;
                 targetPc = alliedPcs.FirstOrDefault(pc => pc.pcName == selected);

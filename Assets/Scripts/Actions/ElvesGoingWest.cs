@@ -104,8 +104,12 @@ public class ElvesGoingWest : CharacterAction
                     "Ok",
                     "Cancel",
                     elves.Select(x => x.characterName).ToList(),
+                    null,
                     false,
-                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null);
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    SelectionDialog.CharacterIconNames(elves));
                 if (string.IsNullOrWhiteSpace(selected)) return false;
                 target = elves.FirstOrDefault(x => x.characterName == selected);
             }

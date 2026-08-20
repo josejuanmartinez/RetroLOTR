@@ -57,6 +57,12 @@ Shader "RetroLOTR/HexSeamlessBlend"
         // 1 = editor GUI target (drawn with GL.sRGBWrite off, needs manual linear->gamma);
         // 0 = in-game camera (pipeline does the conversion itself).
         _GammaOut ("Editor gamma output", Float) = 0
+        // 1 (default) = crop each tile's TileOverdraw margin down to its hex, so neighboring tiles
+        // interlock without overlapping — independent of _BlendStrength (color cross-fade) and of
+        // the grid overlay below, which always traces the true hex edge regardless of this value.
+        // 0 = leave the overdrawn art uncropped (bleeds past the hex into neighbors) for a
+        // deliberately unconstrained look, e.g. HexNoSeamlessBlendGame.
+        _EdgeCrop ("Crop Overdraw To Hex", Float) = 1
 
         _GridOn ("Neon Grid Enabled", Float) = 1
         _GridColor ("Neon Grid Tint", Color) = (1, 1, 1, 1)
@@ -115,6 +121,7 @@ Shader "RetroLOTR/HexSeamlessBlend"
             float _EdgeTrim;
             float _FogFade;
             float _GammaOut;
+            float _EdgeCrop;
 
             float _GridOn;
             fixed4 _GridColor;
@@ -142,9 +149,22 @@ Shader "RetroLOTR/HexSeamlessBlend"
                 return o;
             }
 
+            // t (seam coordinate, 1 == the shared edge) for one direction, with no neighbor/glow
+            // logic attached — used to find which of the 6 edges is nearest at a given pixel before
+            // any of them draw their line (see tMax in frag()).
+            float SeamT(float2 offset, float2 s)
+            {
+                float dist = length(offset);
+                if (dist < 1e-4) return -1e6; // no geometry in this slot; never the nearest edge
+                float halfD = 0.5 * dist;
+                return dot(s, offset / dist) / halfD;
+            }
+
             // Accumulates one neighbor's contribution for fragment position s (tile-local frame).
+            // tMax is the largest of all 6 directions' t at this pixel (see frag()) — a direction's
+            // grid line only draws where it IS that nearest edge.
             void AccumulateNeighbor(float valid, sampler2D tex, float4 rect, float2 offset,
-                                    float2 s, inout float3 rgbSum, inout float weightSum,
+                                    float2 s, float tMax, inout float3 rgbSum, inout float weightSum,
                                     inout float alphaMask, inout float glow)
             {
                 float dist = length(offset);
@@ -160,10 +180,19 @@ Shader "RetroLOTR/HexSeamlessBlend"
                 // directions (not just valid neighbors) so map-border hexes are outlined too.
                 // Both overlapping tiles emit identical glow at the seam, so premultiplied
                 // compositing keeps the line continuous regardless of draw order.
+                //
+                // t alone only constrains distance PERPENDICULAR to this edge (_GridWidth/
+                // _GridGlowWidth) — along the edge, t stays exactly 1 forever, so without a second
+                // bound this "line" is geometrically infinite, previously only ever cut off by
+                // alpha (the overdraw crop, or the sprite's own art) at the true hex vertices. With
+                // _EdgeCrop disabled that no longer happens, so nearestEdgeMask below is the actual
+                // length bound: this direction only draws where it is the closest of the 6 edges,
+                // matching the hexagon's true Voronoi boundary independent of alpha/_EdgeCrop.
                 float seamPx = abs(t - 1.0) / max(fwidth(t), 1e-5);
                 float core = saturate(1.0 - seamPx / _GridWidth);
                 float halo = exp2(-seamPx / _GridGlowWidth);
-                glow = max(glow, core + halo * 0.2);
+                float nearestEdgeMask = smoothstep(-fwidth(t) * 2.0, 0.0, t - tMax);
+                glow = max(glow, (core + halo * 0.2) * nearestEdgeMask);
 
                 // Neighbor state: 1 = rendered neighbor (blend + feather), 0 = no neighbor at all
                 // (map border: crisp edge), -1 = fog-of-war neighbor (exists but is not rendered).
@@ -185,7 +214,15 @@ Shader "RetroLOTR/HexSeamlessBlend"
                 // overlapping tiles end up translucent at the seam and the window background
                 // bleeds through as a visible grid.
                 // Only edges that actually have a neighbor are feathered (map borders stay crisp).
-                alphaMask = min(alphaMask, 1.0 - smoothstep(1.0, 1.0 + _EdgeTrim, t));
+                // Gated on _EdgeCrop, NOT _BlendStrength: whether to crop the overdraw is a
+                // separate concern from whether to color-blend across the seam. Cropping is what
+                // keeps adjacent tiles from overlapping (default on, for tiling correctness);
+                // a material can disable it for a deliberately unconstrained look
+                // (HexNoSeamlessBlendGame) without that decision touching the grid overlay at all
+                // — the grid's glow/core/halo below is computed independently of alphaMask/_EdgeCrop
+                // and always traces the true hex edge (t == 1) regardless of this setting.
+                if (_EdgeCrop > 0.5)
+                    alphaMask = min(alphaMask, 1.0 - smoothstep(1.0, 1.0 + _EdgeTrim, t));
 
                 // Weight ramps 0 -> 1 over the outer _BlendBand fraction of the way from the hex
                 // center to the shared edge.
@@ -228,16 +265,22 @@ Shader "RetroLOTR/HexSeamlessBlend"
                 float2 localUV = (i.uv - _SpriteUV.xy) / _SpriteUV.zw;
                 float2 s = float2(localUV.x - 0.5, (localUV.y - 0.5) * _AspectY);
 
+                // Which of the 6 edges is nearest at this pixel — see AccumulateNeighbor/SeamT.
+                float tMax = max(
+                    max(max(SeamT(_NeighborOffset0.xy, s), SeamT(_NeighborOffset1.xy, s)),
+                        max(SeamT(_NeighborOffset2.xy, s), SeamT(_NeighborOffset3.xy, s))),
+                    max(SeamT(_NeighborOffset4.xy, s), SeamT(_NeighborOffset5.xy, s)));
+
                 float3 rgbSum = float3(0, 0, 0);
                 float weightSum = 0.0;
                 float alphaMask = 1.0;
                 float glow = 0.0;
-                AccumulateNeighbor(_NeighborValid0, _NeighborTex0, _NeighborUV0, _NeighborOffset0.xy, s, rgbSum, weightSum, alphaMask, glow);
-                AccumulateNeighbor(_NeighborValid1, _NeighborTex1, _NeighborUV1, _NeighborOffset1.xy, s, rgbSum, weightSum, alphaMask, glow);
-                AccumulateNeighbor(_NeighborValid2, _NeighborTex2, _NeighborUV2, _NeighborOffset2.xy, s, rgbSum, weightSum, alphaMask, glow);
-                AccumulateNeighbor(_NeighborValid3, _NeighborTex3, _NeighborUV3, _NeighborOffset3.xy, s, rgbSum, weightSum, alphaMask, glow);
-                AccumulateNeighbor(_NeighborValid4, _NeighborTex4, _NeighborUV4, _NeighborOffset4.xy, s, rgbSum, weightSum, alphaMask, glow);
-                AccumulateNeighbor(_NeighborValid5, _NeighborTex5, _NeighborUV5, _NeighborOffset5.xy, s, rgbSum, weightSum, alphaMask, glow);
+                AccumulateNeighbor(_NeighborValid0, _NeighborTex0, _NeighborUV0, _NeighborOffset0.xy, s, tMax, rgbSum, weightSum, alphaMask, glow);
+                AccumulateNeighbor(_NeighborValid1, _NeighborTex1, _NeighborUV1, _NeighborOffset1.xy, s, tMax, rgbSum, weightSum, alphaMask, glow);
+                AccumulateNeighbor(_NeighborValid2, _NeighborTex2, _NeighborUV2, _NeighborOffset2.xy, s, tMax, rgbSum, weightSum, alphaMask, glow);
+                AccumulateNeighbor(_NeighborValid3, _NeighborTex3, _NeighborUV3, _NeighborOffset3.xy, s, tMax, rgbSum, weightSum, alphaMask, glow);
+                AccumulateNeighbor(_NeighborValid4, _NeighborTex4, _NeighborUV4, _NeighborOffset4.xy, s, tMax, rgbSum, weightSum, alphaMask, glow);
+                AccumulateNeighbor(_NeighborValid5, _NeighborTex5, _NeighborUV5, _NeighborOffset5.xy, s, tMax, rgbSum, weightSum, alphaMask, glow);
 
                 fixed4 result = own;
                 if (weightSum > 1e-4)

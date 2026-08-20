@@ -31,11 +31,31 @@ public class TransferArtifact : CharacterAction
             CardData artifact = null;
             if(!isAI)
             {
-                string targetArtifact = await SelectionDialog.Ask("Select artifact", "Ok", "Cancel", transferableArtifacts.Select(x => x.name).ToList(), isAI, SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null);
+                string targetArtifact = await SelectionDialog.Ask(
+                    "Select artifact",
+                    "Ok",
+                    "Cancel",
+                    transferableArtifacts.Select(x => x.name).ToList(),
+                    null,
+                    isAI,
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    SelectionDialog.CardIconNames(transferableArtifacts));
                 artifact = transferableArtifacts.Find(x => x.name == targetArtifact);
                 if (artifact == null) return false;
 
-                string targetCharacter = await SelectionDialog.Ask("Select friendly character", "Ok", "Cancel", characters.Select(x => x.characterName).ToList(), isAI, SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null);
+                string targetCharacter = await SelectionDialog.Ask(
+                    "Select friendly character",
+                    "Ok",
+                    "Cancel",
+                    characters.Select(x => x.characterName).ToList(),
+                    null,
+                    isAI,
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    SelectionDialog.CharacterIconNames(characters));
                 character = c.hex.characters.Find(x => x.characterName == targetCharacter);
                 if (character == null) return false;
 

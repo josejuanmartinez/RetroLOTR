@@ -32,7 +32,17 @@ public class GuardCharacter : AgentAction
             Character target = null;
             if (!isAI)
             {
-                string choice = await SelectionDialog.Ask("Select character to guard", "Ok", "Cancel", targets.Select(x => x.characterName).ToList(), isAI, SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null);
+                string choice = await SelectionDialog.Ask(
+                    "Select character to guard",
+                    "Ok",
+                    "Cancel",
+                    targets.Select(x => x.characterName).ToList(),
+                    null,
+                    isAI,
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    SelectionDialog.CharacterIconNames(targets));
                 if (string.IsNullOrWhiteSpace(choice)) return false;
                 target = targets.Find(x => x.characterName == choice);
             }

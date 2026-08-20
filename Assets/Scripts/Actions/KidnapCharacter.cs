@@ -33,7 +33,17 @@ public class KidnapCharacter : AgentCharacterAction
             Character enemy = null;
             if (!isAI)
             {
-                string targetCharacter = await SelectionDialog.Ask("Select enemy character to kidnap", "Ok", "Cancel", enemies.Select(x => x.characterName).ToList(), isAI, SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null);
+                string targetCharacter = await SelectionDialog.Ask(
+                    "Select enemy character to kidnap",
+                    "Ok",
+                    "Cancel",
+                    enemies.Select(x => x.characterName).ToList(),
+                    null,
+                    isAI,
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    SelectionDialog.CharacterIconNames(enemies));
                 if (string.IsNullOrEmpty(targetCharacter)) return false;
                 enemy = enemies.Find(x => x.characterName == targetCharacter);
             }

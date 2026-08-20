@@ -29,7 +29,8 @@ public static class StartupLoadingScreenPrefabGenerator
         };
     }
 
-    [MenuItem("Tools/RetroLOTR/Rebuild Startup Loading Screen Prefab")]
+    // No longer exposed as a menu item — it self-heals via GenerateOnce above, and a deliberate
+    // rebuild is a one-off script run, not a permanent menu entry.
     public static void Generate()
     {
         // Destroying the previous StartupLoadingScreen instance below while it (or its
@@ -194,60 +195,6 @@ public static class StartupLoadingScreenPrefabGenerator
         EditorSceneManager.SaveScene(scene);
         AssetDatabase.SaveAssets();
         Debug.Log($"Created {PrefabPath} from the existing LeaderSelection Progress widget and added it to {ScenePath}.");
-    }
-
-    // Non-destructive: wires whatever "Cards" (CardDataProvider slots) and "PressAnyKey" text
-    // already exist under the prefab root into the StartupLoadingScreen component, without
-    // touching the rest of the hierarchy. Use this after hand-editing the prefab in the Editor,
-    // instead of Generate() (which rebuilds — and would discard — that hand-editing).
-    [MenuItem("Tools/RetroLOTR/Wire Startup Loading Screen Cards")]
-    public static void WireExistingCards()
-    {
-        // Selecting the same prefab asset in the Inspector while LoadPrefabContents/
-        // UnloadPrefabContents runs makes the Inspector redraw against objects mid-swap,
-        // throwing MissingReferenceException. Clear the selection for the duration to avoid it.
-        Object previousSelection = Selection.activeObject;
-        Selection.activeObject = null;
-
-        GameObject root = PrefabUtility.LoadPrefabContents(PrefabPath);
-        try
-        {
-            StartupLoadingScreen screen = root.GetComponent<StartupLoadingScreen>();
-            if (screen == null)
-                throw new System.InvalidOperationException($"{PrefabPath} has no StartupLoadingScreen component.");
-
-            Transform cardsParent = root.transform.Find("Cards");
-            if (cardsParent == null)
-                throw new System.InvalidOperationException("Could not find a 'Cards' child under the prefab root.");
-            CardDataProvider[] providers = cardsParent.GetComponentsInChildren<CardDataProvider>(true);
-            if (providers.Length == 0)
-                throw new System.InvalidOperationException("'Cards' has no CardDataProvider components under it.");
-
-            Transform pressAnyKey = root.transform.Find("PressAnyKey");
-            TextMeshProUGUI continuePrompt = pressAnyKey != null ? pressAnyKey.GetComponent<TextMeshProUGUI>() : null;
-
-            SerializedObject controller = new(screen);
-            SerializedProperty cardProvidersProp = controller.FindProperty("cardProviders");
-            cardProvidersProp.ClearArray();
-            for (int i = 0; i < providers.Length; i++)
-            {
-                cardProvidersProp.InsertArrayElementAtIndex(i);
-                cardProvidersProp.GetArrayElementAtIndex(i).objectReferenceValue = providers[i];
-            }
-            if (continuePrompt != null)
-            {
-                controller.FindProperty("continuePromptText").objectReferenceValue = continuePrompt;
-            }
-            controller.ApplyModifiedPropertiesWithoutUndo();
-
-            PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
-            Debug.Log($"Wired {providers.Length} card slot(s){(continuePrompt != null ? " and the PressAnyKey prompt" : " (no PressAnyKey text found)")} into {PrefabPath}.");
-        }
-        finally
-        {
-            PrefabUtility.UnloadPrefabContents(root);
-            if (previousSelection != null) Selection.activeObject = previousSelection;
-        }
     }
 
     private static T FindInScene<T>(Scene scene) where T : Component

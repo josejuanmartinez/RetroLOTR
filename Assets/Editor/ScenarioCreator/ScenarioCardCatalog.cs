@@ -16,6 +16,10 @@ namespace RetroLOTR.Scenarios.EditorTools
         private static List<string> _playableLeaders;
         private static List<string> _nonPlayableLeaders;
         private static Dictionary<string, List<LeaderVariantConfig>> _playableVariantsByName;
+        // Reverse of _playableVariantsByName: a variant's own characterName (e.g. "The Iron
+        // Crown") -> its base leader's characterName (e.g. "Sauron"), for GetCharacterIdleSprite's
+        // fallback tier.
+        private static Dictionary<string, string> _baseLeaderNameByVariantName;
         private static List<string> _pcCards;
         private static List<string> _characterCards;
         private static List<string> _armyCards;
@@ -166,6 +170,7 @@ namespace RetroLOTR.Scenarios.EditorTools
         {
             if (_playableVariantsByName != null) return;
             _playableVariantsByName = new Dictionary<string, List<LeaderVariantConfig>>(StringComparer.OrdinalIgnoreCase);
+            _baseLeaderNameByVariantName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
             TextAsset asset = Resources.Load<TextAsset>("PlayableLeaderBiomes");
             if (asset == null) return;
@@ -175,18 +180,36 @@ namespace RetroLOTR.Scenarios.EditorTools
             foreach (LeaderBiomeConfig biome in collection.biomes)
             {
                 if (biome == null || string.IsNullOrWhiteSpace(biome.characterName)) continue;
-                _playableVariantsByName[biome.characterName.Trim()] = biome.variants ?? new List<LeaderVariantConfig>();
+                List<LeaderVariantConfig> variants = biome.variants ?? new List<LeaderVariantConfig>();
+                _playableVariantsByName[biome.characterName.Trim()] = variants;
+
+                foreach (LeaderVariantConfig variant in variants)
+                {
+                    if (variant == null || string.IsNullOrWhiteSpace(variant.characterName)) continue;
+                    if (string.Equals(variant.characterName.Trim(), biome.characterName.Trim(), StringComparison.OrdinalIgnoreCase)) continue;
+                    _baseLeaderNameByVariantName[variant.characterName.Trim()] = biome.characterName.Trim();
+                }
             }
+        }
+
+        /// <summary>The base playable leader's characterName for one of its variant characterNames
+        /// (e.g. "The Iron Crown" -> "Sauron"), or null if the given name isn't a known variant.</summary>
+        private static string GetBaseLeaderNameForVariant(string variantCharacterName)
+        {
+            if (string.IsNullOrWhiteSpace(variantCharacterName)) return null;
+            EnsurePlayableVariantsLoaded();
+            return _baseLeaderNameByVariantName.TryGetValue(variantCharacterName.Trim(), out string baseName) ? baseName : null;
         }
 
         /// <summary>
         /// First frame of the baked "standing idle", Forward-facing spritesheet for a character
         /// or leader name — the same art CharacterAnimationController shows in-game — so the
         /// Scenario Creator can preview spawned characters on the map instead of leaving them as
-        /// bare markers. Resolution mirrors CharacterSpritesheets.TryResolveRaceOrName's first two
-        /// tiers (exact name, then that name's Character-card race); unlike the runtime resolver
-        /// this reads the Editor AssetDatabase directly (synchronous, no Addressables load) since
-        /// it only ever runs in-editor. Null if nothing is baked for either.
+        /// bare markers. Resolution mirrors CharacterSpritesheets.TryResolveRaceOrName's tiers
+        /// (exact name, then — for a playable leader variant — its base leader's name, then that
+        /// name's Character-card race); unlike the runtime resolver this reads the Editor
+        /// AssetDatabase directly (synchronous, no Addressables load) since it only ever runs
+        /// in-editor. Null if nothing is baked for any tier.
         /// </summary>
         public static Sprite GetCharacterIdleSprite(string characterName)
         {
@@ -197,6 +220,17 @@ namespace RetroLOTR.Scenarios.EditorTools
             // Baked spritesheet folders are named after the character with spaces stripped (e.g.
             // "TomBombadil" for "Tom Bombadil") — match CharacterSpritesheets' own normalization.
             Sprite sprite = LoadIdleSprite(key.Replace(" ", ""));
+
+            // A leader variant (e.g. "The Iron Crown") rarely has its own baked spritesheet — try
+            // the base leader's ("Sauron") before falling all the way back to race, same as the
+            // runtime CharacterSpritesheets.TryResolveRaceOrName order.
+            if (sprite == null)
+            {
+                string baseLeaderName = GetBaseLeaderNameForVariant(key);
+                if (baseLeaderName != null)
+                    sprite = LoadIdleSprite(baseLeaderName.Replace(" ", ""));
+            }
+
             if (sprite == null)
             {
                 RacesEnum race = GetCard(key)?.race ?? RacesEnum.Common;

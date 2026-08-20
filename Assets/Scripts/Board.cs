@@ -197,6 +197,7 @@ public class Board : MonoBehaviour
         {
             ShowCampaignSelection();
             yield return new WaitUntil(() => GameConfig.ScenarioChosen);
+            startScreenController?.Hide();
         }
 
         // The title and campaign menus do not use the 17,000+ baked animation frames. Starting

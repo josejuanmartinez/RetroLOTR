@@ -26,7 +26,17 @@ public class Halt : Spell
             Character target = null;
             if (!isAI)
             {
-                string targetCharacter = await SelectionDialog.Ask("Select character to halt", "Ok", "Cancel", targets.Select(x => x.characterName).ToList(), isAI, SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null);
+                string targetCharacter = await SelectionDialog.Ask(
+                    "Select character to halt",
+                    "Ok",
+                    "Cancel",
+                    targets.Select(x => x.characterName).ToList(),
+                    null,
+                    isAI,
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    SelectionDialog.CharacterIconNames(targets));
                 if (string.IsNullOrEmpty(targetCharacter)) return false;
                 target = targets.Find(x => x.characterName == targetCharacter);
             }

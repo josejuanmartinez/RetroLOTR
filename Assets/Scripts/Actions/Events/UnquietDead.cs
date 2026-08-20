@@ -93,7 +93,17 @@ public class UnquietDead : EventAction
             Character target = null;
             if (!isAI)
             {
-                string selected = await SelectionDialog.Ask("Raise from the dead", "Ok", "Cancel", deadAllies.Select(x => x.characterName).ToList(), false, SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null);
+                string selected = await SelectionDialog.Ask(
+                    "Raise from the dead",
+                    "Ok",
+                    "Cancel",
+                    deadAllies.Select(x => x.characterName).ToList(),
+                    null,
+                    false,
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    SelectionDialog.CharacterIconNames(deadAllies));
                 if (string.IsNullOrWhiteSpace(selected)) return false;
                 target = deadAllies.FirstOrDefault(x => x.characterName == selected);
             }

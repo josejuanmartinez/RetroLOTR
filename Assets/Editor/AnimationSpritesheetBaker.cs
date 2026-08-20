@@ -144,7 +144,7 @@ public class AnimationSpritesheetBaker : EditorWindow
     private bool _autoPlay;
     private double _lastEditorTime;
 
-    [MenuItem("Tools/RetroLOTR/Animation/Spritesheet Baker/Open")]
+    [MenuItem("Tools/Runeboard/Animation/Spritesheet Baker/Open")]
     public static void Open()
     {
         var w = GetWindow<AnimationSpritesheetBaker>("Spritesheet Baker");
@@ -179,10 +179,10 @@ public class AnimationSpritesheetBaker : EditorWindow
         Repaint();
     }
 
-    [MenuItem("Assets/RetroLOTR/Animation/Bake Spritesheet From Controller", true)]
+    [MenuItem("Assets/Runeboard/Animation/Bake Spritesheet From Controller", true)]
     private static bool ValidateOpenFromController() => Selection.activeObject is AnimatorController;
 
-    [MenuItem("Assets/RetroLOTR/Animation/Bake Spritesheet From Controller")]
+    [MenuItem("Assets/Runeboard/Animation/Bake Spritesheet From Controller")]
     private static void OpenFromController()
     {
         var w = GetWindow<AnimationSpritesheetBaker>("Spritesheet Baker");
@@ -1254,7 +1254,7 @@ public class AnimationSpritesheetBaker : EditorWindow
     // set at bake time, and goes stale. Resets every AnimationSpritesheets entry's address back
     // to AddressableAssetEntry.AssetPath (which always resolves live from the GUID), so a moved
     // file's address matches where it actually lives again.
-    [MenuItem("Tools/RetroLOTR/Animation/Spritesheet Baker/Resync Addressable Paths")]
+    [MenuItem("Tools/Runeboard/Animation/Spritesheet Baker/Resync Addressable Paths")]
     static void ResyncSpritesheetAddresses()
     {
         AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;

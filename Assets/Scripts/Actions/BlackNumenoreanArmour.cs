@@ -50,8 +50,12 @@ public class BlackNumenoreanArmour : CharacterAction
                     "Ok",
                     "Cancel",
                     alliedCommanders.Select(x => x.characterName).ToList(),
+                    null,
                     false,
-                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null);
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(character) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    SelectionDialog.CharacterIconNames(alliedCommanders));
 
                 if (string.IsNullOrWhiteSpace(selected)) return false;
                 target = alliedCommanders.FirstOrDefault(x => x.characterName == selected);

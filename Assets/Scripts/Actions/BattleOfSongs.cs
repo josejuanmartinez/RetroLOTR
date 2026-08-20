@@ -32,7 +32,17 @@ public class BattleOfSongs : CharacterAction
             Character target = null;
             if (!isAI)
             {
-                string targetName = await SelectionDialog.Ask("Select enemy mage", "Ok", "Cancel", targets.Select(x => x.characterName).ToList(), isAI, SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null);
+                string targetName = await SelectionDialog.Ask(
+                    "Select enemy mage",
+                    "Ok",
+                    "Cancel",
+                    targets.Select(x => x.characterName).ToList(),
+                    null,
+                    isAI,
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    SelectionDialog.CharacterIconNames(targets));
                 if (string.IsNullOrWhiteSpace(targetName)) return false;
                 target = targets.Find(x => x.characterName == targetName);
             }

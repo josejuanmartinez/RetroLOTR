@@ -12,9 +12,9 @@ using UnityEngine.UI;
 /// &lt;sprite&gt; under the day number, drawn from the <see cref="eventSpriteSheet"/>
 /// TMP sprite asset. Hovering a marked day shows its description.
 ///
-/// This component lives on a pre-built prefab (see CalendarWidgetPanel.prefab, built via
-/// Assets/Editor/CalendarWidgetPrefabTools.cs) so its colors, fonts and layout are authored
-/// and tweaked in the Inspector instead of being generated in code. DateManager holds a
+/// This component lives on a pre-built prefab (CalendarWidgetPanel.prefab) so its colors,
+/// fonts and layout are authored and tweaked in the Inspector instead of being generated in
+/// code. DateManager holds a
 /// reference to a disabled instance of this prefab in the scene and enables/disables it
 /// on hover; this script never builds or reparents its own GameObject.
 /// </summary>

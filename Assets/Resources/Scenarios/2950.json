@@ -464,7 +464,7 @@
         0,
         7,
         6,
-        2,
+        3,
         3,
         0,
         0,
@@ -25633,6 +25633,11 @@
         },
         {
             "row": 7,
+            "col": 2,
+            "spriteName": "grass_17"
+        },
+        {
+            "row": 7,
             "col": 3,
             "spriteName": "grass_17"
         },
@@ -43277,7 +43282,7 @@
         },
         {
             "row": 15,
-            "col": 19,
+            "col": 20,
             "characterName": "Bill Ferny",
             "ownerLeaderName": "Saruman",
             "ownerVariantId": "",
@@ -43297,7 +43302,7 @@
         },
         {
             "row": 15,
-            "col": 19,
+            "col": 18,
             "characterName": "Mat Heathertoes",
             "ownerLeaderName": "Aragorn",
             "ownerVariantId": "",
@@ -43363,56 +43368,7 @@
             ]
         },
         {
-            "row": 15,
-            "col": 31,
-            "characterName": "Arwen",
-            "ownerLeaderName": "Elrond",
-            "ownerVariantId": "",
-            "fallbackOwnerName": "",
-            "variantId": "",
-            "spawnConditionLeaderName": "",
-            "spawnConditionVariantId": "",
-            "spawnConditionExclude": false,
-            "army": {
-                "xp": 25,
-                "stacks": [],
-                "spawnConditionLeaderName": "",
-                "spawnConditionVariantId": "",
-                "spawnConditionExclude": false
-            },
-            "startingObjects": []
-        },
-        {
-            "row": 15,
-            "col": 31,
-            "characterName": "Glorfindel",
-            "ownerLeaderName": "Elrond",
-            "ownerVariantId": "",
-            "fallbackOwnerName": "",
-            "variantId": "",
-            "spawnConditionLeaderName": "",
-            "spawnConditionVariantId": "",
-            "spawnConditionExclude": false,
-            "army": {
-                "xp": 25,
-                "stacks": [
-                    {
-                        "armyCardName": "Half Elves",
-                        "amount": 100
-                    },
-                    {
-                        "armyCardName": "Elven Warriors",
-                        "amount": 100
-                    }
-                ],
-                "spawnConditionLeaderName": "",
-                "spawnConditionVariantId": "",
-                "spawnConditionExclude": false
-            },
-            "startingObjects": []
-        },
-        {
-            "row": 15,
+            "row": 16,
             "col": 31,
             "characterName": "Bilbo",
             "ownerLeaderName": "Elrond",
@@ -43460,6 +43416,35 @@
             "startingObjects": [
                 "Narya"
             ]
+        },
+        {
+            "row": 15,
+            "col": 30,
+            "characterName": "Glorfindel",
+            "ownerLeaderName": "Elrond",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
+            "army": {
+                "xp": 25,
+                "stacks": [
+                    {
+                        "armyCardName": "Half Elves",
+                        "amount": 100
+                    },
+                    {
+                        "armyCardName": "Elven Warriors",
+                        "amount": 100
+                    }
+                ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
+            },
+            "startingObjects": []
         },
         {
             "row": 23,
@@ -43532,7 +43517,7 @@
         },
         {
             "row": 5,
-            "col": 6,
+            "col": 5,
             "characterName": "Thorin",
             "ownerLeaderName": "Gandalf",
             "ownerVariantId": "tharkun",
@@ -43556,8 +43541,8 @@
             "startingObjects": []
         },
         {
-            "row": 5,
-            "col": 6,
+            "row": 6,
+            "col": 7,
             "characterName": "Kili",
             "ownerLeaderName": "Gloin",
             "ownerVariantId": "",
@@ -43576,7 +43561,7 @@
             "startingObjects": []
         },
         {
-            "row": 5,
+            "row": 6,
             "col": 6,
             "characterName": "Fili",
             "ownerLeaderName": "Gloin",
@@ -43644,7 +43629,7 @@
         },
         {
             "row": 33,
-            "col": 28,
+            "col": 27,
             "characterName": "Grima",
             "ownerLeaderName": "Saruman",
             "ownerVariantId": "",
@@ -43866,7 +43851,7 @@
             ]
         },
         {
-            "row": 37,
+            "row": 38,
             "col": 31,
             "characterName": "Eowyn",
             "ownerLeaderName": "Theoden",
@@ -43887,7 +43872,7 @@
         },
         {
             "row": 31,
-            "col": 37,
+            "col": 36,
             "characterName": "Stormcrow",
             "ownerLeaderName": "Gandalf",
             "ownerVariantId": "stormcrow",
@@ -43958,7 +43943,7 @@
             "startingObjects": []
         },
         {
-            "row": 25,
+            "row": 24,
             "col": 36,
             "characterName": "Galadriel",
             "ownerLeaderName": "Galadriel",
@@ -44314,8 +44299,8 @@
             ]
         },
         {
-            "row": 53,
-            "col": 46,
+            "row": 44,
+            "col": 64,
             "characterName": "Morlammen",
             "ownerLeaderName": "Ovatha",
             "ownerVariantId": "",
@@ -44334,7 +44319,7 @@
             "startingObjects": []
         },
         {
-            "row": 53,
+            "row": 52,
             "col": 46,
             "characterName": "Lomelinde",
             "ownerLeaderName": "Ovatha",
@@ -44414,8 +44399,8 @@
             ]
         },
         {
-            "row": 37,
-            "col": 45,
+            "row": 38,
+            "col": 46,
             "characterName": "Ethacali",
             "ownerLeaderName": "Dendra Dwar",
             "ownerVariantId": "",
@@ -44435,7 +44420,7 @@
         },
         {
             "row": 43,
-            "col": 43,
+            "col": 42,
             "characterName": "Boromir",
             "ownerLeaderName": "Denethor",
             "ownerVariantId": "",
@@ -44521,8 +44506,8 @@
             "startingObjects": []
         },
         {
-            "row": 43,
-            "col": 41,
+            "row": 42,
+            "col": 42,
             "characterName": "Ioreth",
             "ownerLeaderName": "Denethor",
             "ownerVariantId": "",
@@ -44682,7 +44667,7 @@
         },
         {
             "row": 39,
-            "col": 44,
+            "col": 45,
             "characterName": "Gúrthul",
             "ownerLeaderName": "Hoarmurath",
             "ownerVariantId": "",
@@ -44755,8 +44740,8 @@
             "startingObjects": []
         },
         {
-            "row": 56,
-            "col": 54,
+            "row": 55,
+            "col": 53,
             "characterName": "Ji Indur",
             "ownerLeaderName": "Ji Indur",
             "ownerVariantId": "",
@@ -44802,7 +44787,7 @@
             "startingObjects": []
         },
         {
-            "row": 54,
+            "row": 55,
             "col": 58,
             "characterName": "Akhorahil",
             "ownerLeaderName": "Akhorahil",
@@ -45338,8 +45323,8 @@
             "startingObjects": []
         },
         {
-            "row": 16,
-            "col": 64,
+            "row": 15,
+            "col": 63,
             "characterName": "Erestor",
             "ownerLeaderName": "Lanthir",
             "ownerVariantId": "",
@@ -45405,7 +45390,7 @@
             "startingObjects": []
         },
         {
-            "row": 16,
+            "row": 17,
             "col": 14,
             "characterName": "Lobelia Sackville-Baggins",
             "ownerLeaderName": "Lotho Sackville-Baggins",
@@ -45426,7 +45411,7 @@
         },
         {
             "row": 16,
-            "col": 14,
+            "col": 13,
             "characterName": "Sam",
             "ownerLeaderName": "Frodo",
             "ownerVariantId": "",
@@ -45595,26 +45580,6 @@
         {
             "row": 4,
             "col": 31,
-            "characterName": "",
-            "ownerLeaderName": "",
-            "ownerVariantId": "",
-            "fallbackOwnerName": "",
-            "variantId": "",
-            "spawnConditionLeaderName": "",
-            "spawnConditionVariantId": "",
-            "spawnConditionExclude": false,
-            "army": {
-                "xp": 25,
-                "stacks": [],
-                "spawnConditionLeaderName": "",
-                "spawnConditionVariantId": "",
-                "spawnConditionExclude": false
-            },
-            "startingObjects": []
-        },
-        {
-            "row": 4,
-            "col": 31,
             "characterName": "Azog",
             "ownerLeaderName": "Azog",
             "ownerVariantId": "",
@@ -45673,8 +45638,8 @@
             ]
         },
         {
-            "row": 3,
-            "col": 23,
+            "row": 4,
+            "col": 24,
             "characterName": "Broggha",
             "ownerLeaderName": "Murazor",
             "ownerVariantId": "",
@@ -45724,28 +45689,8 @@
         },
         {
             "row": 17,
-            "col": 12,
+            "col": 13,
             "characterName": "Pippin",
-            "ownerLeaderName": "Pippin",
-            "ownerVariantId": "",
-            "fallbackOwnerName": "",
-            "variantId": "",
-            "spawnConditionLeaderName": "",
-            "spawnConditionVariantId": "",
-            "spawnConditionExclude": false,
-            "army": {
-                "xp": 25,
-                "stacks": [],
-                "spawnConditionLeaderName": "",
-                "spawnConditionVariantId": "",
-                "spawnConditionExclude": false
-            },
-            "startingObjects": []
-        },
-        {
-            "row": 17,
-            "col": 12,
-            "characterName": "Paladin",
             "ownerLeaderName": "Pippin",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
@@ -46069,8 +46014,8 @@
             "startingObjects": []
         },
         {
-            "row": 12,
-            "col": 39,
+            "row": 13,
+            "col": 38,
             "characterName": "Braega",
             "ownerLeaderName": "Arfanhil",
             "ownerVariantId": "",
@@ -46422,26 +46367,6 @@
             "col": 26,
             "characterName": "Faemir",
             "ownerLeaderName": "Galadriel",
-            "ownerVariantId": "",
-            "fallbackOwnerName": "",
-            "variantId": "",
-            "spawnConditionLeaderName": "",
-            "spawnConditionVariantId": "",
-            "spawnConditionExclude": false,
-            "army": {
-                "xp": 25,
-                "stacks": [],
-                "spawnConditionLeaderName": "",
-                "spawnConditionVariantId": "",
-                "spawnConditionExclude": false
-            },
-            "startingObjects": []
-        },
-        {
-            "row": 44,
-            "col": 26,
-            "characterName": "",
-            "ownerLeaderName": "",
             "ownerVariantId": "",
             "fallbackOwnerName": "",
             "variantId": "",
@@ -47665,6 +47590,26 @@
                         "amount": 1
                     }
                 ],
+                "spawnConditionLeaderName": "",
+                "spawnConditionVariantId": "",
+                "spawnConditionExclude": false
+            },
+            "startingObjects": []
+        },
+        {
+            "row": 15,
+            "col": 30,
+            "characterName": "Arwen",
+            "ownerLeaderName": "Elrond",
+            "ownerVariantId": "",
+            "fallbackOwnerName": "",
+            "variantId": "",
+            "spawnConditionLeaderName": "",
+            "spawnConditionVariantId": "",
+            "spawnConditionExclude": false,
+            "army": {
+                "xp": 25,
+                "stacks": [],
                 "spawnConditionLeaderName": "",
                 "spawnConditionVariantId": "",
                 "spawnConditionExclude": false

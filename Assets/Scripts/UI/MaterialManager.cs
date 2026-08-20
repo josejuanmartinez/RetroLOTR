@@ -3,9 +3,17 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
+[System.Serializable]
+public class SkinMaterial
+{
+    public Skins skin;
+    public Material material;
+    public Material animatedMaterial;
+}
+
 public class MaterialManager : SearcherByName
 {
-    [SerializeField] private Material[] materials;
+    [SerializeField] private SkinMaterial[] skinMaterials;
 
     private readonly Dictionary<Image, Material> originalImageMaterials = new();
     private readonly Dictionary<SpriteRenderer, Material> originalSpriteMaterials = new();
@@ -16,23 +24,12 @@ public class MaterialManager : SearcherByName
     private Material activeAnimatedMaterial;
     private bool useSkinMaterials;
 
-    public Material GetMaterialByName(string name)
+    public void ApplySkin(Skins skin)
     {
-        return materials.FirstOrDefault(material =>
-            material != null && Normalize(material.name) == Normalize(name));
-    }
-
-    public void ApplySkin(string suffix)
-    {
-        useSkinMaterials = !string.IsNullOrEmpty(suffix);
-        activeMaterial = useSkinMaterials ? GetMaterialByName(suffix) : null;
-        activeAnimatedMaterial = useSkinMaterials ? GetMaterialByName($"{suffix}Animated") : null;
-
-        if (useSkinMaterials && activeMaterial == null)
-        {
-            Debug.LogError($"MaterialManager: material '{suffix}' is not registered.");
-            return;
-        }
+        SkinMaterial entry = System.Array.Find(skinMaterials, s => s.skin == skin);
+        activeMaterial = entry?.material;
+        activeAnimatedMaterial = entry?.animatedMaterial;
+        useSkinMaterials = activeMaterial != null;
 
         ApplyToAllRenderers();
         RestoreHexTerrainMaterials();
@@ -105,12 +102,12 @@ public class MaterialManager : SearcherByName
 
     private bool IsManagedMaterial(Material material)
     {
-        return material != null && materials.Contains(material);
+        return material != null && skinMaterials.Any(entry => entry.material == material || entry.animatedMaterial == material);
     }
 
     private bool IsAnimatedMaterial(Material material)
     {
-        return material != null && Normalize(material.name).EndsWith("animated");
+        return material != null && skinMaterials.Any(entry => entry.animatedMaterial == material);
     }
 
     private bool IsSkinCandidate(Material material)

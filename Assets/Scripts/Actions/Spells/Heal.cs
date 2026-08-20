@@ -33,7 +33,17 @@ public class Heal: FreeNeutralSpell
             Character target = null;
             if (!isAI)
             {
-                string targetCharacter = await SelectionDialog.Ask("Select character to heal", "Ok", "Cancel", healTargets.Select(x => x.characterName).ToList(), isAI, SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null);
+                string targetCharacter = await SelectionDialog.Ask(
+                    "Select character to heal",
+                    "Ok",
+                    "Cancel",
+                    healTargets.Select(x => x.characterName).ToList(),
+                    null,
+                    isAI,
+                    SelectionDialog.Instance != null ? SelectionDialog.Instance.GetCharacterIllustration(c) : null,
+                    EventIconType.MultiChoice,
+                    actionName,
+                    SelectionDialog.CharacterIconNames(healTargets));
                 if (string.IsNullOrEmpty(targetCharacter)) return false;
                 target = healTargets.Find(x => x.characterName == targetCharacter);
             }
