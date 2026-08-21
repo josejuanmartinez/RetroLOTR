@@ -29,6 +29,7 @@ public class SelectedCharacterIcon : MonoBehaviour
     public Image icon;
     public TextMeshProUGUI nameWidget;
     public TextMeshProUGUI descriptionWidget;
+    public Image animatedCharacter;
 
     [Header("Health")]
     public Image health;
@@ -76,6 +77,10 @@ public class SelectedCharacterIcon : MonoBehaviour
     private readonly List<ArtifactRenderer> artifactStatusRenderers = new();
     private string hoveredPreviewCardName;
 
+    // Whose hex sprite animatedCharacter mirrors — separate from CurrentCharacter because
+    // RefreshForArmy shows an army's commander without setting CurrentCharacter.
+    private Character animatedSourceCharacter;
+
     private void Awake()
     {
         if (icon != null && icon.GetComponent<CharacterShineEffect>() == null)
@@ -94,6 +99,27 @@ public class SelectedCharacterIcon : MonoBehaviour
     {
         UpdateBloomHint();
         UpdateCardHoverPreview();
+        UpdateAnimatedCharacterSprite();
+    }
+
+    // Mirrors whatever frame CharacterAnimationController is currently drawing on the
+    // character's own hex sprite (same sprite reference, no separate animation state to
+    // keep in sync), so this panel's portrait always matches the board exactly.
+    private void UpdateAnimatedCharacterSprite()
+    {
+        if (animatedCharacter == null) return;
+
+        SpriteRenderer source = animatedSourceCharacter != null && animatedSourceCharacter.hex != null
+            ? animatedSourceCharacter.hex.characterSpriteRenderer
+            : null;
+        Sprite sprite = source != null ? source.sprite : null;
+
+        animatedCharacter.enabled = sprite != null;
+        if (sprite != null)
+        {
+            animatedCharacter.sprite = sprite;
+            animatedCharacter.color = Color.white;
+        }
     }
 
     private void UpdateCardHoverPreview()
@@ -290,6 +316,7 @@ public class SelectedCharacterIcon : MonoBehaviour
     private void ApplyRefresh(Character c, bool isHover = false)
     {
         CurrentCharacter = c;
+        animatedSourceCharacter = c;
         SetVisible(true);
         border.SetActive(true);
         SetBannerImage(c);
@@ -351,6 +378,7 @@ public class SelectedCharacterIcon : MonoBehaviour
         }
 
         CurrentCharacter = c;
+        animatedSourceCharacter = c;
         SetVisible(true);
         border.SetActive(true);
         SetBannerImage(c);
@@ -396,7 +424,8 @@ public class SelectedCharacterIcon : MonoBehaviour
     {
         if (army == null || army.commander == null) { Hide(); return; }
 
-SetVisible(true);
+        animatedSourceCharacter = army.commander;
+        SetVisible(true);
         border.SetActive(true);
         SetCardsImage(army.commander.GetOwner());
         SetCharacterVisuals(ResolveArmySprite(army));
@@ -454,6 +483,8 @@ SetVisible(true);
         moved.SetActive(false);
         health.gameObject.SetActive(false);
         CurrentCharacter = null;
+        animatedSourceCharacter = null;
+        if (animatedCharacter != null) animatedCharacter.enabled = false;
         RefreshOtherCharacters(null);
     }
 

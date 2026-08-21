@@ -6,6 +6,10 @@ public class CharacterSpriteHover : MonoBehaviour
     public Hex hex;
     [Tooltip("Seconds the cursor must stay on a character's sprite, uninterrupted, before its card preview appears.")]
     [SerializeField] private float cardPreviewHoverDelay = 5f;
+    
+    public Vector3 hoveredScale = Vector3.one;
+    public Vector3 unhoveredScale = Vector3.one;
+
     private SelectedCharacterIcon selectedIcon;
     private Board board;
     private bool isPreviewing;
@@ -13,10 +17,42 @@ public class CharacterSpriteHover : MonoBehaviour
     private Hex previewedHex;
     private Coroutine cardPreviewCoroutine;
 
+    // OnMouseEnter/Exit are physics-raycast events that Unity can silently fail to
+    // pair up (pointer teleports on alt-tab/focus loss, this object gets repositioned
+    // or its content swapped without ever being disabled, etc.), which is what left
+    // characters stuck scaled up with no matching exit. isHovered + the pointer-overlap
+    // check in Update() self-heal that within a frame instead of trusting the event pairing.
+    private bool isHovered;
+    private BoxCollider2D hoverCollider;
+
     private void Awake()
     {
         board = Board.Instance;
         selectedIcon = FindFirstObjectByType<SelectedCharacterIcon>();
+        // OnMouseEnter/Exit only fire on the GameObject that owns the collider, so this
+        // script (and hoverCollider) must stay on the HexCharacterLayer root — the scale
+        // pop below is applied to the "character" child sprite instead, not to this
+        // transform, so it never touches the root/collider and leaves siblings
+        // (banner, ClassesSpriteRendererLayout, GoldRing, pole) untouched.
+        hoverCollider = GetComponent<BoxCollider2D>();
+    }
+
+    private void SetScale(Vector3 scale)
+    {
+        if (hex != null && hex.characterSpriteRenderer != null)
+        {
+            hex.characterSpriteRenderer.transform.localScale = scale;
+        }
+    }
+
+    private bool IsStillUnderPointer()
+    {
+        if (hoverCollider == null || !hoverCollider.enabled) return false;
+        Camera cam = Camera.main;
+        if (cam == null) return false;
+        float depth = cam.WorldToScreenPoint(hoverCollider.bounds.center).z;
+        Vector3 mouseWorld = cam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, depth));
+        return hoverCollider.OverlapPoint(mouseWorld);
     }
 
     private void OnMouseEnter()
@@ -37,10 +73,20 @@ public class CharacterSpriteHover : MonoBehaviour
             hex.GetCharacterAnimationController()?.SetHoverCursor(true);
         }
         hex.Hover();
+        SetScale(hoveredScale);
+        isHovered = true;
 
         board ??= Board.Instance;
         bool isSelected = board != null && board.selectedCharacter == character;
         bool isScouted = hex.IsScouted();
+
+        // Set before the branches below so it's committed as soon as the visual hover
+        // (scale + hex.Hover()) is, even if an early return skips the preview/icon work —
+        // otherwise ClearPreview's UI-covers-sprite watchdog in Update() never armed for
+        // this hover at all.
+        isPreviewing = true;
+        previewedCharacter = character;
+        previewedHex = hex;
 
         // The already-selected character's info sits permanently in SelectedCharacterIcon
         // already, so skip the transient hover-text overwrite for it — but the card preview
@@ -58,10 +104,6 @@ public class CharacterSpriteHover : MonoBehaviour
             selectedIcon.RefreshHoverPreview(character, hoverText, isScouted, isScouted);
         }
 
-        isPreviewing = true;
-        previewedCharacter = character;
-        previewedHex = hex;
-
         if (cardPreviewCoroutine != null) StopCoroutine(cardPreviewCoroutine);
         cardPreviewCoroutine = StartCoroutine(ShowCardPreviewAfterDelay(character, isScouted));
     }
@@ -78,6 +120,16 @@ public class CharacterSpriteHover : MonoBehaviour
 
     private void Update()
     {
+        // Self-heals any missed OnMouseExit (pointer teleport on alt-tab/focus loss, this
+        // object's content/position changing without ever being disabled, etc.) by checking
+        // the pointer against our own collider directly, rather than trusting Unity's
+        // enter/exit event pairing to always fire correctly.
+        if (isHovered && !IsStillUnderPointer())
+        {
+            HandlePointerLeft();
+            return;
+        }
+
         if (!isPreviewing)
         {
             return;
@@ -89,12 +141,7 @@ public class CharacterSpriteHover : MonoBehaviour
         // teardown as OnMouseExit, since as far as this sprite is concerned the pointer left.
         if (BoardNavigator.IsPointerOverVisibleUIElement())
         {
-            if (hex != null)
-            {
-                hex.SetCharacterHovered(false);
-                hex.GetCharacterAnimationController()?.SetHoverCursor(false);
-            }
-            ClearPreview();
+            HandlePointerLeft();
             return;
         }
 
@@ -127,16 +174,17 @@ public class CharacterSpriteHover : MonoBehaviour
 
     private void OnMouseExit()
     {
-        if (hex != null)
-        {
-            hex.SetCharacterHovered(false);
-            hex.GetCharacterAnimationController()?.SetHoverCursor(false);
-        }
-        ClearPreview();
+        HandlePointerLeft();
     }
 
     private void OnDisable()
     {
+        HandlePointerLeft();
+    }
+
+    private void HandlePointerLeft()
+    {
+        isHovered = false;
         if (hex != null)
         {
             hex.SetCharacterHovered(false);
@@ -169,6 +217,7 @@ public class CharacterSpriteHover : MonoBehaviour
 
     private void ClearPreview()
     {
+        SetScale(unhoveredScale);
         // Only tear down/restore when THIS component actually put up a preview — otherwise
         // every mouse-exit (including ones where OnMouseEnter no-opped, e.g. hovering the
         // already-selected character's own sprite) redundantly re-touches the shared

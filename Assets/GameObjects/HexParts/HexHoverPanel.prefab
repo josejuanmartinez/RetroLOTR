@@ -34,7 +34,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.040000003, y: 0.015}
+  m_AnchoredPosition: {x: -0.029999997, y: 0.015}
   m_SizeDelta: {x: 0.6638, y: 0.0956}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!23 &1045541801354618986
@@ -208,7 +208,7 @@ Transform:
   m_GameObject: {fileID: 2578288953211817442}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.58670247, y: -0.095, z: 0}
+  m_LocalPosition: {x: 0.5267024, y: -0.095, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -270,7 +270,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 1
-  m_Size: {x: 0.18, y: 0.19}
+  m_Size: {x: 0.06, y: 0.1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -288,10 +288,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   label: {fileID: 7398011683204787410}
-  padding: {x: 0.1, y: 0.1}
+  padding: {x: 0, y: 0}
   growRight: 1
+  hoverCollider: {fileID: 0}
   anchorSet: 1
-  anchorInParent: 0.49670243
+  anchorInParent: 0.4967024
 --- !u!1 &3358856748428318750
 GameObject:
   m_ObjectHideFlags: 0
@@ -555,12 +556,12 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 9998
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -6749324499808399212, guid: 5b3bed165517c62489589c64263843a1, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Sprite: {fileID: 5339727768487635548, guid: 206438e3f064acd4a9abb0345a579f78, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 1
-  m_Size: {x: 0.18, y: 0.19}
+  m_Size: {x: 0.16, y: 0.2}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -580,6 +581,7 @@ MonoBehaviour:
   label: {fileID: 7398011683204787410}
   padding: {x: 0.1, y: 0.1}
   growRight: 0
+  hoverCollider: {fileID: 0}
   anchorSet: 0
   anchorInParent: 0
 --- !u!1 &5758385918783506921

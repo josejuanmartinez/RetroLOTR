@@ -16,6 +16,7 @@ public class CharacterAnimationController : MonoBehaviour
 
     public enum Orientation { Forward, Back, Left, Right }
 
+
     private const float VerticalMovementEpsilon = 0.01f;
     private const string StandingIdleStateName = "standing idle";
 
@@ -569,4 +570,5 @@ public class CharacterAnimationController : MonoBehaviour
         // dies or the hex redraws while the pointer is still over it).
         if (cursorHovering) SetHoverCursor(false);
     }
+
 }

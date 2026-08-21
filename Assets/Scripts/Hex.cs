@@ -3543,7 +3543,7 @@ public class Hex : MonoBehaviour
         {
             color = Color.white;
             controller?.SetOutlineAlpha(1f);
-            controller?.SetOutlineSize(outlineSize);
+            controller?.SetOutlineSize(outlineSize);            
             ApplyCharacterAndStackColor(color);
             return;
         }
