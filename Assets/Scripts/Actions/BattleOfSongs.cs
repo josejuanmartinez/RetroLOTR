@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -32,7 +32,7 @@ public class BattleOfSongs : CharacterAction
             Character target = null;
             if (!isAI)
             {
-                string targetName = await SelectionDialog.Ask(
+                string targetName = await SelectionDialog.AskImmediate(
                     "Select enemy mage",
                     "Ok",
                     "Cancel",
@@ -115,7 +115,7 @@ public class BattleOfSongs : CharacterAction
 
         if (shouldShowPopup)
         {
-            PopupManager.Show(
+            PopupManager.ShowImmediate(
                 $"Battle of Songs: {attacker.characterName} vs {defender.characterName}",
                 FindFirstObjectByType<Illustrations>().GetIllustrationByName(attacker.characterName),
                 FindFirstObjectByType<Illustrations>().GetIllustrationByName(defender.characterName),

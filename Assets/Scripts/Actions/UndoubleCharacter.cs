@@ -1,4 +1,4 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +34,7 @@ public class UndoubleCharacter : AgentAction
             Character doubled = null;
             if (!isAI)
             {
-                string targetCharacter = await SelectionDialog.Ask(
+                string targetCharacter = await SelectionDialog.AskImmediate(
                     "Select doubled character",
                     "Ok",
                     "Cancel",

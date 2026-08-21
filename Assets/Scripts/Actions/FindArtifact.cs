@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -278,7 +278,7 @@ public class FindArtifact : MageAction
 
         try
         {
-            string answer = await SelectionDialog.Ask(
+            string answer = await SelectionDialog.AskImmediate(
                 trial.prompt,
                 "Choose",
                 "Leave",

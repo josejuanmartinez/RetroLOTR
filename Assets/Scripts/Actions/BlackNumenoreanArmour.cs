@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -45,7 +45,7 @@ public class BlackNumenoreanArmour : CharacterAction
 
             if (!isAI)
             {
-                string selected = await SelectionDialog.Ask(
+                string selected = await SelectionDialog.AskImmediate(
                     "Select allied army commander",
                     "Ok",
                     "Cancel",
@@ -79,7 +79,7 @@ public class BlackNumenoreanArmour : CharacterAction
                 enemy.ApplyStatusEffect(StatusEffectEnum.Fear, 1);
             }
 
-            MessageDisplayNoUI.ShowMessage(character.hex, character, $"{target.characterName} is fortified by Black Númenórean Armour. {enemies.Count} enemy unit(s) gain Fear.", Color.red);
+            MessageDisplayNoUI.ShowMessage(character.hex, character, $"{target.characterName} is fortified by Black NÃºmenÃ³rean Armour. {enemies.Count} enemy unit(s) gain Fear.", Color.red);
             return true;
         }
 

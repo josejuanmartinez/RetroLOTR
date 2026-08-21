@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -34,7 +34,7 @@ public class FreeCharacter : AgentAction
                 List<string> options = captives
                     .Select(x => $"{x.characterName} held by {x.kidnappedBy.characterName}")
                     .ToList();
-                string selected = await SelectionDialog.Ask(
+                string selected = await SelectionDialog.AskImmediate(
                     "Select captive to free",
                     "Ok",
                     "Cancel",

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +31,7 @@ public class TransferArtifact : CharacterAction
             CardData artifact = null;
             if(!isAI)
             {
-                string targetArtifact = await SelectionDialog.Ask(
+                string targetArtifact = await SelectionDialog.AskImmediate(
                     "Select artifact",
                     "Ok",
                     "Cancel",
@@ -45,7 +45,7 @@ public class TransferArtifact : CharacterAction
                 artifact = transferableArtifacts.Find(x => x.name == targetArtifact);
                 if (artifact == null) return false;
 
-                string targetCharacter = await SelectionDialog.Ask(
+                string targetCharacter = await SelectionDialog.AskImmediate(
                     "Select friendly character",
                     "Ok",
                     "Cancel",

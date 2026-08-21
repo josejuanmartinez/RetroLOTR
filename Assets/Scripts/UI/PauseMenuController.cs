@@ -12,7 +12,6 @@ public sealed class PauseMenuController : MonoBehaviour
     [SerializeField] private GameObject root;
     [SerializeField] private CanvasGroup rootGroup;
     [SerializeField] private RectTransform config;
-    [SerializeField] private MenuBackgroundRotator backdrop;
 
     [Header("Controls")]
     [SerializeField] private Button saveButton;
@@ -112,7 +111,6 @@ public sealed class PauseMenuController : MonoBehaviour
         {
             RefreshVolumeControls();
             SkinManager skin = FindFirstObjectByType<SkinManager>();
-            backdrop?.SetSkin(skin != null ? skin.CurrentSkin : Skins.Default);
             if (playSound) Sounds.Instance?.PlayUiClick();
         }
         else
@@ -163,7 +161,6 @@ public sealed class PauseMenuController : MonoBehaviour
         SkinManager manager = FindFirstObjectByType<SkinManager>();
         if (manager == null) return;
         manager.ChangeSkin(manager.GetNextSkin());
-        backdrop?.SetSkin(manager.CurrentSkin);
         Sounds.Instance?.PlayUiClick();
     }
 

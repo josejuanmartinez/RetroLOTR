@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -32,7 +32,7 @@ public class GuardCharacter : AgentAction
             Character target = null;
             if (!isAI)
             {
-                string choice = await SelectionDialog.Ask(
+                string choice = await SelectionDialog.AskImmediate(
                     "Select character to guard",
                     "Ok",
                     "Cancel",

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -33,7 +33,7 @@ public class NazgulMark : CharacterAction
 
             if (!isAI)
             {
-                string targetName = await SelectionDialog.Ask(
+                string targetName = await SelectionDialog.AskImmediate(
                     "Mark enemy character for death",
                     "Ok",
                     "Cancel",

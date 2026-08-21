@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -27,7 +27,7 @@ public class Courage : FreeSpell
             Character commander = null;
             if (!isAI)
             {
-                string targetCharacter = await SelectionDialog.Ask(
+                string targetCharacter = await SelectionDialog.AskImmediate(
                     "Select friendly army",
                     "Ok",
                     "Cancel",

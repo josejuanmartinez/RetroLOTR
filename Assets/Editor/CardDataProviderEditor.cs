@@ -1,7 +1,5 @@
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.UI;
-using RetroLOTR.Scenarios.EditorTools;
 using System.Collections.Generic;
 
 [CustomEditor(typeof(CardDataProvider))]
@@ -88,8 +86,8 @@ public sealed class CardDataProviderEditor : Editor
 
             if (!provider.Apply()) continue;
 
-            ApplyEditorArtwork(provider.Card);
-            ApplyEditorDeckArtwork(provider.Card);
+            CardEditorArtworkBaker.ApplyArtwork(provider.Card);
+            CardEditorArtworkBaker.ApplyDeckArtwork(provider.Card);
 
             foreach (Component component in hierarchy)
             {
@@ -102,61 +100,5 @@ public sealed class CardDataProviderEditor : Editor
         }
 
         serializedObject.Update();
-    }
-
-    private static void ApplyEditorDeckArtwork(Card card)
-    {
-        if (card == null || card.cardData == null) return;
-
-        SerializedObject cardObject = new SerializedObject(card);
-        Image deckImage = cardObject.FindProperty("deckTypeImage")?.objectReferenceValue as Image;
-        if (deckImage == null) return;
-
-        Sprite deckSprite = FindSpriteByName(card.cardData.deckSpriteName, "Assets/Art/UI/Alignment");
-        deckImage.sprite = deckSprite;
-        deckImage.enabled = deckSprite != null;
-        EditorUtility.SetDirty(deckImage);
-        PrefabUtility.RecordPrefabInstancePropertyModifications(deckImage);
-    }
-
-    private static Sprite FindSpriteByName(string spriteName, string folder)
-    {
-        if (string.IsNullOrWhiteSpace(spriteName)) return null;
-
-        string[] guids = AssetDatabase.FindAssets($"{spriteName} t:Sprite", new[] { folder });
-        foreach (string guid in guids)
-        {
-            string path = AssetDatabase.GUIDToAssetPath(guid);
-            foreach (Object asset in AssetDatabase.LoadAllAssetsAtPath(path))
-            {
-                if (asset is Sprite sprite &&
-                    string.Equals(sprite.name, spriteName, System.StringComparison.OrdinalIgnoreCase))
-                    return sprite;
-            }
-        }
-
-        return null;
-    }
-
-    private static void ApplyEditorArtwork(Card card)
-    {
-        if (card == null || card.cardData == null) return;
-
-        Sprite artwork = ScenarioCardCatalog.GetCardArtwork(card.cardData);
-        if (artwork == null) return;
-
-        SerializedObject cardObject = new SerializedObject(card);
-        AssignArtwork(cardObject.FindProperty("cardArtImage"), artwork);
-        AssignArtwork(cardObject.FindProperty("tokenImage"), artwork);
-    }
-
-    private static void AssignArtwork(SerializedProperty imageProperty, Sprite artwork)
-    {
-        Image image = imageProperty?.objectReferenceValue as Image;
-        if (image == null) return;
-        image.sprite = artwork;
-        image.enabled = true;
-        EditorUtility.SetDirty(image);
-        PrefabUtility.RecordPrefabInstancePropertyModifications(image);
     }
 }

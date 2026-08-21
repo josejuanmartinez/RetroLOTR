@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -49,7 +49,7 @@ public class HelmOfArnor : CharacterAction
 
             if (!isAI)
             {
-                string selected = await SelectionDialog.Ask(
+                string selected = await SelectionDialog.AskImmediate(
                     "Select allied character",
                     "Ok",
                     "Cancel",
@@ -74,7 +74,7 @@ public class HelmOfArnor : CharacterAction
             string choice = "Strengthened";
             if (!isAI)
             {
-                choice = await SelectionDialog.Ask(
+                choice = await SelectionDialog.AskImmediate(
                     "Choose spoils",
                     "Ok",
                     "Cancel",

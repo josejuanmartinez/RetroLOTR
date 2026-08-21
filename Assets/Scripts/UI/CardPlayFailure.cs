@@ -16,21 +16,35 @@ public class CardPlayFailure : MonoBehaviour
 
     private static readonly Color FailColor = new Color(0.85f, 0.15f, 0.1f);
 
-    public static void Launch(Card card)
+    // sourceWorldCenter lets a caller snapshot the enlarged center-preview card's on-screen
+    // position at click time and hand it in later — see CardPlayFlight.Launch's matching
+    // parameter for why querying CardCenterPreview.Instance live at call time doesn't work
+    // (consuming the card from hand rebuilds the bloom and destroys the preview clone first).
+    public static void Launch(Card card, Vector3? sourceWorldCenter = null)
     {
-        if (card == null) return;
+        if (card == null) { Debug.LogWarning("[CardPlayFailure] Launch aborted: card is null."); return; }
 
         Canvas parentCanvas = card.GetComponentInParent<Canvas>();
         Canvas rootCanvas = parentCanvas != null ? parentCanvas.rootCanvas : null;
-        if (rootCanvas == null) return;
+        if (rootCanvas == null) { Debug.LogWarning($"[CardPlayFailure] Launch aborted: '{card.name}' has no parent Canvas."); return; }
 
-        // Same source-point logic as CardPlayFlight: prefer the enlarged center preview
-        // (what the player was actually looking at when they clicked), else the hand card.
-        CardCenterPreview preview = CardCenterPreview.Instance;
-        RectTransform sourceRect = preview != null && preview.CurrentPreviewRect != null
-            ? preview.CurrentPreviewRect
-            : card.transform as RectTransform;
-        if (sourceRect == null) return;
+        Vector3 sourceCenterWorld;
+        if (sourceWorldCenter.HasValue)
+        {
+            sourceCenterWorld = sourceWorldCenter.Value;
+        }
+        else
+        {
+            // Fallback: same source-point logic as CardPlayFlight — prefer the enlarged
+            // center preview (what the player was actually looking at when they clicked),
+            // else the hand card.
+            CardCenterPreview preview = CardCenterPreview.Instance;
+            RectTransform sourceRect = preview != null && preview.CurrentPreviewRect != null
+                ? preview.CurrentPreviewRect
+                : card.transform as RectTransform;
+            if (sourceRect == null) { Debug.LogWarning($"[CardPlayFailure] Launch aborted: '{card.name}' has no fallback sourceRect."); return; }
+            sourceCenterWorld = sourceRect.TransformPoint(sourceRect.rect.center);
+        }
 
         GameObject flutterGo = new("CardPlayFailure", typeof(RectTransform));
         RectTransform flutterRect = flutterGo.GetComponent<RectTransform>();
@@ -39,12 +53,23 @@ public class CardPlayFailure : MonoBehaviour
         flutterRect.pivot = new Vector2(0.5f, 0.5f);
         flutterRect.SetAsLastSibling();
 
+        // Bloom tokens (both the normal hand bloom and the Situation-cards bloom) are built
+        // from TokenCard.prefab, which has no realCardCanvasGroup — CreateRealCardVisualClone
+        // silently returns null for them (see Card.cs:1611), so this effect never showed for
+        // ANY bloom-played card that failed its roll. Fall back to the token visual (the same
+        // one CardPlayFlight already uses) so token-only instances still get an effect.
         GameObject clone = card.CreateRealCardVisualClone(flutterRect, out Vector2 cardSize);
         if (clone == null)
         {
+            clone = card.CreateTokenVisualClone(flutterRect, out cardSize);
+        }
+        if (clone == null)
+        {
+            Debug.LogWarning($"[CardPlayFailure] Launch aborted: '{card.name}' has neither realCardCanvasGroup nor tokenCanvasGroup to clone.");
             Destroy(flutterGo);
             return;
         }
+        Debug.Log($"[CardPlayFailure] '{card.name}': failure flutter launched successfully.");
         flutterRect.sizeDelta = cardSize;
         if (clone.transform is RectTransform cloneRect)
         {
@@ -57,7 +82,7 @@ public class CardPlayFailure : MonoBehaviour
 
         Camera uiCamera = rootCanvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : rootCanvas.worldCamera;
         RectTransform canvasRect = rootCanvas.transform as RectTransform;
-        Vector2 sourceScreen = RectTransformUtility.WorldToScreenPoint(uiCamera, sourceRect.TransformPoint(sourceRect.rect.center));
+        Vector2 sourceScreen = RectTransformUtility.WorldToScreenPoint(uiCamera, sourceCenterWorld);
         RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, sourceScreen, uiCamera, out Vector2 sourceLocal);
         flutterRect.localPosition = sourceLocal;
 

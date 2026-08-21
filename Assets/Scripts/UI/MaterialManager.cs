@@ -23,6 +23,25 @@ public class MaterialManager : SearcherByName
     private Material activeMaterial;
     private Material activeAnimatedMaterial;
     private bool useSkinMaterials;
+    private bool hasAppliedSkin;
+
+    // ApplySkin() only sweeps whatever Image/SpriteRenderer components exist at the moment a skin
+    // is chosen. Anything that ships with a skin material baked into its own prefab (e.g. a leader
+    // portrait authored with the Bakshi material already assigned) and is instantiated or enabled
+    // *after* that sweep never gets corrected — it's stuck on its spawn-time material regardless of
+    // the active skin. This periodic re-sweep catches those without needing every such prefab to
+    // call back in individually.
+    private const float ResweepInterval = 1f;
+    private float resweepTimer;
+
+    private void Update()
+    {
+        if (!hasAppliedSkin) return;
+        resweepTimer += Time.deltaTime;
+        if (resweepTimer < ResweepInterval) return;
+        resweepTimer = 0f;
+        ApplyToAllRenderers(FindObjectsByType<Hex>(FindObjectsInactive.Include, FindObjectsSortMode.None));
+    }
 
     public void ApplySkin(Skins skin)
     {
@@ -30,12 +49,14 @@ public class MaterialManager : SearcherByName
         activeMaterial = entry?.material;
         activeAnimatedMaterial = entry?.animatedMaterial;
         useSkinMaterials = activeMaterial != null;
+        hasAppliedSkin = true;
 
-        ApplyToAllRenderers();
-        RestoreHexTerrainMaterials();
+        Hex[] hexes = FindObjectsByType<Hex>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        ApplyToAllRenderers(hexes);
+        RestoreHexTerrainMaterials(hexes);
     }
 
-    private void ApplyToAllRenderers()
+    private void ApplyToAllRenderers(Hex[] hexes)
     {
         foreach (Image image in FindObjectsByType<Image>(FindObjectsInactive.Include, FindObjectsSortMode.None))
         {
@@ -65,8 +86,20 @@ public class MaterialManager : SearcherByName
             if (image.material != targetMaterial) image.material = targetMaterial;
         }
 
+        // HexSeamlessTerrain exclusively owns each hex's terrain SpriteRenderer (runtime-generated
+        // material + per-hex MaterialPropertyBlock data, rebuilt via MarkDirty/RestoreHexTerrainMaterials
+        // below). Sweeping them here too would fight that ownership: this loop would cache whatever
+        // material it first saw as the renderer's "original" and keep forcing it back, even after
+        // HexSeamlessTerrain destroys and replaces its runtime material on a skin change — reassigning
+        // a stale/destroyed material with none of the blend property-block data applied.
+        HashSet<SpriteRenderer> hexTerrainRenderers = new();
+        foreach (Hex hex in hexes)
+            if (hex.terrainTexture != null) hexTerrainRenderers.Add(hex.terrainTexture);
+
         foreach (SpriteRenderer spriteRenderer in FindObjectsByType<SpriteRenderer>(FindObjectsInactive.Include, FindObjectsSortMode.None))
         {
+            if (hexTerrainRenderers.Contains(spriteRenderer)) continue;
+
             if (!originalSpriteMaterials.ContainsKey(spriteRenderer))
             {
                 Material original = spriteRenderer.sharedMaterial;
@@ -78,7 +111,7 @@ public class MaterialManager : SearcherByName
             if (!IsSkinCandidate(originalMaterial))
             {
                 if (spriteRenderer.sharedMaterial != originalMaterial)
-                    spriteRenderer.sharedMaterial = originalMaterial; 
+                    spriteRenderer.sharedMaterial = originalMaterial;
                 continue;
             }
 
@@ -91,12 +124,12 @@ public class MaterialManager : SearcherByName
         RemoveDestroyedRenderers();
     }
 
-    private static void RestoreHexTerrainMaterials()
+    private static void RestoreHexTerrainMaterials(Hex[] hexes)
     {
         // HexSeamlessTerrain owns the terrain material and its grid/blending property blocks.
         // Marking each existing hex dirty rebuilds those renderers at the end of this frame,
         // repairing any runtime assignment made by an older MaterialManager implementation.
-        foreach (Hex hex in FindObjectsByType<Hex>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (Hex hex in hexes)
             HexSeamlessTerrain.MarkDirty(hex);
     }
 

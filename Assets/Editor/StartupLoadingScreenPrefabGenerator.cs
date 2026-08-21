@@ -14,6 +14,14 @@ public static class StartupLoadingScreenPrefabGenerator
     private const string PrefabPath = "Assets/GameObjects/StartupLoadingScreen.prefab";
     private const string ScenePath = "Assets/Scenes/InGame.unity";
     private const int CardSlotCount = 3;
+    // Seed pools for the generated slots' preload/rotation names — well-known character cards
+    // whose art has always shipped, so a freshly generated prefab never shows an empty image.
+    private static readonly string[][] DefaultCardSlotNames =
+    {
+        new[] { "Gandalf", "Aragorn", "Frodo" },
+        new[] { "Legolas", "Gimli", "Boromir" },
+        new[] { "Galadriel", "Elrond", "Theoden" },
+    };
 
     [InitializeOnLoadMethod]
     private static void GenerateOnce()
@@ -168,12 +176,21 @@ public static class StartupLoadingScreenPrefabGenerator
         controller.FindProperty("canvasGroup").objectReferenceValue = root.GetComponent<CanvasGroup>();
         controller.FindProperty("progressBar").objectReferenceValue = slider;
         controller.FindProperty("statusText").objectReferenceValue = status != null ? status : title;
-        SerializedProperty cardProvidersProp = controller.FindProperty("cardProviders");
-        cardProvidersProp.ClearArray();
+        SerializedProperty cardSlotsProp = controller.FindProperty("cardSlots");
+        cardSlotsProp.ClearArray();
         for (int i = 0; i < cardProviders.Count; i++)
         {
-            cardProvidersProp.InsertArrayElementAtIndex(i);
-            cardProvidersProp.GetArrayElementAtIndex(i).objectReferenceValue = cardProviders[i];
+            cardSlotsProp.InsertArrayElementAtIndex(i);
+            SerializedProperty slotProp = cardSlotsProp.GetArrayElementAtIndex(i);
+            slotProp.FindPropertyRelative("provider").objectReferenceValue = cardProviders[i];
+
+            string[] names = i < DefaultCardSlotNames.Length ? DefaultCardSlotNames[i] : System.Array.Empty<string>();
+            SerializedProperty namesProp = slotProp.FindPropertyRelative("cardNames");
+            namesProp.arraySize = names.Length;
+            for (int n = 0; n < names.Length; n++)
+            {
+                namesProp.GetArrayElementAtIndex(n).stringValue = names[n];
+            }
         }
         controller.FindProperty("continuePromptText").objectReferenceValue = pressAnyKeyLabel;
         controller.ApplyModifiedPropertiesWithoutUndo();

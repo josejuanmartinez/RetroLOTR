@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -31,7 +31,7 @@ public class Possession : DarkNeutralSpell
             Character target = null;
             if (!isAI)
             {
-                string targetCharacter = await SelectionDialog.Ask(
+                string targetCharacter = await SelectionDialog.AskImmediate(
                     "Select enemy character to possess",
                     "Ok",
                     "Cancel",

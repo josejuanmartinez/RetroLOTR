@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -47,7 +47,7 @@ public class OrcDraughts : CharacterAction
 
             if (!isAI)
             {
-                string selected = await SelectionDialog.Ask(
+                string selected = await SelectionDialog.AskImmediate(
                     "Select allied character",
                     "Ok",
                     "Cancel",

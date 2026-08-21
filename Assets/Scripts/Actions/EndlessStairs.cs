@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -65,7 +65,7 @@ public class EndlessStairs : CharacterAction
     }
 
     // Illustrations only indexes Assets/Art/Cards/* and Assets/Art/Decks/* art, so a raw
-    // terrain display name (e.g. "Mountains") never resolves — fall back to the card's own
+    // terrain display name (e.g. "Mountains") never resolves â€” fall back to the card's own
     // art instead of leaving hexes without a PC with a blank icon.
     private static string GetDestinationIconName(Hex hex)
     {
@@ -110,7 +110,7 @@ public class EndlessStairs : CharacterAction
                 List<string> optionIcons = destinations.Select(GetDestinationIconName).ToList();
                 Illustrations illustrations = FindFirstObjectByType<Illustrations>();
                 Sprite portrait = illustrations != null ? illustrations.GetIllustrationByName(CardArtName, false) : null;
-                string selected = await SelectionDialog.Ask(
+                string selected = await SelectionDialog.AskImmediate(
                     "The Endless Stairs wind down into the deep places of the world. Where do they lead?",
                     "Ok",
                     "Cancel",

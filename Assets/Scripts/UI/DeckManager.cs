@@ -1632,17 +1632,26 @@ public class DeckManager : MonoBehaviour
         {
             index = FindMatchingActionCardIndex(sourceList, actionClassName);
         }
-        if (index < 0) return false;
+        if (index < 0)
+        {
+            Debug.LogWarning($"[DeckManager] TryConsumeActionCard: no card matching actionRef='{actionClassName}'" +
+                (string.IsNullOrWhiteSpace(preferredCardName) ? string.Empty : $" preferredCardName='{preferredCardName}'") +
+                $" found in source list of {sourceList.Count} card(s) for '{playableLeader?.characterName}'." +
+                " Check the card is actually in that list, and that IsConsumableEffectCard() covers its CardTypeEnum.");
+            return false;
+        }
 
         consumedCard = sourceList[index];
         if (consumedCard == null) return false;
         if (consumedCard.GetCardType() == CardTypeEnum.Land && playableLeader.HasPlayedLandThisTurn())
         {
+            Debug.LogWarning($"[DeckManager] TryConsumeActionCard: '{consumedCard.name}' rejected — a Land card was already played this turn.");
             consumedCard = null;
             return false;
         }
         if (!consumedCard.MeetsResourceRequirements(playableLeader))
         {
+            Debug.LogWarning($"[DeckManager] TryConsumeActionCard: '{consumedCard.name}' rejected — MeetsResourceRequirements=false for '{playableLeader?.characterName}'.");
             consumedCard = null;
             return false;
         }
@@ -2418,7 +2427,8 @@ public class DeckManager : MonoBehaviour
             || cardType == CardTypeEnum.Encounter
             || cardType == CardTypeEnum.Land
             || cardType == CardTypeEnum.PC
-            || cardType == CardTypeEnum.Environmental;
+            || cardType == CardTypeEnum.Environmental
+            || cardType == CardTypeEnum.Spell;
         if (!supportedType) return false;
 
         return !string.IsNullOrWhiteSpace(card.GetActionRef());

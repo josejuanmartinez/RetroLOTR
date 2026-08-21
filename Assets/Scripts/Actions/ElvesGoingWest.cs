@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,14 +27,14 @@ public class ElvesGoingWest : CharacterAction
         chosen.ApplyStatusEffect(StatusEffectEnum.Despair, 1);
         chosen.ClearStatusEffect(StatusEffectEnum.Hidden);
 
-        // Other Elves feel the grief — 25% chance each loses Hope
+        // Other Elves feel the grief â€” 25% chance each loses Hope
         foreach (Character elf in elves.Where(e => e != chosen))
         {
             if (UnityEngine.Random.value < 0.25f)
                 elf.ClearStatusEffect(StatusEffectEnum.Hope);
         }
         MessageDisplayNoUI.ShowMessage(null, null,
-            $"Elves Going West (ongoing): {chosen.characterName} consumed by sea-longing — loses action and gains Despair.",
+            $"Elves Going West (ongoing): {chosen.characterName} consumed by sea-longing â€” loses action and gains Despair.",
             Color.cyan);
     }
 
@@ -99,7 +99,7 @@ public class ElvesGoingWest : CharacterAction
 
             if (!isAI)
             {
-                string selected = await SelectionDialog.Ask(
+                string selected = await SelectionDialog.AskImmediate(
                     "Choose Elf to compel westward",
                     "Ok",
                     "Cancel",

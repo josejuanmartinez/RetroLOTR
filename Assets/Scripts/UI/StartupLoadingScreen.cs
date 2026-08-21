@@ -8,20 +8,45 @@ using UnityEngine.UI;
 /// <summary>Blocks input while the startup card catalog and illustration cache become ready.</summary>
 public sealed class StartupLoadingScreen : MonoBehaviour
 {
+    // Pairs one of the UI's card slots with a small authored pool of card names. "provider" is
+    // the slot's original, already-positioned card (kept as index 0); "bakedAlternates" are the
+    // extra sibling Card GameObjects the editor's "Bake Preload Cards" button builds for
+    // cardNames[1..] — fully initialized with their artwork baked in as a normal serialized
+    // sprite reference. Rotation only ever toggles which one of these pre-built siblings is
+    // active; it never calls Card.Initialize (and therefore never touches the runtime
+    // Illustrations/Addressables lookup) at all, so it can't lose the load race that caused the
+    // original empty-image bug.
+    [System.Serializable]
+    private class CardRotationSlot
+    {
+        public CardDataProvider provider;
+        [Tooltip("Card names to bake for this slot (3 recommended, including this slot's own card as #1). Press 'Bake Preload Cards' in the Inspector after editing.")]
+        public string[] cardNames = new string[3];
+        [Tooltip("Built by 'Bake Preload Cards': one pre-baked sibling Card per extra name above. Do not edit by hand.")]
+        public List<CardDataProvider> bakedAlternates = new();
+    }
+
     [SerializeField] private CanvasGroup canvasGroup;
     [SerializeField] private Slider progressBar;
     [SerializeField] private TextMeshProUGUI statusText;
-    [SerializeField] private List<CardDataProvider> cardProviders = new();
+    [SerializeField] private List<CardRotationSlot> cardSlots = new();
     [SerializeField] private TextMeshProUGUI continuePromptText;
     [SerializeField] private float fadeSeconds = 0.25f;
-    [Tooltip("How often (in seconds) each card slot re-rolls to a new random card.")]
+    [Tooltip("How often (in seconds) each card slot re-rolls to a new random baked card.")]
     [SerializeField] private float rotationSeconds = 3f;
     [Tooltip("Total duration of the flip animation played when a card slot changes card.")]
     [SerializeField] private float cardFlipSeconds = 0.4f;
 
-    private Illustrations illustrations;
-    private readonly Dictionary<CardDataProvider, Coroutine> activeFlips = new();
+    private readonly Dictionary<CardRotationSlot, List<CardDataProvider>> slotGroups = new();
+    private readonly Dictionary<CardRotationSlot, int> slotActiveIndex = new();
+    private readonly Dictionary<CardRotationSlot, Coroutine> activeFlips = new();
     private readonly Dictionary<CardDataProvider, Vector3> cardRestScales = new();
+    private Illustrations illustrations;
+    private Coroutine cardRotationCoroutine;
+    private int testCardIndex = -1;
+
+    /// <summary>Index last shown by <see cref="TestNextCardSet"/>, for the custom Inspector button's label.</summary>
+    public int TestCardIndex => testCardIndex;
 
     private IEnumerator Start()
     {
@@ -34,7 +59,7 @@ public sealed class StartupLoadingScreen : MonoBehaviour
         // Ensure this canvas is actually presented before synchronous deck parsing begins.
         yield return null;
 
-        Coroutine cardRotation = cardProviders != null && cardProviders.Count > 0 ? StartCoroutine(RotateCardArt()) : null;
+        cardRotationCoroutine = cardSlots != null && cardSlots.Count > 0 ? StartCoroutine(RotateCardArt()) : null;
 
         float waitStartedAt = Time.realtimeSinceStartup;
         while (!StartupReady() && Time.realtimeSinceStartup - waitStartedAt < 30f)
@@ -60,7 +85,7 @@ public sealed class StartupLoadingScreen : MonoBehaviour
             yield return null;
         }
 
-        if (cardRotation != null) StopCoroutine(cardRotation);
+        if (cardRotationCoroutine != null) StopCoroutine(cardRotationCoroutine);
         SetContinuePromptVisible(false);
 
         yield return FadeOut();
@@ -69,80 +94,138 @@ public sealed class StartupLoadingScreen : MonoBehaviour
         Debug.Log("StartupLoadingScreen: startup complete; menu input unblocked.");
     }
 
-    // Re-rolls each of the loading screen's card slots to a random card from the full catalog.
-    // Waits for DeckManager to be loaded (the catalog it reads from) before rolling; this can't
-    // add work during DeckManager's synchronous catalog parse — that block freezes the whole main
-    // thread regardless, and this coroutine simply doesn't get to run until it's over.
-    private IEnumerator RotateCardArt()
+    // Builds each slot's group of pre-baked siblings (the original "provider" plus whatever
+    // "Bake Preload Cards" generated for it) once, and makes sure exactly the first one is
+    // active. Safe to call repeatedly — a slot already known is left alone.
+    private void EnsureGroupsInitialized()
     {
-        while (true)
+        if (cardSlots == null) return;
+
+        foreach (CardRotationSlot slot in cardSlots)
         {
-            List<CardData> catalog = DeckManager.Instance != null && DeckManager.Instance.IsLoaded
-                ? DeckManager.Instance.cards
-                : null;
+            if (slot?.provider == null || slotGroups.ContainsKey(slot)) continue;
 
-            // Encounter cards always render face-down (a "?" overlay) until actually played, so
-            // they'd just sit there unrevealed if rolled here — exclude them from the pool.
-            List<CardData> candidates = catalog?
-                .Where(card => card != null && !string.IsNullOrWhiteSpace(card.name) && !card.IsEncounterCard())
-                .ToList();
+            List<CardDataProvider> group = new() { slot.provider };
+            if (slot.bakedAlternates != null) group.AddRange(slot.bakedAlternates.Where(p => p != null));
 
-            if (candidates != null && candidates.Count > 0)
-            {
-                foreach (CardDataProvider provider in cardProviders)
-                {
-                    if (provider == null) continue;
-                    CardData candidate = candidates[Random.Range(0, candidates.Count)];
+            for (int i = 0; i < group.Count; i++) group[i].gameObject.SetActive(i == 0);
 
-                    if (activeFlips.TryGetValue(provider, out Coroutine running) && running != null)
-                    {
-                        StopCoroutine(running);
-                    }
-                    activeFlips[provider] = StartCoroutine(FlipToCard(provider, candidate.name));
-                }
-            }
-
-            yield return new WaitForSeconds(rotationSeconds);
+            slotGroups[slot] = group;
+            slotActiveIndex[slot] = 0;
         }
     }
 
-    // Card-flip transition: shrinks the slot flat (scale.x -> 0), swaps to the new card at the
-    // midpoint so the reveal lands exactly on the "edge-on" frame, then unfolds back out.
-    private IEnumerator FlipToCard(CardDataProvider provider, string cardName)
+    // Switches one slot to the given index within its pre-baked group via the flip animation.
+    // Never calls Card.Initialize — the target is already fully initialized, art included, so
+    // this is just a GameObject.SetActive toggle either side of the flip.
+    private void AdvanceSlot(CardRotationSlot slot, int targetIndex)
     {
-        Transform cardTransform = provider.transform;
-        if (!cardRestScales.TryGetValue(provider, out Vector3 restScale))
+        if (!slotGroups.TryGetValue(slot, out List<CardDataProvider> group) || group.Count == 0) return;
+
+        targetIndex = ((targetIndex % group.Count) + group.Count) % group.Count;
+        int currentIndex = slotActiveIndex.TryGetValue(slot, out int idx) ? idx : 0;
+        if (targetIndex == currentIndex) return;
+
+        if (activeFlips.TryGetValue(slot, out Coroutine running) && running != null)
         {
-            // First flip for this slot: snapshot whatever scale was authored on it (the "Cards"
-            // row scales these down to fit 3 side by side), so the flip always ends back there
-            // instead of snapping to Vector3.one.
-            restScale = cardTransform.localScale;
-            cardRestScales[provider] = restScale;
+            StopCoroutine(running);
         }
+        activeFlips[slot] = StartCoroutine(FlipGroupTo(group[currentIndex], group[targetIndex]));
+        slotActiveIndex[slot] = targetIndex;
+    }
+
+    // Re-rolls each of the loading screen's card slots to a random *other* card within that
+    // slot's own pre-baked group (see CardRotationSlot / EnsureGroupsInitialized).
+    private IEnumerator RotateCardArt()
+    {
+        EnsureGroupsInitialized();
+
+        while (true)
+        {
+            yield return new WaitForSeconds(rotationSeconds);
+
+            foreach (CardRotationSlot slot in cardSlots)
+            {
+                if (!slotGroups.TryGetValue(slot, out List<CardDataProvider> group) || group.Count <= 1) continue;
+
+                int current = slotActiveIndex[slot];
+                int next = Random.Range(0, group.Count - 1);
+                if (next >= current) next++; // uniformly pick an index different from current
+                AdvanceSlot(slot, next);
+            }
+        }
+    }
+
+    // QA helper wired to a button in the custom Inspector: steps every slot to its own Nth
+    // pre-baked card in lockstep (all slots' first, then all slots' second, ...), so each of the
+    // baked cards can be eyeballed on demand instead of waiting on the timed random rotation to
+    // happen to land on it. Takes over from the automatic rotation once used.
+    public void TestNextCardSet()
+    {
+        if (!Application.isPlaying || cardSlots == null) return;
+
+        EnsureGroupsInitialized();
+
+        if (cardRotationCoroutine != null)
+        {
+            StopCoroutine(cardRotationCoroutine);
+            cardRotationCoroutine = null;
+        }
+
+        testCardIndex++;
+        foreach (CardRotationSlot slot in cardSlots)
+        {
+            AdvanceSlot(slot, testCardIndex);
+        }
+    }
+
+    // Card-flip transition: shrinks the outgoing sibling flat (scale.x -> 0) then deactivates it,
+    // activates the incoming sibling flat and unfolds it back out — so the reveal lands exactly
+    // on the "edge-on" frame, same as the original single-object version, just spread across two
+    // pre-baked GameObjects instead of reinitializing one in place.
+    private IEnumerator FlipGroupTo(CardDataProvider outgoing, CardDataProvider incoming)
+    {
+        if (outgoing == null || incoming == null || outgoing == incoming) yield break;
+
+        Vector3 outgoingRest = GetRestScale(outgoing);
+        Vector3 incomingRest = GetRestScale(incoming);
         float halfDuration = Mathf.Max(0.01f, cardFlipSeconds * 0.5f);
 
         float elapsed = 0f;
         while (elapsed < halfDuration)
         {
             elapsed += Time.deltaTime;
-            float scaleX = Mathf.Lerp(restScale.x, 0f, elapsed / halfDuration);
-            cardTransform.localScale = new Vector3(scaleX, restScale.y, restScale.z);
+            float scaleX = Mathf.Lerp(outgoingRest.x, 0f, elapsed / halfDuration);
+            outgoing.transform.localScale = new Vector3(scaleX, outgoingRest.y, outgoingRest.z);
             yield return null;
         }
-        cardTransform.localScale = new Vector3(0f, restScale.y, restScale.z);
+        outgoing.gameObject.SetActive(false);
+        outgoing.transform.localScale = outgoingRest;
 
-        provider.Initialize(cardName, provider.startAsToken);
+        incoming.transform.localScale = new Vector3(0f, incomingRest.y, incomingRest.z);
+        incoming.gameObject.SetActive(true);
 
         elapsed = 0f;
         while (elapsed < halfDuration)
         {
             elapsed += Time.deltaTime;
-            float scaleX = Mathf.Lerp(0f, restScale.x, elapsed / halfDuration);
-            cardTransform.localScale = new Vector3(scaleX, restScale.y, restScale.z);
+            float scaleX = Mathf.Lerp(0f, incomingRest.x, elapsed / halfDuration);
+            incoming.transform.localScale = new Vector3(scaleX, incomingRest.y, incomingRest.z);
             yield return null;
         }
-        cardTransform.localScale = restScale;
-        activeFlips[provider] = null;
+        incoming.transform.localScale = incomingRest;
+    }
+
+    private Vector3 GetRestScale(CardDataProvider provider)
+    {
+        if (!cardRestScales.TryGetValue(provider, out Vector3 restScale))
+        {
+            // Snapshot whatever scale was authored/baked onto it (the "Cards" row scales these
+            // down to fit 3 side by side), so flips always end back there.
+            restScale = provider.transform.localScale;
+            cardRestScales[provider] = restScale;
+        }
+        return restScale;
     }
 
     private bool StartupReady()

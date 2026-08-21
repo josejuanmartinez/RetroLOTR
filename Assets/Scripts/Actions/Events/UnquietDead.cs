@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -93,7 +93,7 @@ public class UnquietDead : EventAction
             Character target = null;
             if (!isAI)
             {
-                string selected = await SelectionDialog.Ask(
+                string selected = await SelectionDialog.AskImmediate(
                     "Raise from the dead",
                     "Ok",
                     "Cancel",

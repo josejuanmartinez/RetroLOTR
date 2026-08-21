@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -36,7 +36,7 @@ public class AskRansom : AgentAction
                 List<string> options = captives
                     .Select(x => $"{x.characterName} [{x.GetKidnapRansomValue()} gold]")
                     .ToList();
-                string selected = await SelectionDialog.Ask(
+                string selected = await SelectionDialog.AskImmediate(
                     "Select captive for ransom demand",
                     "Ok",
                     "Cancel",
@@ -71,7 +71,7 @@ public class AskRansom : AgentAction
             {
                 List<string> responseOptions = new() { $"Pay {ransomCost} gold", "Refuse ransom" };
                 List<string> responseIcons = new() { actionName, !string.IsNullOrWhiteSpace(target.illustrationName) ? target.illustrationName : target.characterName };
-                string answer = await SelectionDialog.Ask(
+                string answer = await SelectionDialog.AskImmediate(
                     $"{actor.characterName} demands {ransomCost} gold to release {target.characterName}.",
                     "Choose",
                     "Decline",

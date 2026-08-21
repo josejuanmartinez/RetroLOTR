@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +26,7 @@ public class AssassinateCharacter : AgentCharacterAction
             Character enemy = null;
             if (!isAI)
             {
-                string targetCharacter = await SelectionDialog.Ask(
+                string targetCharacter = await SelectionDialog.AskImmediate(
                     "Select enemy character",
                     "Ok",
                     "Cancel",

@@ -140,18 +140,7 @@ public class CardBloomWheel : MonoBehaviour
         if (isOpen && Input.GetMouseButtonDown(0))
         {
             int clickedIndex = FindHoveredCardIndex(CanvasCamera());
-            if (clickedIndex >= 0 && clickedIndex < cardComponents.Count)
-            {
-                if (externalClickHandler != null)
-                {
-                    externalClickHandler(clickedIndex);
-                }
-                else
-                {
-                    Card clickedCard = cardComponents[clickedIndex];
-                    clickedCard?.PlayFromBloom(selectedCharacterIcon != null ? selectedCharacterIcon.CurrentCharacter : null);
-                }
-            }
+            if (clickedIndex >= 0) PlayCardAtIndex(clickedIndex);
         }
 
         if (useWorldAnchor) ApplyWorldAnchor();
@@ -200,6 +189,35 @@ public class CardBloomWheel : MonoBehaviour
         hoveredCardIndex = isOpen ? FindHoveredCardIndex(cam) : -1;
         AnimateCards();
         LinesAlpha = 1f;
+    }
+
+    // Shared by the wheel's own manual click detection above and by the enlarged center
+    // preview's click catcher, so both paths play the exact same (already-validated) token
+    // instead of the preview clone re-deriving its own playability.
+    private void PlayCardAtIndex(int index)
+    {
+        if (index < 0 || index >= cardComponents.Count)
+        {
+            Debug.LogWarning($"[CardPlay/Bloom] PlayCardAtIndex({index}) out of range (cardComponents.Count={cardComponents.Count}).");
+            return;
+        }
+
+        if (externalClickHandler != null)
+        {
+            Debug.Log($"[CardPlay/Bloom] Index {index} routed to externalClickHandler (e.g. SituationCardsUI opportunity bloom).");
+            externalClickHandler(index);
+        }
+        else
+        {
+            Card clickedCard = cardComponents[index];
+            if (clickedCard == null)
+            {
+                Debug.LogWarning($"[CardPlay/Bloom] Index {index} has a null Card component — nothing to play.");
+                return;
+            }
+            Debug.Log($"[CardPlay/Bloom] Index {index} -> PlayFromBloom('{clickedCard.cardData?.name}').");
+            clickedCard.PlayFromBloom(selectedCharacterIcon != null ? selectedCharacterIcon.CurrentCharacter : null);
+        }
     }
 
     // Called by DeckManager after spawning / clearing cards. onCardClicked, when supplied,
@@ -490,9 +508,9 @@ public class CardBloomWheel : MonoBehaviour
         // that same world point — otherwise it shows at its own unrelated fixed screen anchor
         // while the ring of tokens it "bloomed" from surrounds a completely different spot.
         if (useWorldAnchor)
-            CardCenterPreview.Instance?.ShowPreview(data, hoverDriven: true, worldAnchor: worldAnchorPosition, worldAnchorCamera: worldAnchorCamera);
+            CardCenterPreview.Instance?.ShowPreview(data, hoverDriven: true, worldAnchor: worldAnchorPosition, worldAnchorCamera: worldAnchorCamera, onClick: () => PlayCardAtIndex(index));
         else
-            CardCenterPreview.Instance?.ShowPreview(data, hoverDriven: true);
+            CardCenterPreview.Instance?.ShowPreview(data, hoverDriven: true, onClick: () => PlayCardAtIndex(index));
     }
 
     private int FindHoveredCardIndex(Camera cam)

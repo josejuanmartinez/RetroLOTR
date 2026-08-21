@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -49,7 +49,7 @@ public class BowOfAlatar : CharacterAction
 
             if (!isAI)
             {
-                string picked = await SelectionDialog.Ask(
+                string picked = await SelectionDialog.AskImmediate(
                     "Select enemy character",
                     "Ok",
                     "Cancel",

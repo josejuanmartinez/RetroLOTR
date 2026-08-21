@@ -462,8 +462,23 @@ public class SituationCardsUI : MonoBehaviour
         SituationCardOffer offer = offers[index];
         if (offer == null || !offer.IsPlayable) return;
         savedBlooms.Remove(character);
+
+        // Capture the clicked token's flight source BEFORE dismissing: DismissBloom destroys
+        // every card instance (ClearCards) and the enlarged center-preview clone
+        // (CardBloomWheel.SetCards -> ClearCenterPreview), and ResolveCardAction's action
+        // execute/consume calls are awaited, so neither would still exist by the time
+        // CardPlayFlight/CardPlayFailure would otherwise go looking for them. Pull the
+        // clicked instance out of cardInstances so ClearCards() skips it — ResolveCardAction
+        // destroys it itself once the flight/failure effect has cloned its visuals.
+        (Vector3? previewCenter, float? previewWidth) = Card.SnapshotCenterPreviewSource();
+        GameObject clickedGo = index < cardInstances.Count ? cardInstances[index] : null;
+        Card flightSourceCard = clickedGo != null ? clickedGo.GetComponent<Card>() : null;
+        if (clickedGo != null) cardInstances.Remove(clickedGo);
+
+        Debug.Log($"[SituationCards/Flight] OnBloomCardClicked index={index} '{offer.Card?.name}': previewCenter={(previewCenter.HasValue ? previewCenter.Value.ToString() : "null")}, flightSourceCard={(flightSourceCard != null ? flightSourceCard.name : "null")}, cardInstances.Count(before removal check)={cardInstances.Count}.");
+
         DismissBloom(saveForCharacter: false);
-        ResolveCardAction(offer, character, leader);
+        ResolveCardAction(offer, character, leader, flightSourceCard, previewCenter, previewWidth);
     }
 
     // Tears down the bloom presentation: the wheel is exclusively an opportunity-card
@@ -682,93 +697,124 @@ public class SituationCardsUI : MonoBehaviour
     // resolves on click (Card.HandleActionCardPlayed) — the "Act now!" presentation
     // promises an immediate effect, not a card quietly parked in hand for later. Shared by
     // both the center-tray click (OnCardClicked) and the bloom-wheel click (OnBloomCardClicked).
-    private async void ResolveCardAction(SituationCardOffer offer, Character character, PlayableLeader leader)
+    //
+    // flightSourceCard/previewCenter/previewWidth (bloom only — null from the center-tray
+    // path): the clicked token's Card instance, kept alive by the caller specifically so
+    // CardPlayFlight/CardPlayFailure can still clone its token visuals down here, plus a
+    // click-time snapshot of the enlarged center-preview's on-screen position/size to fly
+    // out of — see OnBloomCardClicked.
+    private async void ResolveCardAction(SituationCardOffer offer, Character character, PlayableLeader leader, Card flightSourceCard = null, Vector3? previewCenter = null, float? previewWidth = null)
     {
-        CardData cardData = offer?.Card;
-        if (cardData == null || character == null || leader == null || DeckManager.Instance == null)
+        try
         {
-            Debug.Log($"[SituationCards] click aborted — cardData={cardData != null} character={character != null} leader={leader != null} deckManager={DeckManager.Instance != null}");
-            return;
-        }
-
-        if (cardData.GetCardType() == CardTypeEnum.Character)
-        {
-            bool succeeded = ResolveCharacterOpportunity(cardData, character, leader);
-            Debug.Log($"[SituationCards] '{cardData.name}' character opportunity resolved, succeeded={succeeded}");
-            return;
-        }
-
-        // Environmental cards don't execute an immediate action — they become the board's
-        // active environment (see EnvironmentalCardManager) rather than routing through the
-        // generic actionRef->action.Execute() path below, same as Card.HandleEnvironmentalCardPlayed.
-        if (cardData.GetCardType() == CardTypeEnum.Environmental)
-        {
-            EnvironmentalCardManager environment = EnvironmentalCardManager.GetOrCreate();
-            int currentTurn = Game.Instance?.turn ?? 0;
-            if (!environment.CanNationPlay(leader, currentTurn, out string environmentalReason))
+            CardData cardData = offer?.Card;
+            if (cardData == null || character == null || leader == null || DeckManager.Instance == null)
             {
-                Debug.Log($"[SituationCards] click aborted — {environmentalReason}");
+                Debug.Log($"[SituationCards] click aborted — cardData={cardData != null} character={character != null} leader={leader != null} deckManager={DeckManager.Instance != null}");
                 return;
             }
 
-            string envActionRef = cardData.GetActionRef();
-            bool consumedEnv = offer.Source == SituationCardOfferSource.AI
-                ? DeckManager.Instance.TryConsumeActionCardFromFullDeck(leader, envActionRef, cardData, out _)
+            if (cardData.GetCardType() == CardTypeEnum.Character)
+            {
+                bool succeeded = ResolveCharacterOpportunity(cardData, character, leader);
+                Debug.Log($"[SituationCards] '{cardData.name}' character opportunity resolved, succeeded={succeeded}");
+                return;
+            }
+
+            // Environmental cards don't execute an immediate action — they become the board's
+            // active environment (see EnvironmentalCardManager) rather than routing through the
+            // generic actionRef->action.Execute() path below, same as Card.HandleEnvironmentalCardPlayed.
+            if (cardData.GetCardType() == CardTypeEnum.Environmental)
+            {
+                EnvironmentalCardManager environment = EnvironmentalCardManager.GetOrCreate();
+                int currentTurn = Game.Instance?.turn ?? 0;
+                if (!environment.CanNationPlay(leader, currentTurn, out string environmentalReason))
+                {
+                    Debug.Log($"[SituationCards] click aborted — {environmentalReason}");
+                    return;
+                }
+
+                string envActionRef = cardData.GetActionRef();
+                bool consumedEnv = offer.Source == SituationCardOfferSource.AI
+                    ? DeckManager.Instance.TryConsumeActionCardFromFullDeck(leader, envActionRef, cardData, out _)
+                    : DeckManager.Instance.TryAddCardToHand(leader, cardData)
+                        && DeckManager.Instance.TryConsumeCard(leader, cardData.name, false, out _);
+                if (!consumedEnv)
+                {
+                    Debug.Log($"[SituationCards] click aborted — could not consume environmental card '{cardData.name}' from {offer.Source} source");
+                    return;
+                }
+
+                if (!environment.TrySetActiveCard(cardData, leader, out _)) return;
+                Debug.Log($"[SituationCards] '{cardData.name}' environmental card activated");
+                if (flightSourceCard != null)
+                    CardPlayFlight.Launch(flightSourceCard, character.hex, sourceWorldCenter: previewCenter, sourceWorldWidth: previewWidth);
+                return;
+            }
+
+            string actionRef = cardData.GetActionRef();
+            if (string.IsNullOrWhiteSpace(actionRef))
+            {
+                Debug.Log($"[SituationCards] click aborted — '{cardData.name}' has no actionRef");
+                return;
+            }
+
+            ActionsManager actionsManager = ActionsManager.Instance;
+            CharacterAction action = actionsManager != null ? actionsManager.ResolveActionByRef(actionRef, cardData) : null;
+            if (action == null)
+            {
+                Debug.Log($"[SituationCards] click aborted — could not resolve action '{actionRef}' for '{cardData.name}' (actionsManager={actionsManager != null})");
+                return;
+            }
+
+            action.Initialize(character, cardData);
+            if (!action.FulfillsConditions())
+            {
+                Debug.Log($"[SituationCards] click aborted — '{cardData.name}' action '{actionRef}' no longer FulfillsConditions()");
+                return;
+            }
+
+            // Route through the normal hand-consume path so resource costs, discard-pile
+            // bookkeeping, and card history are applied exactly as they are for a card
+            // played straight out of hand.
+            bool consumed = offer.Source == SituationCardOfferSource.AI
+                ? DeckManager.Instance.TryConsumeActionCardFromFullDeck(leader, actionRef, cardData, out _)
                 : DeckManager.Instance.TryAddCardToHand(leader, cardData)
-                    && DeckManager.Instance.TryConsumeCard(leader, cardData.name, false, out _);
-            if (!consumedEnv)
+                    && DeckManager.Instance.TryConsumeActionCard(leader, actionRef, false, out _, cardData.name);
+            if (!consumed)
             {
-                Debug.Log($"[SituationCards] click aborted — could not consume environmental card '{cardData.name}' from {offer.Source} source");
+                Debug.Log($"[SituationCards] click aborted — could not consume '{cardData.name}' from {offer.Source} source (actionRef={actionRef})");
                 return;
             }
 
-            if (!environment.TrySetActiveCard(cardData, leader, out _)) return;
-            Debug.Log($"[SituationCards] '{cardData.name}' environmental card activated");
-            return;
-        }
+            DeckManager.Instance.ApplyMapRevealForPlayedCard(leader, cardData);
 
-        string actionRef = cardData.GetActionRef();
-        if (string.IsNullOrWhiteSpace(actionRef))
+            action.Initialize(character, cardData);
+            await action.Execute();
+
+            Debug.Log($"[SituationCards] '{cardData.name}' action executed, succeeded={action.LastExecutionSucceeded}");
+
+            if (flightSourceCard != null)
+            {
+                Debug.Log($"[SituationCards/Flight] '{cardData.name}': launching {(action.LastExecutionSucceeded ? "CardPlayFlight" : "CardPlayFailure")} from flightSourceCard='{flightSourceCard.name}' (destroyed={flightSourceCard == null}), previewCenter={(previewCenter.HasValue ? previewCenter.Value.ToString() : "null (will fall back to flightSourceCard.transform)")}.");
+                if (action.LastExecutionSucceeded)
+                    CardPlayFlight.Launch(flightSourceCard, character.hex, sourceWorldCenter: previewCenter, sourceWorldWidth: previewWidth);
+                else
+                    CardPlayFailure.Launch(flightSourceCard, sourceWorldCenter: previewCenter);
+            }
+            else
+            {
+                Debug.LogWarning($"[SituationCards/Flight] '{cardData.name}': flightSourceCard is null — no flight/failure animation will play. This card wasn't clicked via the bloom (or the token instance wasn't found at click time).");
+            }
+        }
+        finally
         {
-            Debug.Log($"[SituationCards] click aborted — '{cardData.name}' has no actionRef");
-            return;
+            // The clicked token was pulled out of CardBloomWheel's normal cleanup specifically
+            // so it could still be cloned by the flight/failure effect above (which read its
+            // visuals synchronously before returning) — safe to destroy it now regardless of
+            // which path this resolution took.
+            if (flightSourceCard != null) Destroy(flightSourceCard.gameObject);
         }
-
-        ActionsManager actionsManager = ActionsManager.Instance;
-        CharacterAction action = actionsManager != null ? actionsManager.ResolveActionByRef(actionRef, cardData) : null;
-        if (action == null)
-        {
-            Debug.Log($"[SituationCards] click aborted — could not resolve action '{actionRef}' for '{cardData.name}' (actionsManager={actionsManager != null})");
-            return;
-        }
-
-        action.Initialize(character, cardData);
-        if (!action.FulfillsConditions())
-        {
-            Debug.Log($"[SituationCards] click aborted — '{cardData.name}' action '{actionRef}' no longer FulfillsConditions()");
-            return;
-        }
-
-        // Route through the normal hand-consume path so resource costs, discard-pile
-        // bookkeeping, and card history are applied exactly as they are for a card
-        // played straight out of hand.
-        bool consumed = offer.Source == SituationCardOfferSource.AI
-            ? DeckManager.Instance.TryConsumeActionCardFromFullDeck(leader, actionRef, cardData, out _)
-            : DeckManager.Instance.TryAddCardToHand(leader, cardData)
-                && DeckManager.Instance.TryConsumeActionCard(leader, actionRef, false, out _, cardData.name);
-        if (!consumed)
-        {
-            Debug.Log($"[SituationCards] click aborted — could not consume '{cardData.name}' from {offer.Source} source (actionRef={actionRef})");
-            return;
-        }
-
-        DeckManager.Instance.ApplyMapRevealForPlayedCard(leader, cardData);
-
-        action.Initialize(character, cardData);
-        await action.Execute();
-
-        Debug.Log($"[SituationCards] '{cardData.name}' action executed, succeeded={action.LastExecutionSucceeded}");
-
     }
 
     private static bool IsCardPlayable(CardData cardData, Character character)

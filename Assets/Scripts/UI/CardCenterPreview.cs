@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 // Shows a card enlarged ("unfolded") in the center of the screen. Extracted out of
 // CardBloomWheel so any token card (not just ones in the now-retired bloom wheel) can
@@ -100,10 +102,10 @@ public class CardCenterPreview : MonoBehaviour
         AnimateCenterPreview();
     }
 
-    public void ShowPreview(CardData data, float speedMultiplier = 1f, bool hoverDriven = false, Vector3? worldAnchor = null, Camera worldAnchorCamera = null)
+    public void ShowPreview(CardData data, float speedMultiplier = 1f, bool hoverDriven = false, Vector3? worldAnchor = null, Camera worldAnchorCamera = null, System.Action onClick = null)
     {
         if (data == null) return;
-        ShowPreview(new List<CardData> { data }, speedMultiplier, hoverDriven, worldAnchor, worldAnchorCamera);
+        ShowPreview(new List<CardData> { data }, speedMultiplier, hoverDriven, worldAnchor, worldAnchorCamera, onClick);
     }
 
     // Shared by every character-hover site (roster lists, hex map): the character's own
@@ -148,7 +150,7 @@ public class CardCenterPreview : MonoBehaviour
     // world-anchored hex rather than this preview's usual fixed centerPreviewAnchor spot),
     // the preview is centered on that world point instead — otherwise the enlarged card and
     // the ring of tokens it "bloomed" from end up anchored to two unrelated screen positions.
-    public void ShowPreview(IReadOnlyList<CardData> cardsData, float speedMultiplier = 1f, bool hoverDriven = false, Vector3? worldAnchor = null, Camera worldAnchorCamera = null)
+    public void ShowPreview(IReadOnlyList<CardData> cardsData, float speedMultiplier = 1f, bool hoverDriven = false, Vector3? worldAnchor = null, Camera worldAnchorCamera = null, System.Action onClick = null)
     {
         List<CardData> validCards = cardsData?.Where(c => c != null).ToList();
         if (validCards == null || validCards.Count == 0) return;
@@ -227,8 +229,9 @@ public class CardCenterPreview : MonoBehaviour
 
             CanvasGroup group = instance.GetComponent<CanvasGroup>();
             if (group == null) group = instance.AddComponent<CanvasGroup>();
-            group.blocksRaycasts = false;
-            group.interactable = false;
+            group.blocksRaycasts = onClick != null;
+            group.interactable = onClick != null;
+            if (onClick != null) AttachClickCatcher(instance, onClick);
 
             centerPreviewInstances.Add(instance);
             centerPreviewRects.Add(rect);
@@ -361,5 +364,41 @@ public class CardCenterPreview : MonoBehaviour
         const float c3 = c1 + 1f;
         float xm1 = x - 1f;
         return 1f + c3 * xm1 * xm1 * xm1 + c1 * xm1 * xm1;
+    }
+
+    // The clone's own Card component (SuppressHoverEffects=true) would otherwise handle a
+    // click itself and re-evaluate playability against its own (stale/unset) LastKnownPlayable
+    // - it isn't the bloom token that already computed that. A full-rect catcher on top,
+    // forwarding to the caller's onClick, routes the click to the real token's already-known
+    // state instead (see CardBloomWheel.PlayCardAtIndex).
+    private static void AttachClickCatcher(GameObject instance, System.Action onClick)
+    {
+        GameObject catcher = new("ClickCatcher", typeof(RectTransform));
+        catcher.transform.SetParent(instance.transform, false);
+        RectTransform catcherRect = catcher.GetComponent<RectTransform>();
+        catcherRect.anchorMin = Vector2.zero;
+        catcherRect.anchorMax = Vector2.one;
+        catcherRect.offsetMin = Vector2.zero;
+        catcherRect.offsetMax = Vector2.zero;
+
+        Image image = catcher.AddComponent<Image>();
+        image.color = new Color(0f, 0f, 0f, 0f);
+        image.raycastTarget = true;
+
+        PreviewClickForwarder forwarder = catcher.AddComponent<PreviewClickForwarder>();
+        forwarder.onClick = onClick;
+
+        catcher.transform.SetAsLastSibling();
+    }
+
+    private sealed class PreviewClickForwarder : MonoBehaviour, IPointerClickHandler
+    {
+        public System.Action onClick;
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            if (eventData != null && eventData.button != PointerEventData.InputButton.Left) return;
+            onClick?.Invoke();
+        }
     }
 }

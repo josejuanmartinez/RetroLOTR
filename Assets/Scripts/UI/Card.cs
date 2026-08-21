@@ -905,20 +905,43 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         bool actionConditionsMet = true;
         string actionRef = cardData.GetActionRef();
 
-        if (!string.IsNullOrWhiteSpace(actionRef) && actionsManager != null && character != null)
+        if (!string.IsNullOrWhiteSpace(actionRef))
         {
-            CharacterAction action = actionsManager.ResolveActionByRef(actionRef, cardData);
-            if (action != null)
+            if (actionsManager == null)
             {
-                action.Initialize(character, cardData);
-                actionConditionsMet = action.FulfillsConditions();
+                Debug.LogWarning($"[CardPlay/Evaluate] '{cardData.name}': has actionRef '{actionRef}' but no actionsManager reference — action gate skipped (treated as met).");
+            }
+            else if (character == null)
+            {
+                Debug.LogWarning($"[CardPlay/Evaluate] '{cardData.name}': has actionRef '{actionRef}' but no character passed in — action gate skipped (treated as met).");
+            }
+            else
+            {
+                CharacterAction action = actionsManager.ResolveActionByRef(actionRef, cardData);
+                if (action == null)
+                {
+                    Debug.LogWarning($"[CardPlay/Evaluate] '{cardData.name}': ResolveActionByRef('{actionRef}') returned null — no CharacterAction registered.");
+                }
+                else
+                {
+                    action.Initialize(character, cardData);
+                    actionConditionsMet = action.FulfillsConditions();
+                }
             }
         }
 
-        return cardData.EvaluatePlayability(
+        bool meetsResources = resourceOwner == null || cardData.MeetsResourceRequirements(resourceOwner);
+        bool result = cardData.EvaluatePlayability(
             character,
-            _ => resourceOwner == null || cardData.MeetsResourceRequirements(resourceOwner),
+            _ => meetsResources,
             _ => actionConditionsMet);
+
+        if (!result)
+        {
+            Debug.Log($"[CardPlay/Evaluate] '{cardData.name}' EvaluateIsPlayable=false for '{(character != null ? character.characterName : "none")}' (meetsResources={meetsResources}, actionConditionsMet={actionConditionsMet}).");
+        }
+
+        return result;
     }
 
     public void UpdateInteractableState()
@@ -1023,16 +1046,31 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         }
     }
 
+    // Snapshots the enlarged center-preview card's on-screen footprint (world center + width)
+    // at click time, for CardPlayFlight.Launch to fly out of later. Must be read now: playing
+    // the card rebuilds the hand/bloom (CardBloomWheel.SetCards -> ClearCenterPreview) well
+    // before the awaited action/consume calls finish, destroying the live preview clone by
+    // the time Launch would otherwise query CardCenterPreview.Instance itself.
+    public static (Vector3? center, float? width) SnapshotCenterPreviewSource()
+    {
+        RectTransform previewRect = CardCenterPreview.Instance != null ? CardCenterPreview.Instance.CurrentPreviewRect : null;
+        if (previewRect == null) return (null, null);
+        return (previewRect.TransformPoint(previewRect.rect.center), previewRect.rect.width * Mathf.Abs(previewRect.lossyScale.x));
+    }
+
     // CardBloomWheel performs its own geometric hit testing because its tokens animate
     // outside their original layout rect. Route bloom clicks through that same hit result
     // instead of relying on an unrelated UI raycast to happen to reach this component.
     public void PlayFromBloom(Character selectedCharacter)
     {
+        Debug.Log($"[CardPlay/Bloom] PlayFromBloom: '{cardData?.name ?? "null"}' (LastKnownPlayable={LastKnownPlayable}, selectedCharacter={(selectedCharacter != null ? selectedCharacter.characterName : "none")}).");
+
         // LastKnownPlayable is the exact state CardBloomWheel uses to paint a token red.
         // Keep click behavior consistent with that visual state even though bloom clicks
         // intentionally bypass the root CanvasGroup's stale interactable flag.
         if (!LastKnownPlayable)
         {
+            Debug.LogWarning($"[CardPlay/Bloom] '{cardData?.name}' aborted: LastKnownPlayable=false (cached from the last UpdateInteractableState pass).");
             if (IsUnplayedEncounterWithHex())
             {
                 BoardNavigator.Instance?.LookAt(cardData.encounterTargetHex.transform.position);
@@ -1042,36 +1080,51 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             {
                 string reason = BuildRequirementsMessageText(selectedCharacter, GetHumanPlayerLeader());
                 if (!string.IsNullOrWhiteSpace(reason))
+                {
+                    Debug.LogWarning($"[CardPlay/Bloom] '{cardData?.name}' requirements message: {reason}");
                     MessageDisplayNoUI.ShowMessage(selectedCharacter.hex, selectedCharacter, reason, Color.red);
+                }
             }
             return;
         }
 
+        (Vector3? previewCenter, float? previewWidth) = SnapshotCenterPreviewSource();
+
         if (cardData != null && cardData.GetCardType() == CardTypeEnum.Environmental)
         {
-            PlayEnvironmentalFromBloom(selectedCharacter);
+            PlayEnvironmentalFromBloom(selectedCharacter, previewCenter, previewWidth);
             return;
         }
-        TryPlayCard(selectedCharacter, invokedFromBloom: true);
+        TryPlayCard(selectedCharacter, invokedFromBloom: true, previewCenter, previewWidth);
     }
 
-    private void PlayEnvironmentalFromBloom(Character selected)
+    private void PlayEnvironmentalFromBloom(Character selected, Vector3? previewCenter = null, float? previewWidth = null)
     {
-        if (IsPlayInProgress || cardData == null) return;
+        if (IsPlayInProgress || cardData == null)
+        {
+            Debug.LogWarning($"[CardPlay/Environmental] '{cardData?.name}' aborted: IsPlayInProgress={IsPlayInProgress}, cardData null={cardData == null}.");
+            return;
+        }
         EnsureManagersLoaded();
 
         Game game = Game.Instance;
         PlayableLeader playerLeader = game != null ? game.player : null;
-        if (playerLeader == null || deckManager == null) return;
+        if (playerLeader == null || deckManager == null)
+        {
+            Debug.LogWarning($"[CardPlay/Environmental] '{cardData.name}' aborted: playerLeader={(playerLeader != null)}, deckManager={(deckManager != null)}.");
+            return;
+        }
         EnvironmentalCardManager environment = EnvironmentalCardManager.GetOrCreate();
         if (!environment.CanNationPlay(playerLeader, game.turn, out string environmentalReason))
         {
+            Debug.LogWarning($"[CardPlay/Environmental] '{cardData.name}': CanNationPlay=false — {environmentalReason}");
             if (selected?.hex != null)
                 MessageDisplayNoUI.ShowMessage(selected.hex, selected, environmentalReason, Color.red);
             return;
         }
         if (!cardData.MeetsResourceRequirements(playerLeader))
         {
+            Debug.LogWarning($"[CardPlay/Environmental] '{cardData.name}': MeetsResourceRequirements=false for '{playerLeader.characterName}'.");
             if (selected?.hex != null)
             {
                 string reason = BuildRequirementsMessageText(selected, playerLeader);
@@ -1086,6 +1139,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         if (!deckManager.TryConsumeCard(playerLeader, playedCard.name, false, out CardData consumedCard))
         {
+            Debug.LogWarning($"[CardPlay/Environmental] '{cardData.name}': deckManager.TryConsumeCard failed.");
             IsPlayInProgress = false;
             return;
         }
@@ -1093,24 +1147,36 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         CardData activeCard = consumedCard ?? playedCard;
         if (!environment.TrySetActiveCard(activeCard, playerLeader, out _))
         {
+            Debug.LogWarning($"[CardPlay/Environmental] '{cardData.name}': environment.TrySetActiveCard failed (already consumed from hand).");
             IsPlayInProgress = false;
             return;
         }
+        Debug.Log($"[CardPlay/Environmental] '{cardData.name}' played successfully via bloom.");
         if (selected?.hex != null) selected.hex.PlayCharacterActionAnimation(selected);
 
         if (selected?.hex != null)
             MessageDisplayNoUI.ShowMessage(selected.hex, selected, $"{activeCard.name} takes hold — effects begin next turn", Color.green);
 
-        CardPlayFlight.Launch(this, selected != null ? selected.hex : null);
+        CardPlayFlight.Launch(this, selected != null ? selected.hex : null, sourceWorldCenter: previewCenter, sourceWorldWidth: previewWidth);
         Destroy(gameObject);
     }
 
-    private async void TryPlayCard(Character selectedOverride = null, bool invokedFromBloom = false)
+    private async void TryPlayCard(Character selectedOverride = null, bool invokedFromBloom = false, Vector3? previewCenter = null, float? previewWidth = null)
     {
-        if (cardData == null) return;
-        if (IsPlayInProgress) return;
+        if (cardData == null)
+        {
+            Debug.LogWarning("[CardPlay] TryPlayCard aborted: cardData is null.");
+            return;
+        }
+        Debug.Log($"[CardPlay] TryPlayCard start: '{cardData.name}' (type={cardData.GetCardType()}, invokedFromBloom={invokedFromBloom}).");
+        if (IsPlayInProgress)
+        {
+            Debug.LogWarning($"[CardPlay] '{cardData.name}' aborted: a play is already in progress for this card instance.");
+            return;
+        }
         if (!invokedFromBloom && canvasGroup != null && !canvasGroup.interactable)
         {
+            Debug.LogWarning($"[CardPlay] '{cardData.name}' aborted: card CanvasGroup is not interactable (not invoked from bloom).");
             return;
         }
 
@@ -1126,10 +1192,26 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         Character playedSelected = selected;
         bool actionConditionsMet = true;
         string actionRef = playedCard.GetActionRef();
-        if (!string.IsNullOrWhiteSpace(actionRef) && actionsManager != null && playedSelected != null)
+        if (string.IsNullOrWhiteSpace(actionRef))
+        {
+            Debug.Log($"[CardPlay] '{playedCard.name}' has no actionRef — skipping action-gate check (not action-backed, e.g. Land/PC/Character/Encounter).");
+        }
+        else if (actionsManager == null)
+        {
+            Debug.LogWarning($"[CardPlay] '{playedCard.name}' has actionRef '{actionRef}' but this Card has no actionsManager reference — action gate skipped.");
+        }
+        else if (playedSelected == null)
+        {
+            Debug.LogWarning($"[CardPlay] '{playedCard.name}' has actionRef '{actionRef}' but no character is selected — action gate skipped, will likely fail playability.");
+        }
+        else
         {
             CharacterAction action = actionsManager.ResolveActionByRef(actionRef, playedCard);
-            if (action != null)
+            if (action == null)
+            {
+                Debug.LogWarning($"[CardPlay] '{playedCard.name}': actionsManager.ResolveActionByRef('{actionRef}') returned null — no CharacterAction registered for this ref.");
+            }
+            else
             {
                 action.Initialize(playedSelected, playedCard);
                 actionConditionsMet = action.FulfillsConditions();
@@ -1138,19 +1220,25 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                     string hexName = playedSelected.hex != null ? playedSelected.hex.name : "none";
                     string pcName = playedSelected.hex?.GetPCData()?.pcName ?? "none";
                     Debug.LogWarning(
-                        $"Action gate failed for card '{playedCard.name}' on '{playedSelected.characterName}' " +
+                        $"[CardPlay] Action gate failed for card '{playedCard.name}' on '{playedSelected.characterName}' " +
                         $"(hex='{hexName}', pc='{pcName}', commander={playedSelected.GetCommander()}, agent={playedSelected.GetAgent()}, " +
                         $"emmissary={playedSelected.GetEmmissary()}, mage={playedSelected.GetMage()})");
+                }
+                else
+                {
+                    Debug.Log($"[CardPlay] '{playedCard.name}': action gate ('{action.GetType().Name}') passed for '{playedSelected.characterName}'.");
                 }
             }
         }
 
+        bool meetsResources = resourceOwner == null || playedCard.MeetsResourceRequirements(resourceOwner);
         bool playable = playedCard.EvaluatePlayability(
             playedSelected,
-            _ => resourceOwner == null || playedCard.MeetsResourceRequirements(resourceOwner),
+            _ => meetsResources,
             _ => actionConditionsMet);
         if (!playable)
         {
+            Debug.LogWarning($"[CardPlay] '{playedCard.name}' NOT playable (meetsResources={meetsResources}, actionConditionsMet={actionConditionsMet}, selected={(playedSelected != null ? playedSelected.characterName : "none")}). Card will not be played.");
             if (IsUnplayedEncounterWithHex())
             {
                 BoardNavigator.Instance?.LookAt(cardData.encounterTargetHex.transform.position);
@@ -1165,11 +1253,13 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                 string reason = BuildRequirementsMessageText(playedSelected, resourceOwner);
                 if (!string.IsNullOrWhiteSpace(reason))
                 {
+                    Debug.LogWarning($"[CardPlay] '{playedCard.name}' requirements message: {reason}");
                     MessageDisplayNoUI.ShowMessage(playedSelected.hex, playedSelected, reason, Color.red);
                 }
             }
             return;
         }
+        Debug.Log($"[CardPlay] '{playedCard.name}' passed playability check — proceeding to resolve (type={playedCard.GetCardType()}).");
 
         // Hand consumption rebuilds the bloom immediately. DeckManager uses this flag to keep
         // the clicked instance alive until its async effect and play animation have completed.
@@ -1201,6 +1291,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             case CardTypeEnum.Land:
             case CardTypeEnum.PC:
             case CardTypeEnum.Army:
+            case CardTypeEnum.Spell:
+            case CardTypeEnum.Object:
                 (success, actionRollFailed) = await HandleActionCardPlayed(playedSelected);
                 break;
             case CardTypeEnum.Encounter:
@@ -1212,7 +1304,12 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             case CardTypeEnum.Environmental:
                 success = await HandleEnvironmentalCardPlayed(playedSelected);
                 break;
+            default:
+                Debug.LogError($"[CardPlay] '{playedCard.name}': no switch case handles card type {cardType} — card will not be played. Add a case in TryPlayCard's switch.");
+                break;
         }
+
+        Debug.Log($"[CardPlay] '{playedCard.name}' resolution finished: success={success}, actionRollFailed={actionRollFailed}.");
 
         // Effects resolved (or refused) — hand the cursor back before anything else;
         // this must run even if the card object was destroyed during resolution.
@@ -1230,7 +1327,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             {
                 // The card was spent but its difficulty roll failed — no effect landed, so it
                 // doesn't fly anywhere. Shake it, drain it red, and let it dissolve in place.
-                CardPlayFailure.Launch(this);
+                CardPlayFailure.Launch(this, sourceWorldCenter: previewCenter);
             }
             else
             {
@@ -1241,7 +1338,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                 Hex effectHex = playedCard.encounterTargetHex != null
                     ? playedCard.encounterTargetHex
                     : playedSelected != null ? playedSelected.hex : null;
-                CardPlayFlight.Launch(this, effectHex);
+                CardPlayFlight.Launch(this, effectHex, sourceWorldCenter: previewCenter, sourceWorldWidth: previewWidth);
             }
             // Card was successfully played, it will be removed from hand by the manager
             if (gameObject != null)
@@ -1251,6 +1348,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         }
         else
         {
+            Debug.LogWarning($"[CardPlay] '{playedCard.name}' handler reported failure — card token destroyed WITHOUT being consumed from hand, so it should reappear on next bloom rebuild. See warnings above for the specific reason.");
             // Undo the pressed/locked waiting state — the card stays in hand.
             transform.localScale = preResolveScale;
             if (canvasGroup != null)
@@ -1699,27 +1797,51 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private async Task<(bool success, bool actionRollFailed)> HandleActionCardPlayed(Character selected)
     {
         string actionRef = cardData.GetActionRef();
-        if (string.IsNullOrWhiteSpace(actionRef)) return (false, false);
+        if (string.IsNullOrWhiteSpace(actionRef))
+        {
+            Debug.LogWarning($"[CardPlay/Action] '{cardData.name}' has no actionRef set on its CardData — cannot resolve a CharacterAction. Check the card's JSON/asset.");
+            return (false, false);
+        }
+
+        if (actionsManager == null)
+        {
+            Debug.LogWarning($"[CardPlay/Action] '{cardData.name}': this Card has no actionsManager reference.");
+            return (false, false);
+        }
 
         CharacterAction action = actionsManager.ResolveActionByRef(actionRef, cardData);
-        if (action == null) return (false, false);
-        if (selected == null) return (false, false);
+        if (action == null)
+        {
+            Debug.LogWarning($"[CardPlay/Action] '{cardData.name}': ResolveActionByRef('{actionRef}') returned null — no CharacterAction class is registered for this ref.");
+            return (false, false);
+        }
+        if (selected == null)
+        {
+            Debug.LogWarning($"[CardPlay/Action] '{cardData.name}': no character selected — cannot Initialize/Execute the action.");
+            return (false, false);
+        }
 
         action.Initialize(selected, cardData);
         if (!action.FulfillsConditions())
         {
+            Debug.LogWarning($"[CardPlay/Action] '{cardData.name}': action '{action.GetType().Name}'.FulfillsConditions() returned false for '{selected.characterName}' — condition delegate rejected it (see the specific action's Initialize()).");
             return (false, false);
         }
 
         Game game = Game.Instance;
         PlayableLeader playerLeader = game != null ? game.player : null;
-        if (playerLeader == null) return (false, false);
+        if (playerLeader == null)
+        {
+            Debug.LogWarning($"[CardPlay/Action] '{cardData.name}': Game.Instance.player is null — no human PlayableLeader to consume the card from.");
+            return (false, false);
+        }
 
         // Try to consume the card from hand first
         // We use the card name now as the ID
         bool drawReplacementCard = false;
         if (!deckManager.TryConsumeActionCard(playerLeader, actionRef, drawReplacementCard, out _, cardData.name))
         {
+            Debug.LogWarning($"[CardPlay/Action] '{cardData.name}': deckManager.TryConsumeActionCard failed (actionRef='{actionRef}') — card not found in hand under that ref/name, or DeckManager rejected the consume.");
             return (false, false);
         }
 
@@ -1728,6 +1850,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         // Execute the action
         action.Initialize(selected, cardData);
+        Debug.Log($"[CardPlay/Action] '{cardData.name}': card consumed, executing action '{action.GetType().Name}' for '{selected.characterName}'.");
         await action.Execute();
 
         if (!action.LastExecutionSucceeded)
@@ -1736,32 +1859,49 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             // but the current game design usually consumes it anyway on fail.
             // If we want to return it:
             // deckManager.TryReturnActionCardToHand(playerLeader, actionRef);
+            Debug.LogWarning($"[CardPlay/Action] '{cardData.name}': action '{action.GetType().Name}'.Execute() did not succeed (LastExecutionSucceeded=false) — likely failed its difficulty roll, or effect/asyncEffect returned false. Card is still spent.");
             return (true, true);
         }
 
+        Debug.Log($"[CardPlay/Action] '{cardData.name}': action '{action.GetType().Name}' executed successfully.");
         return (true, false);
     }
 
     private Task<bool> HandleEnvironmentalCardPlayed(Character selected)
     {
         Game game = Game.Instance;
-        if (game == null) return Task.FromResult(false);
+        if (game == null)
+        {
+            Debug.LogWarning($"[CardPlay/Environmental] '{cardData.name}': Game.Instance is null.");
+            return Task.FromResult(false);
+        }
         PlayableLeader playerLeader = game.player;
-        if (playerLeader == null) return Task.FromResult(false);
+        if (playerLeader == null)
+        {
+            Debug.LogWarning($"[CardPlay/Environmental] '{cardData.name}': game.player is null.");
+            return Task.FromResult(false);
+        }
 
         EnvironmentalCardManager environment = EnvironmentalCardManager.GetOrCreate();
         if (!environment.CanNationPlay(playerLeader, game.turn, out string environmentalReason))
         {
+            Debug.LogWarning($"[CardPlay/Environmental] '{cardData.name}': CanNationPlay=false — {environmentalReason}");
             if (selected?.hex != null)
                 MessageDisplayNoUI.ShowMessage(selected.hex, selected, environmentalReason, Color.red);
             return Task.FromResult(false);
         }
 
         if (!deckManager.TryConsumeCard(playerLeader, cardData.name, false, out _))
+        {
+            Debug.LogWarning($"[CardPlay/Environmental] '{cardData.name}': deckManager.TryConsumeCard failed.");
             return Task.FromResult(false);
+        }
 
         if (!environment.TrySetActiveCard(cardData, playerLeader, out _))
+        {
+            Debug.LogWarning($"[CardPlay/Environmental] '{cardData.name}': environment.TrySetActiveCard failed (already consumed from hand).");
             return Task.FromResult(false);
+        }
 
         // Environmental cards don't roll/resolve immediately like Action cards — they become
         // the ongoing effect and apply at the start of next turn. Without an explicit message
@@ -1790,17 +1930,23 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         Game game = Game.Instance;
         PlayableLeader playerLeader = game != null ? game.player : null;
-        if (playerLeader == null) return false;
+        if (playerLeader == null)
+        {
+            Debug.LogWarning($"[CardPlay/Encounter] '{cardData.name}': game.player is null.");
+            return false;
+        }
 
         bool drawReplacementCard = false;
         if (!deckManager.TryConsumeCard(playerLeader, cardData.name, drawReplacementCard, out _))
         {
+            Debug.LogWarning($"[CardPlay/Encounter] '{cardData.name}': deckManager.TryConsumeCard failed.");
             return false;
         }
 
         bool resolved = await EncounterResolver.ResolveAsync(cardData, selected);
         if (!resolved)
         {
+            Debug.LogWarning($"[CardPlay/Encounter] '{cardData.name}': EncounterResolver.ResolveAsync returned false — returning card to hand.");
             deckManager.TryReturnCardToHand(playerLeader, cardData.name);
         }
 
@@ -1901,6 +2047,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         PlayableLeader playerLeader = game != null ? game.player : null;
         if (playerLeader == null || selected == null)
         {
+            Debug.LogWarning($"[CardPlay/Character] '{cardData.name}': playerLeader={(playerLeader != null)}, selected={(selected != null)} — both required.");
             return Task.FromResult(false);
         }
 
@@ -1908,12 +2055,14 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         PC pc = hex?.GetPCData();
         if (pc == null || !CardNameUtility.Equals(pc.pcName, cardData.startingPC))
         {
+            Debug.LogWarning($"[CardPlay/Character] '{cardData.name}': selected character's hex PC ('{pc?.pcName ?? "none"}') does not match required startingPC ('{cardData.startingPC}').");
             return Task.FromResult(false);
         }
 
         bool drawReplacementCard = false;
         if (!deckManager.TryConsumeCard(playerLeader, cardData.name, drawReplacementCard, out _))
         {
+            Debug.LogWarning($"[CardPlay/Character] '{cardData.name}': deckManager.TryConsumeCard failed.");
             return Task.FromResult(false);
         }
 
@@ -1924,6 +2073,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         {
             if (!playerLeader.HasCharacterSlot())
             {
+                Debug.LogWarning($"[CardPlay/Character] '{cardData.name}': no character slots available for '{playerLeader.characterName}'.");
                 MessageDisplay.ShowMessage("No character slots available.", Color.red);
                 return Task.FromResult(false);
             }
@@ -1931,6 +2081,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             CharacterInstantiator instantiator = FindFirstObjectByType<CharacterInstantiator>();
             if (instantiator == null)
             {
+                Debug.LogWarning($"[CardPlay/Character] '{cardData.name}': no CharacterInstantiator found in scene.");
                 return Task.FromResult(false);
             }
 

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -60,7 +60,7 @@ public class BearerOfNenya : CharacterAction
             if (!isAI)
             {
                 List<string> options = alliedPcs.Select(pc => pc.pcName).Distinct().ToList();
-                string selected = await SelectionDialog.Ask(
+                string selected = await SelectionDialog.AskImmediate(
                     "Select allied PC",
                     "Ok",
                     "Cancel",

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -27,7 +27,7 @@ public class Curse : DarkNeutralSpell
             Character enemy = null;
             if (!isAI)
             {
-                string targetCharacter = await SelectionDialog.Ask(
+                string targetCharacter = await SelectionDialog.AskImmediate(
                     "Select enemy character",
                     "Ok",
                     "Cancel",

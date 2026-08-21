@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -34,7 +34,7 @@ public class Gargoyles : EventAction
 
             if (!isAI)
             {
-                string targetName = await SelectionDialog.Ask(
+                string targetName = await SelectionDialog.AskImmediate(
                     "Select enemy character",
                     "Ok",
                     "Cancel",

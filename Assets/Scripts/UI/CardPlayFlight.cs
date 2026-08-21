@@ -24,22 +24,43 @@ public class CardPlayFlight : MonoBehaviour
     private Action onArrived;
     private float durationScale = 1f;
 
-    public static void Launch(Card card, Hex targetHex, Action onArrived = null, float durationScale = 1f)
+    // sourceWorldCenter/sourceWorldWidth let a caller snapshot the enlarged center-preview
+    // card's on-screen footprint at click time and hand it in later, once the card has
+    // actually finished resolving (after awaited action/consume calls). Querying
+    // CardCenterPreview.Instance live at that later point doesn't work: consuming the card
+    // from hand rebuilds the bloom (CardBloomWheel.SetCards -> ClearCenterPreview) well
+    // before this runs, destroying the preview clone the flight is supposed to fly out of —
+    // silently downgrading the "spin out of the zoomed card" flight into one from the tiny
+    // token instead. See Card.TryPlayCard/PlayEnvironmentalFromBloom for the snapshot.
+    public static void Launch(Card card, Hex targetHex, Action onArrived = null, float durationScale = 1f, Vector3? sourceWorldCenter = null, float? sourceWorldWidth = null)
     {
-        if (card == null) { onArrived?.Invoke(); return; }
+        if (card == null) { Debug.LogWarning("[CardPlayFlight] Launch aborted: card is null."); onArrived?.Invoke(); return; }
 
         Canvas parentCanvas = card.GetComponentInParent<Canvas>();
         Canvas rootCanvas = parentCanvas != null ? parentCanvas.rootCanvas : null;
-        if (rootCanvas == null) { onArrived?.Invoke(); return; }
+        if (rootCanvas == null) { Debug.LogWarning($"[CardPlayFlight] Launch aborted: '{card.name}' has no parent Canvas."); onArrived?.Invoke(); return; }
 
-        // The enlarged center preview (when one is showing) is what the player is
-        // actually looking at as they click — start the flight from it, else from
-        // the hand card itself.
-        CardCenterPreview preview = CardCenterPreview.Instance;
-        RectTransform sourceRect = preview != null && preview.CurrentPreviewRect != null
-            ? preview.CurrentPreviewRect
-            : card.transform as RectTransform;
-        if (sourceRect == null) { onArrived?.Invoke(); return; }
+        Vector3 sourceCenterWorld;
+        float sourceWidthWorld;
+        if (sourceWorldCenter.HasValue && sourceWorldWidth.HasValue)
+        {
+            sourceCenterWorld = sourceWorldCenter.Value;
+            sourceWidthWorld = sourceWorldWidth.Value;
+        }
+        else
+        {
+            // Fallback: the enlarged center preview (when one is still showing) is what the
+            // player is actually looking at as they click — start the flight from it, else
+            // from the hand card itself.
+            CardCenterPreview preview = CardCenterPreview.Instance;
+            RectTransform sourceRect = preview != null && preview.CurrentPreviewRect != null
+                ? preview.CurrentPreviewRect
+                : card.transform as RectTransform;
+            Debug.Log($"[CardPlayFlight] '{card.name}': no source snapshot passed in — falling back to {(preview != null && preview.CurrentPreviewRect != null ? "live CardCenterPreview" : "card.transform")}.");
+            if (sourceRect == null) { Debug.LogWarning($"[CardPlayFlight] Launch aborted: '{card.name}' has no fallback sourceRect (card.transform is not a RectTransform)."); onArrived?.Invoke(); return; }
+            sourceCenterWorld = sourceRect.TransformPoint(sourceRect.rect.center);
+            sourceWidthWorld = sourceRect.rect.width * Mathf.Abs(sourceRect.lossyScale.x);
+        }
 
         GameObject flightGo = new("CardPlayFlight", typeof(RectTransform));
         RectTransform flightRect = flightGo.GetComponent<RectTransform>();
@@ -51,10 +72,12 @@ public class CardPlayFlight : MonoBehaviour
         GameObject token = card.CreateTokenVisualClone(flightRect, out Vector2 tokenSize);
         if (token == null)
         {
+            Debug.LogWarning($"[CardPlayFlight] Launch aborted: '{card.name}'.CreateTokenVisualClone returned null (no tokenCanvasGroup on this Card instance).");
             Destroy(flightGo);
             onArrived?.Invoke();
             return;
         }
+        Debug.Log($"[CardPlayFlight] '{card.name}': flight launched successfully, targetHex={(targetHex != null ? targetHex.name : "none")}.");
         flightRect.sizeDelta = tokenSize;
         RectTransform tokenRect = token.transform as RectTransform;
         if (tokenRect != null)
@@ -81,14 +104,13 @@ public class CardPlayFlight : MonoBehaviour
         // the card's footprint — the compact phase then reads as the card collapsing
         // into its token.
         Camera sourceCamera = flight.uiCamera;
-        Vector2 sourceScreen = RectTransformUtility.WorldToScreenPoint(sourceCamera, sourceRect.TransformPoint(sourceRect.rect.center));
+        Vector2 sourceScreen = RectTransformUtility.WorldToScreenPoint(sourceCamera, sourceCenterWorld);
         RectTransformUtility.ScreenPointToLocalPointInRectangle(flight.canvasRect, sourceScreen, flight.uiCamera, out Vector2 sourceLocal);
         flight.startLocal = sourceLocal;
         flightRect.localPosition = sourceLocal;
 
-        float sourceWidth = sourceRect.rect.width * Mathf.Abs(sourceRect.lossyScale.x);
         float tokenWidth = tokenSize.x * Mathf.Abs(flight.canvasRect.lossyScale.x);
-        flight.compactStartScale = tokenWidth > 1f ? Mathf.Clamp(sourceWidth / tokenWidth, 1f, 4f) : 2.5f;
+        flight.compactStartScale = tokenWidth > 1f ? Mathf.Clamp(sourceWidthWorld / tokenWidth, 1f, 4f) : 2.5f;
         flightRect.localScale = Vector3.one * flight.compactStartScale;
 
         flight.StartCoroutine(flight.Run());

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -32,7 +32,7 @@ public class ReleaseCharacter : AgentAction
             bool isAI = !actor.isPlayerControlled;
             if (!isAI)
             {
-                string selected = await SelectionDialog.Ask(
+                string selected = await SelectionDialog.AskImmediate(
                     "Select captive to release",
                     "Ok",
                     "Cancel",

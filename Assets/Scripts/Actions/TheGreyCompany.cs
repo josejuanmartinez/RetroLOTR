@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -54,7 +54,7 @@ public class TheGreyCompany : CharacterAction
 
             if (!isAI)
             {
-                string commanderName = await SelectionDialog.Ask(
+                string commanderName = await SelectionDialog.AskImmediate(
                     "Dunedain gains +1 Commander",
                     "Ok",
                     "Cancel",
@@ -77,7 +77,7 @@ public class TheGreyCompany : CharacterAction
                     return true;
                 }
 
-                string agentName = await SelectionDialog.Ask(
+                string agentName = await SelectionDialog.AskImmediate(
                     "Dunedain gains +1 Agent",
                     "Ok",
                     "Skip",
@@ -97,7 +97,7 @@ public class TheGreyCompany : CharacterAction
                 }
                 else
                 {
-                    string emmissaryName = await SelectionDialog.Ask(
+                    string emmissaryName = await SelectionDialog.AskImmediate(
                         "Dunedain gains +1 Emmissary",
                         "Ok",
                         "Skip",
