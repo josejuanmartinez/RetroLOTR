@@ -115,6 +115,8 @@ Hexes started as assets from the [Unity Asset Store](https://assetstore.unity.co
 
 An independent, non-commercial fan project inspired by classic fantasy strategy games.
 
-[Website](https://josejuanmartinez.github.io/Runeboard/) · [Releases](https://github.com/josejuanmartinez/Runeboard/releases) · [Watch the trailer](docs/videos/trailer.mp4)
+[Website](https://josejuanmartinez.github.io/Runeboard/) · [Releases](https://github.com/josejuanmartinez/Runeboard/releases)
+
+<video src="https://media.githubusercontent.com/media/josejuanmartinez/Runeboard/main/docs/videos/trailer.mp4" controls poster="https://raw.githubusercontent.com/josejuanmartinez/Runeboard/main/docs/images/hero/trailer-poster.webp" width="720"></video>
 
 </div>
