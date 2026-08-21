@@ -2,7 +2,7 @@
 
 <img src="docs/images/hero/frame-02.png" alt="Runeboard title screen" width="720">
 
-<video src="https://media.githubusercontent.com/media/josejuanmartinez/Runeboard/main/docs/videos/trailer.mp4" controls poster="https://raw.githubusercontent.com/josejuanmartinez/Runeboard/main/docs/images/hero/trailer-poster.webp" width="720"></video>
+<a href="https://github.com/josejuanmartinez/Runeboard/blob/main/docs/videos/trailer.mp4"><img src="https://raw.githubusercontent.com/josejuanmartinez/Runeboard/main/docs/images/hero/trailer-poster.webp" alt="Watch the trailer" width="720"></a>
 
 # Runeboard
 
